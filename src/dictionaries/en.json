@@ -1,0 +1,285 @@
+{
+  "hero": {
+    "kicker": "SWISS BASED COMPANY",
+    "title_1": "A small team,",
+    "title_2": "fully by your side.",
+    "description": "Swiss-based partner helping enterprises, small businesses, and individuals with practical digital and strategy solutions.",
+    "cta": "Let's talk"
+  },
+  "clients": {
+    "title": "Who trust us?"
+  },
+  "description": {
+    "paragraphs": [
+      "We are a Swiss based technical execution partner focused on building high-performance systems and digital experiences for ambitious companies.",
+      "Our mission is to help you bridge the gap between strategy and execution by providing the technical infrastructure and on-demand talent you need to scale.",
+      "From automation and AI to custom software and team integration, we act as an extension of your business, ensuring you stay ahead in a rapidly moving world."
+    ]
+  },
+  "problem": {
+    "badge": "PROBLEM",
+    "headline_1": "Your business is moving fast.",
+    "headline_2": "Your operations aren't.",
+    "items": [
+      {
+        "title": "Fragmented Systems",
+        "description": "Critical data is scattered across tools that don't talk to each other, creating manual work and human error."
+      },
+      {
+        "title": "Execution Bottlenecks",
+        "description": "Strategic initiatives stall because your team lacks the specialized technical capacity to build and maintain them."
+      },
+      {
+        "title": "Manual Repetition",
+        "description": "High-value talent is wasted on repetitive administrative tasks that could be automated for scale."
+      },
+      {
+        "title": "Lack of Visibility",
+        "description": "Decisions are made on incomplete data because you lack real-time visibility into your business performance."
+      }
+    ]
+  },
+  "vision": {
+    "badge": "VISION",
+    "statement": "We give growing businesses real-time execution capacity through connected systems, automation, and on-demand talent."
+  },
+  "work": {
+    "badge": "SOLUTION",
+    "headline": "Built for speed. Proven by results.",
+    "projects": [
+      {
+        "id": "crm",
+        "category": "CRM and automation system",
+        "title": "Client intake, deal creation, and internal workflows structured into one connected system with full automation and visibility.",
+        "image": "/crm_automation_dashboard_1778762266170.png"
+      },
+      {
+        "id": "ecommerce",
+        "category": "E-commerce and operations platform",
+        "title": "Custom platform with product management, order flows, and back-office systems built to support daily operations.",
+        "image": "/ecommerce_ops_platform_1778762308624.png"
+      },
+      {
+        "id": "business",
+        "category": "Custom business system",
+        "title": "End-to-end system combining interface design, development, integrations, and reporting tailored to how the business operates.",
+        "image": "/custom_business_system_1778762352424.png"
+      }
+    ]
+  },
+  "process": {
+    "badge": "PROCESS",
+    "headline": "From bottleneck to execution in days",
+    "items": [
+      { "id": "01", "title": "Audit →", "description": "Identify inefficiencies" },
+      { "id": "02", "title": "Build →", "description": "Create systems + workflows" },
+      { "id": "03", "title": "Deploy →", "description": "Launch teams/automation" },
+      { "id": "04", "title": "Optimize →", "description": "Improve continuously" }
+    ]
+  },
+  "insights": {
+    "badge": "INSIGHTS",
+    "headline": "Latest from the team",
+    "articles": [
+      {
+        "category": "UI/UX Design",
+        "title": "Designing Interfaces That Drive Business Growth",
+        "date": "Apr 10, 2026",
+        "readTime": "5 min read",
+        "excerpt": "Great interface design goes beyond visuals, it shapes how users interact with your business. Learn how intuitive layouts and user-centered design can increase engagement and conversions..."
+      },
+      {
+        "category": "Technology",
+        "title": "Building Scalable Systems with Modern Infrastructure",
+        "date": "Apr 08, 2026",
+        "readTime": "8 min read",
+        "excerpt": "Scalability is the foundation of growth. We explore the latest trends in cloud architecture and how they impact your bottom line..."
+      },
+      {
+        "category": "Strategy",
+        "title": "How to Bridge the Gap Between Vision and Execution",
+        "date": "Apr 05, 2026",
+        "readTime": "6 min read",
+        "excerpt": "Many companies have a vision, but few can execute it. Discover our framework for turning strategic goals into operational reality..."
+      },
+      {
+        "category": "Automation",
+        "title": "The Future of AI in Operational Workflows",
+        "date": "Apr 01, 2026",
+        "readTime": "10 min read",
+        "excerpt": "Artificial Intelligence is no longer a luxury. It's a necessity for high-performing teams looking to automate repetitive tasks..."
+      },
+      {
+        "category": "UI/UX Design",
+        "title": "The Role of Micro-interactions in User Retention",
+        "date": "Mar 28, 2026",
+        "readTime": "4 min read",
+        "excerpt": "Small details make a big difference. Learn how subtle animations and feedback loops keep users engaged with your digital products..."
+      },
+      {
+        "category": "Systems Design",
+        "title": "Optimizing Performance for High-Traffic Applications",
+        "date": "Mar 25, 2026",
+        "readTime": "7 min read",
+        "excerpt": "Speed is a competitive advantage. We share our techniques for reducing latency and improving response times in critical business systems..."
+      }
+    ]
+  },
+  "footer": {
+    "rights": "©2026 MAWT. All Rights Reserved.",
+    "cookieSettings": "Cookie Settings",
+    "columns": [
+      {
+        "title": "Company",
+        "links": [
+          { "label": "About Us", "href": "/about" },
+          { "label": "Careers", "href": "/careers" },
+          { "label": "Contact", "href": "/contact" }
+        ]
+      },
+      {
+        "title": "Services",
+        "links": [
+          { "label": "What We Do", "href": "/services" },
+          { "label": "Systems", "href": "/solutions" },
+          { "label": "Integrations", "href": "/integrations" },
+          { "label": "Enterprise", "href": "/enterprise" }
+        ]
+      },
+      {
+        "title": "Resources",
+        "links": [
+          { "label": "Blog", "href": "/blog" },
+          { "label": "Documentation", "href": "/docs" },
+          { "label": "FAQs", "href": "/faqs" },
+          { "label": "Case Studies", "href": "/projects" }
+        ]
+      },
+      {
+        "title": "Legal",
+        "links": [
+          { "label": "Privacy Policy", "href": "/legal" },
+          { "label": "Cookie Policy", "href": "/cookie-policy" },
+          { "label": "Terms of Service", "href": "/terms" },
+          { "label": "Security", "href": "/security" },
+          { "label": "Status", "href": "/status" }
+        ]
+      }
+    ],
+    "newsletter": {
+      "title": "Newsletter",
+      "description": "Get the latest insights on technical execution and operational speed.",
+      "placeholder": "Email address",
+      "success": "Thank you for subscribing."
+    }
+  },
+  "solution": {
+    "badge": "SOLUTION",
+    "headline_1": "We build the infrastructure",
+    "headline_2": "that keeps your business moving.",
+    "items": [
+      {
+        "title": "Systems Design",
+        "description": "We design operational systems that remove bottlenecks and create scalable workflows."
+      },
+      {
+        "title": "Automation & AI",
+        "description": "We eliminate repetitive tasks through automation and connected workflows."
+      },
+      {
+        "title": "Embedded Execution Teams",
+        "description": "We deploy developers, designers, and specialists that integrate directly into your business."
+      },
+      {
+        "title": "Performance Optimization",
+        "description": "We continuously improve your systems as your business grows."
+      }
+    ]
+  },
+  "services": {
+    "badge": "What We Do",
+    "headline": "Comprehensive technical execution across five core pillars.",
+    "pillars": [
+      {
+        "title": "Strategy",
+        "description": "We help you define the right digital roadmap. From understanding users and meeting market needs to improving iterative performance."
+      },
+      {
+        "title": "Design",
+        "description": "User research, service design, and UX/UI design that prioritizes clarity and conversion. We build design systems that ensure consistency."
+      },
+      {
+        "title": "Development",
+        "description": "Custom software, CMS implementation, and mobile applications built with modern stacks. We specialize in AI integration."
+      },
+      {
+        "title": "Performance",
+        "description": "Data-driven optimization through advanced analytics and SEO. We ensure your digital systems are actively growing your business."
+      },
+      {
+        "title": "Content",
+        "description": "Strategic storytelling and UX writing that communicates your value effectively. We provide content governance and training."
+      }
+    ]
+  },
+  "contact": {
+    "badge": "Contact Us",
+    "headline": "Let's discuss how we can accelerate your technical execution.",
+    "inquiries": "Inquiries",
+    "address": "Address",
+    "social": "Social",
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "message": "Message",
+      "submit": "Send Message",
+      "success": "Message sent successfully.",
+      "error": "Something went wrong. Please try again."
+    }
+  },
+  "help": {
+    "badge": "Help Center",
+    "headline": "How can we help you today?",
+    "searchPlaceholder": "Search for articles, guides, and more...",
+    "noResults": "No categories found matching",
+    "articles": "Articles",
+    "quickLinks": "Quick Links",
+    "categories": {
+      "gettingStarted": "Getting Started",
+      "account": "Account Management",
+      "billing": "Billing & Invoices",
+      "integrations": "Third-party Integrations",
+      "security": "Security & Privacy",
+      "developer": "Developer Hub"
+    }
+  },
+  "faq": {
+    "badge": "Support",
+    "headline": "Everything you need to know about working with MAWT.",
+    "noFaqs": "No FAQs available at the moment.",
+    "stillQuestions": "Still have questions?",
+    "contactDesc": "Our team is here to help. Contact us directly for any specific inquiries or to discuss how we can help your business.",
+    "contactBtn": "Contact Support"
+  },
+  "results": {
+    "badge": "Results",
+    "headline": "Measurable impact on operational efficiency and scale.",
+    "metrics": [
+      { "label": "Execution Speed", "value": "3x", "description": "Average increase in strategic project delivery speed." },
+      { "label": "Operational Efficiency", "value": "40%", "description": "Reduction in manual tasks through system automation." },
+      { "label": "Team Capacity", "value": "+250h", "description": "Hours saved per month for internal teams." },
+      { "label": "System Uptime", "value": "99.99%", "description": "Guaranteed availability for critical business infrastructure." }
+    ],
+    "footerHeadline": "Proven success at scale.",
+    "footerDesc": "Our results are not just numbers; they are the foundation of our long-term partnerships. We focus on clear, measurable outcomes."
+  },
+  "login": {
+    "title": "Command Center",
+    "subtitle": "Secure entry for MAWT administrators.",
+    "fieldLabel": "Access Key",
+    "placeholder": "Enter your security key",
+    "button": "Enter Command Center",
+    "error": "Invalid access key. Please try again.",
+    "success": "Access granted. Redirecting..."
+  }
+}

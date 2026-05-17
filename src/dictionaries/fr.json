@@ -1,0 +1,297 @@
+{
+  "hero": {
+    "kicker": "Entreprise basée en Suisse",
+    "title_1": "Une petite équipe,",
+    "title_2": "entièrement à vos côtés.",
+    "description": "Partenaire basé en Suisse aidant les entreprises, les petites entreprises et les particuliers avec des solutions numériques et stratégiques pratiques.",
+    "cta": "Parlons-en"
+  },
+  "clients": {
+    "title": "Qui nous fait confiance ?"
+  },
+  "description": {
+    "paragraphs": [
+      "Nous sommes un partenaire d'exécution technique basé en Suisse, spécialisé dans la création de systèmes performants et d'expériences numériques pour les entreprises ambitieuses.",
+      "Notre mission est de vous aider à combler l'écart entre la stratégie et l'exécution en fournissant l'infrastructure technique et les talents à la demande dont vous avez besoin pour évoluer.",
+      "De l'automatisation et l'IA aux logiciels personnalisés et à l'intégration d'équipes, nous agissons comme une extension de votre entreprise, vous assurant de rester en tête dans un monde qui évolue rapidement."
+    ]
+  },
+  "problem": {
+    "badge": "PROBLÈME",
+    "headline_1": "Votre entreprise évolue rapidement.",
+    "headline_2": "Vos opérations ne suivent pas.",
+    "items": [
+      {
+        "title": "Systèmes Fragmentés",
+        "description": "Les données critiques sont dispersées entre des outils qui ne communiquent pas entre eux, créant du travail manuel et des erreurs humaines."
+      },
+      {
+        "title": "Goulots d'Étranglement",
+        "description": "Les initiatives stratégiques stagnent parce que votre équipe manque de la capacité technique spécialisée pour les construire et les maintenir."
+      },
+      {
+        "title": "Répétition Manuelle",
+        "description": "Les talents à haute valeur ajoutée sont gaspillés dans des tâches administratives répétitives qui pourraient être automatisées pour évoluer."
+      },
+      {
+        "title": "Manque de Visibilité",
+        "description": "Les décisions sont prises sur la base de données incomplètes parce que vous manquez de visibilité en temps réel sur la performance de votre entreprise."
+      }
+    ]
+  },
+  "vision": {
+    "badge": "VISION",
+    "statement": "Nous donnons aux entreprises en croissance une capacité d'exécution en temps réel grâce à des systèmes connectés, à l'automatisation et à des talents à la demande."
+  },
+  "work": {
+    "badge": "SOLUTION",
+    "headline": "Conçu pour la vitesse. Prouvé par les résultats.",
+    "projects": [
+      {
+        "id": "crm",
+        "category": "Système CRM et automatisation",
+        "title": "Prise en charge des clients, création de transactions et flux de travail internes structurés dans un système connecté avec automatisation et visibilité complètes.",
+        "image": "/crm_automation_dashboard_1778762266170.png"
+      },
+      {
+        "id": "ecommerce",
+        "category": "Plateforme d'e-commerce et d'opérations",
+        "title": "Plateforme personnalisée avec gestion des produits, flux de commandes et systèmes de back-office conçus pour soutenir les opérations quotidiennes.",
+        "image": "/ecommerce_ops_platform_1778762308624.png"
+      },
+      {
+        "id": "business",
+        "category": "Système d'entreprise personnalisé",
+        "title": "Système de bout en bout combinant conception d'interface, développement, intégrations et reporting adaptés au fonctionnement de l'entreprise.",
+        "image": "/custom_business_system_1778762352424.png"
+      }
+    ]
+  },
+  "process": {
+    "badge": "PROCESSUS",
+    "headline": "Du goulot d'étranglement à l'exécution en quelques jours",
+    "items": [
+      { "id": "01", "title": "Audit →", "description": "Identifier les inefficacités" },
+      { "id": "02", "title": "Construction →", "description": "Créer des systèmes et des flux de travail" },
+      { "id": "03", "title": "Déploiement →", "description": "Lancer les équipes et l'automatisation" },
+      { "id": "04", "title": "Optimisation →", "description": "Améliorer continuellement" }
+    ]
+  },
+  "insights": {
+    "badge": "APERÇUS",
+    "headline": "Dernières nouvelles de l'équipe",
+    "articles": [
+      {
+        "category": "Design UI/UX",
+        "title": "Concevoir des interfaces qui stimulent la croissance des entreprises",
+        "date": "10 avr. 2026",
+        "readTime": "5 min de lecture",
+        "excerpt": "Un excellent design d'interface va au-delà du visuel, il façonne la manière dont les utilisateurs interagissent avec votre entreprise. Découvrez comment..."
+      },
+      {
+        "category": "Technologie",
+        "title": "Construire des systèmes évolutifs avec une infrastructure moderne",
+        "date": "08 avr. 2026",
+        "readTime": "8 min de lecture",
+        "excerpt": "L'évolutivité est le fondement de la croissance. Nous explorons les dernières tendances en architecture cloud et leur impact sur vos résultats..."
+      },
+      {
+        "category": "Stratégie",
+        "title": "Comment combler l'écart entre la vision et l'exécution",
+        "date": "05 avr. 2026",
+        "readTime": "6 min de lecture",
+        "excerpt": "Beaucoup d'entreprises ont une vision, mais peu peuvent l'exécuter. Découvrez notre cadre pour transformer les objectifs stratégiques en réalité opérationnelle..."
+      },
+      {
+        "category": "Automatisation",
+        "title": "L'avenir de l'IA dans les flux de travail opérationnels",
+        "date": "01 avr. 2026",
+        "readTime": "10 min de lecture",
+        "excerpt": "L'intelligence artificielle n'est plus un luxe. C'est une nécessité pour les équipes performantes cherchant à automatiser les tâches répétitives..."
+      },
+      {
+        "category": "Design UI/UX",
+        "title": "Le rôle des micro-interactions dans la fidélisation des utilisateurs",
+        "date": "28 mars 2026",
+        "readTime": "4 min de lecture",
+        "excerpt": "Les petits détails font une grande différence. Découvrez comment les animations subtiles et les boucles de rétroaction maintiennent l'engagement..."
+      },
+      {
+        "category": "Conception de Systèmes",
+        "title": "Optimiser la performance pour les applications à fort trafic",
+        "date": "25 mars 2026",
+        "readTime": "7 min de lecture",
+        "excerpt": "La vitesse est un avantage concurrentiel. Nous partageons nos techniques pour réduire la latence et améliorer les temps de réponse..."
+      }
+    ]
+  },
+  "footer": {
+    "rights": "© 2026 MAWT. Tous droits réservés.",
+    "cookieSettings": "Paramètres des cookies",
+    "columns": [
+      {
+        "title": "Entreprise",
+        "links": [
+          { "label": "À propos", "href": "/about" },
+          { "label": "Carrières", "href": "/careers" },
+          { "label": "Sécurité", "href": "/security" },
+          { "label": "Statut", "href": "/status" },
+          { "label": "Conditions et confidentialité", "href": "/legal" },
+          { "label": "Vos droits", "href": "/legal" }
+        ]
+      },
+      {
+        "title": "Ressources",
+        "links": [
+          { "label": "Centre d'aide", "href": "/help" },
+          { "label": "Tarification", "href": "/pricing" },
+          { "label": "Blog", "href": "/blog" },
+          { "label": "Communauté", "href": "/community" },
+          { "label": "Intégrations", "href": "/integrations" },
+          { "label": "Programmes partenaires", "href": "/partners" }
+        ]
+      },
+      {
+        "title": "Produit",
+        "links": [
+          { "label": "Ce que nous faisons", "href": "/services" },
+          { "label": "Comment ça marche", "href": "/process" },
+          { "label": "Études de cas", "href": "/projects" },
+          { "label": "Systèmes", "href": "/solutions" },
+          { "label": "Résultats", "href": "/results" }
+        ]
+      },
+      {
+        "title": "Support",
+        "links": [
+          { "label": "Contactez-nous", "href": "/contact" },
+          { "label": "Documentation", "href": "/docs" },
+          { "label": "FAQ", "href": "/faqs" }
+        ]
+      },
+      {
+        "title": "MAWT pour",
+        "links": [
+          { "label": "Entreprise", "href": "/enterprise" },
+          { "label": "Petite Entreprise", "href": "/small-business" },
+          { "label": "Personnel", "href": "/personal" }
+        ]
+      }
+    ],
+    "newsletter": {
+      "title": "Newsletter",
+      "description": "Recevez les dernières informations sur l'exécution technique et la vélocité opérationnelle.",
+      "placeholder": "Adresse e-mail",
+      "success": "Merci de vous être abonné."
+    }
+  },
+  "solution": {
+    "badge": "SOLUTION",
+    "headline_1": "Nous construisons l'infrastructure",
+    "headline_2": "qui maintient votre entreprise en mouvement.",
+    "items": [
+      {
+        "title": "Conception de Systèmes",
+        "description": "Nous concevons des systèmes opérationnels qui éliminent les goulots d'étranglement et créent des flux de travail évolutifs."
+      },
+      {
+        "title": "Automatisation et IA",
+        "description": "Nous éliminons les tâches répétitives grâce à l'automatisation et aux flux de travail connectés."
+      },
+      {
+        "title": "Équipes d'Exécution Intégrées",
+        "description": "Nous déployons des développeurs, des designers et des spécialistes qui s'intègrent directement dans votre entreprise."
+      },
+      {
+        "title": "Optimisation de la Performance",
+        "description": "Nous améliorons continuellement vos systèmes à mesure que votre entreprise grandit."
+      }
+    ]
+  },
+  "services": {
+    "badge": "Ce que nous faisons",
+    "headline": "Exécution technique complète à travers cinq piliers fondamentaux.",
+    "pillars": [
+      {
+        "title": "Stratégie",
+        "description": "Nous vous aidons à définir la bonne feuille de route numérique. De la compréhension des utilisateurs à l'amélioration de la performance itérative."
+      },
+      {
+        "title": "Design",
+        "description": "Recherche utilisateur, conception de services et design UX/UI qui privilégient la clarté et la conversion. Nous construisons des systèmes de design cohérents."
+      },
+      {
+        "title": "Développement",
+        "description": "Logiciels personnalisés, mise en œuvre de CMS et applications mobiles construites avec des stacks modernes. Spécialisation en intégration d'IA."
+      },
+      {
+        "title": "Performance",
+        "description": "Optimisation basée sur les données grâce à l'analyse avancée et au SEO. Nous assurons la croissance active de vos systèmes numériques."
+      },
+      {
+        "title": "Contenu",
+        "description": "Storytelling stratégique et rédaction UX qui communique efficacement votre valeur. Nous assurons la gouvernance du contenu et la formation."
+      }
+    ]
+  },
+  "contact": {
+    "badge": "Contactez-nous",
+    "headline": "Discutons de la manière dont nous pouvons accélérer votre exécution technique.",
+    "inquiries": "Demandes",
+    "address": "Adresse",
+    "social": "Social",
+    "form": {
+      "name": "Nom",
+      "email": "E-mail",
+      "message": "Message",
+      "submit": "Envoyer le message",
+      "success": "Message envoyé avec succès.",
+      "error": "Une erreur est survenue. Veuillez réessayer."
+    }
+  },
+  "help": {
+    "badge": "Centre d'aide",
+    "headline": "Comment pouvons-nous vous aider aujourd'hui ?",
+    "searchPlaceholder": "Rechercher des articles, des guides, et plus encore...",
+    "noResults": "Aucune catégorie trouvée correspondant à",
+    "articles": "Articles",
+    "quickLinks": "Liens rapides",
+    "categories": {
+      "gettingStarted": "Premiers pas",
+      "account": "Gestion du compte",
+      "billing": "Facturation et factures",
+      "integrations": "Intégrations tierces",
+      "security": "Sécurité et confidentialité",
+      "developer": "Espace développeur"
+    }
+  },
+  "faq": {
+    "badge": "Support",
+    "headline": "Tout ce que vous devez savoir sur le travail avec MAWT.",
+    "noFaqs": "Aucune FAQ disponible pour le moment.",
+    "stillQuestions": "Vous avez encore des questions ?",
+    "contactDesc": "Notre équipe est là pour vous aider. Contactez-nous directement pour toute demande spécifique.",
+    "contactBtn": "Contacter le support"
+  },
+  "results": {
+    "badge": "Résultats",
+    "headline": "Impact mesurable sur l'efficacité opérationnelle et l'échelle.",
+    "metrics": [
+      { "label": "Vitesse d'Exécution", "value": "3x", "description": "Augmentation moyenne de la vitesse de livraison des projets stratégiques." },
+      { "label": "Efficacité Opérationnelle", "value": "40%", "description": "Réduction des tâches manuelles grâce à l'automatisation des systèmes." },
+      { "label": "Capacité de l'Équipe", "value": "+250h", "description": "Heures économisées par mois pour les équipes internes." },
+      { "label": "Disponibilité du Système", "value": "99.99%", "description": "Disponibilité garantie pour l'infrastructure commerciale critique." }
+    ],
+    "footerHeadline": "Succès prouvé à grande échelle.",
+    "footerDesc": "Nos résultats ne sont pas seulement des chiffres ; ils sont le fondement de nos partenariats à long terme."
+  },
+  "login": {
+    "title": "Centre de Commande",
+    "subtitle": "Accès sécurisé pour les administrateurs MAWT.",
+    "fieldLabel": "Clé d'Accès",
+    "placeholder": "Entrez votre clé de sécurité",
+    "button": "Accéder au Centre",
+    "error": "Clé d'accès invalide. Veuillez réessayer.",
+    "success": "Accès accordé. Redirection..."
+  }
+}

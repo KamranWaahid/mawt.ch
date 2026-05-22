@@ -1,14 +1,11 @@
 "use client";
 
 import gsap from "gsap";
-import Image from "next/image";
 import Link from "next/link";
 import { useGSAP } from "@gsap/react";
 import type { ReactNode } from "react";
-import { useRef, useEffect, useState } from "react";
-
-import { MagneticButton } from "@/components/ui/magnetic-button";
-import { motion, useScroll, useTransform, type MotionValue } from "motion/react";
+import { useRef, useEffect, useState, useCallback } from "react";
+import { motion, useScroll, useTransform } from "motion/react";
 import { Reveal } from "@/components/ui/reveal";
 import type { SiteSettings } from "@/lib/types";
 
@@ -37,7 +34,7 @@ const socialLinks = [
 ];
 
 const GeometricSymbol = () => (
-  <svg width="71" height="44" viewBox="0 0 71 44" fill="none" className="hero-kicker mb-10 opacity-80" xmlns="http://www.w3.org/2000/svg">
+  <svg width="71" height="44" viewBox="0 0 71 44" fill="none" className="hero-kicker mb-6 lg:mb-10 opacity-80" xmlns="http://www.w3.org/2000/svg">
     <circle cx="35.2503" cy="21.5827" r="16.8204" stroke="white" strokeWidth="0.891184"/>
     <circle cx="21.5825" cy="21.5825" r="21.1369" stroke="white" strokeWidth="0.891184"/>
     <circle cx="48.9204" cy="21.5825" r="21.1369" stroke="white" strokeWidth="0.891184"/>
@@ -47,9 +44,7 @@ const GeometricSymbol = () => (
   </svg>
 );
 
-
-
-export function HeroSection({ settings, dict }: HeroSectionProps & { dict: any }) {
+export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { dict: any }) {
   const containerRef = useRef<HTMLElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
@@ -62,6 +57,55 @@ export function HeroSection({ settings, dict }: HeroSectionProps & { dict: any }
 
   const frameCount = 81;
   
+  const render = useCallback((progress: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d", { alpha: false });
+    if (!ctx) return;
+
+    // Map progress to frames (0.0 to 0.7 for animation, then hold)
+    const easedProgress = Math.min(1, progress / 0.7);
+    const frameIndex = Math.min(
+      frameCount - 1,
+      Math.floor(easedProgress * (frameCount - 1))
+    );
+    
+    const img = imagesRef.current[frameIndex];
+    if (!img || !img.complete) return;
+
+    // Clear canvas to solid black before drawing the next frame
+    ctx.fillStyle = "#000000";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw image with 'cover' logic
+    const canvasAspect = canvas.width / canvas.height;
+    const imgAspect = img.width / img.height;
+    let drawWidth = canvas.width;
+    let drawHeight = canvas.height;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    if (canvasAspect > imgAspect) {
+      drawHeight = canvas.width / imgAspect;
+      offsetY = (canvas.height - drawHeight) / 2;
+    } else {
+      if (typeof window !== "undefined" && window.innerWidth < 1024) {
+        // Mobile portrait: scale down the visual sequence to occupy the bottom portion
+        // of the screen to prevent overlap with the text content at the top.
+        const scale = 0.55;
+        drawHeight = canvas.height * scale;
+        drawWidth = drawHeight * imgAspect;
+        offsetX = canvas.width / 2 - drawWidth * 0.6841;
+        offsetY = canvas.height - drawHeight;
+      } else {
+        drawWidth = canvas.height * imgAspect;
+        offsetX = (canvas.width - drawWidth) / 2;
+      }
+    }
+
+    ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+  }, []);
+
   // Preload images with priority for first frame
   useEffect(() => {
     let loadedCount = 0;
@@ -69,7 +113,7 @@ export function HeroSection({ settings, dict }: HeroSectionProps & { dict: any }
 
     const preloadImages = async () => {
       for (let i = 1; i <= frameCount; i++) {
-        const img = new (window as any).Image();
+        const img = new Image();
         img.src = `/HeroImages/ezgif-frame-${String(i).padStart(3, '0')}.jpg`;
         
         img.onload = () => {
@@ -87,42 +131,7 @@ export function HeroSection({ settings, dict }: HeroSectionProps & { dict: any }
     };
 
     preloadImages();
-  }, []);
-
-  const render = (progress: number) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d", { alpha: false });
-    if (!ctx) return;
-
-    // Map progress to frames (0.0 to 0.7 for animation, then hold)
-    const easedProgress = Math.min(1, progress / 0.7);
-    const frameIndex = Math.min(
-      frameCount - 1,
-      Math.floor(easedProgress * (frameCount - 1))
-    );
-    
-    const img = imagesRef.current[frameIndex];
-    if (!img || !img.complete) return;
-
-    // Draw image with 'cover' logic
-    const canvasAspect = canvas.width / canvas.height;
-    const imgAspect = img.width / img.height;
-    let drawWidth = canvas.width;
-    let drawHeight = canvas.height;
-    let offsetX = 0;
-    let offsetY = 0;
-
-    if (canvasAspect > imgAspect) {
-      drawHeight = canvas.width / imgAspect;
-      offsetY = (canvas.height - drawHeight) / 2;
-    } else {
-      drawWidth = canvas.height * imgAspect;
-      offsetX = (canvas.width - drawWidth) / 2;
-    }
-
-    ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-  };
+  }, [render]);
 
   // Setup canvas and scroll listener
   useEffect(() => {
@@ -145,7 +154,7 @@ export function HeroSection({ settings, dict }: HeroSectionProps & { dict: any }
       window.removeEventListener("resize", handleResize);
       unsubscribe();
     };
-  }, [scrollYProgress]);
+  }, [scrollYProgress, render]);
 
   const contentOpacity = useTransform(scrollYProgress, [0.3, 0.6], [1, 0]);
   const contentY = useTransform(scrollYProgress, [0.3, 0.6], [0, -30]);
@@ -189,29 +198,31 @@ export function HeroSection({ settings, dict }: HeroSectionProps & { dict: any }
 
         <motion.div 
           style={{ opacity: contentOpacity, y: contentY }}
-          className="relative z-20 mx-auto w-full px-6 sm:px-8 md:px-10 lg:px-12"
+          className="relative z-20 mx-auto w-full"
         >
           <div className="flex flex-col items-start lg:max-w-3xl">
             <GeometricSymbol />
             
-            <div className="hero-kicker mb-3 text-[11px] font-normal tracking-widest text-white/60 uppercase md:text-xs">
+            <div className="hero-kicker mb-2 text-[11px] font-normal tracking-widest text-white/60 normal-case lg:uppercase md:text-xs">
               {dict.kicker}
             </div>
 
             <div className="flex flex-col gap-3">
               <Reveal direction="up" delay={0.1}>
-                <h1 className="text-[32px] font-normal leading-[1.15] md:leading-[1.1] tracking-[-0.04em] text-white sm:text-[44px] md:text-[56px] lg:text-[68px]">
-                  {dict.title_1} {dict.title_2}
+                <h1 className="text-[28px] xs:text-[32px] sm:text-[44px] md:text-[56px] lg:text-[68px] font-normal leading-[1.15] md:leading-[1.1] tracking-[-0.04em] text-white">
+                  {dict.title_1}
+                  <br className="block lg:hidden" />{" "}
+                  {dict.title_2}
                 </h1>
               </Reveal>
               <Reveal direction="up" delay={0.3}>
-                <p className="hero-copy mt-4 md:mt-5 max-w-md text-sm font-normal leading-relaxed text-neutral-400 md:text-base">
+                <p className="hero-copy mt-3 md:mt-5 max-w-md text-[13px] sm:text-sm font-normal leading-relaxed text-neutral-400 md:text-base">
                   {dict.description}
                 </p>
               </Reveal>
             </div>
 
-            <div className="hero-cta-group mt-6 md:mt-8 flex flex-wrap items-center gap-x-10 gap-y-5">
+            <div className="hero-cta-group mt-5 md:mt-8 flex flex-row items-center gap-x-6 lg:gap-x-10">
               <Link 
                 href={settings.ctaHref}
                 className="group flex items-center gap-3 text-[13px] font-normal text-[#75DAB4] transition-colors hover:text-white md:text-sm"

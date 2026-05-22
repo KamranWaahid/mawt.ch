@@ -29,7 +29,7 @@ export function ProjectList({ projects, lang }: ProjectListProps) {
       </div>
 
       {/* Table Header */}
-      <div className="grid grid-cols-12 gap-4 pb-8 border-b border-black/5 text-[11px] uppercase tracking-widest text-neutral-400">
+      <div className="hidden md:grid grid-cols-12 gap-4 pb-8 border-b border-black/5 text-[11px] uppercase tracking-widest text-neutral-400">
         <div className="col-span-3">Client</div>
         <div className="col-span-4">Work Type</div>
         <div className="col-span-3">Industry</div>
@@ -47,18 +47,29 @@ export function ProjectList({ projects, lang }: ProjectListProps) {
           >
             <Link 
               href={`/${lang}/projects/${project.slug}`}
-              className="grid grid-cols-12 gap-4 py-8 border-b border-black/5 group hover:bg-black/[0.02] transition-colors items-center"
+              className="flex flex-col gap-2 md:grid md:grid-cols-12 md:gap-4 py-6 md:py-8 border-b border-black/5 group hover:bg-black/[0.02] transition-colors items-start md:items-center"
             >
-              <div className="col-span-3 text-[14px] font-normal text-black group-hover:pl-2 transition-all duration-300">
+              <div className="col-span-3 text-base md:text-[14px] font-normal text-black group-hover:pl-2 transition-all duration-300">
                 {project.title}
               </div>
-              <div className="col-span-4 text-[14px] font-normal text-neutral-600">
+              
+              {/* Mobile Meta (hidden on desktop) */}
+              <div className="md:hidden flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-neutral-500">
+                <span>{project.workType || "—"}</span>
+                <span className="text-neutral-300">•</span>
+                <span>{project.industry || "—"}</span>
+                <span className="text-neutral-300">•</span>
+                <span>{project.year || "—"}</span>
+              </div>
+
+              {/* Desktop Columns (hidden on mobile) */}
+              <div className="hidden md:block col-span-4 text-[14px] font-normal text-neutral-600">
                 {project.workType || "—"}
               </div>
-              <div className="col-span-3 text-[14px] font-normal text-neutral-600">
+              <div className="hidden md:block col-span-3 text-[14px] font-normal text-neutral-600">
                 {project.industry || "—"}
               </div>
-              <div className="col-span-2 text-[14px] font-normal text-neutral-600">
+              <div className="hidden md:block col-span-2 text-[14px] font-normal text-neutral-600">
                 {project.year || "—"}
               </div>
             </Link>

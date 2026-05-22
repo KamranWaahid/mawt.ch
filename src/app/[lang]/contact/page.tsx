@@ -103,7 +103,7 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
           </div>
           
           <SectionReveal delay={0.1}>
-             <div className="p-8 md:p-16 bg-neutral-50/50 border border-black/5 rounded-sm">
+             <div className="px-5 py-8 sm:p-8 md:p-16 bg-neutral-50/50 border border-black/5 rounded-sm">
                 <ContactForm dict={dict.contact.form} />
              </div>
           </SectionReveal>

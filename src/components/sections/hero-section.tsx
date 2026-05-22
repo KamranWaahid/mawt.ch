@@ -104,6 +104,19 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
     }
 
     ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+
+    // Apply a black linear gradient to fade out the bottom of the drawn image
+    // to smoothly blend the flat cut-off wrist of the 3D model.
+    const fadeHeight = drawHeight * 0.22;
+    const fadeStart = offsetY + drawHeight - fadeHeight;
+    const fadeEnd = offsetY + drawHeight;
+
+    const gradient = ctx.createLinearGradient(0, fadeStart, 0, fadeEnd);
+    gradient.addColorStop(0, "rgba(0, 0, 0, 0)");
+    gradient.addColorStop(1, "rgba(0, 0, 0, 1)");
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, fadeStart, canvas.width, fadeHeight);
   }, []);
 
   // Preload images with priority for first frame

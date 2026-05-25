@@ -56,7 +56,7 @@ export function ClientsSection({ dict, partners }: { dict: any; partners?: Partn
                         alt={partner.name}
                         fill
                         sizes="(max-width: 768px) 88px, 112px"
-                        className="object-contain filter grayscale opacity-55"
+                        className="object-contain filter grayscale opacity-55 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
                       />
                     </a>
                   ) : (
@@ -65,7 +65,7 @@ export function ClientsSection({ dict, partners }: { dict: any; partners?: Partn
                       alt={partner.name}
                       fill
                       sizes="(max-width: 768px) 88px, 112px"
-                      className="object-contain filter grayscale opacity-55"
+                      className="object-contain filter grayscale opacity-55 hover:grayscale-0 hover:opacity-100 transition-all duration-300"
                     />
                   )}
                 </div>

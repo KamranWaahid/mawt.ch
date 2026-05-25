@@ -152,7 +152,7 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
       const canvas = canvasRef.current;
       if (!canvas) return;
       canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight * 1.15;
+      canvas.height = window.innerHeight;
       render(scrollYProgress.get());
     };
 
@@ -171,7 +171,7 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
 
   const contentOpacity = useTransform(scrollYProgress, [0.3, 0.6], [1, 0]);
   const contentY = useTransform(scrollYProgress, [0.3, 0.6], [0, -30]);
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "8%"]);
+  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "90%"]);
 
   useGSAP(
     () => {
@@ -205,7 +205,7 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
         {/* Frame Sequence Canvas Background */}
         <motion.div 
           style={{ y: backgroundY }}
-          className="hero-visual-bg pointer-events-none absolute inset-x-0 -top-[10%] h-[115%] z-0"
+          className="hero-visual-bg pointer-events-none absolute inset-0 z-0 h-full w-full"
         >
           <canvas 
             ref={canvasRef}

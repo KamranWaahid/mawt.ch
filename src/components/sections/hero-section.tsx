@@ -50,9 +50,11 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"],
+  const { scrollY } = useScroll();
+  const scrollYProgress = useTransform(scrollY, (value) => {
+    if (typeof window === "undefined") return 0;
+    const height = window.innerHeight;
+    return height > 0 ? value / height : 0;
   });
 
   const frameCount = 81;
@@ -169,9 +171,19 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
     };
   }, [scrollYProgress, render]);
 
-  const contentOpacity = useTransform(scrollYProgress, [0.3, 0.6], [1, 0]);
-  const contentY = useTransform(scrollYProgress, [0.3, 0.6], [0, -30]);
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "90%"]);
+  const contentOpacity = useTransform(scrollYProgress, (value) => {
+    if (value <= 0.3) return 1;
+    if (value >= 0.6) return 0;
+    return 1 - (value - 0.3) / 0.3;
+  });
+  const contentY = useTransform(scrollYProgress, (value) => {
+    if (value <= 0.3) return 0;
+    if (value >= 0.6) return -30;
+    return -30 * ((value - 0.3) / 0.3);
+  });
+  const backgroundY = useTransform(scrollYProgress, (value) => {
+    return `${value * 90}%`;
+  });
 
   useGSAP(
     () => {

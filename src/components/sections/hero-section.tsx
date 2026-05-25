@@ -199,8 +199,8 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
   );
 
   return (
-    <section ref={containerRef} className="relative h-[130vh] bg-black">
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-start pt-[100px] lg:pt-[140px] px-6 sm:px-8 md:px-10 lg:px-12">
+    <section ref={containerRef} className="relative h-screen bg-black">
+      <div className="relative h-full w-full overflow-hidden flex items-start pt-[100px] lg:pt-[140px] px-6 sm:px-8 md:px-10 lg:px-12">
         {/* Frame Sequence Canvas Background */}
         <div className="hero-visual-bg pointer-events-none absolute inset-0 z-0 h-full w-full">
           <canvas 

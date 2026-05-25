@@ -40,8 +40,23 @@
     ]
   },
   "vision": {
-    "badge": "VISION",
-    "statement": "We give growing businesses real-time execution capacity through connected systems, automation, and on-demand talent."
+    "badge": "Services",
+    "statement": "Good design is not a service. It's a decision. These are the areas where MAWT works and where that decision matters most.",
+    "cta": "View all services",
+    "items": [
+      {
+        "title": "Web Design",
+        "description": "Building websites that are considered at every level — from structure and layout to copy and interactions. Primarily in Next.js, React, and modern CMS."
+      },
+      {
+        "title": "Brand Identity",
+        "description": "Logos, typography, color systems, and the visual language that makes a brand recognizable and consistent across every touchpoint."
+      },
+      {
+        "title": "Digital Design",
+        "description": "UI design, landing pages, product visuals, and digital assets for brands that need to show up well online."
+      }
+    ]
   },
   "work": {
     "badge": "SOLUTION",

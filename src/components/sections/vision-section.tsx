@@ -1,45 +1,92 @@
 "use client";
 
-import { motion } from "motion/react";
-import Image from "next/image";
+import { useParams } from "next/navigation";
+import Link from "next/link";
 import { SectionReveal } from "@/components/ui/section-reveal";
 
-export function VisionSection({ dict }: { dict: any }) {
-  return (
-    <section className="relative overflow-hidden bg-bg-light py-[240px] min-h-[80vh] flex items-center">
-      {/* Faded Planet Background */}
-      <div className="absolute inset-0 z-0 flex items-center justify-center opacity-40">
-        <div className="relative h-[120%] w-[120%] -translate-y-[10%]">
-          <Image
-            src="/PlanetBackground.png"
-            alt="Vision atmospheric background"
-            fill
-            className="object-contain"
-            priority
-          />
-        </div>
-      </div>
+export function VisionSection({ dict, services }: { dict: any; services?: any[] }) {
+  const params = useParams();
+  const currentLang = (params?.lang as string) || "en";
+  const displayItems = services && services.length > 0 ? services : dict.items;
 
-      <div className="mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-20 relative z-10">
+  return (
+    <section className="relative overflow-hidden bg-bg-light py-20 md:py-32 lg:py-40 border-t border-black/5">
+      <div className="mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-20">
+        
+        {/* Header Badge */}
         <SectionReveal>
-          {/* Header Badge */}
           <div className="mb-12 flex items-center gap-3">
             <span className="h-1.5 w-1.5 rounded-full bg-brand-teal" />
-            <div className="rounded-full border border-black/10 bg-black/[0.03] px-3.5 py-1.5 backdrop-blur-sm">
-              <span className="text-[10px] font-normal tracking-[0.2em] text-black/80">{dict.badge}</span>
+            <div className="rounded-full border border-black/10 bg-black/[0.03] px-3.5 py-1.5 backdrop-blur-sm w-fit">
+              <span className="text-[10px] font-normal tracking-[0.2em] text-black/80 uppercase">
+                {dict.badge}
+              </span>
+            </div>
+          </div>
+        </SectionReveal>
+
+        {/* Horizontal Divider */}
+        <div className="mb-16 h-px w-full bg-black/10" />
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+          
+          {/* Left Column: Statement */}
+          <div className="lg:col-span-5 lg:sticky lg:top-32 h-fit">
+            <SectionReveal delay={0.1}>
+              <h2 className="text-2xl font-normal tracking-tight text-black sm:text-3xl md:text-[32px] lg:text-[34px] leading-[1.25] text-balance">
+                {dict.statement}
+              </h2>
+            </SectionReveal>
+          </div>
+          
+          {/* Right Column: Services List & Link */}
+          <div className="lg:col-span-7 flex flex-col pt-2 lg:pt-0">
+            {displayItems?.map((item: any, idx: number) => {
+              const title = item.category || item.title;
+              return (
+                <div key={`${title}-${idx}`} className="flex flex-col">
+                  <SectionReveal delay={idx * 0.08}>
+                    <div className="flex flex-col">
+                      <h3 className="text-[22px] md:text-2xl lg:text-[26px] font-normal tracking-tight text-black mb-3">
+                        {title}
+                      </h3>
+                      {item.services && Array.isArray(item.services) ? (
+                        <ul className="flex flex-wrap gap-x-3 gap-y-1.5 text-[15px] leading-relaxed text-neutral-500 max-w-[55ch] mb-8">
+                          {item.services.map((service: string, sIdx: number) => (
+                            <li key={`${service}-${sIdx}`} className="flex items-center gap-2">
+                              <span>{service}</span>
+                              {sIdx < item.services.length - 1 && <span className="text-black/20 text-xs">•</span>}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-base font-normal leading-relaxed text-neutral-600 max-w-[55ch] mb-8">
+                          {item.description}
+                        </p>
+                      )}
+                    </div>
+                    
+                    {/* Divider */}
+                    <div className="h-px w-full bg-black/10 mb-8" />
+                  </SectionReveal>
+                </div>
+              );
+            })}
+            
+            {/* Call to Action Link */}
+            <div className="pt-2">
+              <SectionReveal delay={((displayItems?.length || 3) - 1) * 0.08 + 0.12}>
+                <Link
+                  href={`/${currentLang}/services`}
+                  className="inline-flex items-center gap-1.5 text-base font-normal text-black border-b border-black pb-1 hover:opacity-60 transition-opacity"
+                >
+                  {dict.cta} <span>↗</span>
+                </Link>
+              </SectionReveal>
             </div>
           </div>
 
-          {/* Horizontal Divider */}
-          <div className="mb-16 h-px w-full bg-black/10" />
-
-          {/* Main Statement */}
-          <div className="max-w-5xl">
-            <h2 className="text-3xl font-normal tracking-tight text-black sm:text-4xl md:text-[44px] lg:leading-[1.1]">
-              {dict.statement}
-            </h2>
-          </div>
-        </SectionReveal>
+        </div>
       </div>
     </section>
   );

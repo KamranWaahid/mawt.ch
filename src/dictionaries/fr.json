@@ -40,8 +40,23 @@
     ]
   },
   "vision": {
-    "badge": "VISION",
-    "statement": "Nous donnons aux entreprises en croissance une capacité d'exécution en temps réel grâce à des systèmes connectés, à l'automatisation et à des talents à la demande."
+    "badge": "Services",
+    "statement": "Un bon design n'est pas un service. C'est une décision. Ce sont les domaines dans lesquels MAWT travaille et où cette décision compte le plus.",
+    "cta": "Voir tous les services",
+    "items": [
+      {
+        "title": "Design Web",
+        "description": "Construire des sites web pensés à tous les niveaux — de la structure et de la mise en page au contenu et aux interactions. Principalement avec Next.js et des CMS modernes."
+      },
+      {
+        "title": "Identité de Marque",
+        "description": "Logos, typographie, systèmes de couleurs et langage visuel qui rendent une marque reconnaissable et cohérente sur tous les points de contact."
+      },
+      {
+        "title": "Design Numérique",
+        "description": "Design UI, pages d'atterrissage, visuels de produits et actifs numériques pour les marques qui ont besoin de briller en ligne."
+      }
+    ]
   },
   "work": {
     "badge": "SOLUTION",

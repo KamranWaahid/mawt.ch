@@ -9,7 +9,7 @@ import { WorkSection } from "@/components/sections/work-section";
 import { SolutionSection } from "@/components/sections/solution-section";
 import { VisionSection } from "@/components/sections/vision-section";
 import { SiteHeader } from "@/components/sections/site-header";
-import { getHomePageData } from "@/lib/sanity.queries";
+import { getHomePageData, getPartners } from "@/lib/sanity.queries";
 import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
 
@@ -21,6 +21,7 @@ export default async function HomePage({
   const { lang } = await params;
   const dictionary = await getDictionary(lang);
   const data = await getHomePageData();
+  const partners = await getPartners();
 
   const defaultServicesList = [
     {
@@ -103,7 +104,7 @@ export default async function HomePage({
   return (
     <>
       <HeroSection settings={data.settings} dict={dictionary.hero} />
-      <ClientsSection dict={dictionary.clients} />
+      <ClientsSection dict={dictionary.clients} partners={partners} />
       <DescriptionSection dict={dictionary.description} />
       <ProblemSection dict={dictionary.problem} />
       <VisionSection dict={dictionary.vision} services={servicesList} />

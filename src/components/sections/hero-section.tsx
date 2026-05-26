@@ -238,7 +238,7 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
           updateProgress(e.deltaY * 0.0015);
         } else if (e.deltaY < 0 && current > 0 && current <= 0.3) {
           e.preventDefault();
-          updateProgress(e.deltaY * 0.0015);
+          progressValue.set(0);
         }
       }
     };
@@ -263,7 +263,7 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
           touchStart = touchCurrent;
         } else if (deltaY < 0 && current > 0 && current <= 0.3) {
           e.preventDefault();
-          updateProgress(deltaY * 0.003);
+          progressValue.set(0);
           touchStart = touchCurrent;
         }
       }
@@ -281,8 +281,7 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
           updateProgress(step);
         } else if ((e.key === "ArrowUp" || e.key === "PageUp") && current > 0 && current <= 0.3) {
           e.preventDefault();
-          const step = e.key === "PageUp" ? -0.05 : -0.01;
-          updateProgress(step);
+          progressValue.set(0);
         }
       }
     };

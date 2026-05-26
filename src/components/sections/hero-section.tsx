@@ -61,14 +61,19 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
 
   useLenis((lenisInstance) => {
     const scroll = lenisInstance.scroll;
-    if (scroll > 0) {
+    if (scroll > 1) {
       if (typeof window !== "undefined") {
         const L = window.innerHeight * 0.5;
         const nextProgress = Math.min(1, 0.3 + (scroll / L) * 0.7);
         progressValue.set(nextProgress);
       }
-    } else if (scroll === 0 && progressValue.get() > 0.3) {
-      progressValue.set(0.3);
+    } else if (scroll <= 1) {
+      if (progressValue.get() > 0.3) {
+        progressValue.set(0.3);
+      }
+      if (progressValue.get() < 0.3) {
+        lenisInstance.stop();
+      }
     }
   });
 
@@ -199,7 +204,11 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
 
     const handleProgressChange = (latest: number) => {
       if (latest < 0.3) {
-        lenis.stop();
+        if (window.scrollY <= 1) {
+          lenis.stop();
+        } else {
+          lenis.start();
+        }
       } else {
         lenis.start();
       }
@@ -223,7 +232,7 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
       const scrollY = window.scrollY;
       const current = progressValue.get();
 
-      if (scrollY === 0) {
+      if (scrollY <= 1) {
         if (e.deltaY > 0 && current < 0.3) {
           e.preventDefault();
           updateProgress(e.deltaY * 0.0015);
@@ -244,7 +253,7 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
       const scrollY = window.scrollY;
       const current = progressValue.get();
 
-      if (scrollY === 0 && e.touches.length > 0) {
+      if (scrollY <= 1 && e.touches.length > 0) {
         const touchCurrent = e.touches[0].clientY;
         const deltaY = touchStart - touchCurrent; // positive is scrolling down (swipe up)
 
@@ -265,7 +274,7 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
       const scrollY = window.scrollY;
       const current = progressValue.get();
 
-      if (scrollY === 0 && keysToPrevent.includes(e.key)) {
+      if (scrollY <= 1 && keysToPrevent.includes(e.key)) {
         if ((e.key === "ArrowDown" || e.key === " " || e.key === "PageDown") && current < 0.3) {
           e.preventDefault();
           const step = e.key === " " || e.key === "PageDown" ? 0.05 : 0.01;

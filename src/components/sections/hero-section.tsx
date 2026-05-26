@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useGSAP } from "@gsap/react";
 import type { ReactNode } from "react";
 import { useRef, useEffect, useState, useCallback } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, useTransform, useMotionValue } from "motion/react";
+import { useLenis } from "lenis/react";
 import { Reveal } from "@/components/ui/reveal";
 import type { SiteSettings } from "@/lib/types";
 
@@ -50,12 +51,28 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   
-  const { scrollY } = useScroll();
-  const scrollYProgress = useTransform(scrollY, (value) => {
-    if (typeof window === "undefined") return 0;
-    const height = window.innerHeight;
-    return height > 0 ? value / height : 0;
+  const progressValue = useMotionValue(0);
+  const lenis = useLenis();
+
+  useLenis((lenisInstance) => {
+    const scroll = lenisInstance.scroll;
+    if (scroll > 0) {
+      if (typeof window !== "undefined") {
+        const L = window.innerHeight * 0.5;
+        const nextProgress = Math.min(1, 0.3 + (scroll / L) * 0.7);
+        progressValue.set(nextProgress);
+      }
+    } else if (scroll === 0 && progressValue.get() > 0.3) {
+      progressValue.set(0.3);
+    }
   });
+
+  const updateProgress = useCallback((delta: number) => {
+    const current = progressValue.get();
+    const next = Math.max(0, Math.min(0.3, current + delta));
+    progressValue.set(next);
+    return next;
+  }, [progressValue]);
 
   const frameCount = 81;
   
@@ -155,13 +172,13 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
       if (!canvas) return;
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      render(scrollYProgress.get());
+      render(progressValue.get());
     };
 
     window.addEventListener("resize", handleResize);
     handleResize();
 
-    const unsubscribe = scrollYProgress.on("change", (latest) => {
+    const unsubscribe = progressValue.on("change", (latest) => {
       requestAnimationFrame(() => render(latest));
     });
 
@@ -169,20 +186,115 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
       window.removeEventListener("resize", handleResize);
       unsubscribe();
     };
-  }, [scrollYProgress, render]);
+  }, [progressValue, render]);
 
-  const contentOpacity = useTransform(scrollYProgress, (value) => {
+  // Hook into Lenis to stop/start scrolling
+  useEffect(() => {
+    if (!lenis) return;
+
+    const handleProgressChange = (latest: number) => {
+      if (latest < 0.3) {
+        lenis.stop();
+      } else {
+        lenis.start();
+      }
+    };
+
+    // Initialize
+    handleProgressChange(progressValue.get());
+
+    const unsubscribe = progressValue.on("change", handleProgressChange);
+    return () => {
+      unsubscribe();
+      lenis.start();
+    };
+  }, [lenis, progressValue]);
+
+  // Handle native scroll/wheel/touch/keyboard inputs to drive progressValue
+  useEffect(() => {
+    let touchStart = 0;
+
+    const handleWheel = (e: WheelEvent) => {
+      const scrollY = window.scrollY;
+      const current = progressValue.get();
+
+      if (scrollY === 0) {
+        if (e.deltaY > 0 && current < 0.3) {
+          e.preventDefault();
+          updateProgress(e.deltaY * 0.0015);
+        } else if (e.deltaY < 0 && current > 0 && current <= 0.3) {
+          e.preventDefault();
+          updateProgress(e.deltaY * 0.0015);
+        }
+      }
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        touchStart = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      const scrollY = window.scrollY;
+      const current = progressValue.get();
+
+      if (scrollY === 0 && e.touches.length > 0) {
+        const touchCurrent = e.touches[0].clientY;
+        const deltaY = touchStart - touchCurrent; // positive is scrolling down (swipe up)
+
+        if (deltaY > 0 && current < 0.3) {
+          e.preventDefault();
+          updateProgress(deltaY * 0.003);
+          touchStart = touchCurrent;
+        } else if (deltaY < 0 && current > 0 && current <= 0.3) {
+          e.preventDefault();
+          updateProgress(deltaY * 0.003);
+          touchStart = touchCurrent;
+        }
+      }
+    };
+
+    const keysToPrevent = ["ArrowDown", "ArrowUp", " ", "PageDown", "PageUp", "Home", "End"];
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const scrollY = window.scrollY;
+      const current = progressValue.get();
+
+      if (scrollY === 0 && keysToPrevent.includes(e.key)) {
+        if ((e.key === "ArrowDown" || e.key === " " || e.key === "PageDown") && current < 0.3) {
+          e.preventDefault();
+          const step = e.key === " " || e.key === "PageDown" ? 0.05 : 0.01;
+          updateProgress(step);
+        } else if ((e.key === "ArrowUp" || e.key === "PageUp") && current > 0 && current <= 0.3) {
+          e.preventDefault();
+          const step = e.key === "PageUp" ? -0.05 : -0.01;
+          updateProgress(step);
+        }
+      }
+    };
+
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: false });
+    window.addEventListener("keydown", handleKeyDown, { passive: false });
+
+    return () => {
+      window.removeEventListener("wheel", handleWheel);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [progressValue, updateProgress]);
+
+  const contentOpacity = useTransform(progressValue, (value) => {
     if (value <= 0.3) return 1;
     if (value >= 0.6) return 0;
     return 1 - (value - 0.3) / 0.3;
   });
-  const contentY = useTransform(scrollYProgress, (value) => {
+  const contentY = useTransform(progressValue, (value) => {
     if (value <= 0.3) return 0;
     if (value >= 0.6) return -30;
     return -30 * ((value - 0.3) / 0.3);
-  });
-  const backgroundY = useTransform(scrollYProgress, (value) => {
-    return `${value * 90}%`;
   });
 
   useGSAP(
@@ -215,15 +327,12 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
     <section ref={containerRef} className="relative h-screen bg-black">
       <div className="relative h-full w-full overflow-hidden flex items-start pt-[100px] lg:pt-[140px] px-6 sm:px-8 md:px-10 lg:px-12">
         {/* Frame Sequence Canvas Background */}
-        <motion.div 
-          style={{ y: backgroundY }}
-          className="hero-visual-bg pointer-events-none absolute inset-0 z-0 h-full w-full"
-        >
+        <div className="hero-visual-bg pointer-events-none absolute inset-0 z-0 h-full w-full">
           <canvas 
             ref={canvasRef}
             className="h-full w-full object-cover"
           />
-        </motion.div>
+        </div>
 
         <motion.div 
           style={{ opacity: contentOpacity, y: contentY }}

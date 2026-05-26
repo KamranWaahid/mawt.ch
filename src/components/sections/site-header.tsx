@@ -102,6 +102,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
         <Link
           href={`/${currentLang}`}
           aria-label={`${title} home`}
+          onMouseEnter={() => setActiveDropdown(null)}
           className="shrink-0 transition-opacity hover:opacity-80 z-50 flex items-center"
         >
           <Image
@@ -117,7 +118,13 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
               <div
                 key={item.label}
                 className="relative flex h-full items-center"
-                onMouseEnter={() => item.hasDropdown && setActiveDropdown(item.label)}
+                onMouseEnter={() => {
+                  if (item.hasDropdown) {
+                    setActiveDropdown(item.label);
+                  } else {
+                    setActiveDropdown(null);
+                  }
+                }}
               >
                 <motion.div
                   whileHover={{ y: -1 }}
@@ -149,8 +156,11 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
             ))}
           </div>
 
-          <div className={`hidden items-center gap-4 border-l transition-colors duration-300 pl-6 md:flex ${isLight ? "border-black/10" : "border-white/10"
-            }`}>
+          <div 
+            className={`hidden items-center gap-4 border-l transition-colors duration-300 pl-6 md:flex ${isLight ? "border-black/10" : "border-white/10"
+            }`}
+            onMouseEnter={() => setActiveDropdown(null)}
+          >
             <motion.button
               whileHover={{ y: -1 }}
               onClick={() => handleLanguageChange("fr")}
@@ -198,6 +208,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              onMouseEnter={() => setActiveDropdown(null)}
               className="fixed inset-0 top-[104px] z-[-1] bg-white h-screen w-screen hidden md:block"
             />
             <motion.div

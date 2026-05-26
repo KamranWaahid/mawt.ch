@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useGSAP } from "@gsap/react";
 import type { ReactNode } from "react";
 import { useRef, useEffect, useState, useCallback } from "react";
-import { motion, useTransform, useMotionValue } from "motion/react";
+import { motion, useTransform, useMotionValue, useSpring } from "motion/react";
 import { useLenis } from "lenis/react";
 import { Reveal } from "@/components/ui/reveal";
 import type { SiteSettings } from "@/lib/types";
@@ -52,6 +52,11 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
   const [isLoaded, setIsLoaded] = useState(false);
   
   const progressValue = useMotionValue(0);
+  const smoothProgress = useSpring(progressValue, {
+    stiffness: 80,
+    damping: 25,
+    restDelta: 0.001
+  });
   const lenis = useLenis();
 
   useLenis((lenisInstance) => {
@@ -172,13 +177,13 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
       if (!canvas) return;
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      render(progressValue.get());
+      render(smoothProgress.get());
     };
 
     window.addEventListener("resize", handleResize);
     handleResize();
 
-    const unsubscribe = progressValue.on("change", (latest) => {
+    const unsubscribe = smoothProgress.on("change", (latest) => {
       requestAnimationFrame(() => render(latest));
     });
 
@@ -186,7 +191,7 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
       window.removeEventListener("resize", handleResize);
       unsubscribe();
     };
-  }, [progressValue, render]);
+  }, [smoothProgress, render]);
 
   // Hook into Lenis to stop/start scrolling
   useEffect(() => {
@@ -286,12 +291,12 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
     };
   }, [progressValue, updateProgress]);
 
-  const contentOpacity = useTransform(progressValue, (value) => {
+  const contentOpacity = useTransform(smoothProgress, (value) => {
     if (value <= 0.3) return 1;
     if (value >= 0.6) return 0;
     return 1 - (value - 0.3) / 0.3;
   });
-  const contentY = useTransform(progressValue, (value) => {
+  const contentY = useTransform(smoothProgress, (value) => {
     if (value <= 0.3) return 0;
     if (value >= 0.6) return -30;
     return -30 * ((value - 0.3) / 0.3);

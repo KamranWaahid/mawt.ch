@@ -5,6 +5,18 @@ export const projectType = defineType({
   title: "Project",
   type: "document",
   fields: [
+    defineField({
+      name: "language",
+      title: "Language",
+      type: "string",
+      options: {
+        list: [
+          { title: "French", value: "fr" },
+          { title: "English", value: "en" },
+        ],
+      },
+      validation: (Rule) => Rule.required(),
+    }),
     defineField({ name: "title", type: "string", validation: (Rule) => Rule.required() }),
     defineField({
       name: "slug",
@@ -16,11 +28,73 @@ export const projectType = defineType({
         return regex.test(slug.current!) || "Slug must only contain lowercase letters, numbers, and hyphens.";
       }),
     }),
+    defineField({
+      name: "heroH1",
+      title: "Hero H1",
+      type: "string",
+    }),
+    defineField({
+      name: "heroH2",
+      title: "Hero H2",
+      type: "string",
+    }),
+    defineField({
+      name: "pitch",
+      title: "Hero pitch",
+      type: "text",
+      rows: 2,
+    }),
+    defineField({
+      name: "cardTeaser",
+      title: "Card teaser",
+      type: "text",
+      rows: 2,
+    }),
+    defineField({
+      name: "challenge",
+      title: "The challenge",
+      type: "text",
+      rows: 6,
+    }),
+    defineField({
+      name: "featuredHomepage",
+      title: "Featured on homepage",
+      type: "boolean",
+      initialValue: false,
+    }),
+    defineField({
+      name: "family",
+      title: "Primary family",
+      type: "string",
+      options: {
+        list: [
+          { title: "Sites & Branding", value: "sites-et-branding" },
+          { title: "Solutions IA", value: "solutions-ia" },
+          { title: "Conseil IA", value: "conseil-ia" },
+          { title: "Renfort & Équipe", value: "renfort-equipe" },
+          { title: "Formation IA", value: "formation-ia" },
+        ],
+      },
+    }),
+    defineField({
+      name: "secondaryFamily",
+      title: "Secondary family",
+      type: "string",
+      options: {
+        list: [
+          { title: "Sites & Branding", value: "sites-et-branding" },
+          { title: "Solutions IA", value: "solutions-ia" },
+          { title: "Conseil IA", value: "conseil-ia" },
+          { title: "Renfort & Équipe", value: "renfort-equipe" },
+          { title: "Formation IA", value: "formation-ia" },
+        ],
+      },
+    }),
     defineField({ name: "excerpt", type: "text", rows: 3 }),
     defineField({ name: "overview", type: "text", rows: 8 }),
     defineField({ name: "year", type: "number" }),
-    defineField({ name: "workType", title: "Work Type", type: "string", description: "e.g., Website design and development" }),
-    defineField({ name: "industry", title: "Industry", type: "string", description: "e.g., Deep tech VC fund" }),
+    defineField({ name: "workType", title: "Work Type", type: "string" }),
+    defineField({ name: "industry", title: "Industry", type: "string" }),
     defineField({
       name: "tags",
       type: "array",
@@ -78,12 +152,17 @@ export const projectType = defineType({
       name: "videoUrl",
       title: "Video URL",
       type: "url",
-      description: "Optional URL to a project video (e.g., Vimeo, YouTube).",
     }),
     defineField({ name: "problemStatement", title: "Problem Statement", type: "text", rows: 4 }),
     defineField({ name: "problemImage", title: "Problem Image", type: "image", options: { hotspot: true } }),
-    defineField({ name: "solution", title: "TII Solution", type: "text", rows: 4 }),
+    defineField({ name: "solution", title: "What we built", type: "text", rows: 8 }),
     defineField({ name: "solutionImage", title: "Solution Image", type: "image", options: { hotspot: true } }),
+    defineField({
+      name: "outcome",
+      title: "Outcome",
+      type: "text",
+      rows: 4,
+    }),
     defineField({
       name: "deliverables",
       title: "Deliverables",

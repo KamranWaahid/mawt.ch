@@ -54,7 +54,7 @@ CTAs : [Voir ce qu'on a fait]  [Discutons]
 
 ```
 H1   : Problem solvers numériques pour PME et organisations.
-H2   : On construit ce dont vous avez besoin. Quand c'est de l'IA — encore mieux.
+H2   : On construit ce dont vous avez besoin. Quand c'est de l'IA, encore mieux.
 Body : Équipe à taille humaine. Genève et Suisse romande.
 CTAs : [Parlons-en]  [Nos projets]
        └─ → /fr/contact   └─ → /fr/projets
@@ -136,7 +136,7 @@ export const HERO_COPY = {
     },
     v5_problem_solver: {
       h1: 'Problem solvers numériques pour PME et organisations.',
-      h2: 'On construit ce dont vous avez besoin. Quand c\'est de l\'IA — encore mieux.',
+      h2: 'On construit ce dont vous avez besoin. Quand c\'est de l\'IA, encore mieux.',
       body: 'Équipe à taille humaine. Genève et Suisse romande.',
       ctaPrimary: { label: 'Parlons-en', href: 'contact' },
       ctaSecondary: { label: 'Nos projets', href: 'projets' },

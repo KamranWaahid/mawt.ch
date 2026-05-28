@@ -6,6 +6,18 @@ export const faqType = defineType({
   type: "document",
   fields: [
     defineField({
+      name: "language",
+      title: "Language",
+      type: "string",
+      options: {
+        list: [
+          { title: "French", value: "fr" },
+          { title: "English", value: "en" },
+        ],
+      },
+      initialValue: "en",
+    }),
+    defineField({
       name: "question",
       title: "Question",
       type: "string",
@@ -30,6 +42,15 @@ export const faqType = defineType({
         ],
       },
       initialValue: "general",
+    }),
+    defineField({
+      name: "tags",
+      title: "Family filter tags",
+      type: "array",
+      of: [{ type: "string" }],
+      options: { layout: "tags" },
+      description:
+        "Tags for pillar page filtering: sites, branding, ecommerce, ia, crm, agent-ia, rag, automatisation, mobile, conseil, strategie, audit, transformation, change, formation, chatgpt, coaching, renfort, developpeur, fractional, qa",
     }),
     defineField({
       name: "order",

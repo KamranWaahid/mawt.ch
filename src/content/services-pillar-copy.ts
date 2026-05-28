@@ -1,0 +1,291 @@
+export type PillarLangCopy = {
+  metaTitle: string;
+  metaDescription: string;
+  h1: string;
+  subhead: string;
+  ctaPrimary: string;
+  ctaSecondary: string;
+  ctaPrimaryHref: string;
+  ctaSecondaryHref: string;
+  introParagraphs: string[];
+  servicesH2: string;
+  socialProof: string;
+  projectsH2: string;
+  faqH2: string;
+  bottomCtaH2: string;
+  bottomCtaPitch: string;
+  bottomCtaLabel: string;
+};
+
+export type FamilyKey =
+  | "sites-et-branding"
+  | "solutions-ia"
+  | "conseil-ia"
+  | "renfort-equipe"
+  | "formation-ia";
+
+export const PILLAR_COPY: Record<FamilyKey, { fr: PillarLangCopy; en: PillarLangCopy }> = {
+  "sites-et-branding": {
+    fr: {
+      metaTitle: "Sites web, e-commerce et branding pour PME suisses | MAWT",
+      metaDescription:
+        "Sites internet sur mesure, e-shops, refontes, identité visuelle. Équipe à taille humaine à Genève. Discutons de votre projet.",
+      h1: "Sites web et branding qui travaillent pour vous.",
+      subhead:
+        "Site vitrine, e-commerce, refonte, identité visuelle. Construits sur mesure par une équipe à taille humaine basée à Genève.",
+      ctaPrimary: "Discutons",
+      ctaSecondary: "Voir nos projets",
+      ctaPrimaryHref: "contact",
+      ctaSecondaryHref: "projets",
+      introParagraphs: [
+        "Votre site actuel ne vous représente plus. Trop lent, trop daté, trop compliqué à mettre à jour. Il ne ramène pas les bons clients, et vous le voyez chaque mois.",
+        "Refaire un site n'est pas qu'un exercice graphique. C'est l'occasion de remettre votre image, votre proposition et vos parcours client à plat. Beaucoup livrent du beau. Peu livrent de l'efficace.",
+        "On conçoit et on construit votre présence digitale comme un outil de croissance, pas comme une vitrine de portfolio. Site internet, e-commerce, refonte, identité cohérente. Un seul interlocuteur du premier brief au déploiement.",
+      ],
+      servicesH2: "Ce qu'on construit dans cette famille",
+      socialProof:
+        "Cas concrets : Kouleta (refonte vitrine), phaam.ch (e-commerce), rs detailing (site vitrine), Mellender (site immobilier avec listings dynamiques).",
+      projectsH2: "Projets de la famille Sites et branding",
+      faqH2: "Questions fréquentes sur les sites web et le branding",
+      bottomCtaH2: "Discutons de votre site",
+      bottomCtaPitch:
+        "30 minutes pour comprendre votre besoin. Pas de devis bâclé, pas de pression. Juste un échange direct avec ceux qui vont construire.",
+      bottomCtaLabel: "Démarrer un projet",
+    },
+    en: {
+      metaTitle: "Websites, e-commerce and branding for ambitious teams | MAWT",
+      metaDescription:
+        "Custom websites, e-shops, redesigns, brand identity. Senior team based in Geneva. Let's talk about your project.",
+      h1: "Websites and branding that actually pull their weight.",
+      subhead:
+        "Marketing sites, e-commerce, redesigns, brand identity. Built custom by a senior team based in Geneva.",
+      ctaPrimary: "Get in touch",
+      ctaSecondary: "See our work",
+      ctaPrimaryHref: "contact",
+      ctaSecondaryHref: "projets",
+      introParagraphs: [
+        "Your current site no longer represents you. Slow, dated, hard to update. It's not bringing in the right clients, and you can feel it every month.",
+        "Rebuilding a site isn't just a visual exercise. It's a chance to reset your image, your value proposition, your customer paths. Plenty of agencies ship pretty. Few ship effective.",
+        "We design and build your digital presence as a growth tool, not a portfolio piece. Websites, e-commerce, redesign, coherent brand. One senior point of contact from first brief to launch.",
+      ],
+      servicesH2: "What we build in this family",
+      socialProof:
+        "Real cases : Kouleta (marketing site redesign), phaam.ch (e-commerce), rs detailing (marketing site), Mellender (real estate site with dynamic listings).",
+      projectsH2: "Featured Sites and branding projects",
+      faqH2: "Frequently asked questions about websites and branding",
+      bottomCtaH2: "Let's talk about your site",
+      bottomCtaPitch:
+        "30 minutes to understand what you actually need. No rushed quote, no pressure. Just a direct conversation with the people who'll build it.",
+      bottomCtaLabel: "Start a project",
+    },
+  },
+  "solutions-ia": {
+    fr: {
+      metaTitle: "Solutions IA sur mesure pour PME suisses | MAWT",
+      metaDescription:
+        "CRM intelligent, agents IA, RAG embarqué, automatisations. On intègre l'IA dans vos outils métier. Équipe à taille humaine basée à Genève.",
+      h1: "Solutions IA sur mesure pour votre activité.",
+      subhead: "CRM intelligent, agents IA, RAG embarqué, automatisations. On met l'IA dans vos outils, pas à côté.",
+      ctaPrimary: "Discutons",
+      ctaSecondary: "Cas concrets",
+      ctaPrimaryHref: "contact",
+      ctaSecondaryHref: "projets",
+      introParagraphs: [
+        "Les outils standards atteignent leur limite. ChatGPT répond à des questions isolées mais ne connaît pas vos clients, vos process, vos données. Vous voulez plus que ça : un système IA qui sert vraiment votre activité.",
+        "La vraie IA en entreprise ne vit pas dans un onglet à part. Elle s'intègre dans vos outils existants. CRM, applications métier, workflows. Elle comprend votre contexte. Elle décharge vos équipes des tâches sans valeur.",
+        "On conçoit et on construit cette couche IA sur mesure. RAG sur votre base documentaire, agents qui traitent vos demandes entrantes, CRM qui suggère la prochaine action. Pensés pour votre activité, par une équipe à taille humaine basée à Genève.",
+      ],
+      servicesH2: "Ce qu'on construit dans cette famille",
+      socialProof:
+        "Cas concrets : Mellender (CRM immobilier avec RAG), Crown (transformation 360 avec CRM intelligent et RAG), Diagora (automatisations métier).",
+      projectsH2: "Projets de la famille Solutions IA",
+      faqH2: "Questions fréquentes sur les solutions IA",
+      bottomCtaH2: "Discutons de votre projet IA",
+      bottomCtaPitch:
+        "On démarre par comprendre ce que vous voulez vraiment automatiser ou améliorer. Si l'IA est pertinente, on le dit. Si elle ne l'est pas, on le dit aussi.",
+      bottomCtaLabel: "Démarrer",
+    },
+    en: {
+      metaTitle: "Custom AI solutions for ambitious businesses | MAWT",
+      metaDescription:
+        "Smart CRMs, AI agents, embedded RAG, automation. We weave AI into your tools, not next to them. Senior team based in Geneva.",
+      h1: "Custom AI solutions, built into your tools.",
+      subhead: "Smart CRMs, AI agents, embedded RAG, automation. AI that actually fits how your business runs.",
+      ctaPrimary: "Get in touch",
+      ctaSecondary: "Case studies",
+      ctaPrimaryHref: "contact",
+      ctaSecondaryHref: "projets",
+      introParagraphs: [
+        "Off-the-shelf AI tools hit a wall fast. ChatGPT answers isolated questions but doesn't know your clients, your processes, your data. You want more than that : an AI system that actually serves your business.",
+        "Real enterprise AI doesn't live in a separate tab. It embeds into your existing tools. CRMs, business apps, workflows. It understands your context. It frees your team from no-value work.",
+        "We design and build that AI layer custom. RAG on your knowledge base, agents that triage incoming requests, CRMs that suggest the next action. Built for your business, by a senior team based in Geneva.",
+      ],
+      servicesH2: "What we build in this family",
+      socialProof:
+        "Real cases : Mellender (real estate CRM with RAG), Crown (360 transformation with smart CRM and RAG), Diagora (business automation).",
+      projectsH2: "Featured AI solutions projects",
+      faqH2: "Frequently asked questions about AI solutions",
+      bottomCtaH2: "Let's talk about your AI project",
+      bottomCtaPitch:
+        "We start by understanding what you actually want to automate or improve. If AI is the right answer, we say yes. If it isn't, we say so too.",
+      bottomCtaLabel: "Start",
+    },
+  },
+  "conseil-ia": {
+    fr: {
+      metaTitle: "Conseil IA et transformation numérique pour PME | MAWT",
+      metaDescription:
+        "Stratégie IA, audit opérationnel, transformation numérique, change management. On aide à décider où mettre l'IA, et où ne pas en mettre.",
+      h1: "Conseil IA et transformation numérique pour PME.",
+      subhead: "Stratégie IA, audit opérationnel, change management. On aide à décider avant de construire.",
+      ctaPrimary: "Discutons",
+      ctaSecondary: "Cas de transformation",
+      ctaPrimaryHref: "contact",
+      ctaSecondaryHref: "projets",
+      introParagraphs: [
+        "Tout le monde parle d'IA. Personne ne sait par où commencer. Vos équipes hésitent, vos process sont flous, vous craignez le projet à 200k qui ne sert à rien.",
+        "Le vrai piège, c'est de sauter sur la première solution étiquetée IA sans diagnostic. Certains vendent des chatbots à des boîtes qui ont besoin d'autre chose. D'autres pondent des rapports sans jamais coder une ligne. Aucune de ces deux approches ne résout votre problème de fond.",
+        "On commence par comprendre votre boîte. On identifie où l'IA crée vraiment de la valeur, et où elle est un gadget. On vous accompagne sur la mise en œuvre, le change management, la formation des équipes. Conseil et exécution dans la même équipe : c'est rare.",
+      ],
+      servicesH2: "Ce qu'on fait dans cette famille",
+      socialProof:
+        "Cas concrets : Crown (transformation 360 avec restructuration organisation, tech et IA), DG Expertise (digitalisation interne après audit), missions de stratégie IA pour scale-ups commerciales en Suisse romande.",
+      projectsH2: "Projets de la famille Conseil IA",
+      faqH2: "Questions fréquentes sur le conseil IA et la transformation",
+      bottomCtaH2: "Discutons de votre transformation",
+      bottomCtaPitch:
+        "30 minutes pour comprendre où vous en êtes. On dit franchement si on est les bons. Si ce n'est pas le cas, on recommande quelqu'un d'autre.",
+      bottomCtaLabel: "Démarrer",
+    },
+    en: {
+      metaTitle: "AI consulting and digital transformation | MAWT Geneva",
+      metaDescription:
+        "AI strategy, business audit, change management. We help you decide where AI matters, and where it doesn't.",
+      h1: "AI consulting and digital transformation.",
+      subhead: "AI strategy, business audit, change management. Senior humans who think before they code.",
+      ctaPrimary: "Get in touch",
+      ctaSecondary: "Transformation cases",
+      ctaPrimaryHref: "contact",
+      ctaSecondaryHref: "projets",
+      introParagraphs: [
+        "Everyone talks AI. Nobody knows where to start. Your team hesitates, your processes are unclear, you fear the 300k project that delivers nothing.",
+        "The real trap is jumping on the first pitch labelled AI without a diagnosis. Some sell chatbots to companies that need something else entirely. Others ship reports and never write a line of code. Neither approach actually solves your problem.",
+        "We start by understanding your business. We identify where AI creates real value, and where it's a gadget. We support rollout, change management, team training. Consulting and execution from the same team : that's rare.",
+      ],
+      servicesH2: "What we do in this family",
+      socialProof:
+        "Real cases : Crown (360 transformation across org, tech and AI), DG Expertise (internal digitalisation after audit), AI strategy missions for commercial scale-ups across French speaking Switzerland.",
+      projectsH2: "Featured AI consulting projects",
+      faqH2: "Frequently asked questions about AI consulting and transformation",
+      bottomCtaH2: "Let's talk about your transformation",
+      bottomCtaPitch:
+        "30 minutes to understand where you are. We tell you honestly if we're the right fit. If we're not, we recommend someone else.",
+      bottomCtaLabel: "Start",
+    },
+  },
+  "renfort-equipe": {
+    fr: {
+      metaTitle: "Renfort tech et design dédié pour votre équipe | MAWT",
+      metaDescription:
+        "Développeur dédié, expert IA, designer UX, CTO temps partiel. Personne choisie, intégrée à votre business. Basés à Genève.",
+      h1: "Renfort d'équipe digitale, soigneusement choisi.",
+      subhead:
+        "Pas un profil interchangeable. Une personne dédiée, sélectionnée pour votre business, intégrée à votre équipe.",
+      ctaPrimary: "Discutons",
+      ctaSecondary: "Profils et disponibilités",
+      ctaPrimaryHref: "contact",
+      ctaSecondaryHref: "contact",
+      introParagraphs: [
+        "Vous avez un projet, vous manquez de ressources. Vous pourriez ouvrir Malt ou LinkedIn, screener 30 candidats, vous tromper deux fois. Ou attendre six mois qu'un recrutement aboutisse.",
+        "Les marketplaces vous laissent seul face au choix. Les ESN classiques envoient des juniors interchangeables qui changent de mission tous les trois mois. Aucune des deux options ne respecte ce qui vous importe vraiment : la qualité, la continuité, la compréhension de votre métier.",
+        "On fait l'opposé. On comprend votre besoin, on choisit la bonne personne dans notre équipe ou dans notre réseau senior. Développeur dédié, designer UX, expert IA, CTO ou tech lead à temps partiel. Cette personne devient une extension de votre équipe, pas un consultant qui facture à l'heure.",
+      ],
+      servicesH2: "Les profils qu'on met à votre disposition",
+      socialProof:
+        "Cas concrets : Digital Admin (renfort développeur à la demande), EMS (QA testing), Swixit (sparring UX et UI continu), Kouleta (pilotage de refonte).",
+      projectsH2: "Projets de la famille Renfort et équipe",
+      faqH2: "Questions fréquentes sur le renfort d'équipe",
+      bottomCtaH2: "Quel profil vous manque ?",
+      bottomCtaPitch:
+        "30 minutes pour comprendre votre contexte. On propose ensuite la bonne personne, pas un CV pris au hasard dans une base.",
+      bottomCtaLabel: "Discutons",
+    },
+    en: {
+      metaTitle: "Dedicated tech and design talent for your team | MAWT",
+      metaDescription:
+        "Senior dedicated developers, UX designers, AI experts, fractional CTO. Curated, not rented. Geneva based.",
+      h1: "Dedicated tech and design talent. Curated, not rented.",
+      subhead: "Not interchangeable freelancers. Senior people, picked for your business, embedded into your team.",
+      ctaPrimary: "Get in touch",
+      ctaSecondary: "Roles and availability",
+      ctaPrimaryHref: "contact",
+      ctaSecondaryHref: "contact",
+      introParagraphs: [
+        "You have a project. You're short on resources. You could browse marketplaces, screen 30 candidates, mis-hire twice. Or wait six months for a real hire to land.",
+        "Marketplaces leave you alone with the choice. Classic agencies send juniors who rotate every three months. Neither respects what matters : quality, continuity, deep understanding of your business.",
+        "We do the opposite. We understand your need, we pick the right person from our team or our senior network. Dedicated developer, UX designer, AI expert, fractional CTO or tech lead. That person becomes an extension of your team, not a consultant billing hours.",
+      ],
+      servicesH2: "The roles we bring to your team",
+      socialProof:
+        "Real cases : Digital Admin (on demand dev resources), EMS (QA testing), Swixit (continuous UX and UI sparring), Kouleta (redesign pilot).",
+      projectsH2: "Featured Team augmentation projects",
+      faqH2: "Frequently asked questions about team augmentation",
+      bottomCtaH2: "Which role are you missing ?",
+      bottomCtaPitch:
+        "30 minutes to understand your context. Then we propose the right person, not a random CV pulled from a database.",
+      bottomCtaLabel: "Get in touch",
+    },
+  },
+  "formation-ia": {
+    fr: {
+      metaTitle: "Formation IA et ChatGPT pour entreprises | MAWT",
+      metaDescription:
+        "Formation ChatGPT en entreprise, ateliers IA équipes, coaching décideurs. Sessions sur mesure basées sur vos vrais cas métier.",
+      h1: "Formation IA pour entreprises et équipes.",
+      subhead: "ChatGPT en entreprise, ateliers IA, coaching décideurs. Sessions sur mesure, pas du replay YouTube.",
+      ctaPrimary: "Discutons",
+      ctaSecondary: "Voir les modules",
+      ctaPrimaryHref: "contact",
+      ctaSecondaryHref: "services/formation-ia",
+      introParagraphs: [
+        "Vos équipes utilisent ChatGPT en cachette. Ou pas du tout. Pas de cadre, pas de méthode, pas de sécurité. Et vous voyez les écarts se creuser entre ceux qui maîtrisent et les autres.",
+        "Les formations IA standards sont trop générales pour être utiles. Deux heures de vidéo sur ChatGPT ne changent rien à la pratique de votre équipe demain matin. Il faut du contexte : vos outils, vos process, vos vrais cas.",
+        "On construit des sessions sur mesure à partir de votre quotidien. ChatGPT appliqué à vos vrais documents, agents IA testés sur vos vrais workflows, coaching individuel pour les décideurs. Vos équipes repartent avec du concret, pas des slides.",
+      ],
+      servicesH2: "Ce qu'on propose dans cette famille",
+      socialProof:
+        "Cas concrets : formations ChatGPT pour équipes dirigeantes de PME romandes, ateliers IA pour équipes commerciales, coaching individuel pour décideurs.",
+      projectsH2: "Projets de formation menés",
+      faqH2: "Questions fréquentes sur la formation IA",
+      bottomCtaH2: "Discutons de votre besoin en formation",
+      bottomCtaPitch:
+        "30 minutes pour comprendre votre niveau et vos enjeux. On construit ensuite un programme qui parle de votre métier, pas du nôtre.",
+      bottomCtaLabel: "Démarrer",
+    },
+    en: {
+      metaTitle: "AI and ChatGPT training for teams | MAWT Geneva",
+      metaDescription:
+        "ChatGPT for teams, AI workshops, leader AI coaching. Custom sessions built on your real use cases.",
+      h1: "AI training for teams and leaders.",
+      subhead: "ChatGPT for teams, AI workshops, leader coaching. Custom sessions, not generic YouTube replays.",
+      ctaPrimary: "Get in touch",
+      ctaSecondary: "See modules",
+      ctaPrimaryHref: "contact",
+      ctaSecondaryHref: "services/ai-training",
+      introParagraphs: [
+        "Your team uses ChatGPT in secret. Or not at all. No framework, no method, no security. And you can see the gap widening between those who master it and those who don't.",
+        "Standard AI training is too generic to matter. A two hour ChatGPT video won't change your team's practice tomorrow morning. You need context : your tools, your processes, your real cases.",
+        "We build custom sessions from your day to day reality. ChatGPT applied to your actual documents, AI agents tested on your real workflows, individual coaching for leaders. Your team leaves with something concrete, not slides.",
+      ],
+      servicesH2: "What we offer in this family",
+      socialProof:
+        "Real cases : ChatGPT training for executive teams of Swiss SMBs, AI workshops for sales teams, individual coaching for leaders.",
+      projectsH2: "Training engagements we ran",
+      faqH2: "Frequently asked questions about AI training",
+      bottomCtaH2: "Let's talk about your training need",
+      bottomCtaPitch:
+        "30 minutes to understand your level and your stakes. Then we build a programme that speaks your business language, not ours.",
+      bottomCtaLabel: "Start",
+    },
+  },
+};

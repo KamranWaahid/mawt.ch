@@ -42,18 +42,30 @@ export const postType = defineType({
       ],
     }),
     defineField({
-      name: "categories",
-      title: "Categories",
+      name: "category",
+      title: "Category",
+      type: "string",
+      options: {
+        list: [
+          { title: "Cas clients / Case studies", value: "cas-clients" },
+          { title: "Tendances IA / AI trends", value: "tendances-ia" },
+          { title: "Guides pratiques / Practical guides", value: "guides-pratiques" },
+          { title: "Opinions", value: "opinions" },
+        ],
+        layout: "radio",
+      },
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "tags",
+      title: "Tags",
       type: "array",
       of: [defineArrayMember({ type: "string" })],
       options: {
-        list: [
-          { title: "Technical", value: "technical" },
-          { title: "Strategic", value: "strategic" },
-          { title: "Operational", value: "operational" },
-          { title: "Culture", value: "culture" },
-        ],
+        layout: "tags",
       },
+      description:
+        "Free-form tags. Suggested: service slugs (crm-intelligent, agent-ia...), sectors (immobilier, ecommerce...), or technologies (nextjs, sanity...). 2-5 tags ideal.",
     }),
     defineField({
       name: "publishedAt",

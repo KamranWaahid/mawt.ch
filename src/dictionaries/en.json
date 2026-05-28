@@ -147,37 +147,33 @@
       {
         "title": "Company",
         "links": [
-          { "label": "About Us", "href": "/about" },
-          { "label": "Careers", "href": "/careers" },
-          { "label": "Contact", "href": "/contact" }
+          { "label": "About us", "href": "/about" },
+          { "label": "Contact", "href": "/contact" },
+          { "label": "Clients & partners", "href": "/partners" }
         ]
       },
       {
         "title": "Services",
         "links": [
-          { "label": "What We Do", "href": "/services" },
-          { "label": "Systems", "href": "/solutions" },
-          { "label": "Integrations", "href": "/integrations" },
-          { "label": "Enterprise", "href": "/enterprise" }
+          { "label": "All services", "href": "/services" },
+          { "label": "Our process", "href": "/our-process" },
+          { "label": "Projects", "href": "/projects" }
         ]
       },
       {
         "title": "Resources",
         "links": [
           { "label": "Blog", "href": "/blog" },
-          { "label": "Documentation", "href": "/docs" },
-          { "label": "FAQs", "href": "/faqs" },
-          { "label": "Case Studies", "href": "/projects" }
+          { "label": "FAQs", "href": "/faqs" }
         ]
       },
       {
         "title": "Legal",
         "links": [
-          { "label": "Privacy Policy", "href": "/legal" },
-          { "label": "Cookie Policy", "href": "/cookie-policy" },
-          { "label": "Terms of Service", "href": "/terms" },
-          { "label": "Security", "href": "/security" },
-          { "label": "Status", "href": "/status" }
+          { "label": "Privacy", "href": "/legal" },
+          { "label": "Terms of service", "href": "/terms" },
+          { "label": "Cookies", "href": "/cookies" },
+          { "label": "Security", "href": "/security" }
         ]
       }
     ],
@@ -250,22 +246,6 @@
       "submit": "Send Message",
       "success": "Message sent successfully.",
       "error": "Something went wrong. Please try again."
-    }
-  },
-  "help": {
-    "badge": "Help Center",
-    "headline": "How can we help you today?",
-    "searchPlaceholder": "Search for articles, guides, and more...",
-    "noResults": "No categories found matching",
-    "articles": "Articles",
-    "quickLinks": "Quick Links",
-    "categories": {
-      "gettingStarted": "Getting Started",
-      "account": "Account Management",
-      "billing": "Billing & Invoices",
-      "integrations": "Third-party Integrations",
-      "security": "Security & Privacy",
-      "developer": "Developer Hub"
     }
   },
   "faq": {

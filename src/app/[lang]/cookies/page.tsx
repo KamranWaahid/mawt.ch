@@ -4,8 +4,9 @@ import type { Locale } from "@/i18n-config";
 import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: Locale }> }): Promise<Metadata> {
+  const { lang } = await params;
   return {
-    title: "Cookie Policy | MAWT Solutions",
+    title: lang === "fr" ? "Cookies | MAWT" : "Cookie Policy | MAWT Solutions",
     description: "Information regarding cookie transparency, tracking tools, and user consent management for MAWT Solutions.",
   };
 }
@@ -50,7 +51,7 @@ const cookieSections = [
   }
 ];
 
-export default async function CookiePolicyPage({ params }: { params: Promise<{ lang: Locale }> }) {
+export default async function CookiesPage({ params }: { params: Promise<{ lang: Locale }> }) {
   return (
     <div className="bg-white min-h-screen">
       <SubpageHero 

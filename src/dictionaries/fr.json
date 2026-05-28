@@ -148,48 +148,32 @@
         "title": "Entreprise",
         "links": [
           { "label": "À propos", "href": "/about" },
-          { "label": "Carrières", "href": "/careers" },
-          { "label": "Sécurité", "href": "/security" },
-          { "label": "Statut", "href": "/status" },
-          { "label": "Conditions et confidentialité", "href": "/legal" },
-          { "label": "Vos droits", "href": "/legal" }
+          { "label": "Contact", "href": "/contact" },
+          { "label": "Clients & partenaires", "href": "/clients" }
+        ]
+      },
+      {
+        "title": "Services",
+        "links": [
+          { "label": "Tous nos services", "href": "/services" },
+          { "label": "Notre méthode", "href": "/notre-methode" },
+          { "label": "Projets", "href": "/projects" }
         ]
       },
       {
         "title": "Ressources",
         "links": [
-          { "label": "Centre d'aide", "href": "/help" },
-          { "label": "Tarification", "href": "/pricing" },
           { "label": "Blog", "href": "/blog" },
-          { "label": "Communauté", "href": "/community" },
-          { "label": "Intégrations", "href": "/integrations" },
-          { "label": "Programmes partenaires", "href": "/partners" }
-        ]
-      },
-      {
-        "title": "Produit",
-        "links": [
-          { "label": "Ce que nous faisons", "href": "/services" },
-          { "label": "Comment ça marche", "href": "/process" },
-          { "label": "Études de cas", "href": "/projects" },
-          { "label": "Systèmes", "href": "/solutions" },
-          { "label": "Résultats", "href": "/results" }
-        ]
-      },
-      {
-        "title": "Support",
-        "links": [
-          { "label": "Contactez-nous", "href": "/contact" },
-          { "label": "Documentation", "href": "/docs" },
           { "label": "FAQ", "href": "/faqs" }
         ]
       },
       {
-        "title": "MAWT pour",
+        "title": "Légal",
         "links": [
-          { "label": "Entreprise", "href": "/enterprise" },
-          { "label": "Petite Entreprise", "href": "/small-business" },
-          { "label": "Personnel", "href": "/personal" }
+          { "label": "Confidentialité", "href": "/legal" },
+          { "label": "Conditions d'utilisation", "href": "/terms" },
+          { "label": "Cookies", "href": "/cookies" },
+          { "label": "Sécurité", "href": "/securite" }
         ]
       }
     ],
@@ -262,22 +246,6 @@
       "submit": "Envoyer le message",
       "success": "Message envoyé avec succès.",
       "error": "Une erreur est survenue. Veuillez réessayer."
-    }
-  },
-  "help": {
-    "badge": "Centre d'aide",
-    "headline": "Comment pouvons-nous vous aider aujourd'hui ?",
-    "searchPlaceholder": "Rechercher des articles, des guides, et plus encore...",
-    "noResults": "Aucune catégorie trouvée correspondant à",
-    "articles": "Articles",
-    "quickLinks": "Liens rapides",
-    "categories": {
-      "gettingStarted": "Premiers pas",
-      "account": "Gestion du compte",
-      "billing": "Facturation et factures",
-      "integrations": "Intégrations tierces",
-      "security": "Sécurité et confidentialité",
-      "developer": "Espace développeur"
     }
   },
   "faq": {

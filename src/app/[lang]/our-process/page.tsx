@@ -1,13 +1,12 @@
 import { SubpageHero } from "@/components/sections/subpage-hero";
 import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
-import { motion } from "motion/react";
 
 interface ProcessPageProps {
   params: Promise<{ lang: Locale }>;
 }
 
-export default async function ProcessPage({ params }: ProcessPageProps) {
+export default async function OurProcessPage({ params }: ProcessPageProps) {
   const { lang } = await params;
   const dict = await getDictionary(lang);
   
@@ -21,7 +20,7 @@ export default async function ProcessPage({ params }: ProcessPageProps) {
       <section className="bg-white px-6 py-24 sm:px-8 md:px-10 lg:px-12">
         <div className="max-w-[1440px] mx-auto">
           <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
-            {dict.process.items.map((step: any, index: number) => (
+            {dict.process.items.map((step: any) => (
               <div 
                 key={step.id} 
                 className="flex flex-col gap-6 p-10 border border-black/5 bg-white transition-all duration-500 hover:border-black/20 group"

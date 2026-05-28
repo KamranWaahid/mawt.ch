@@ -13,6 +13,15 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: "/:lang(en|fr)/integrations",
+        destination: "/:lang/services/ai-solutions/integrations-apis",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -408,6 +408,41 @@ export async function getPartners(): Promise<Partner[]> {
   });
 }
 
+// Static pages (legal + list-page headers) stored as `pageContent`
+export interface PageContentData {
+  heroH1?: string;
+  heroH2?: string;
+  intro?: unknown[];
+  body?: unknown[];
+  bottomCtaH2?: string;
+  bottomCtaBody?: string;
+  bottomCtaLabel?: string;
+  seo?: { metaTitle?: string; metaDescription?: string };
+}
+
+const pageContentQuery = groq`
+*[_type == "pageContent" && pageKey == $pageKey && language == $lang][0]{
+  heroH1,
+  heroH2,
+  intro,
+  body,
+  bottomCtaH2,
+  bottomCtaBody,
+  bottomCtaLabel,
+  seo
+}
+`;
+
+export async function getPageContent(pageKey: string, lang: string): Promise<PageContentData | null> {
+  const sanityClient = getSanityClient();
+  if (!sanityClient) return null;
+  return sanityClient.fetch<PageContentData | null>(
+    pageContentQuery,
+    { pageKey, lang },
+    { next: { tags: ["pageContent", `pageContent:${pageKey}:${lang}`] } },
+  );
+}
+
 const contactQuery = groq`
 *[_type == "contact"][0]{
   _id,

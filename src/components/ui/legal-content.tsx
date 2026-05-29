@@ -18,14 +18,16 @@ export function LegalContent({ sections }: LegalContentProps) {
         <div className="flex flex-col gap-16">
           {sections.map((section, index) => (
             <motion.div
-              key={section.title}
+              key={section.title || `section-${index}`}
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.05 }}
               className="flex flex-col gap-6"
             >
-              <h2 className="text-2xl font-normal tracking-tight text-black">{section.title}</h2>
+              {section.title && (
+                <h2 className="text-2xl font-normal tracking-tight text-black">{section.title}</h2>
+              )}
               <div className="flex flex-col gap-4">
                 {section.content.map((paragraph, pIndex) => (
                   <p key={pIndex} className="text-[16px] leading-relaxed text-neutral-500 font-normal">

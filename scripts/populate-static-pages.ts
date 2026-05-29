@@ -10,6 +10,8 @@
  */
 import { createClient } from "@sanity/client";
 
+import type { PortableTextBlock } from "@portabletext/types";
+
 import { textToBlocks } from "./lib/sanity-content-helpers";
 
 const token =
@@ -31,15 +33,15 @@ const client = createClient({
 
 type Section = { title: string; body: string };
 
-function bodyFromSections(sections: Section[]) {
-  const blocks: Record<string, unknown>[] = [];
+function bodyFromSections(sections: Section[]): PortableTextBlock[] {
+  const blocks: PortableTextBlock[] = [];
   for (const s of sections) {
     blocks.push({
       _type: "block",
       style: "h2",
       markDefs: [],
       children: [{ _type: "span", text: s.title, marks: [] as string[] }],
-    });
+    } as unknown as PortableTextBlock);
     blocks.push(...textToBlocks(s.body));
   }
   return blocks;

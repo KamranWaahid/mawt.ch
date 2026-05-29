@@ -130,6 +130,11 @@ export const deskStructure: StructureResolver = (S) =>
         .icon(Network)
         .child(S.documentTypeList("partner").title("Partners")),
 
+      S.listItem()
+        .title("Static Pages (Legal & headers)")
+        .icon(FileText)
+        .child(S.documentTypeList("pageContent").title("Static Pages")),
+
       // Filter out types that are handled explicitly above
       ...S.documentTypeListItems().filter(
         (listItem) =>
@@ -145,6 +150,8 @@ export const deskStructure: StructureResolver = (S) =>
             "newsletterSubscriber",
             "author",
             "dictionary",
+            "partner",
+            "pageContent",
           ].includes(listItem.getId()!)
       ),
     ]);

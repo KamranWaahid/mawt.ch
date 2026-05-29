@@ -19,6 +19,7 @@ import { contactType } from "@/sanity/schemaTypes/contact";
 import { partnerType } from "@/sanity/schemaTypes/partner";
 import { methodPageType } from "@/sanity/schemaTypes/method-page";
 import { securityPageType } from "@/sanity/schemaTypes/security-page";
+import { pageContentType } from "@/sanity/schemaTypes/page-content";
 
 export const schemaTypes = [
   siteSettingsType,
@@ -28,6 +29,7 @@ export const schemaTypes = [
   aboutContentType,
   methodPageType,
   securityPageType,
+  pageContentType,
   careerType,
   faqType,
   pricingType,

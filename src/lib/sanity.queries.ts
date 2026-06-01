@@ -16,14 +16,14 @@ const homeQuery = groq`
     servicesNav,
     mainNav
   },
-  "about": *[_type == "aboutContent"][0]{
+  "about": *[_type == "aboutContent" && language == $lang][0]{
     heading,
     subheading,
     story,
     values,
     locations
   },
-  "projects": *[_type == "project"] | order(year desc){
+  "projects": *[_type == "project" && language == $lang] | order(year desc){
     _id,
     title,
     "slug": slug.current,
@@ -38,10 +38,14 @@ const homeQuery = groq`
     testimonialQuote,
     testimonialAuthor
   }[0...6],
-  "services": *[_type == "service"] | order(_createdAt asc){
+  "services": *[_type == "service" && language == $lang] | order(tier asc){
     _id,
     title,
-    category,
+    "slug": slug.current,
+    family,
+    displayAsCard,
+    tier,
+    icon,
     description
   },
   "testimonials": *[_type == "testimonial"] | order(_createdAt desc){
@@ -50,7 +54,7 @@ const homeQuery = groq`
     name,
     role
   },
-  "posts": *[_type == "post"] | order(publishedAt desc)[0...3]{
+  "posts": *[_type == "post" && language == $lang] | order(publishedAt desc)[0...3]{
     _id,
     title,
     "slug": slug.current,
@@ -162,10 +166,10 @@ const docBySlugQuery = groq`
 }
 `;
 
-export async function getHomePageData(): Promise<HomePageData> {
+export async function getHomePageData(lang: string = "en"): Promise<HomePageData> {
   const sanityClient = getSanityClient();
   if (!sanityClient) return mockHomeData;
-  const data = await sanityClient.fetch<HomePageData>(homeQuery, {}, {
+  const data = await sanityClient.fetch<HomePageData>(homeQuery, { lang }, {
     next: { tags: ["home", "project", "service", "testimonial"] }
   });
   return {
@@ -341,7 +345,7 @@ export async function getServiceBySlug(slug: string): Promise<Service> {
 
 // Blog / Insights Queries
 export const allPostsQuery = groq`
-*[_type == "post"] | order(publishedAt desc){
+*[_type == "post" && language == $lang] | order(publishedAt desc){
   _id,
   title,
   "slug": slug.current,
@@ -358,7 +362,7 @@ export const allPostsQuery = groq`
 `;
 
 export const postBySlugQuery = groq`
-*[_type == "post" && slug.current == $slug][0]{
+*[_type == "post" && slug.current == $slug && language == $lang][0]{
   _id,
   title,
   "slug": slug.current,
@@ -377,16 +381,16 @@ export const postBySlugQuery = groq`
 }
 `;
 
-export async function getPosts(): Promise<BlogPost[]> {
+export async function getPosts(lang: string = "en"): Promise<BlogPost[]> {
   const sanityClient = getSanityClient();
   if (!sanityClient) return [];
-  return sanityClient.fetch(allPostsQuery);
+  return sanityClient.fetch(allPostsQuery, { lang });
 }
 
-export async function getPostBySlug(slug: string): Promise<BlogPost> {
+export async function getPostBySlug(slug: string, lang: string = "en"): Promise<BlogPost | null> {
   const sanityClient = getSanityClient();
-  if (!sanityClient) return {} as BlogPost;
-  return sanityClient.fetch(postBySlugQuery, { slug });
+  if (!sanityClient) return null;
+  return sanityClient.fetch<BlogPost | null>(postBySlugQuery, { slug, lang });
 }
 
 const partnersQuery = groq`

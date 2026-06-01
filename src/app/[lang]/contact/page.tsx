@@ -23,7 +23,7 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
   const [dict, contact, siteData] = await Promise.all([
     getDictionary(lang),
     getContactSettings(),
-    getHomePageData()
+    getHomePageData(lang)
   ]);
 
   return (

@@ -3,6 +3,8 @@ import { FlatGrid } from "@/components/ui/flat-grid";
 import { getDictionary } from "@/get-dictionary";
 import { getHomePageData } from "@/lib/sanity.queries";
 import type { Locale } from "@/i18n-config";
+import { getFamilyTitle, familySlugForLang } from "@/lib/routing/url-helpers";
+import Link from "next/link";
 
 interface ServicesPageProps {
   params: Promise<{ lang: Locale }>;
@@ -70,19 +72,23 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
     }
   ];
 
-  // Group the individual Service documents from Sanity by their category
+  // Group the individual Service documents from Sanity by their family
   const dynamicServicesGrouped = data.services?.reduce((acc, service) => {
-    if (!service.category || !service.title) return acc;
-    const cat = service.category;
-    if (!acc[cat]) {
-      acc[cat] = [];
+    if (!service.family || !service.title) return acc;
+    const familyTitle = getFamilyTitle(service.family, lang);
+    if (!acc[familyTitle]) {
+      acc[familyTitle] = [];
     }
-    acc[cat].push(service.title);
+    const familySlug = familySlugForLang(service.family, lang);
+    acc[familyTitle].push({
+      title: service.title,
+      href: `/${lang}/services/${familySlug}/${service.slug}`,
+    });
     return acc;
-  }, {} as Record<string, string[]>);
+  }, {} as Record<string, { title: string; href: string }[]>);
 
   // Convert the grouped object into the array format expected by the UI
-  let servicesList = defaultServicesList;
+  let servicesList: any[] = defaultServicesList;
   
   if (dynamicServicesGrouped && Object.keys(dynamicServicesGrouped).length > 0) {
     servicesList = Object.entries(dynamicServicesGrouped).map(([category, services]) => ({
@@ -151,11 +157,23 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
                   </div>
                   <div className="col-span-1">
                     <ul className="flex flex-col gap-2.5">
-                      {item.services?.map((service) => (
-                        <li key={service} className="text-[14px] text-neutral-500 font-normal">
-                          {service}
-                        </li>
-                      ))}
+                      {item.services?.map((service: any) => {
+                        const isObj = typeof service === "object";
+                        const serviceTitle = isObj ? service.title : service;
+                        const serviceHref = isObj ? service.href : null;
+
+                        return (
+                          <li key={serviceTitle} className="text-[14px] text-neutral-500 font-normal">
+                            {serviceHref ? (
+                              <Link href={serviceHref} className="hover:text-black hover:underline transition-colors decoration-[#75DAB4] decoration-2 underline-offset-4">
+                                {serviceTitle}
+                              </Link>
+                            ) : (
+                              <span>{serviceTitle}</span>
+                            )}
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 </div>

@@ -47,12 +47,22 @@ export type Service = {
   title: string;
   slug: string;
   category?: string;
+  family?: string;
+  displayAsCard?: boolean;
+  tier?: number;
+  h2SeoCapture?: string;
+  heroH1?: string;
+  heroH2?: string;
   description?: string;
   icon?: string;
   mainImage?: SanityImageSource;
   longDescription?: any[]; // Portable text
   features?: string[];
   featuredProjects?: Project[];
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+  };
 };
 
 export type Testimonial = {

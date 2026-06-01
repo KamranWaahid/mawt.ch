@@ -52,12 +52,24 @@ export function VisionSection({ dict, services }: { dict: any; services?: any[] 
                       </h3>
                       {item.services && Array.isArray(item.services) ? (
                         <ul className="flex flex-wrap gap-x-3 gap-y-1.5 text-[15px] leading-relaxed text-neutral-500 max-w-[55ch] mb-8">
-                          {item.services.map((service: string, sIdx: number) => (
-                            <li key={`${service}-${sIdx}`} className="flex items-center gap-2">
-                              <span>{service}</span>
-                              {sIdx < item.services.length - 1 && <span className="text-black/20 text-xs">•</span>}
-                            </li>
-                          ))}
+                          {item.services.map((service: any, sIdx: number) => {
+                            const isObj = typeof service === "object";
+                            const serviceTitle = isObj ? service.title : service;
+                            const serviceHref = isObj ? service.href : null;
+
+                            return (
+                              <li key={`${serviceTitle}-${sIdx}`} className="flex items-center gap-2">
+                                {serviceHref ? (
+                                  <Link href={serviceHref} className="hover:text-black hover:underline transition-colors decoration-[#75DAB4] decoration-2 underline-offset-4">
+                                    {serviceTitle}
+                                  </Link>
+                                ) : (
+                                  <span>{serviceTitle}</span>
+                                )}
+                                {sIdx < item.services.length - 1 && <span className="text-black/20 text-xs">•</span>}
+                              </li>
+                            );
+                          })}
                         </ul>
                       ) : (
                         <p className="text-base font-normal leading-relaxed text-neutral-600 max-w-[55ch] mb-8">

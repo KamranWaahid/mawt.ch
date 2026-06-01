@@ -13,10 +13,10 @@ import type { Metadata } from "next";
 export async function generateMetadata({ 
   params 
 }: { 
-  params: Promise<{ slug: string }> 
+  params: Promise<{ lang: string; slug: string }> 
 }): Promise<Metadata> {
-  const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const { slug, lang } = await params;
+  const post = await getPostBySlug(slug, lang);
   
   if (!post) return {};
 
@@ -80,7 +80,7 @@ export default async function BlogPostPage({
   params: Promise<{ lang: string; slug: string }> 
 }) {
   const { lang, slug } = await params;
-  const post = await getPostBySlug(slug);
+  const post = await getPostBySlug(slug, lang);
 
   if (!post?._id) {
     notFound();

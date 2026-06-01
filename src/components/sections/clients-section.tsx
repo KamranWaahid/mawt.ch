@@ -42,7 +42,7 @@ export function ClientsSection({ dict, partners }: { dict: any; partners?: Partn
               return (
                 <div 
                   key={partner._id} 
-                  className="relative w-22 h-6 md:w-28 md:h-7 shrink-0"
+                  className="relative w-22 h-7 md:w-28 md:h-9 shrink-0"
                 >
                   {partner.url ? (
                     <a 

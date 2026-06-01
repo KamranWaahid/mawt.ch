@@ -28,7 +28,7 @@ export function PartnerLogoWall({ partners }: PartnerLogoWallProps) {
                   <motion.div 
                     key={partner._id}
                     whileHover={{ backgroundColor: "rgba(255, 255, 255, 1)" }}
-                    className="aspect-[3/2] bg-white flex items-center justify-center p-12 transition-colors group relative"
+                    className="aspect-[3/2] bg-white flex items-center justify-center transition-colors group relative"
                   >
                      {partner.url ? (
                        <a 
@@ -40,18 +40,18 @@ export function PartnerLogoWall({ partners }: PartnerLogoWallProps) {
                           <Image 
                             src={urlForImage(partner.logo)?.width(400).url() || ""}
                             alt={partner.name}
-                            width={200}
-                            height={100}
-                            className="object-contain filter grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
+                            fill
+                            sizes="(max-width: 768px) 150px, 200px"
+                            className="object-contain p-6 sm:p-8 md:p-10 filter grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
                           />
                        </a>
                      ) : (
                         <Image 
                           src={urlForImage(partner.logo)?.width(400).url() || ""}
                           alt={partner.name}
-                          width={200}
-                          height={100}
-                          className="object-contain filter grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
+                          fill
+                          sizes="(max-width: 768px) 150px, 200px"
+                          className="object-contain p-6 sm:p-8 md:p-10 filter grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
                         />
                      )}
                   </motion.div>

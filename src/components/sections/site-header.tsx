@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
 import LogoBlack from "../../../public/MAWT Branding/MAWT Logo - Black.svg";
 import LogoWhite from "../../../public/MAWT Branding/MAWT Logo - White.svg";
+import { getFamilyTitle, familySlugForLang } from "@/lib/routing/url-helpers";
 
 type SiteHeaderProps = {
   title: string;
@@ -57,21 +58,41 @@ const platformIcons: Record<string, any> = {
 
 export function SiteHeader({ title, theme: themeProp, socialLinks, services, mainNav }: SiteHeaderProps) {
   const pathname = usePathname();
+  const currentLang = pathname.startsWith("/fr") ? "fr" : "en";
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
 
-  const activeServicesData = services && services.length > 0 
+  const activeServicesData: Record<string, { title: string; href: string; items: { title: string; href: string }[] }> = services && services.length > 0 
     ? services.reduce((acc, service) => {
-        if (!service.category || !service.title) return acc;
-        const cat = service.category;
-        if (!acc[cat]) {
-          acc[cat] = [];
+        if (!service.family || !service.title) return acc;
+        const familyTitle = getFamilyTitle(service.family, currentLang as any);
+        if (!acc[familyTitle]) {
+          const familySlug = familySlugForLang(service.family, currentLang as any);
+          acc[familyTitle] = {
+            title: familyTitle,
+            href: `/${currentLang}/services/${familySlug}`,
+            items: []
+          };
         }
-        acc[cat].push(service.title);
+        const familySlug = familySlugForLang(service.family, currentLang as any);
+        acc[familyTitle].items.push({
+          title: service.title,
+          href: `/${currentLang}/services/${familySlug}/${service.slug}`
+        });
         return acc;
-      }, {} as Record<string, string[]>)
-    : defaultServicesData;
+      }, {} as Record<string, { title: string; href: string; items: { title: string; href: string }[] }>)
+    : Object.entries(defaultServicesData).reduce((acc, [category, items]) => {
+        acc[category] = {
+          title: category,
+          href: `/${currentLang}/services`,
+          items: items.map(item => ({
+            title: item,
+            href: `/${currentLang}/services`
+          }))
+        };
+        return acc;
+      }, {} as Record<string, { title: string; href: string; items: { title: string; href: string }[] }>);
 
   const activeNavItems = mainNav && mainNav.length > 0 ? mainNav : navItems;
 
@@ -80,8 +101,6 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
   const theme = themeProp || (isHomePage ? "dark" : "light");
 
   const isLight = theme === "light" || activeDropdown !== null || isMobileMenuOpen;
-
-  const currentLang = pathname.startsWith("/fr") ? "fr" : "en";
 
   const handleLanguageChange = (lang: string) => {
     if (lang === currentLang) return;
@@ -219,18 +238,23 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
               className="absolute left-0 right-0 top-full bg-white text-black hidden md:block border-b border-black/5"
             >
               <div className="mx-auto grid max-w-[1440px] grid-cols-5 gap-12 px-6 py-16 sm:px-8 md:px-10 lg:px-12">
-                {Object.entries(activeServicesData).map(([category, items]) => (
-                  <div key={category} className="flex flex-col gap-6">
-                    <h3 className="text-lg font-normal tracking-tight text-black">{category}</h3>
+                {Object.values(activeServicesData).map((group) => (
+                  <div key={group.title} className="flex flex-col gap-6">
+                    <Link href={group.href} onClick={() => setActiveDropdown(null)}>
+                      <h3 className="text-lg font-normal tracking-tight text-black hover:text-[#75DAB4] transition-colors">
+                        {group.title}
+                      </h3>
+                    </Link>
                     <ul className="flex flex-col gap-3">
-                      {(items as string[]).map((item) => (
-                        <li key={item}>
+                      {group.items.map((item) => (
+                        <li key={item.title}>
                           <motion.div whileHover={{ x: 2 }}>
                             <Link
-                              href={`/${currentLang}/services`}
+                              href={item.href}
+                              onClick={() => setActiveDropdown(null)}
                               className="text-[15px] font-normal text-neutral-600 transition-colors hover:text-black"
                             >
-                              {item}
+                              {item.title}
                             </Link>
                           </motion.div>
                         </li>
@@ -295,14 +319,17 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
                               className="overflow-hidden border-l border-black/5 pl-6"
                             >
                               <div className="grid gap-8 py-4">
-                                {Object.keys(activeServicesData).map(cat => (
+                                {Object.values(activeServicesData).map(group => (
                                   <Link
-                                    key={cat}
-                                    href={`/${currentLang}/services`}
-                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    key={group.title}
+                                    href={group.href}
+                                    onClick={() => {
+                                      setIsMobileMenuOpen(false);
+                                      setMobileServicesOpen(false);
+                                    }}
                                     className="text-xl text-neutral-400 font-normal hover:text-black transition-colors"
                                   >
-                                    {cat}
+                                    {group.title}
                                   </Link>
                                 ))}
                               </div>

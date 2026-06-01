@@ -41,7 +41,7 @@ export default async function LangLayout({
 }) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang as Locale);
-  const data = await getHomePageData();
+  const data = await getHomePageData(lang);
 
   return (
     <div className="relative">

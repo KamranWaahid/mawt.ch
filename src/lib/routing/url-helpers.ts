@@ -157,3 +157,16 @@ export function canonicalizeFamilySlug(
   );
   return family?.fr ?? null;
 }
+
+const FAMILY_TITLES: Record<string, { fr: string; en: string }> = {
+  "sites-et-branding": { fr: "Sites & Branding", en: "Sites & Branding" },
+  "solutions-ia": { fr: "Solutions IA", en: "AI Solutions" },
+  "conseil-ia": { fr: "Conseil IA", en: "AI Consulting" },
+  "formation-ia": { fr: "Formation IA", en: "AI Training" },
+  "renfort-equipe": { fr: "Renfort & Équipe", en: "Team Augmentation" },
+};
+
+export function getFamilyTitle(family: string, lang: "fr" | "en"): string {
+  return FAMILY_TITLES[family]?.[lang] ?? family;
+}
+

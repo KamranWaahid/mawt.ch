@@ -12,6 +12,7 @@ import { SiteHeader } from "@/components/sections/site-header";
 import { getHomePageData, getPartners } from "@/lib/sanity.queries";
 import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
+import { getFamilyTitle, familySlugForLang } from "@/lib/routing/url-helpers";
 
 export default async function HomePage({
   params,
@@ -20,7 +21,7 @@ export default async function HomePage({
 }) {
   const { lang } = await params;
   const dictionary = await getDictionary(lang);
-  const data = await getHomePageData();
+  const data = await getHomePageData(lang);
   const partners = await getPartners();
 
   const defaultServicesList = [
@@ -80,19 +81,23 @@ export default async function HomePage({
     }
   ];
 
-  // Group the individual Service documents from Sanity by their category
+  // Group the individual Service documents from Sanity by their family
   const dynamicServicesGrouped = data.services?.reduce((acc, service) => {
-    if (!service.category || !service.title) return acc;
-    const cat = service.category;
-    if (!acc[cat]) {
-      acc[cat] = [];
+    if (!service.family || !service.title) return acc;
+    const familyTitle = getFamilyTitle(service.family, lang);
+    if (!acc[familyTitle]) {
+      acc[familyTitle] = [];
     }
-    acc[cat].push(service.title);
+    const familySlug = familySlugForLang(service.family, lang);
+    acc[familyTitle].push({
+      title: service.title,
+      href: `/${lang}/services/${familySlug}/${service.slug}`,
+    });
     return acc;
-  }, {} as Record<string, string[]>);
+  }, {} as Record<string, { title: string; href: string }[]>);
 
   // Convert the grouped object into the array format expected by the UI
-  let servicesList = defaultServicesList;
+  let servicesList: any[] = defaultServicesList;
   
   if (dynamicServicesGrouped && Object.keys(dynamicServicesGrouped).length > 0) {
     servicesList = Object.entries(dynamicServicesGrouped).map(([category, services]) => ({

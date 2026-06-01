@@ -6,6 +6,7 @@ import { Globe, Layers } from "lucide-react";
 import { FaFacebookF, FaXTwitter, FaInstagram, FaLinkedinIn, FaGithub } from "react-icons/fa6";
 import Image from "next/image";
 import { NewsletterForm } from "@/components/ui/newsletter-form";
+import LogoBlack from "../../../public/MAWT Branding/MAWT Logo - Black.svg";
 
 const platformIcons: Record<string, any> = {
   LinkedIn: FaLinkedinIn,
@@ -39,7 +40,11 @@ export function SiteFooter({
           {/* Logo and Socials Column */}
           <div className="col-span-2 md:col-span-3 lg:col-span-1 space-y-8">
             <div className="flex items-center gap-2">
-               <span className="text-xl font-bold tracking-tighter">MAWT</span>
+              <Image
+                src={LogoBlack}
+                alt="MAWT Logo"
+                className="h-5 w-auto"
+              />
             </div>
             
             <div className="flex items-center gap-5 text-black/40">

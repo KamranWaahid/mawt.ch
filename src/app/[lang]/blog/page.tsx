@@ -23,7 +23,7 @@ import { getPosts } from "@/lib/sanity.queries";
 export default async function BlogPage({ params }: BlogPageProps) {
   const { lang } = await params;
   const dict = await getDictionary(lang);
-  const posts = await getPosts();
+  const posts = await getPosts(lang);
   
   return (
     <div className="bg-white min-h-screen">

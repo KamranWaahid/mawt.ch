@@ -10,7 +10,7 @@ export default async function AdminPage({
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
-  const data = await getHomePageData();
+  const data = await getHomePageData(lang);
   const client = getSanityClient();
   
   // Basic Health Check

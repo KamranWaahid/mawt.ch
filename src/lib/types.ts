@@ -42,8 +42,44 @@ export type Project = {
 
 };
 
+export type ServiceSection = {
+  h2: string;
+  paragraphs?: string[];
+  bullets?: string[];
+};
+
+export type ServiceFaqItem = {
+  question: string;
+  answer: string;
+};
+
+export type ServiceComparisonTable = {
+  title?: string;
+  columns?: string[];
+  rows?: { cells: string[] }[];
+};
+
+export type ServiceCta = {
+  headline?: string;
+  primaryLabel?: string;
+  primaryHref?: string;
+  secondaryLabel?: string;
+  secondaryHref?: string;
+};
+
+export type RelatedService = {
+  _id: string;
+  title: string;
+  slug: string;
+  family?: string;
+  heroH2?: string;
+  description?: string;
+  icon?: string;
+};
+
 export type Service = {
   _id: string;
+  language?: "fr" | "en";
   title: string;
   slug: string;
   category?: string;
@@ -56,8 +92,17 @@ export type Service = {
   description?: string;
   icon?: string;
   mainImage?: SanityImageSource;
+  answerBox?: string;
+  whoFor?: string;
   longDescription?: any[]; // Portable text
   features?: string[];
+  deliverables?: string[];
+  keyTakeaways?: string[];
+  sections?: ServiceSection[];
+  comparisonTable?: ServiceComparisonTable;
+  faq?: ServiceFaqItem[];
+  cta?: ServiceCta;
+  relatedServices?: RelatedService[];
   featuredProjects?: Project[];
   seo?: {
     metaTitle?: string;

@@ -40,6 +40,14 @@ const serviceDetailPageQuery = groq`
     h2SeoCapture,
     heroH1,
     heroH2,
+    answerBox,
+    whoFor,
+    deliverables,
+    keyTakeaways,
+    sections[]{ h2, paragraphs, bullets },
+    comparisonTable{ title, columns, rows[]{ cells } },
+    faq[]{ question, answer },
+    cta,
     featuredProjects[]->{
       _id,
       title,
@@ -78,6 +86,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     groq`*[_type == "service" && family == $family && slug.current == $serviceSlug && language == $lang][0]{
       title,
       description,
+      answerBox,
+      heroH1,
       seo
     }`,
     { family: canonicalFamily, serviceSlug: service, lang }
@@ -85,9 +95,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!data) return {};
 
+  const canonical = `https://mawt.ch/${lang}/services/${family}/${service}`;
+  const title = data.seo?.metaTitle || `${data.title} | MAWT`;
+  const description = data.seo?.metaDescription || data.answerBox || data.description;
+
   return {
-    title: data.seo?.metaTitle || `${data.title} | MAWT`,
-    description: data.seo?.metaDescription || data.description,
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      locale: lang === "fr" ? "fr_CH" : "en_US",
+    },
   };
 }
 
@@ -148,7 +169,46 @@ export default async function ServiceDetailPage({ params }: Props) {
   }
 
   const related = data?.relatedServices || [];
-  const faqs = data?.faqs || [];
+  // Prefer the service's own rich FAQ; fall back to tag matched FAQ docs.
+  const faqItems = (svc.faq && svc.faq.length > 0 ? svc.faq : data?.faqs || []) as { question: string; answer: string }[];
+  const table = svc.comparisonTable;
+  const hasTable = !!(table && table.rows && table.rows.length > 0);
+
+  // JSON-LD (SSR — AI crawlers do not run JS)
+  const SITE_URL = "https://mawt.ch";
+  const canonical = `${SITE_URL}/${lang}/services/${family}/${service}`;
+  const serviceLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: svc.title,
+    serviceType: svc.title,
+    description: svc.answerBox || svc.description || svc.heroH1 || svc.title,
+    url: canonical,
+    inLanguage: lang === "fr" ? "fr-CH" : "en",
+    provider: { "@type": "Organization", name: "MAWT", url: SITE_URL },
+    areaServed: { "@type": "Country", name: "Switzerland" },
+  };
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "MAWT", item: `${SITE_URL}/${lang}` },
+      { "@type": "ListItem", position: 2, name: "Services", item: `${SITE_URL}/${lang}/services` },
+      { "@type": "ListItem", position: 3, name: svc.title, item: canonical },
+    ],
+  };
+  const faqLd =
+    faqItems.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqItems.map((f) => ({
+            "@type": "Question",
+            name: f.question,
+            acceptedAnswer: { "@type": "Answer", text: f.answer },
+          })),
+        }
+      : null;
 
   // Dynamically resolve icon
   const IconComponent = (Icons as any)[svc.icon || "Layers"] || Icons.Layers;
@@ -190,6 +250,13 @@ export default async function ServiceDetailPage({ params }: Props) {
 
   return (
     <div className="bg-white min-h-screen">
+      {/* JSON-LD — server rendered */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      {faqLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      )}
+
       <Breadcrumb
         items={[
           { label: labels.breadServices, to: "services" },
@@ -243,28 +310,98 @@ export default async function ServiceDetailPage({ params }: Props) {
         </div>
       </section>
 
+      {/* Answer box — direct definition, high on the page (GEO) */}
+      {svc.answerBox && (
+        <section className="bg-white px-6 pt-12 md:pt-16 sm:px-8 md:px-10 lg:px-12">
+          <div className="max-w-[1440px] mx-auto">
+            <SectionReveal className="max-w-3xl rounded-sm border-l-4 border-[#75DAB4] bg-neutral-50 p-6 md:p-8">
+              <span className="text-[11px] uppercase tracking-[0.2em] text-[#75DAB4] font-bold block mb-3">
+                {lang === "fr" ? "En bref" : "In short"}
+              </span>
+              <p className="text-lg md:text-xl text-black/80 leading-relaxed">{svc.answerBox}</p>
+            </SectionReveal>
+          </div>
+        </section>
+      )}
+
       {/* Main Narrative & Capabilities Grid */}
       <section className="bg-white px-6 py-20 md:py-32 sm:px-8 md:px-10 lg:px-12 border-b border-black/5">
         <div className="max-w-[1440px] mx-auto grid lg:grid-cols-12 gap-16 lg:gap-24">
-          {/* Left Column: Narrative (Portable Text) */}
+          {/* Left Column: Narrative (Portable Text) + structured sections */}
           <div className="lg:col-span-7">
             <SectionReveal className="space-y-8">
-              <div className="prose prose-lg max-w-none text-neutral-800">
-                {svc.longDescription ? (
+              {svc.longDescription && (
+                <div className="prose prose-lg max-w-none text-neutral-800">
                   <PortableText value={svc.longDescription} components={components} />
-                ) : (
-                  <p className="text-xl text-neutral-600 italic">
-                    {svc.description || "Detailed narrative coming soon."}
-                  </p>
-                )}
-              </div>
+                </div>
+              )}
+
+              {/* Structured H2 sections */}
+              {svc.sections?.map((sec: any, i: number) => (
+                <div key={i}>
+                  <h2 className="text-3xl font-normal tracking-tight text-black mt-4 mb-6">{sec.h2}</h2>
+                  {sec.paragraphs?.map((p: string, j: number) => (
+                    <p key={j} className="text-lg text-neutral-600 font-normal leading-relaxed mb-6">{p}</p>
+                  ))}
+                  {sec.bullets && sec.bullets.length > 0 && (
+                    <ul className="list-disc pl-6 mt-2 mb-2 text-neutral-600 space-y-2 text-lg">
+                      {sec.bullets.map((b: string, j: number) => (
+                        <li key={j}>{b}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
+
+              {/* Comparison table */}
+              {hasTable && (
+                <div>
+                  {table.title && (
+                    <h2 className="text-3xl font-normal tracking-tight text-black mt-4 mb-6">{table.title}</h2>
+                  )}
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse text-left">
+                      {table.columns && table.columns.length > 0 && (
+                        <thead>
+                          <tr className="border-b border-black/10">
+                            {table.columns.map((c: string, i: number) => (
+                              <th key={i} className="py-3 pr-6 text-[11px] uppercase tracking-[0.2em] text-neutral-400 font-bold">{c}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                      )}
+                      <tbody>
+                        {table.rows.map((row: any, i: number) => (
+                          <tr key={i} className="border-b border-black/5">
+                            {row.cells?.map((cell: string, j: number) => (
+                              <td key={j} className={`py-3 pr-6 text-base ${j === 0 ? "text-black font-medium" : "text-neutral-600"}`}>{cell}</td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+
+              {/* Who it is for */}
+              {svc.whoFor && (
+                <div>
+                  <h2 className="text-3xl font-normal tracking-tight text-black mt-4 mb-6">{lang === "fr" ? "Pour qui" : "Who it is for"}</h2>
+                  <p className="text-lg text-neutral-600 leading-relaxed">{svc.whoFor}</p>
+                </div>
+              )}
+
+              {!svc.longDescription && !svc.sections?.length && (
+                <p className="text-xl text-neutral-600 italic">{svc.description || ""}</p>
+              )}
             </SectionReveal>
           </div>
 
-          {/* Right Column: Capabilities / What it includes */}
-          <div className="lg:col-span-5">
+          {/* Right Column: Capabilities + Deliverables */}
+          <div className="lg:col-span-5 space-y-8">
             {svc.features && svc.features.length > 0 && (
-              <SectionReveal delay={0.2} className="bg-neutral-50/50 p-8 sm:p-12 border border-black/5 rounded-sm sticky top-32">
+              <SectionReveal delay={0.2} className="bg-neutral-50/50 p-8 sm:p-12 border border-black/5 rounded-sm">
                 <h2 className="text-[11px] font-bold text-neutral-400 uppercase tracking-[0.2em] mb-8">
                   {labels.featuresH2}
                 </h2>
@@ -282,9 +419,48 @@ export default async function ServiceDetailPage({ params }: Props) {
                 </ul>
               </SectionReveal>
             )}
+
+            {svc.deliverables && svc.deliverables.length > 0 && (
+              <SectionReveal delay={0.3} className="bg-white p-8 sm:p-12 border border-black/5 rounded-sm">
+                <h2 className="text-[11px] font-bold text-neutral-400 uppercase tracking-[0.2em] mb-8">
+                  {lang === "fr" ? "Ce que vous obtenez" : "What you get"}
+                </h2>
+                <ul className="space-y-5">
+                  {svc.deliverables.map((d: string, i: number) => (
+                    <li key={i} className="flex items-start gap-4">
+                      <div className="mt-1 flex items-center justify-center h-5 w-5 rounded-full bg-[#75DAB4]/10 shrink-0">
+                        <Check size={12} className="text-black" />
+                      </div>
+                      <span className="text-[15px] sm:text-[16px] font-normal leading-relaxed text-neutral-600">{d}</span>
+                    </li>
+                  ))}
+                </ul>
+              </SectionReveal>
+            )}
           </div>
         </div>
       </section>
+
+      {/* Key takeaways */}
+      {svc.keyTakeaways && svc.keyTakeaways.length > 0 && (
+        <section className="bg-white px-6 py-12 md:py-16 sm:px-8 md:px-10 lg:px-12 border-b border-black/5">
+          <div className="max-w-[1440px] mx-auto">
+            <SectionReveal className="rounded-sm bg-black text-white p-8 md:p-12">
+              <h2 className="text-[11px] uppercase tracking-[0.2em] text-[#75DAB4] mb-6 font-bold">
+                {lang === "fr" ? "À retenir" : "Key takeaways"}
+              </h2>
+              <ul className="grid md:grid-cols-2 gap-x-12 gap-y-4">
+                {svc.keyTakeaways.map((k: string, i: number) => (
+                  <li key={i} className="flex items-start gap-4">
+                    <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[#75DAB4] shrink-0" />
+                    <span className="text-lg text-white/90 leading-relaxed">{k}</span>
+                  </li>
+                ))}
+              </ul>
+            </SectionReveal>
+          </div>
+        </section>
+      )}
 
       {/* Case Studies / Featured Projects */}
       {svc.featuredProjects && svc.featuredProjects.length > 0 && (
@@ -382,7 +558,7 @@ export default async function ServiceDetailPage({ params }: Props) {
       )}
 
       {/* FAQ Section */}
-      {faqs.length > 0 && (
+      {faqItems.length > 0 && (
         <section className="bg-neutral-50/20 py-20 border-b border-black/5">
           <div className="max-w-[1440px] mx-auto">
             <SectionReveal className="px-6 sm:px-8 md:px-10 lg:px-12 text-center mb-4">
@@ -390,7 +566,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                 {labels.faqH2}
               </h2>
             </SectionReveal>
-            <FAQAccordion items={faqs} />
+            <FAQAccordion items={faqItems} />
           </div>
         </section>
       )}
@@ -399,15 +575,23 @@ export default async function ServiceDetailPage({ params }: Props) {
       <section className="bg-black text-white px-6 py-24 sm:px-8 md:px-10 lg:px-12 text-center">
         <SectionReveal className="max-w-3xl mx-auto space-y-8">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight leading-[1.15] text-balance">
-            {labels.bottomCtaH2}
+            {svc.cta?.headline || labels.bottomCtaH2}
           </h2>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-4">
             <Link
-              href={`/${lang}/contact`}
+              href={`/${lang}/${svc.cta?.primaryHref || "contact"}`}
               className="px-8 py-4 bg-[#75DAB4] text-black hover:bg-white transition-colors duration-300 text-sm font-normal uppercase tracking-widest rounded-sm w-full sm:w-auto text-center"
             >
-              {lang === "fr" ? "Démarrer un projet" : "Start a Conversation"}
+              {svc.cta?.primaryLabel || (lang === "fr" ? "Démarrer un projet" : "Start a Conversation")}
             </Link>
+            {svc.cta?.secondaryLabel && (
+              <Link
+                href={`/${lang}/${svc.cta?.secondaryHref || "projects"}`}
+                className="px-8 py-4 border border-white/20 hover:border-white text-white transition-colors duration-300 text-sm font-normal uppercase tracking-widest rounded-sm w-full sm:w-auto text-center"
+              >
+                {svc.cta.secondaryLabel}
+              </Link>
+            )}
           </div>
         </SectionReveal>
       </section>

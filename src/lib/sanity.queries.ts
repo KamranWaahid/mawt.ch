@@ -313,15 +313,47 @@ export async function getRelatedDocsByTags(currentSlug: string, tags: string[]):
 }
 
 export const serviceBySlugQuery = groq`
-*[_type == "service" && slug.current == $slug][0]{
+*[_type == "service" && slug.current == $slug && language == $lang][0]{
   _id,
+  language,
   title,
   "slug": slug.current,
+  family,
+  heroH1,
+  heroH2,
+  h2SeoCapture,
   description,
   icon,
+  answerBox,
+  whoFor,
   longDescription,
   features,
-  featuredProjects[]->{
+  deliverables,
+  keyTakeaways,
+  sections[]{
+    h2,
+    paragraphs,
+    bullets
+  },
+  comparisonTable{
+    title,
+    columns,
+    rows[]{ cells }
+  },
+  faq[]{
+    question,
+    answer
+  },
+  cta,
+  "relatedServices": relatedServices[]->{
+    _id,
+    title,
+    "slug": slug.current,
+    heroH2,
+    description,
+    icon
+  },
+  "featuredProjects": featuredProjects[]->{
     _id,
     title,
     "slug": slug.current,
@@ -333,10 +365,12 @@ export const serviceBySlugQuery = groq`
 }
 `;
 
-export async function getServiceBySlug(slug: string): Promise<Service> {
+export async function getServiceBySlug(slug: string, lang: string): Promise<Service | null> {
   const sanityClient = getSanityClient();
-  if (!sanityClient) return {} as Service;
-  return sanityClient.fetch(serviceBySlugQuery, { slug });
+  if (!sanityClient) return null;
+  return sanityClient.fetch<Service | null>(serviceBySlugQuery, { slug, lang }, {
+    next: { tags: ["service", `service:${lang}:${slug}`] },
+  });
 }
 
 // Blog / Insights Queries

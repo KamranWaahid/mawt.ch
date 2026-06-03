@@ -63,7 +63,7 @@ export function WorkSection({ dict, projects }: { dict: any; projects: Project[]
               const isWide = idx % 3 === 2;
               return (
                 <motion.div key={project._id} variants={itemVariants} className={`group relative bg-white overflow-hidden ${isWide ? "lg:col-span-2" : ""}`}>
-                  <Link href={`/${currentLang}/projects/${project.slug}`} className={`flex h-full ${isWide ? "flex-col lg:flex-row min-h-[480px] md:min-h-[520px]" : "flex-col"}`}>
+                  <Link href={`/${currentLang}/${currentLang === "fr" ? "projets" : "projects"}/${project.slug}`} className={`flex h-full ${isWide ? "flex-col lg:flex-row min-h-[480px] md:min-h-[520px]" : "flex-col"}`}>
                     
                     {/* Text Container */}
                     <div className={`p-8 md:p-10 ${isWide ? "flex flex-col justify-between w-full lg:w-1/2 pb-8 md:pb-10" : "flex items-start justify-between w-full pb-12"}`}>

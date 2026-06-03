@@ -2,6 +2,7 @@ import { SubpageHero } from "@/components/sections/subpage-hero";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { getFAQs } from "@/lib/sanity.queries";
 import { getDictionary } from "@/get-dictionary";
+import { standaloneAlternates } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/i18n-config";
 import type { Metadata } from "next";
 
@@ -13,9 +14,10 @@ export async function generateMetadata({ params }: FAQsPageProps): Promise<Metad
   const { lang } = await params;
   return {
     title: lang === "en" ? "FAQs" : "FAQs",
-    description: lang === "en" 
+    description: lang === "en"
       ? "Everything you need to know about working with MAWT."
       : "Tout ce que vous devez savoir sur le travail avec MAWT.",
+    alternates: standaloneAlternates("faqs", lang),
   };
 }
 

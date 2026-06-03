@@ -170,7 +170,7 @@
       {
         "title": "Legal",
         "links": [
-          { "label": "Privacy", "href": "/legal" },
+          { "label": "Privacy", "href": "/privacy" },
           { "label": "Terms of service", "href": "/terms" },
           { "label": "Cookies", "href": "/cookies" },
           { "label": "Security", "href": "/security" }

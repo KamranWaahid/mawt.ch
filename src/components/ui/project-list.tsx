@@ -46,7 +46,7 @@ export function ProjectList({ projects, lang }: ProjectListProps) {
             transition={{ duration: 0.5, delay: index * 0.03 }}
           >
             <Link 
-              href={`/${lang}/projects/${project.slug}`}
+              href={`/${lang}/${lang === "fr" ? "projets" : "projects"}/${project.slug}`}
               className="flex flex-col gap-2 md:grid md:grid-cols-12 md:gap-4 py-6 md:py-8 border-b border-black/5 group hover:bg-black/[0.02] transition-colors items-start md:items-center"
             >
               <div className="col-span-3 text-base md:text-[14px] font-normal text-black group-hover:pl-2 transition-all duration-300">

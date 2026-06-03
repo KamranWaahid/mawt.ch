@@ -3,6 +3,7 @@ import { LegalContent } from "@/components/ui/legal-content";
 import type { Locale } from "@/i18n-config";
 import { getPageContent } from "@/lib/sanity.queries";
 import { portableTextToSections } from "@/lib/portable-text-to-sections";
+import { standaloneAlternates } from "@/lib/routing/url-helpers";
 import type { Metadata } from "next";
 
 const PAGE_KEY = "cookies";
@@ -15,6 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: Loc
     description:
       page?.seo?.metaDescription ||
       "Information regarding cookie transparency, tracking tools, and user consent management for MAWT Solutions.",
+    alternates: standaloneAlternates("cookies", lang),
   };
 }
 

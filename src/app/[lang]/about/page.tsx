@@ -1,12 +1,21 @@
 import { SubpageHero } from "@/components/sections/subpage-hero";
 import { SectionReveal } from "@/components/ui/section-reveal";
 import Image from "next/image";
+import { standaloneAlternates } from "@/lib/routing/url-helpers";
+import type { Locale } from "@/i18n-config";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "About Us | MAWT",
-  description: "We Build Digital Experiences That Move Businesses Forward",
-};
+export async function generateMetadata({ params }: { params: Promise<{ lang: Locale }> }): Promise<Metadata> {
+  const { lang } = await params;
+  return {
+    title: lang === "fr" ? "À propos | MAWT" : "About Us | MAWT",
+    description:
+      lang === "fr"
+        ? "Nous concevons des expériences digitales qui font avancer les entreprises."
+        : "We Build Digital Experiences That Move Businesses Forward",
+    alternates: standaloneAlternates("a-propos", lang),
+  };
+}
 
 export default function AboutPage() {
   return (

@@ -149,14 +149,14 @@
         "links": [
           { "label": "À propos", "href": "/about" },
           { "label": "Contact", "href": "/contact" },
-          { "label": "Clients & partenaires", "href": "/clients" }
+          { "label": "Clients & partenaires", "href": "/partners" }
         ]
       },
       {
         "title": "Services",
         "links": [
           { "label": "Tous nos services", "href": "/services" },
-          { "label": "Notre méthode", "href": "/notre-methode" },
+          { "label": "Notre méthode", "href": "/our-process" },
           { "label": "Projets", "href": "/projects" }
         ]
       },
@@ -170,10 +170,10 @@
       {
         "title": "Légal",
         "links": [
-          { "label": "Confidentialité", "href": "/legal" },
+          { "label": "Confidentialité", "href": "/privacy" },
           { "label": "Conditions d'utilisation", "href": "/terms" },
           { "label": "Cookies", "href": "/cookies" },
-          { "label": "Sécurité", "href": "/securite" }
+          { "label": "Sécurité", "href": "/security" }
         ]
       }
     ],

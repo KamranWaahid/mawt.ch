@@ -3,6 +3,7 @@ import { FlatGrid } from "@/components/ui/flat-grid";
 import { PartnerLogoWall } from "@/components/ui/partner-logo-wall";
 import { getDictionary } from "@/get-dictionary";
 import { getPartners } from "@/lib/sanity.queries";
+import { standaloneAlternates } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/i18n-config";
 import type { Metadata } from "next";
 
@@ -10,9 +11,10 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: str
   const { lang } = await params;
   return {
     title: lang === "en" ? "Partners | MAWT Network" : "Partenaires | Réseau MAWT",
-    description: lang === "en" 
+    description: lang === "en"
       ? "Our ecosystem of technical and strategic partners."
       : "Notre écosystème de partenaires techniques et stratégiques.",
+    alternates: standaloneAlternates("clients", lang as Locale),
   };
 }
 

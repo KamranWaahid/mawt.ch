@@ -8,7 +8,7 @@ import Image from "next/image";
 import { urlForImage } from "@/lib/sanity.image";
 import { ArrowRight, Check } from "lucide-react";
 import * as Icons from "lucide-react";
-import { getFamilyTitle, familySlugForLang, canonicalizeFamilySlug } from "@/lib/routing/url-helpers";
+import { getFamilyTitle, familySlugForLang, canonicalizeFamilySlug, hreflangAlternates } from "@/lib/routing/url-helpers";
 import { PILLAR_COPY, type FamilyKey } from "@/content/services-pillar-copy";
 import type { Locale } from "@/lib/routing/url-map";
 import { groq } from "next-sanity";
@@ -87,6 +87,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: copy.metaTitle,
     description: dynamicMetaDescription,
+    alternates: hreflangAlternates(`/${lang}/services/${family}`, lang as Locale),
   };
 }
 
@@ -295,7 +296,7 @@ export default async function FamilyPillarPage({ params }: Props) {
                   </div>
                   <div className="px-8 pb-8 pt-4">
                     <Link
-                      href={`/${lang}/projects/${project.slug}`}
+                      href={`/${lang}/${lang === "fr" ? "projets" : "projects"}/${project.slug}`}
                       className="inline-flex items-center gap-2 text-sm font-normal text-black border-b border-black pb-1 hover:opacity-60 transition-opacity"
                     >
                       {labels.viewCaseStudy} <ArrowRight size={14} />

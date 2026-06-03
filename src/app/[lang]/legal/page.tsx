@@ -3,6 +3,7 @@ import { LegalContent } from "@/components/ui/legal-content";
 import type { Locale } from "@/i18n-config";
 import { getPageContent } from "@/lib/sanity.queries";
 import { portableTextToSections } from "@/lib/portable-text-to-sections";
+import { standaloneAlternates } from "@/lib/routing/url-helpers";
 import type { Metadata } from "next";
 
 const PAGE_KEY = "privacy";
@@ -11,10 +12,11 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: Loc
   const { lang } = await params;
   const page = await getPageContent(PAGE_KEY, lang);
   return {
-    title: page?.seo?.metaTitle || "Privacy Policy | MAWT Solutions",
+    title: page?.seo?.metaTitle || (lang === "fr" ? "Politique de confidentialité | MAWT Solutions" : "Privacy Policy | MAWT Solutions"),
     description:
       page?.seo?.metaDescription ||
       "Swiss nFADP and GDPR compliant privacy policy detailing how MAWT Solutions collects, uses, and protects data.",
+    alternates: standaloneAlternates("confidentialite", lang),
   };
 }
 

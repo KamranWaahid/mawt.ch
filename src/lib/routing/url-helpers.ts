@@ -1,15 +1,24 @@
 import { URL_MAP, type Locale, type RouteMapping } from "./url-map";
 
-/** FR-canonical segment → on-disk `src/app/[lang]/` folder name (interim until brief 09). */
-const FILESYSTEM_BY_FR_CANONICAL: Record<string, { fr: string; en: string }> = {
-  projets: { fr: "projects", en: "projects" },
-  "a-propos": { fr: "about", en: "about" },
-  clients: { fr: "clients", en: "partners" },
-  "notre-methode": { fr: "notre-methode", en: "our-process" },
-  securite: { fr: "securite", en: "security" },
-  "mentions-legales": { fr: "legal", en: "legal" },
-  confidentialite: { fr: "legal", en: "legal" },
-  "conditions-utilisation": { fr: "terms", en: "terms" },
+export const SITE_URL = "https://mawt.ch";
+
+/**
+ * FR-canonical standalone segment → on-disk `src/app/[lang]/` folder name.
+ * The folder is language-neutral (one folder serves both locales via `params.lang`).
+ * Only routes whose public slug differs from the folder need an entry here.
+ * Services and dynamic `[slug]` detail routes are intentionally absent: they use
+ * real localized slugs (Sanity) and must never be rewritten.
+ */
+const FOLDER_BY_FR_CANONICAL: Record<string, string> = {
+  projets: "projects",
+  "a-propos": "about",
+  clients: "partners",
+  "notre-methode": "our-process",
+  securite: "security",
+  confidentialite: "legal",
+  "mentions-legales": "legal-notice",
+  "conditions-generales": "terms",
+  // blog, contact, faqs, cookies, services → folder === fr-canonical slug.
 };
 
 function getServicesBranch(): RouteMapping | undefined {
@@ -37,7 +46,9 @@ export function translateSegments(
 }
 
 /**
- * Given a path in one language, return the equivalent path in the other language.
+ * Given a public path in one language, return the equivalent public path in the
+ * other language. Unmapped segments (e.g. Sanity `[slug]` detail pages) pass through
+ * unchanged — callers that need true per-document slugs should resolve those upstream.
  * Example: translatePath('/fr/services/solutions-ia/crm-intelligent', 'fr', 'en')
  *   → '/en/services/ai-solutions/smart-crm'
  */
@@ -53,21 +64,21 @@ export function translatePath(path: string, from: Locale, to: Locale): string {
 export function parseRoute(pathname: string): {
   locale: Locale;
   segments: string[];
-  canonical: string;
 } {
   const match = pathname.match(/^\/(fr|en)(\/.*)?$/);
   if (!match) {
-    return { locale: "fr", segments: [], canonical: "/fr" };
+    return { locale: "fr", segments: [] };
   }
   const locale = match[1] as Locale;
   const rest = (match[2] || "").split("/").filter(Boolean);
-  return { locale, segments: rest, canonical: pathname };
+  return { locale, segments: rest };
 }
 
 /**
- * Generate a static link for a known route (canonical FR slug path), with locale awareness.
+ * Generate a public path for a known FR-canonical route key, localized.
  * e.g. localizedHref('services/solutions-ia/crm-intelligent', 'en')
  *   → '/en/services/ai-solutions/smart-crm'
+ *   localizedHref('a-propos', 'fr') → '/fr/a-propos'
  */
 export function localizedHref(canonicalRouteKey: string, locale: Locale): string {
   const segments = canonicalRouteKey.split("/").filter(Boolean);
@@ -75,66 +86,52 @@ export function localizedHref(canonicalRouteKey: string, locale: Locale): string
   return `/${locale}/${translated.join("/")}`;
 }
 
-/** Public URL segments → FR-canonical segments (B3 map). */
-export function segmentsToFrCanonical(
-  segments: string[],
-  locale: Locale,
-): string[] {
-  let level = URL_MAP;
-  const result: string[] = [];
-
-  for (let i = 0; i < segments.length; i++) {
-    const seg = segments[i];
-    const match = level.find((m) => m[locale] === seg);
-    if (!match) {
-      return [...result, ...segments.slice(i)];
-    }
-    result.push(match.fr);
-    level = match.children ?? [];
-  }
-
-  return result;
-}
-
-/** FR-canonical segments → on-disk app router folder names. */
-export function frCanonicalToFilesystem(
-  segments: string[],
-  locale: Locale,
-): string[] {
-  return segments.map((seg) => {
-    const asymmetric = FILESYSTEM_BY_FR_CANONICAL[seg];
-    if (asymmetric) return asymmetric[locale];
-    return seg;
-  });
-}
-
 /**
- * Resolve public B3 pathname to internal Next.js filesystem path (middleware rewrite).
- * e.g. /en/projects → /en/projects (filesystem), /fr/projets → /fr/projects (interim)
+ * Resolve a public (localized) pathname to the internal Next.js filesystem path.
+ * Used by `proxy.ts` to rewrite localized URLs onto their shared on-disk folder.
+ * Only top-level standalone routes are rewritten; services and `[slug]` detail
+ * routes pass through untouched.
+ * e.g. /fr/a-propos → /fr/about, /en/privacy → /en/legal, /fr/projets/x → /fr/projects/x
  */
 export function toFilesystemPathname(pathname: string): string {
   const { locale, segments } = parseRoute(pathname);
   if (segments.length === 0) return pathname;
 
-  const frCanonical = segmentsToFrCanonical(segments, locale);
-  const fsSegments = frCanonicalToFilesystem(frCanonical, locale);
-  const fsPath = `/${locale}/${fsSegments.join("/")}`;
+  const [head, ...rest] = segments;
+  const match = URL_MAP.find((m) => m[locale] === head);
+  if (!match || match.fr === "services") return pathname;
 
-  return fsPath === pathname ? pathname : fsPath;
+  const folder = FOLDER_BY_FR_CANONICAL[match.fr] ?? match.fr;
+  if (folder === head) return pathname;
+
+  return `/${locale}/${[folder, ...rest].join("/")}`;
 }
 
-export function isValidRoute(segments: string[], locale: Locale): boolean {
-  if (segments.length === 0) return true;
+/**
+ * Build canonical + hreflang `alternates` for a page, given its own public path
+ * in the current language. Works for any route — standalone, services, or a fully
+ * resolved `[slug]` detail page — as long as `publicPath` is the correct localized URL.
+ */
+export function hreflangAlternates(publicPath: string, lang: Locale) {
+  const frPath = lang === "fr" ? publicPath : translatePath(publicPath, lang, "fr");
+  const enPath = lang === "en" ? publicPath : translatePath(publicPath, lang, "en");
+  return {
+    canonical: `${SITE_URL}${publicPath}`,
+    languages: {
+      fr: `${SITE_URL}${frPath}`,
+      en: `${SITE_URL}${enPath}`,
+      "x-default": `${SITE_URL}${enPath}`,
+    },
+  };
+}
 
-  let level: RouteMapping[] = URL_MAP;
-  for (const segment of segments) {
-    const match = level.find((m) => m[locale] === segment);
-    if (!match) {
-      return true;
-    }
-    level = match.children ?? [];
-  }
-  return true;
+/**
+ * Convenience wrapper for standalone pages: pass the FR-canonical key and current
+ * locale, get back canonical + hreflang alternates.
+ * e.g. standaloneAlternates('a-propos', 'fr')
+ */
+export function standaloneAlternates(canonicalRouteKey: string, lang: Locale) {
+  return hreflangAlternates(localizedHref(canonicalRouteKey, lang), lang);
 }
 
 /** Stable FR family key (e.g. solutions-ia) → localized URL segment. */
@@ -169,4 +166,3 @@ const FAMILY_TITLES: Record<string, { fr: string; en: string }> = {
 export function getFamilyTitle(family: string, lang: "fr" | "en"): string {
   return FAMILY_TITLES[family]?.[lang] ?? family;
 }
-

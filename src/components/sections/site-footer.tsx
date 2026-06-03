@@ -6,6 +6,8 @@ import { Globe, Layers } from "lucide-react";
 import { FaFacebookF, FaXTwitter, FaInstagram, FaLinkedinIn, FaGithub } from "react-icons/fa6";
 import Image from "next/image";
 import { NewsletterForm } from "@/components/ui/newsletter-form";
+import { translatePath } from "@/lib/routing/url-helpers";
+import type { Locale } from "@/lib/routing/url-map";
 import LogoBlack from "../../../public/MAWT Branding/MAWT Logo - Black.svg";
 
 const platformIcons: Record<string, any> = {
@@ -27,9 +29,19 @@ export function SiteFooter({
   const pathname = usePathname();
   const currentLang = (params?.lang as string) || "en";
 
+  // Footer hrefs are authored as EN-canonical paths (e.g. "/about"); localize them
+  // to the current locale's public URL (e.g. "/fr/a-propos").
+  const localizeHref = (href: string) => {
+    if (!href || href === "/") return `/${currentLang}`;
+    const normalized = href.startsWith("/") ? href : `/${href}`;
+    return translatePath(`/en${normalized}`, "en", currentLang as Locale);
+  };
+
   const toggleLanguage = () => {
     const nextLang = currentLang === "en" ? "fr" : "en";
-    const newPath = pathname?.replace(`/${currentLang}`, `/${nextLang}`) || `/${nextLang}`;
+    const newPath = pathname
+      ? translatePath(pathname, currentLang as Locale, nextLang as Locale)
+      : `/${nextLang}`;
     window.location.href = newPath;
   };
 
@@ -91,8 +103,8 @@ export function SiteFooter({
               <ul className="space-y-4">
                 {column.links.map((link: any) => (
                   <li key={link.label}>
-                    <Link 
-                      href={link.href} 
+                    <Link
+                      href={localizeHref(link.href)}
                       className="text-sm font-normal text-black/40 hover:text-black transition-colors"
                     >
                       {link.label}

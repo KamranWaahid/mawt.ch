@@ -1,6 +1,7 @@
 import { SubpageHero } from "@/components/sections/subpage-hero";
 import { BlogFilter } from "@/components/ui/blog-filter";
 import { getDictionary } from "@/get-dictionary";
+import { standaloneAlternates } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/i18n-config";
 import type { Metadata } from "next";
 
@@ -12,9 +13,10 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   const { lang } = await params;
   return {
     title: lang === "en" ? "Insights" : "Insights",
-    description: lang === "en" 
+    description: lang === "en"
       ? "Latest thoughts from the technical execution team."
       : "Dernières réflexions de l'équipe d'exécution technique.",
+    alternates: standaloneAlternates("blog", lang),
   };
 }
 

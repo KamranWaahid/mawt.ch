@@ -1,13 +1,19 @@
 import { SubpageHero } from "@/components/sections/subpage-hero";
 import { ComplianceMatrix } from "@/components/ui/compliance-matrix";
 import { FlatGrid } from "@/components/ui/flat-grid";
+import { standaloneAlternates } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/i18n-config";
 import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: Locale }> }): Promise<Metadata> {
+  const { lang } = await params;
   return {
-    title: "Security | MAWT Solutions",
-    description: "Security principles, compliance standards, and data protection infrastructure at MAWT Solutions.",
+    title: lang === "fr" ? "Sécurité | MAWT Solutions" : "Security | MAWT Solutions",
+    description:
+      lang === "fr"
+        ? "Principes de sécurité, normes de conformité et protection des données chez MAWT Solutions."
+        : "Security principles, compliance standards, and data protection infrastructure at MAWT Solutions.",
+    alternates: standaloneAlternates("securite", lang),
   };
 }
 

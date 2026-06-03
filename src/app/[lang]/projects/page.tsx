@@ -3,6 +3,7 @@ import type { Locale } from "@/i18n-config";
 import { ProjectList } from "@/components/ui/project-list";
 import { getAllProjects } from "@/lib/sanity.queries";
 import { SubpageHero } from "@/components/sections/subpage-hero";
+import { standaloneAlternates } from "@/lib/routing/url-helpers";
 import type { Metadata } from "next";
 
 interface ProjectsPageProps {
@@ -13,9 +14,10 @@ export async function generateMetadata({ params }: ProjectsPageProps): Promise<M
   const { lang } = await params;
   return {
     title: lang === "en" ? "Case Studies" : "Études de cas",
-    description: lang === "en" 
+    description: lang === "en"
       ? "Proven systems built for high-performance teams."
       : "Systèmes éprouvés conçus pour des équipes performantes.",
+    alternates: standaloneAlternates("projets", lang),
   };
 }
 

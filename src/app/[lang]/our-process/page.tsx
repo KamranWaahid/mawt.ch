@@ -1,9 +1,23 @@
 import { SubpageHero } from "@/components/sections/subpage-hero";
 import { getDictionary } from "@/get-dictionary";
+import { standaloneAlternates } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/i18n-config";
+import type { Metadata } from "next";
 
 interface ProcessPageProps {
   params: Promise<{ lang: Locale }>;
+}
+
+export async function generateMetadata({ params }: ProcessPageProps): Promise<Metadata> {
+  const { lang } = await params;
+  return {
+    title: lang === "fr" ? "Notre méthode | MAWT" : "Our Process | MAWT",
+    description:
+      lang === "fr"
+        ? "Notre méthode d'exécution technique, étape par étape, de l'audit au déploiement."
+        : "Our technical execution process, step by step, from audit to deployment.",
+    alternates: standaloneAlternates("notre-methode", lang),
+  };
 }
 
 export default async function OurProcessPage({ params }: ProcessPageProps) {

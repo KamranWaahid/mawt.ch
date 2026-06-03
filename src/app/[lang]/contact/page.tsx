@@ -6,15 +6,17 @@ import type { Locale } from "@/i18n-config";
 import { SectionReveal } from "@/components/ui/section-reveal";
 import { MapPin, Mail, Phone, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { standaloneAlternates } from "@/lib/routing/url-helpers";
 import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: Locale }> }): Promise<Metadata> {
   const { lang } = await params;
   return {
     title: lang === "en" ? "Contact | MAWT Solutions" : "Contact | MAWT Solutions",
-    description: lang === "en" 
+    description: lang === "en"
       ? "Get in touch with our technical execution teams in Zürich and London."
       : "Contactez nos équipes d'exécution technique à Zurich et à Londres.",
+    alternates: standaloneAlternates("contact", lang),
   };
 }
 

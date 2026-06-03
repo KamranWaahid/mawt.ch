@@ -3,6 +3,7 @@ import { LegalContent } from "@/components/ui/legal-content";
 import type { Locale } from "@/i18n-config";
 import { getPageContent } from "@/lib/sanity.queries";
 import { portableTextToSections } from "@/lib/portable-text-to-sections";
+import { standaloneAlternates } from "@/lib/routing/url-helpers";
 import type { Metadata } from "next";
 
 const PAGE_KEY = "terms";
@@ -11,10 +12,11 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: Loc
   const { lang } = await params;
   const page = await getPageContent(PAGE_KEY, lang);
   return {
-    title: page?.seo?.metaTitle || "Terms of Service | MAWT Solutions",
+    title: page?.seo?.metaTitle || (lang === "fr" ? "Conditions générales | MAWT Solutions" : "Terms of Service | MAWT Solutions"),
     description:
       page?.seo?.metaDescription ||
       "Operational policies, project guidelines, and service terms for working with MAWT Solutions under Swiss governing law.",
+    alternates: standaloneAlternates("conditions-generales", lang),
   };
 }
 

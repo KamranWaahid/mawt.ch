@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { i18n } from "./i18n-config";
+import { toFilesystemPathname } from "@/lib/routing/url-helpers";
 
 import { match as matchLocale } from "@formatjs/intl-localematcher";
 import Negotiator from "negotiator";
@@ -13,46 +14,46 @@ function getLocale(request: NextRequest): string | undefined {
   // @ts-ignore locales are readonly
   const locales: string[] = i18n.locales;
 
-  // Use negotiator and intl-localematcher to get best locale
-  let languages = new Negotiator({ headers: negotiatorHeaders }).languages(
-    locales
+  // Use negotiator + intl-localematcher to pick the best locale from Accept-Language.
+  const languages = new Negotiator({ headers: negotiatorHeaders }).languages(
+    locales,
   );
 
-  const locale = matchLocale(languages, locales, i18n.defaultLocale);
-
-  return locale;
+  return matchLocale(languages, locales, i18n.defaultLocale);
 }
 
-export function middleware(request: NextRequest) {
+// Next.js 16 renamed `middleware` to `proxy`. Same functionality.
+export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
-  // 1. Studio/Admin Normalization & Protection
-  // If someone visits /en/studio or /fr/studio, redirect them to root /studio
-  const isLocalizedStudio = i18n.locales.some(locale => pathname.startsWith(`/${locale}/studio`));
+  // 1. Studio/Admin normalization & protection.
+  // If someone visits /en/studio or /fr/studio, redirect them to root /studio.
+  const isLocalizedStudio = i18n.locales.some((locale) =>
+    pathname.startsWith(`/${locale}/studio`),
+  );
   if (isLocalizedStudio) {
-    const cleanPath = pathname.replace(/^\/(en|fr)/, '');
+    const cleanPath = pathname.replace(/^\/(en|fr)/, "");
     return NextResponse.redirect(new URL(cleanPath, request.url));
   }
 
-  const isStudio = pathname.startsWith("/studio") || pathname.startsWith("/admin");
+  const isStudio =
+    pathname.startsWith("/studio") || pathname.startsWith("/admin");
 
   if (isStudio) {
     const adminSecret = process.env.ADMIN_SECRET || "mawt-dev-key";
     const cookieSecret = request.cookies.get("admin-token")?.value;
 
-    // Allow access if token matches secret
     if (cookieSecret === adminSecret) {
       return NextResponse.next();
     }
 
-    // Otherwise redirect to login
     const locale = getLocale(request) || i18n.defaultLocale;
     if (!pathname.includes("/login")) {
       return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
     }
   }
 
-  // 2. Ignore Public Assets from Locale Redirection
+  // 2. Ignore public assets from locale redirection.
   const isPublicAsset = [
     "/App Icons/",
     "/HeroImages/",
@@ -60,6 +61,7 @@ export function middleware(request: NextRequest) {
     "/HeroImage.gif",
     "/HeroImage.png",
     "/MAWT Logo.svg",
+    "/MAWT Branding/",
     "/PlanetBackground.png",
     "/file.svg",
     "/globe.svg",
@@ -69,16 +71,16 @@ export function middleware(request: NextRequest) {
     "/logo-black.svg",
     "/logo-white.svg",
     "/favicon.svg",
-    "/favicon.ico"
+    "/favicon.ico",
   ].some((path) => pathname.startsWith(path));
 
   if (isPublicAsset) {
     return NextResponse.next();
   }
 
-  // 3. Locale Redirection (Exclude Studio)
+  // 3. Locale redirection (exclude studio).
   const pathnameIsMissingLocale = i18n.locales.every(
-    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
+    (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`,
   );
 
   if (pathnameIsMissingLocale && !isStudio) {
@@ -86,13 +88,30 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(
       new URL(
         `/${locale}${pathname.startsWith("/") ? "" : "/"}${pathname}`,
-        request.url
-      )
+        request.url,
+      ),
     );
   }
+
+  // 4. Localized URL → filesystem rewrite.
+  // Public URLs are fully localized (e.g. /fr/a-propos, /en/privacy); rewrite them
+  // onto the shared on-disk folder (/fr/about, /en/legal) without changing the URL.
+  if (!isStudio) {
+    const fsPathname = toFilesystemPathname(pathname);
+    if (fsPathname !== pathname) {
+      const url = request.nextUrl.clone();
+      url.pathname = fsPathname;
+      return NextResponse.rewrite(url);
+    }
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
-  // Matcher ignoring `/_next/` and `/api/`
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  // Matcher ignoring `/_next/`, `/api/`, and root metadata files (sitemap, robots,
+  // favicon) so they are not caught by the locale redirect/rewrite.
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+  ],
 };

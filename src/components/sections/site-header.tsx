@@ -9,7 +9,19 @@ import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
 import LogoBlack from "../../../public/MAWT Branding/MAWT Logo - Black.svg";
 import LogoWhite from "../../../public/MAWT Branding/MAWT Logo - White.svg";
-import { getFamilyTitle, familySlugForLang } from "@/lib/routing/url-helpers";
+import { getFamilyTitle, familySlugForLang, translatePath } from "@/lib/routing/url-helpers";
+import type { Locale } from "@/lib/routing/url-map";
+
+/**
+ * Localize a nav href (authored as an EN-canonical path like "/about") to the
+ * current locale's public URL. "/" maps to the locale root. Unknown segments
+ * pass through unchanged.
+ */
+function navHref(href: string, lang: Locale): string {
+  if (!href || href === "/") return `/${lang}`;
+  const normalized = href.startsWith("/") ? href : `/${href}`;
+  return translatePath(`/en${normalized}`, "en", lang);
+}
 
 type SiteHeaderProps = {
   title: string;
@@ -104,7 +116,9 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
 
   const handleLanguageChange = (lang: string) => {
     if (lang === currentLang) return;
-    const newPath = pathname.replace(`/${currentLang}`, `/${lang}`) || `/${lang}`;
+    // Translate the localized slug across languages (e.g. /fr/services/solutions-ia/crm-intelligent
+    // → /en/services/ai-solutions/smart-crm) instead of a naive prefix swap, which 404s.
+    const newPath = translatePath(pathname, currentLang as Locale, lang as Locale);
     window.location.href = newPath;
   };
 
@@ -150,8 +164,8 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 >
                   <Link
-                    href={`/${currentLang}${item.href === "/" ? "" : item.href}`}
-                    aria-current={pathname === `/${currentLang}${item.href === "/" ? "" : item.href}` ? "page" : undefined}
+                    href={navHref(item.href, currentLang as Locale)}
+                    aria-current={pathname === navHref(item.href, currentLang as Locale) ? "page" : undefined}
                     className={`group relative flex items-center gap-1.5 py-2 text-[15px] font-normal tracking-tight transition-colors duration-300 ${isLight ? "text-black" : "text-neutral-300 hover:text-white"
                       }`}
                   >
@@ -339,7 +353,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
                       </div>
                     ) : (
                       <Link
-                        href={`/${currentLang}${item.href === "/" ? "" : item.href}`}
+                        href={navHref(item.href, currentLang as Locale)}
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="text-4xl font-normal tracking-tighter text-black flex items-center justify-between group"
                       >

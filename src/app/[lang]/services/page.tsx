@@ -3,11 +3,24 @@ import { FlatGrid } from "@/components/ui/flat-grid";
 import { getDictionary } from "@/get-dictionary";
 import { getHomePageData } from "@/lib/sanity.queries";
 import type { Locale } from "@/i18n-config";
-import { getFamilyTitle, familySlugForLang } from "@/lib/routing/url-helpers";
+import { getFamilyTitle, familySlugForLang, standaloneAlternates } from "@/lib/routing/url-helpers";
 import Link from "next/link";
+import type { Metadata } from "next";
 
 interface ServicesPageProps {
   params: Promise<{ lang: Locale }>;
+}
+
+export async function generateMetadata({ params }: ServicesPageProps): Promise<Metadata> {
+  const { lang } = await params;
+  return {
+    title: "Services | MAWT",
+    description:
+      lang === "fr"
+        ? "Sites, solutions IA, conseil, renfort d'équipe et formation. L'exécution technique de bout en bout par MAWT."
+        : "Websites, AI solutions, consulting, team augmentation and training. End to end technical execution by MAWT.",
+    alternates: standaloneAlternates("services", lang),
+  };
 }
 
 export default async function ServicesPage({ params }: ServicesPageProps) {

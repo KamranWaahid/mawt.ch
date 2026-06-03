@@ -12,7 +12,24 @@ import { SiteHeader } from "@/components/sections/site-header";
 import { getHomePageData, getPartners } from "@/lib/sanity.queries";
 import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
-import { getFamilyTitle, familySlugForLang } from "@/lib/routing/url-helpers";
+import { getFamilyTitle, familySlugForLang, hreflangAlternates } from "@/lib/routing/url-helpers";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: Locale }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  return {
+    title: lang === "fr" ? "MAWT — Partenaire d'exécution technique" : "MAWT — Technical Execution Partner",
+    description:
+      lang === "fr"
+        ? "Partenaire suisse d'exécution technique : systèmes haute performance, solutions IA et expériences digitales."
+        : "Swiss-based technical execution partner for high-performance systems and digital experiences.",
+    alternates: hreflangAlternates(`/${lang}`, lang),
+  };
+}
 
 export default async function HomePage({
   params,

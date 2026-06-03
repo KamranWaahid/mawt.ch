@@ -106,6 +106,6 @@ export const URL_MAP: RouteMapping[] = [
   { fr: "securite", en: "security" },
   { fr: "mentions-legales", en: "legal-notice" },
   { fr: "confidentialite", en: "privacy" },
-  { fr: "conditions-utilisation", en: "terms" },
+  { fr: "conditions-generales", en: "terms" },
   { fr: "cookies", en: "cookies" },
 ];

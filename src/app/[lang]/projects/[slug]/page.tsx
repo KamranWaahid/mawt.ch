@@ -190,7 +190,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </p>
           <Link 
             href={`/${lang}/contact`}
-            className="inline-flex items-center gap-4 bg-black text-white px-10 py-5 rounded-full font-bold hover:bg-[#75DAB4] hover:text-black transition-colors shadow-lg"
+            className="inline-flex items-center gap-4 bg-black text-white px-10 py-5 rounded-full font-normal hover:bg-[#75DAB4] hover:text-black transition-colors"
           >
             Start a Conversation
             <ArrowRight size={20} />

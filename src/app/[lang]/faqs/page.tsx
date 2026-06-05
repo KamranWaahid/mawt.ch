@@ -2,7 +2,8 @@ import { SubpageHero } from "@/components/sections/subpage-hero";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { getFAQs } from "@/lib/sanity.queries";
 import { getDictionary } from "@/get-dictionary";
-import { standaloneAlternates } from "@/lib/routing/url-helpers";
+import { standaloneAlternates, localizedHref } from "@/lib/routing/url-helpers";
+import { JsonLd, faqPageLd, breadcrumbLd, SITE_URL } from "@/components/seo/structured-data";
 import type { Locale } from "@/i18n-config";
 import type { Metadata } from "next";
 
@@ -26,9 +27,21 @@ export default async function FAQsPage({ params }: FAQsPageProps) {
   const dict = await getDictionary(lang);
   const faqs = await getFAQs();
 
+  const faqLd = faqPageLd(
+    (faqs || []).map((f: { question: string; answer: string }) => ({
+      question: f.question,
+      answer: f.answer,
+    })),
+  );
+  const crumbLd = breadcrumbLd([
+    { name: "MAWT", url: `${SITE_URL}/${lang}` },
+    { name: "FAQ", url: `${SITE_URL}${localizedHref("faqs", lang)}` },
+  ]);
+
   return (
     <div className="bg-white min-h-screen">
-      <SubpageHero 
+      <JsonLd data={faqLd ? [crumbLd, faqLd] : [crumbLd]} />
+      <SubpageHero
         badge={dict.faq.badge}
         title={dict.faq.headline}
       />

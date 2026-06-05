@@ -46,7 +46,7 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
     <section className="relative overflow-hidden bg-bg-light py-12 md:py-20 h-screen max-h-[100vh] flex items-center justify-center border-t border-black/5">
       <div className="mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-20 flex items-center justify-center h-full">
         {/* Testimonial Card */}
-        <div className="relative w-full max-w-[420px] aspect-[3/4] md:max-w-[460px] md:aspect-[3/4] bg-neutral-900 rounded-none overflow-hidden flex flex-col justify-between p-8 md:p-10 text-white shadow-lg">
+        <div className="relative w-full max-w-[420px] aspect-[3/4] md:max-w-[460px] md:aspect-[3/4] bg-neutral-900 rounded-none overflow-hidden flex flex-col justify-between p-8 md:p-10 text-white">
           
           {/* Animated Background */}
           <div className="absolute inset-0 z-0">
@@ -87,7 +87,7 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
                     &quot;{activeItem.quote}&quot;
                   </p>
                   <div className="text-[13px] sm:text-sm font-normal text-white/90">
-                    <span className="font-semibold block">{activeItem.name}</span>
+                    <span className="font-normal block">{activeItem.name}</span>
                     {activeItem.role && <span className="opacity-75">{activeItem.role}</span>}
                   </div>
                 </motion.div>
@@ -102,7 +102,7 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
                   onClick={() => setActiveIndex(i)}
                   className={`relative w-12 h-12 md:w-14 md:h-14 rounded-none overflow-hidden border-2 transition-all duration-300 outline-none ${
                     activeIndex === i 
-                      ? "border-white scale-105 shadow-md z-20" 
+                      ? "border-white scale-105 z-20"
                       : "border-white/20 hover:border-white/50 hover:scale-102 opacity-70 hover:opacity-100 z-10"
                   }`}
                   aria-label={`Go to slide ${i + 1}`}

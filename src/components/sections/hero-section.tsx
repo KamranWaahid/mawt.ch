@@ -371,6 +371,16 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
                   {dict.description}
                 </p>
               </Reveal>
+              {dict.summary && (
+                <Reveal direction="up" delay={0.4}>
+                  {/* Bite-sized RAG summary (40-60 words): a dense, entity-rich
+                      intent statement placed right under the H1 for AI Overview
+                      extraction. Kept visually quiet to respect the flat hero. */}
+                  <p className="hero-copy mt-3 max-w-lg text-[12px] sm:text-[13px] font-normal leading-relaxed text-neutral-500">
+                    {dict.summary}
+                  </p>
+                </Reveal>
+              )}
             </div>
 
             <div className="hero-cta-group mt-5 md:mt-8 flex flex-row items-center gap-x-6 lg:gap-x-10">

@@ -33,7 +33,7 @@ export default function StudioPage() {
             </div>
 
             <div className="w-full space-y-6 text-left bg-black/20 p-8 rounded-2xl border border-white/5">
-               <h2 className="text-[11px] font-bold uppercase tracking-widest text-[#75DAB4]">Next Steps</h2>
+               <h2 className="text-[11px] font-normal uppercase tracking-widest text-[#75DAB4]">Next Steps</h2>
                <ul className="space-y-4">
                  <li className="flex items-start gap-3 text-xs text-neutral-300">
                    <div className="mt-1 h-1.5 w-1.5 rounded-full bg-[#75DAB4]" />

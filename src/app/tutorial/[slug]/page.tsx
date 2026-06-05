@@ -34,7 +34,7 @@ const components = {
     number: ({ children }: any) => <li className="text-neutral-600">{children}</li>,
   },
   marks: {
-    strong: ({ children }: any) => <strong className="font-semibold text-black">{children}</strong>,
+    strong: ({ children }: any) => <strong className="font-normal text-black">{children}</strong>,
     link: ({ children, value }: any) => (
       <a href={value?.href} target="_blank" rel="noopener noreferrer" className="text-brand-teal underline hover:text-black transition-colors">
         {children}
@@ -44,7 +44,7 @@ const components = {
   types: {
     code: ({ value }: any) => (
       <div className="relative group my-12">
-        <div className="absolute -top-3 left-4 px-2 py-1 bg-white border border-black/5 text-[10px] font-bold uppercase tracking-widest text-neutral-400 z-10">
+        <div className="absolute -top-3 left-4 px-2 py-1 bg-white border border-black/5 text-[10px] font-normal uppercase tracking-widest text-neutral-400 z-10">
            {value?.language || 'code'}
         </div>
         <div className="p-8 bg-neutral-900 text-neutral-100 font-mono text-[14px] leading-relaxed overflow-x-auto rounded-sm">
@@ -87,7 +87,7 @@ export default async function TutorialPostPage({
         </div>
       )}
       
-      <h1 className="text-4xl font-bold mb-4 tracking-tighter leading-tight">{post.title}</h1>
+      <h1 className="text-4xl font-normal mb-4 tracking-tighter leading-tight">{post.title}</h1>
       
       <div className="flex items-center gap-2 text-sm text-neutral-400 mb-12">
         <span>Published: {new Date(post.publishedAt).toLocaleDateString()}</span>

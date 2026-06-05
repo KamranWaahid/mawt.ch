@@ -40,7 +40,7 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
           <div className="flex flex-col gap-16">
             {/* Main Inquiries */}
             <SectionReveal className="flex flex-col gap-6">
-              <h3 className="text-[11px] font-bold text-neutral-400 uppercase tracking-[0.2em]">{dict.contact.inquiries}</h3>
+              <h3 className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]">{dict.contact.inquiries}</h3>
               <div className="flex flex-col gap-4">
                  {contact?.email && (
                    <a href={`mailto:${contact.email}`} className="text-2xl font-normal text-black hover:text-brand-teal transition-colors flex items-center gap-3">
@@ -59,13 +59,13 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
 
             {/* Offices */}
             <SectionReveal delay={0.1} className="flex flex-col gap-8">
-              <h3 className="text-[11px] font-bold text-neutral-400 uppercase tracking-[0.2em]">Our Presence</h3>
+              <h3 className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]">Our Presence</h3>
               <div className="flex flex-col gap-10">
                  {contact?.offices?.map((office, i) => (
                    <div key={i} className="flex flex-col gap-3 group">
                       <div className="flex items-center justify-between">
                          <span className="text-lg font-medium text-black">{office.city}</span>
-                         {office.isMain && <span className="text-[10px] font-bold uppercase tracking-widest text-brand-teal bg-brand-teal/5 px-2 py-0.5 rounded-full">HQ</span>}
+                         {office.isMain && <span className="text-[10px] font-normal uppercase tracking-widest text-brand-teal bg-brand-teal/5 px-2 py-0.5 rounded-full">HQ</span>}
                       </div>
                       <p className="text-neutral-500 font-normal leading-relaxed whitespace-pre-line">
                         {office.address}
@@ -87,7 +87,7 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
 
             {/* Social */}
             <SectionReveal delay={0.2} className="flex flex-col gap-6 pt-8 border-t border-black/5">
-              <h3 className="text-[11px] font-bold text-neutral-400 uppercase tracking-[0.2em]">{contact?.socialHeadline || dict.contact.social}</h3>
+              <h3 className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]">{contact?.socialHeadline || dict.contact.social}</h3>
               <div className="flex flex-wrap gap-x-8 gap-y-4">
                 {siteData?.settings?.socialLinks?.map((link, i) => (
                   <Link 

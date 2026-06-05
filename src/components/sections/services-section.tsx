@@ -9,7 +9,7 @@ export function ServicesSection({ services }: ServicesSectionProps) {
   return (
     <section id="services" className="px-6 py-20 md:px-12">
       <SectionReveal>
-        <h2 className="text-3xl font-semibold tracking-tight text-white md:text-5xl">
+        <h2 className="text-3xl font-normal tracking-tight text-white md:text-5xl">
           Services & Skills
         </h2>
       </SectionReveal>

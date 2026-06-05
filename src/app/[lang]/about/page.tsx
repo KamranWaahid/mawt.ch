@@ -1,7 +1,8 @@
 import { SubpageHero } from "@/components/sections/subpage-hero";
 import { SectionReveal } from "@/components/ui/section-reveal";
 import Image from "next/image";
-import { standaloneAlternates } from "@/lib/routing/url-helpers";
+import { standaloneAlternates, localizedHref } from "@/lib/routing/url-helpers";
+import { JsonLd, breadcrumbLd, ORG_ID, SITE_URL } from "@/components/seo/structured-data";
 import type { Locale } from "@/i18n-config";
 import type { Metadata } from "next";
 
@@ -17,10 +18,26 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: Loc
   };
 }
 
-export default function AboutPage() {
+export default async function AboutPage({ params }: { params: Promise<{ lang: Locale }> }) {
+  const { lang } = await params;
+  const aboutUrl = `${SITE_URL}${localizedHref("a-propos", lang)}`;
+  const aboutLd = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    url: aboutUrl,
+    inLanguage: lang === "fr" ? "fr-CH" : "en",
+    about: { "@id": ORG_ID },
+    mainEntity: { "@id": ORG_ID },
+  };
+  const crumbLd = breadcrumbLd([
+    { name: "MAWT", url: `${SITE_URL}/${lang}` },
+    { name: lang === "fr" ? "À propos" : "About", url: aboutUrl },
+  ]);
+
   return (
     <div className="bg-white min-h-screen font-sans text-black selection:bg-black selection:text-white">
-      <SubpageHero 
+      <JsonLd data={[crumbLd, aboutLd]} />
+      <SubpageHero
         badge="About MAWT"
         title="We Build Digital Experiences That Move Businesses Forward"
       />
@@ -193,7 +210,7 @@ export default function AboutPage() {
             { title: "Growth", text: "Continuous learning & improvement." }
           ].map((val, idx) => (
              <SectionReveal key={idx} delay={idx * 0.1}>
-               <div className="p-8 border border-black/5 h-full rounded-2xl hover:border-black/20 hover:shadow-sm transition-all duration-300 bg-white group">
+               <div className="p-8 border border-black/5 h-full rounded-2xl hover:border-black/20 transition-all duration-300 bg-white group">
                   <div className="w-8 h-8 rounded-full bg-black/5 group-hover:bg-black group-hover:text-white flex items-center justify-center transition-colors mb-6">
                     <span className="text-xs font-medium">{idx + 1}</span>
                   </div>

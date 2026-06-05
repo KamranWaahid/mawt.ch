@@ -71,7 +71,7 @@ export function StatusGrid({ items }: StatusGridProps) {
                    <h3 className="text-xl font-normal text-black tracking-tight">{item.service}</h3>
                 </div>
                 <div className="flex items-center gap-3 pl-7">
-                   <span className={cn("text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full", config.light, "text-black/60")}>
+                   <span className={cn("text-[10px] font-normal uppercase tracking-widest px-2 py-0.5 rounded-full", config.light, "text-black/60")}>
                       {config.text}
                    </span>
                 </div>

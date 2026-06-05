@@ -8,6 +8,8 @@ import { format } from "date-fns";
 import { urlForImage } from "@/lib/sanity.image";
 import Image from "next/image";
 import { SectionReveal } from "@/components/ui/section-reveal";
+import { JsonLd, articleLd, breadcrumbLd, SITE_URL } from "@/components/seo/structured-data";
+import type { Locale } from "@/i18n-config";
 import type { Metadata } from "next";
 
 export async function generateMetadata({ 
@@ -53,7 +55,9 @@ const components = {
     number: ({ children }: any) => <li className="text-neutral-600">{children}</li>,
   },
   marks: {
-    strong: ({ children }: any) => <strong className="font-semibold text-black">{children}</strong>,
+    strong: ({ children }: any) => <strong className="font-normal text-black">{children}</strong>,
+    em: ({ children }: any) => <em className="not-italic text-black">{children}</em>,
+    highlight: ({ children }: any) => <mark>{children}</mark>,
     link: ({ children, value }: any) => (
       <a href={value?.href} target="_blank" rel="noopener noreferrer" className="text-brand-teal underline hover:text-black transition-colors">
         {children}
@@ -63,7 +67,7 @@ const components = {
   types: {
     code: ({ value }: any) => (
       <div className="relative group my-12">
-        <div className="absolute -top-3 left-4 px-2 py-1 bg-white border border-black/5 text-[10px] font-bold uppercase tracking-widest text-neutral-400 z-10">
+        <div className="absolute -top-3 left-4 px-2 py-1 bg-white border border-black/5 text-[10px] font-normal uppercase tracking-widest text-neutral-400 z-10">
            {value?.language || 'code'}
         </div>
         <div className="p-8 bg-neutral-900 text-neutral-100 font-mono text-[14px] leading-relaxed overflow-x-auto rounded-sm">
@@ -86,8 +90,28 @@ export default async function BlogPostPage({
     notFound();
   }
 
+  const postUrl = `${SITE_URL}/${lang}/blog/${slug}`;
+  const postLd = articleLd({
+    url: postUrl,
+    headline: post.title,
+    description: post.excerpt,
+    image: post.mainImage
+      ? urlForImage(post.mainImage)?.width(1200).height(630).url() || undefined
+      : undefined,
+    datePublished: post.publishedAt,
+    dateModified: post.publishedAt,
+    authorName: post.author?.name,
+    lang: lang as Locale,
+  });
+  const crumbLd = breadcrumbLd([
+    { name: "MAWT", url: `${SITE_URL}/${lang}` },
+    { name: "Blog", url: `${SITE_URL}/${lang}/blog` },
+    { name: post.title, url: postUrl },
+  ]);
+
   return (
     <div className="bg-white min-h-screen">
+      <JsonLd data={[crumbLd, postLd]} />
       <div className="px-6 pt-32 sm:px-8 md:px-10 lg:px-12">
         <Link 
           href={`/${lang}/blog`}
@@ -103,7 +127,7 @@ export default async function BlogPostPage({
           <SectionReveal className="flex flex-col gap-6 mb-16">
             <div className="flex gap-2">
                {post.categories?.map((cat: string) => (
-                 <span key={cat} className="text-[12px] font-semibold text-brand-teal uppercase tracking-widest">{cat}</span>
+                 <span key={cat} className="text-[12px] font-normal text-brand-teal uppercase tracking-widest">{cat}</span>
                ))}
             </div>
             <h1 className="text-4xl font-normal tracking-tight text-black sm:text-5xl md:text-6xl leading-[1.1]">

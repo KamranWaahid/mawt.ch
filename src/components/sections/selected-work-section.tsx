@@ -14,7 +14,7 @@ export function SelectedWorkSection({ projects }: SelectedWorkSectionProps) {
     <section id="work" className="px-8 py-20 md:px-16 lg:px-24">
       <SectionReveal>
         <div className="mb-12 flex items-end justify-between gap-4">
-          <h2 className="text-3xl font-semibold tracking-tight text-white md:text-5xl">
+          <h2 className="text-3xl font-normal tracking-tight text-white md:text-5xl">
             Selected Work
           </h2>
           <p className="max-w-sm text-sm leading-relaxed text-neutral-400">

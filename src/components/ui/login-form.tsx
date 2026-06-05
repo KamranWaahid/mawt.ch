@@ -53,7 +53,7 @@ export function LoginForm({ dict, lang }: LoginFormProps) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white border border-black/5 p-12 shadow-2xl relative overflow-hidden"
+        className="bg-white border border-black/5 p-12 relative overflow-hidden"
       >
         {/* Decor */}
         <div className="absolute top-0 right-0 p-4 opacity-[0.03]">
@@ -73,7 +73,7 @@ export function LoginForm({ dict, lang }: LoginFormProps) {
 
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="space-y-2">
-              <label className="text-[11px] font-bold uppercase tracking-widest text-black/40">
+              <label className="text-[11px] font-normal uppercase tracking-widest text-black/40">
                 {dict.fieldLabel}
               </label>
               <input

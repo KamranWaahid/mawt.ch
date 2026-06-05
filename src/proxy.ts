@@ -22,6 +22,22 @@ function getLocale(request: NextRequest): string | undefined {
   return matchLocale(languages, locales, i18n.defaultLocale);
 }
 
+// Forward the active locale to Server Components via a request header so the
+// root layout (which has no `lang` route param) can set `<html lang>` correctly.
+const LOCALE_HEADER = "x-mawt-locale";
+
+function localeFromPathname(pathname: string): string | undefined {
+  return i18n.locales.find(
+    (locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`),
+  );
+}
+
+function withLocaleHeader(request: NextRequest, locale: string) {
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set(LOCALE_HEADER, locale);
+  return requestHeaders;
+}
+
 // Next.js 16 renamed `middleware` to `proxy`. Same functionality.
 export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -96,16 +112,20 @@ export function proxy(request: NextRequest) {
   // 4. Localized URL → filesystem rewrite.
   // Public URLs are fully localized (e.g. /fr/a-propos, /en/privacy); rewrite them
   // onto the shared on-disk folder (/fr/about, /en/legal) without changing the URL.
+  const activeLocale =
+    localeFromPathname(pathname) || getLocale(request) || i18n.defaultLocale;
+  const headers = withLocaleHeader(request, activeLocale);
+
   if (!isStudio) {
     const fsPathname = toFilesystemPathname(pathname);
     if (fsPathname !== pathname) {
       const url = request.nextUrl.clone();
       url.pathname = fsPathname;
-      return NextResponse.rewrite(url);
+      return NextResponse.rewrite(url, { request: { headers } });
     }
   }
 
-  return NextResponse.next();
+  return NextResponse.next({ request: { headers } });
 }
 
 export const config = {

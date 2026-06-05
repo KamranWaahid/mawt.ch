@@ -11,6 +11,7 @@ import { ArrowRight, Check } from "lucide-react";
 import * as Icons from "lucide-react";
 import { getFamilyTitle, familySlugForLang, canonicalizeFamilySlug, hreflangAlternates } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/lib/routing/url-map";
+import { areaServed } from "@/components/seo/structured-data";
 import { groq } from "next-sanity";
 import type { Metadata } from "next";
 
@@ -114,7 +115,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const components = {
   block: {
-    h1: ({ children }: any) => <h1 className="text-4xl font-normal tracking-tight text-black mt-16 mb-8">{children}</h1>,
+    // Render authored "h1" blocks as <h2>: the page already owns a single H1
+    // (the hero title), so body content must start at H2 to avoid a duplicate
+    // H1 and keep a strict H1 -> H2 -> H3 hierarchy for parsers.
+    h1: ({ children }: any) => <h2 className="text-3xl font-normal tracking-tight text-black mt-16 mb-8">{children}</h2>,
     h2: ({ children }: any) => <h2 className="text-3xl font-normal tracking-tight text-black mt-16 mb-8">{children}</h2>,
     h3: ({ children }: any) => <h3 className="text-2xl font-normal text-black mt-12 mb-6">{children}</h3>,
     h4: ({ children }: any) => <h4 className="text-xl font-normal text-black mt-10 mb-4">{children}</h4>,
@@ -134,7 +138,14 @@ const components = {
     number: ({ children }: any) => <li className="text-neutral-600">{children}</li>,
   },
   marks: {
-    strong: ({ children }: any) => <strong className="font-semibold text-black">{children}</strong>,
+    // Flat semantic emphasis: keeps the <strong> signal for RAG parsers but
+    // renders at font-weight 400 (CSS enforces it) with a darker ink for a
+    // purely tonal contrast, no visual bold.
+    strong: ({ children }: any) => <strong className="font-normal text-black">{children}</strong>,
+    em: ({ children }: any) => <em className="not-italic text-black">{children}</em>,
+    // "highlight" mark → <mark> for TL;DR / answer-style key phrases.
+    // The flat teal background comes from globals.css (no radius, no shadow).
+    highlight: ({ children }: any) => <mark>{children}</mark>,
     link: ({ children, value }: any) => (
       <a href={value?.href} target="_blank" rel="noopener noreferrer" className="text-[#75DAB4] underline hover:text-black transition-colors">
         {children}
@@ -186,7 +197,7 @@ export default async function ServiceDetailPage({ params }: Props) {
     url: canonical,
     inLanguage: lang === "fr" ? "fr-CH" : "en",
     provider: { "@type": "Organization", name: "MAWT", url: SITE_URL },
-    areaServed: { "@type": "Country", name: "Switzerland" },
+    areaServed: areaServed(lang as Locale),
   };
   const breadcrumbLd = {
     "@context": "https://schema.org",
@@ -315,7 +326,7 @@ export default async function ServiceDetailPage({ params }: Props) {
         <section className="bg-white px-6 pt-12 md:pt-16 sm:px-8 md:px-10 lg:px-12">
           <div className="max-w-[1440px] mx-auto">
             <SectionReveal className="max-w-3xl rounded-sm border-l-4 border-[#75DAB4] bg-neutral-50 p-6 md:p-8">
-              <span className="text-[11px] uppercase tracking-[0.2em] text-[#75DAB4] font-bold block mb-3">
+              <span className="text-[11px] uppercase tracking-[0.2em] text-[#75DAB4] font-normal block mb-3">
                 {lang === "fr" ? "En bref" : "In short"}
               </span>
               <p className="text-lg md:text-xl text-black/80 leading-relaxed">{svc.answerBox}</p>
@@ -336,9 +347,10 @@ export default async function ServiceDetailPage({ params }: Props) {
                 </div>
               )}
 
-              {/* Structured H2 sections */}
+              {/* Structured H2 sections — each is a self-contained topic, so
+                  <article> gives RAG parsers a clean extractable boundary. */}
               {svc.sections?.map((sec: any, i: number) => (
-                <div key={i}>
+                <article key={i}>
                   <h2 className="text-3xl font-normal tracking-tight text-black mt-4 mb-6">{sec.h2}</h2>
                   {sec.paragraphs?.map((p: string, j: number) => (
                     <p key={j} className="text-lg text-neutral-600 font-normal leading-relaxed mb-6">{p}</p>
@@ -350,7 +362,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                       ))}
                     </ul>
                   )}
-                </div>
+                </article>
               ))}
 
               {/* Comparison table */}
@@ -365,7 +377,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                         <thead>
                           <tr className="border-b border-black/10">
                             {table.columns.map((c: string, i: number) => (
-                              <th key={i} className="py-3 pr-6 text-[11px] uppercase tracking-[0.2em] text-neutral-400 font-bold">{c}</th>
+                              <th key={i} className="py-3 pr-6 text-[11px] uppercase tracking-[0.2em] text-neutral-400 font-normal">{c}</th>
                             ))}
                           </tr>
                         </thead>
@@ -402,7 +414,7 @@ export default async function ServiceDetailPage({ params }: Props) {
           <div className="lg:col-span-5 space-y-8">
             {svc.features && svc.features.length > 0 && (
               <SectionReveal delay={0.2} className="bg-neutral-50/50 p-8 sm:p-12 border border-black/5 rounded-sm">
-                <h2 className="text-[11px] font-bold text-neutral-400 uppercase tracking-[0.2em] mb-8">
+                <h2 className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em] mb-8">
                   {labels.featuresH2}
                 </h2>
                 <ul className="space-y-5">
@@ -422,7 +434,7 @@ export default async function ServiceDetailPage({ params }: Props) {
 
             {svc.deliverables && svc.deliverables.length > 0 && (
               <SectionReveal delay={0.3} className="bg-white p-8 sm:p-12 border border-black/5 rounded-sm">
-                <h2 className="text-[11px] font-bold text-neutral-400 uppercase tracking-[0.2em] mb-8">
+                <h2 className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em] mb-8">
                   {lang === "fr" ? "Ce que vous obtenez" : "What you get"}
                 </h2>
                 <ul className="space-y-5">
@@ -446,7 +458,7 @@ export default async function ServiceDetailPage({ params }: Props) {
         <section className="bg-white px-6 py-12 md:py-16 sm:px-8 md:px-10 lg:px-12 border-b border-black/5">
           <div className="max-w-[1440px] mx-auto">
             <SectionReveal className="rounded-sm bg-black text-white p-8 md:p-12">
-              <h2 className="text-[11px] uppercase tracking-[0.2em] text-[#75DAB4] mb-6 font-bold">
+              <h2 className="text-[11px] uppercase tracking-[0.2em] text-[#75DAB4] mb-6 font-normal">
                 {lang === "fr" ? "À retenir" : "Key takeaways"}
               </h2>
               <ul className="grid md:grid-cols-2 gap-x-12 gap-y-4">
@@ -467,7 +479,7 @@ export default async function ServiceDetailPage({ params }: Props) {
         <section id="projects" className="bg-neutral-50/30 px-6 py-20 md:py-32 sm:px-8 md:px-10 lg:px-12 border-b border-black/5">
           <div className="max-w-[1440px] mx-auto">
             <SectionReveal className="mb-16">
-              <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-[0.2em] mb-4 block">
+              <span className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em] mb-4 block">
                 Proof of Excellence
               </span>
               <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-black">
@@ -490,7 +502,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                       ) : null}
                     </div>
                     <div className="p-8 space-y-4">
-                      <span className="text-[11px] uppercase tracking-[0.2em] text-neutral-400 font-bold">
+                      <span className="text-[11px] uppercase tracking-[0.2em] text-neutral-400 font-normal">
                         {project.tags?.[0] || "Case Study"}
                       </span>
                       <h3 className="text-2xl font-normal tracking-tight text-black">
@@ -531,7 +543,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                 const ItemIcon = (Icons as any)[item.icon || "Layers"] || Icons.Layers;
                 const localizedFamily = familySlugForLang(item.family, lang as Locale);
                 return (
-                  <SectionReveal key={item._id} delay={i * 0.08} className="border border-black/5 hover:border-black/20 p-8 rounded-sm hover:shadow-sm transition-all duration-300 flex flex-col justify-between">
+                  <SectionReveal key={item._id} delay={i * 0.08} className="border border-black/5 hover:border-black/20 p-8 rounded-sm transition-all duration-300 flex flex-col justify-between">
                     <div className="space-y-6">
                       <div className="text-[#75DAB4]">
                         <ItemIcon size={28} strokeWidth={1.5} />

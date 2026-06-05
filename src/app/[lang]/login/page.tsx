@@ -42,7 +42,7 @@ export default async function LoginPage({ params }: LoginPageProps) {
       </div>
 
       {/* Security Footer */}
-      <div className="absolute bottom-8 left-0 w-full px-8 flex justify-between items-center text-[10px] text-black/20 font-bold uppercase tracking-[0.3em]">
+      <div className="absolute bottom-8 left-0 w-full px-8 flex justify-between items-center text-[10px] text-black/20 font-normal uppercase tracking-[0.3em]">
          <span>Node: MAWT-CH-01</span>
          <span>Security Level: Enterprise</span>
       </div>

@@ -41,6 +41,32 @@ body {
   overflow-x: hidden;
 }
 
+/*
+ * GEO — "Invisible semantics".
+ * LLM/RAG parsers rely on <strong>/<em>/<mark> to extract entities and
+ * summaries, but the MAWT design system is strictly ultra-flat: no bold
+ * weight, no italics, no shadow. These rules keep the semantic tags in the
+ * DOM while neutralising their visual weight so the design never changes.
+ */
+strong,
+b {
+  font-weight: 400;
+}
+
+em,
+i {
+  font-style: normal;
+}
+
+mark {
+  background-color: #75DAB4;
+  color: #0A1A14;
+  border-radius: 0;
+  padding: 0 0.15em;
+  box-shadow: none;
+  font-weight: 400;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

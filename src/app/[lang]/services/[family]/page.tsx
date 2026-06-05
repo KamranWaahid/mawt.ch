@@ -8,8 +8,9 @@ import Image from "next/image";
 import { urlForImage } from "@/lib/sanity.image";
 import { ArrowRight, Check } from "lucide-react";
 import * as Icons from "lucide-react";
-import { getFamilyTitle, familySlugForLang, canonicalizeFamilySlug, hreflangAlternates } from "@/lib/routing/url-helpers";
+import { getFamilyTitle, familySlugForLang, canonicalizeFamilySlug, hreflangAlternates, localizedHref } from "@/lib/routing/url-helpers";
 import { PILLAR_COPY, type FamilyKey } from "@/content/services-pillar-copy";
+import { JsonLd, breadcrumbLd, itemListLd, faqPageLd, SITE_URL } from "@/components/seo/structured-data";
 import type { Locale } from "@/lib/routing/url-map";
 import { groq } from "next-sanity";
 import type { Metadata } from "next";
@@ -153,8 +154,28 @@ export default async function FamilyPillarPage({ params }: Props) {
     viewCaseStudy: "View Case Study",
   };
 
+  const familyTitle = getFamilyTitle(canonicalFamily, lang as Locale);
+  const familyUrl = `${SITE_URL}/${lang}/services/${family}`;
+  const crumbLd = breadcrumbLd([
+    { name: "MAWT", url: `${SITE_URL}/${lang}` },
+    { name: labels.breadServices, url: `${SITE_URL}${localizedHref("services", lang as Locale)}` },
+    { name: familyTitle, url: familyUrl },
+  ]);
+  const serviceItemsLd = itemListLd(
+    familyTitle,
+    services.map((s: any) => ({
+      name: s.title,
+      url: `${SITE_URL}/${lang}/services/${familySlugForLang(s.family, lang as Locale)}/${s.slug}`,
+    })),
+    lang as Locale,
+  );
+  const faqLd = faqPageLd(
+    (faqs || []).map((f: any) => ({ question: f.question, answer: f.answer })),
+  );
+
   return (
     <div className="bg-white min-h-screen">
+      <JsonLd data={faqLd ? [crumbLd, serviceItemsLd, faqLd] : [crumbLd, serviceItemsLd]} />
       <Breadcrumb
         items={[
           { label: labels.breadServices, to: "services" },
@@ -230,7 +251,7 @@ export default async function FamilyPillarPage({ params }: Props) {
               const ItemIcon = (Icons as any)[item.icon || "Layers"] || Icons.Layers;
               const localizedFamily = familySlugForLang(item.family, lang as Locale);
               return (
-                <SectionReveal key={item._id} delay={i * 0.08} className="bg-white border border-black/5 hover:border-black/20 p-8 rounded-sm hover:shadow-sm transition-all duration-300 flex flex-col justify-between">
+                <SectionReveal key={item._id} delay={i * 0.08} className="bg-white border border-black/5 hover:border-black/20 p-8 rounded-sm transition-all duration-300 flex flex-col justify-between">
                   <div className="space-y-6">
                     <div className="text-[#75DAB4]">
                       <ItemIcon size={32} strokeWidth={1.5} />
@@ -260,7 +281,7 @@ export default async function FamilyPillarPage({ params }: Props) {
         <section className="bg-white px-6 py-20 md:py-32 sm:px-8 md:px-10 lg:px-12 border-b border-black/5">
           <div className="max-w-[1440px] mx-auto">
             <SectionReveal className="mb-16">
-              <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-[0.2em] mb-4 block">
+              <span className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em] mb-4 block">
                 Proof of Excellence
               </span>
               <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-black">
@@ -283,7 +304,7 @@ export default async function FamilyPillarPage({ params }: Props) {
                       ) : null}
                     </div>
                     <div className="p-8 space-y-4">
-                      <span className="text-[11px] uppercase tracking-[0.2em] text-neutral-400 font-bold">
+                      <span className="text-[11px] uppercase tracking-[0.2em] text-neutral-400 font-normal">
                         {project.tags?.[0] || "Case Study"}
                       </span>
                       <h3 className="text-2xl font-normal tracking-tight text-black">
@@ -318,7 +339,7 @@ export default async function FamilyPillarPage({ params }: Props) {
                 "{testimonial.quote}"
               </p>
               <div className="pt-6">
-                <p className="text-sm font-semibold tracking-wider text-[#75DAB4] uppercase">{testimonial.name}</p>
+                <p className="text-sm font-normal tracking-wider text-[#75DAB4] uppercase">{testimonial.name}</p>
                 {testimonial.role && <p className="text-xs text-neutral-400 font-normal mt-1">{testimonial.role}</p>}
               </div>
             </SectionReveal>

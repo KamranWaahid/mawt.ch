@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { headers } from "next/headers";
 import { LenisProvider } from "@/components/providers/lenis-provider";
+import { i18n } from "@/i18n-config";
 import "./globals.css";
 
 const inter = Inter({
@@ -33,28 +35,27 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Locale is forwarded by the proxy (no `lang` route param exists at the root).
+  // Falls back to the default locale for non-localized routes (studio, tutorial).
+  const headerStore = await headers();
+  const lang = headerStore.get("x-mawt-locale") || i18n.defaultLocale;
+
   return (
     <html
-      lang="en"
+      lang={lang}
       className={`${inter.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <body className="min-h-full bg-black text-white" suppressHydrationWarning>
         <LenisProvider>
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-50 focus:rounded-md focus:bg-white focus:px-3 focus:py-2 focus:text-black"
-          >
-            Skip to content
-          </a>
-          <div id="main-content" className="flex min-h-full flex-col">
-            {children}
-          </div>
+          {/* The single <main id="main-content"> lives in [lang]/layout.tsx,
+              which also owns the skip link, to avoid a duplicate landmark/id. */}
+          <div className="flex min-h-full flex-col">{children}</div>
         </LenisProvider>
       </body>
     </html>

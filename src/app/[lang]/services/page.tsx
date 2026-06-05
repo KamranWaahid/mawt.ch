@@ -3,7 +3,8 @@ import { FlatGrid } from "@/components/ui/flat-grid";
 import { getDictionary } from "@/get-dictionary";
 import { getHomePageData } from "@/lib/sanity.queries";
 import type { Locale } from "@/i18n-config";
-import { getFamilyTitle, familySlugForLang, standaloneAlternates } from "@/lib/routing/url-helpers";
+import { getFamilyTitle, familySlugForLang, standaloneAlternates, localizedHref } from "@/lib/routing/url-helpers";
+import { JsonLd, breadcrumbLd, itemListLd, SITE_URL } from "@/components/seo/structured-data";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -110,9 +111,26 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
     }));
   }
   
+  const catalogItems = (data.services || [])
+    .filter((s: any) => s?.family && s?.title && s?.slug)
+    .map((s: any) => ({
+      name: s.title,
+      url: `${SITE_URL}/${lang}/services/${familySlugForLang(s.family, lang)}/${s.slug}`,
+    }));
+  const crumbLd = breadcrumbLd([
+    { name: "MAWT", url: `${SITE_URL}/${lang}` },
+    { name: "Services", url: `${SITE_URL}${localizedHref("services", lang)}` },
+  ]);
+  const catalogLd = itemListLd(
+    lang === "fr" ? "Services MAWT" : "MAWT Services",
+    catalogItems,
+    lang,
+  );
+
   return (
     <div className="bg-white min-h-screen">
-      <SubpageHero 
+      <JsonLd data={catalogItems.length ? [crumbLd, catalogLd] : [crumbLd]} />
+      <SubpageHero
         badge={dict.services.badge}
         title={dict.services.headline}
       />

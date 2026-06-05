@@ -17,12 +17,12 @@ export default async function TutorialIndexPage() {
       <Link href="/" className="text-sm text-neutral-400 hover:text-black mb-8 block transition-colors">
         ← Back to MAWT Main Site
       </Link>
-      <h1 className="text-4xl font-bold mb-8 tracking-tighter">Tutorial Posts</h1>
+      <h1 className="text-4xl font-normal mb-8 tracking-tighter">Tutorial Posts</h1>
       <ul className="flex flex-col gap-y-6">
         {posts.map((post) => (
           <li className="group" key={post._id}>
             <Link href={`/tutorial/${post.slug.current}`}>
-              <h2 className="text-xl font-semibold group-hover:text-[#75DAB4] transition-colors">{post.title}</h2>
+              <h2 className="text-xl font-normal group-hover:text-[#75DAB4] transition-colors">{post.title}</h2>
               <p className="text-neutral-400 text-sm">{new Date(post.publishedAt).toLocaleDateString()}</p>
             </Link>
           </li>

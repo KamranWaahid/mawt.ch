@@ -50,7 +50,7 @@ export default async function ProjectsPage({ params }: ProjectsPageProps) {
       />
       <section className="px-6 sm:px-8 md:px-10 lg:px-12 max-w-[1440px] mx-auto pt-16">
         <div className="max-w-2xl mb-16 flex flex-col gap-4">
-           <h3 className="text-sm font-bold text-neutral-400 uppercase tracking-widest">Areas of Impact</h3>
+           <h3 className="text-sm font-normal text-neutral-400 uppercase tracking-widest">Areas of Impact</h3>
            <div className="flex flex-wrap gap-3">
               {["E-Commerce", "Real Estate", "Service Businesses", "Hospitality", "Brand Platforms", "Operational Automation"].map((area, i) => (
                  <span key={i} className="px-4 py-2 bg-neutral-100 text-neutral-600 rounded-full text-xs font-medium">{area}</span>

@@ -43,7 +43,7 @@ export default async function AdminPage({
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Stats Cards */}
-          <div className="bg-white border border-neutral-100 p-6 rounded-sm shadow-sm hover:shadow-md transition-shadow">
+          <div className="bg-white border border-neutral-100 p-6 rounded-sm hover:border-neutral-200 transition-colors">
             <div className="flex items-center justify-between mb-4">
               <MessageSquare size={18} className="text-neutral-400" />
               <span className="text-[10px] font-normal uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Active</span>
@@ -52,7 +52,7 @@ export default async function AdminPage({
             <h2 className="text-3xl font-normal tracking-tighter">{leadCount}</h2>
           </div>
 
-          <div className="bg-white border border-neutral-100 p-6 rounded-sm shadow-sm hover:shadow-md transition-shadow">
+          <div className="bg-white border border-neutral-100 p-6 rounded-sm hover:border-neutral-200 transition-colors">
             <div className="flex items-center justify-between mb-4">
               <Users size={18} className="text-neutral-400" />
               <span className="text-[10px] font-normal uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Growth</span>
@@ -61,7 +61,7 @@ export default async function AdminPage({
             <h2 className="text-3xl font-normal tracking-tighter">{subscriberCount}</h2>
           </div>
 
-          <div className="bg-white border border-neutral-100 p-6 rounded-sm shadow-sm hover:shadow-md transition-shadow">
+          <div className="bg-white border border-neutral-100 p-6 rounded-sm hover:border-neutral-200 transition-colors">
             <div className="flex items-center justify-between mb-4">
               <ShieldCheck size={18} className="text-neutral-400" />
             </div>
@@ -69,7 +69,7 @@ export default async function AdminPage({
             <h2 className="text-xl font-normal tracking-tight text-emerald-600">Hardened</h2>
           </div>
 
-          <div className="bg-white border border-neutral-100 p-6 rounded-sm shadow-sm hover:shadow-md transition-shadow">
+          <div className="bg-white border border-neutral-100 p-6 rounded-sm hover:border-neutral-200 transition-colors">
             <div className="flex items-center justify-between mb-4">
               <Activity size={18} className="text-neutral-400" />
             </div>

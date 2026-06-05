@@ -390,7 +390,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
                 {/* Social Media Links */}
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] uppercase tracking-[0.2em] text-neutral-400 font-bold">Follow @mawt.ch</span>
+                    <span className="text-[11px] uppercase tracking-[0.2em] text-neutral-400 font-normal">Follow @mawt.ch</span>
                     <div className="h-px flex-1 bg-black/5 ml-4" />
                   </div>
                   <div className="flex gap-8 text-black">

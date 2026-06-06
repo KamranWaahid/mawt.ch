@@ -44,8 +44,16 @@ export default async function HomePage({
   params: Promise<{ lang: Locale }>;
 }) {
   const { lang } = await params;
-  // Inject <link rel="preload" as="image" fetchpriority="high"> for the hero LCP frame.
-  preload(HERO_FIRST_FRAME, { as: "image", fetchPriority: "high" });
+  // Preload the raw hero frame ONLY on desktop (>=1024px), where the animated
+  // <canvas> draws it. On mobile the hero is a Next-optimized <Image priority>
+  // (AVIF/WebP) which emits its own high-priority preload — so without the media
+  // scope this raw JPEG preload double-loads and competes with the real mobile
+  // LCP image, inflating mobile LCP.
+  preload(HERO_FIRST_FRAME, {
+    as: "image",
+    fetchPriority: "high",
+    media: "(min-width: 1024px)",
+  });
   const dictionary = await getDictionary(lang);
   const data = await getHomePageData(lang);
   const partners = await getPartners();

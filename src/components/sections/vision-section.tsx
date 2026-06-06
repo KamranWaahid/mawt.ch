@@ -27,11 +27,14 @@ export function VisionSection({ dict, services }: { dict: any; services?: any[] 
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
 
-          {/* Left Column: Statement + its divider line. Sticky at ALL
-              breakpoints: from the horizontal line down, this block pins while
-              the services column on the right keeps scrolling. `self-start`
-              stops the grid item stretching (required for sticky to engage). */}
-          <div className="lg:col-span-5 sticky top-24 lg:top-32 self-start h-fit">
+          {/* Left Column: Statement + its divider line. Sticky ONLY at lg+
+              (2-column layout): from the horizontal line down, this block pins
+              while the services column on the right keeps scrolling. On mobile/
+              tablet the grid is a single column (text above, services below), so
+              pinning would make the services overlap the text — there it stays
+              in normal flow. `self-start` stops the grid item stretching
+              (required for sticky to engage). */}
+          <div className="lg:col-span-5 lg:sticky lg:top-32 self-start h-fit">
             <SectionReveal delay={0.1}>
               {/* Horizontal Divider — now pinned together with the text */}
               <div className="mb-8 h-px w-full bg-black/10" />

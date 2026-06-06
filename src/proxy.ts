@@ -103,12 +103,12 @@ export function proxy(request: NextRequest) {
 
   if (pathnameIsMissingLocale && !isStudio) {
     const locale = getLocale(request);
-    return NextResponse.redirect(
-      new URL(
-        `/${locale}${pathname.startsWith("/") ? "" : "/"}${pathname}`,
-        request.url,
-      ),
-    );
+    // For the root "/", redirect straight to "/<locale>" (no trailing slash).
+    // Building "/<locale>/" caused a second 308 hop ("/" -> "/en/" -> "/en"),
+    // a ~980ms redirect-chain penalty in Lighthouse. `pathname` always starts
+    // with "/", so other paths just get the locale prefix.
+    const target = pathname === "/" ? `/${locale}` : `/${locale}${pathname}`;
+    return NextResponse.redirect(new URL(target, request.url));
   }
 
   // 4. Localized URL → filesystem rewrite.

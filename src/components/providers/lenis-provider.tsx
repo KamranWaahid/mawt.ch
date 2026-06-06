@@ -1,44 +1,15 @@
 "use client";
 
-import { ReactLenis, useLenis } from "lenis/react";
+import { ReactLenis } from "lenis/react";
 import { usePathname } from "next/navigation";
-import { useEffect } from "react";
 
 type LenisProviderProps = {
   children: React.ReactNode;
 };
 
-// Reset scroll to the top on every route change. Lenis (root mode) keeps its own
-// scroll position across client navigations, so landing on a shorter page from
-// the bottom of a long one left the viewport pinned at the bottom (e.g. arriving
-// on a project page at its closing CTA). Force the top on each pathname change.
-function ScrollToTopOnNavigate() {
-  const pathname = usePathname();
-  const lenis = useLenis();
-
-  useEffect(() => {
-    // The homepage hero captures scroll through Lenis (it calls lenis.stop() at
-    // the top to drive its frame animation from wheel/touch input). Resetting
-    // scroll there overrides that stop() and the animation stops playing — so
-    // skip the home roots. Everywhere else, reset to top (the real bug: landing
-    // at the bottom of a shorter content page after navigating).
-    const isHome =
-      pathname === "/" || pathname === "/fr" || pathname === "/en";
-    if (isHome) return;
-
-    if (lenis) {
-      lenis.scrollTo(0, { immediate: true });
-    } else if (typeof window !== "undefined") {
-      window.scrollTo(0, 0);
-    }
-  }, [pathname, lenis]);
-
-  return null;
-}
-
 export function LenisProvider({ children }: LenisProviderProps) {
   const pathname = usePathname();
-
+  
   // Disable smooth scrolling in Sanity Studio as it breaks nested scrolling panels
   if (pathname?.startsWith("/studio")) {
     return <>{children}</>;
@@ -55,7 +26,6 @@ export function LenisProvider({ children }: LenisProviderProps) {
         lerp: 0.1,
       }}
     >
-      <ScrollToTopOnNavigate />
       {children}
     </ReactLenis>
   );

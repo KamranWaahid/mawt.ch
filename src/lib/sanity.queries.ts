@@ -23,7 +23,7 @@ const homeQuery = groq`
     values,
     locations
   },
-  "projects": *[_type == "project" && language == $lang] | order(year desc){
+  "projects": *[_type == "project" && language == $lang && !(hidden == true)] | order(year desc){
     _id,
     title,
     "slug": slug.current,
@@ -185,7 +185,7 @@ export async function getHomePageData(lang: string = "en"): Promise<HomePageData
 }
 
 export const allProjectsQuery = groq`
-*[_type == "project"] | order(year desc){
+*[_type == "project" && language == $lang && !(hidden == true)] | order(year desc){
   _id,
   title,
   "slug": slug.current,
@@ -195,10 +195,10 @@ export const allProjectsQuery = groq`
 }
 `;
 
-export async function getAllProjects(): Promise<Partial<Project>[]> {
+export async function getAllProjects(lang: string): Promise<Partial<Project>[]> {
   const sanityClient = getSanityClient();
   if (!sanityClient) return [];
-  return sanityClient.fetch(allProjectsQuery, {}, {
+  return sanityClient.fetch(allProjectsQuery, { lang }, {
     next: { tags: ["project"] }
   });
 }
@@ -330,7 +330,7 @@ export async function getDictionaryFromSanity(lang: string) {
 
 // Relational Discovery Queries
 export const relatedProjectsQuery = groq`
-  *[_type == "project" && slug.current != $currentSlug && count(tags[@ in $tags]) > 0] | order(year desc)[0...3]{
+  *[_type == "project" && slug.current != $currentSlug && !(hidden == true) && count(tags[@ in $tags]) > 0] | order(year desc)[0...3]{
     _id,
     title,
     "slug": slug.current,

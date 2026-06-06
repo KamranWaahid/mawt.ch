@@ -89,7 +89,12 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
             <SectionReveal delay={0.2} className="flex flex-col gap-6 pt-8 border-t border-black/5">
               <h3 className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]">{contact?.socialHeadline || dict.contact.social}</h3>
               <div className="flex flex-wrap gap-x-8 gap-y-4">
-                {siteData?.settings?.socialLinks?.map((link, i) => (
+                {siteData?.settings?.socialLinks
+                  ?.filter((link) => {
+                    const p = (link.platform || "").toLowerCase();
+                    return p !== "twitter" && p !== "x" && p !== "github";
+                  })
+                  .map((link, i) => (
                   <Link 
                     key={i} 
                     href={link.url} 

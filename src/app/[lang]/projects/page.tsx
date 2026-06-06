@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: ProjectsPageProps): Promise<M
 export default async function ProjectsPage({ params }: ProjectsPageProps) {
   const { lang } = await params;
   const dict = await getDictionary(lang);
-  const fetchedProjects = await getAllProjects();
+  const fetchedProjects = await getAllProjects(lang);
 
   const defaultProjects = [
     { _id: "1", title: "Redstart Ventures", workType: "Website design and development", industry: "Deep tech VC fund", year: 2025, slug: "redstart-ventures" },

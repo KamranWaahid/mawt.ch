@@ -37,7 +37,7 @@ const familyPillarPageQuery = groq`
     description,
     icon
   },
-  "projects": *[_type == "project" && language == $lang && (family == $family || secondaryFamily == $family)] | order(year desc)[0..2]{
+  "projects": *[_type == "project" && language == $lang && !(hidden == true) && (family == $family || secondaryFamily == $family)] | order(year desc)[0..2]{
     _id,
     title,
     "slug": slug.current,

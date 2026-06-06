@@ -63,6 +63,14 @@ export const projectType = defineType({
       initialValue: false,
     }),
     defineField({
+      name: "hidden",
+      title: "Hidden (exclude from site)",
+      description:
+        "When on, this project is excluded from all listings, the homepage and related-project sections. Toggle off to show it again.",
+      type: "boolean",
+      initialValue: false,
+    }),
+    defineField({
       name: "family",
       title: "Primary family",
       type: "string",

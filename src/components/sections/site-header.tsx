@@ -88,6 +88,9 @@ const platformIcons: Record<string, any> = {
 export function SiteHeader({ title, theme: themeProp, socialLinks, services, mainNav }: SiteHeaderProps) {
   const pathname = usePathname();
   const currentLang = pathname.startsWith("/fr") ? "fr" : "en";
+  // Hide the FR/EN switch on the contact page only (requested). The global
+  // switcher stays everywhere else so language switching still works site-wide.
+  const isContactPage = pathname.endsWith("/contact");
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
@@ -211,7 +214,8 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
             ))}
           </div>
 
-          <div 
+          {!isContactPage && (
+          <div
             className={`hidden items-center gap-4 border-l transition-colors duration-300 pl-6 md:flex ${isLight ? "border-black/10" : "border-white/10"
             }`}
             onMouseEnter={() => setActiveDropdown(null)}
@@ -239,6 +243,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
               EN
             </motion.button>
           </div>
+          )}
 
           <button
             className="flex items-center justify-center p-3 md:hidden z-50"
@@ -393,7 +398,8 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
                 transition={{ delay: 0.6, duration: 0.5 }}
                 className="space-y-12"
               >
-                {/* Language Switcher */}
+                {/* Language Switcher (hidden on the contact page) */}
+                {!isContactPage && (
                 <div className="flex items-center gap-8 border-t border-black/10 pt-12">
                   <button
                     onClick={() => handleLanguageChange("fr")}
@@ -408,6 +414,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
                     EN
                   </button>
                 </div>
+                )}
 
                 {/* Social Media Links */}
                 <div className="space-y-6">

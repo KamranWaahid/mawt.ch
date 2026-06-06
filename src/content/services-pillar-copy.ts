@@ -62,7 +62,7 @@ export const PILLAR_COPY: Record<FamilyKey, { fr: PillarLangCopy; en: PillarLang
       ctaPrimary: "Get in touch",
       ctaSecondary: "See our work",
       ctaPrimaryHref: "contact",
-      ctaSecondaryHref: "projets",
+      ctaSecondaryHref: "projects",
       introParagraphs: [
         "Your current site no longer represents you. Slow, dated, hard to update. It's not bringing in the right clients, and you can feel it every month.",
         "Rebuilding a site isn't just a visual exercise. It's a chance to reset your image, your value proposition, your customer paths. Plenty of agencies ship pretty. Few ship effective.",
@@ -114,7 +114,7 @@ export const PILLAR_COPY: Record<FamilyKey, { fr: PillarLangCopy; en: PillarLang
       ctaPrimary: "Get in touch",
       ctaSecondary: "Case studies",
       ctaPrimaryHref: "contact",
-      ctaSecondaryHref: "projets",
+      ctaSecondaryHref: "projects",
       introParagraphs: [
         "Off-the-shelf AI tools hit a wall fast. ChatGPT answers isolated questions but doesn't know your clients, your processes, your data. You want more than that : an AI system that actually serves your business.",
         "Real enterprise AI doesn't live in a separate tab. It embeds into your existing tools. CRMs, business apps, workflows. It understands your context. It frees your team from no-value work.",
@@ -166,7 +166,7 @@ export const PILLAR_COPY: Record<FamilyKey, { fr: PillarLangCopy; en: PillarLang
       ctaPrimary: "Get in touch",
       ctaSecondary: "Transformation cases",
       ctaPrimaryHref: "contact",
-      ctaSecondaryHref: "projets",
+      ctaSecondaryHref: "projects",
       introParagraphs: [
         "Everyone talks AI. Nobody knows where to start. Your team hesitates, your processes are unclear, you fear the 300k project that delivers nothing.",
         "The real trap is jumping on the first pitch labelled AI without a diagnosis. Some sell chatbots to companies that need something else entirely. Others ship reports and never write a line of code. Neither approach actually solves your problem.",

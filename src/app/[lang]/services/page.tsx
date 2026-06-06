@@ -27,7 +27,10 @@ export async function generateMetadata({ params }: ServicesPageProps): Promise<M
 export default async function ServicesPage({ params }: ServicesPageProps) {
   const { lang } = await params;
   const dict = await getDictionary(lang);
-  const data = await getHomePageData();
+  // Pass `lang`: without it this defaulted to EN service docs, so on /fr the
+  // service links were built with English slugs (/fr/services/.../website)
+  // instead of the French ones (/site-internet) -> 404 across the FR catalog.
+  const data = await getHomePageData(lang);
 
   const defaultServicesList = [
     {

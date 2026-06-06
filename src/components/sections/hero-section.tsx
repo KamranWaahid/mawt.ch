@@ -2,6 +2,9 @@
 
 import gsap from "gsap";
 import Link from "next/link";
+// Aliased: the hero uses the browser-global `new Image()` for canvas frames,
+// so next/image must not shadow it.
+import NextImage from "next/image";
 import { useGSAP } from "@gsap/react";
 import type { ReactNode } from "react";
 import { useRef, useEffect, useState, useCallback } from "react";
@@ -157,6 +160,13 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
     `/HeroImages/ezgif-frame-${String(i).padStart(3, "0")}.jpg`;
 
   useEffect(() => {
+    // Option A: the animated 81-frame canvas runs on desktop ONLY. On mobile
+    // we render a single static <NextImage> (below) and never fetch the frames,
+    // which removes the dominant mobile LCP/bandwidth bottleneck.
+    if (typeof window !== "undefined" && !window.matchMedia("(min-width: 1024px)").matches) {
+      return;
+    }
+
     const images: HTMLImageElement[] = new Array(frameCount);
     imagesRef.current = images;
 
@@ -191,8 +201,11 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
     };
   }, [render]);
 
-  // Setup canvas and scroll listener
+  // Setup canvas and scroll listener — desktop only (see Option A above).
   useEffect(() => {
+    if (typeof window !== "undefined" && !window.matchMedia("(min-width: 1024px)").matches) {
+      return;
+    }
     const handleResize = () => {
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -360,9 +373,21 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
       <div className="relative h-full w-full overflow-hidden flex items-start pt-[100px] lg:pt-[140px] px-6 sm:px-8 md:px-10 lg:px-12">
         {/* Frame Sequence Canvas Background */}
         <div className="hero-visual-bg pointer-events-none absolute inset-0 z-0 h-full w-full">
-          <canvas 
+          {/* Mobile (<lg): one static, Next-optimized frame (AVIF/WebP). No canvas,
+              no 81-image fetch — this is the Option A LCP fix. */}
+          <NextImage
+            src="/HeroImages/ezgif-frame-001.jpg"
+            alt=""
+            aria-hidden="true"
+            fill
+            priority
+            sizes="100vw"
+            className="lg:hidden object-contain object-bottom"
+          />
+          {/* Desktop (lg+): animated frame sequence on canvas. */}
+          <canvas
             ref={canvasRef}
-            className="h-full w-full object-cover"
+            className="hidden lg:block h-full w-full object-cover"
           />
         </div>
 

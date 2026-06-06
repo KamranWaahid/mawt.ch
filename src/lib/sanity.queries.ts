@@ -114,7 +114,7 @@ const careersQuery = groq`
 `;
 
 const faqsQuery = groq`
-*[_type == "faq"] | order(order asc, _createdAt asc){
+*[_type == "faq" && language == $lang] | order(order asc, _createdAt asc){
   _id,
   question,
   answer,
@@ -217,19 +217,64 @@ export async function getCareers(): Promise<Career[]> {
   return sanityClient.fetch<Career[]>(careersQuery);
 }
 
-export async function getFAQs(): Promise<FAQ[]> {
+export async function getFAQs(lang: string = "en"): Promise<FAQ[]> {
   const sanityClient = getSanityClient();
-  const defaultFaqs: FAQ[] = [
-    { _id: "faq-1", question: "Do you only build websites?", answer: "No. MAWT works on broader digital systems including automation, integrations, branding, and operational platforms.", category: "General" },
-    { _id: "faq-2", question: "Do you work with small businesses?", answer: "Yes. We work with startups, small businesses, and growing companies as well as larger organizations.", category: "General" },
-    { _id: "faq-3", question: "Do you offer ongoing support?", answer: "Yes. We provide maintenance, optimization, and long-term technical support.", category: "Support" },
-    { _id: "faq-4", question: "Can you modernize existing systems?", answer: "Absolutely. Many of our projects involve redesigning or improving existing platforms and workflows.", category: "Services" },
-    { _id: "faq-5", question: "Do you provide custom solutions?", answer: "Yes. Every solution is tailored to the specific business and operational needs of the client.", category: "Services" }
-  ];
+  if (!sanityClient) return [];
+  // Language-scoped: never fall back to another language's FAQs (that surfaced
+  // English content on the French page). Empty → the page shows its own
+  // localized "no FAQs / coming soon" placeholder.
+  const data = await sanityClient.fetch<FAQ[]>(faqsQuery, { lang }, {
+    next: { tags: ["faq", `faq:${lang}`] },
+  });
+  return data ?? [];
+}
 
-  if (!sanityClient) return defaultFaqs;
-  const data = await sanityClient.fetch<FAQ[]>(faqsQuery);
-  return data?.length ? data : defaultFaqs;
+// ── CMS-driven standalone pages (about / security / method) ──────────────────
+const aboutContentPageQuery = groq`
+*[_type == "aboutContent" && language == $lang][0]{
+  heroH1, heroH2,
+  storyH2, storyP1, storyP2, storyP3,
+  teamH2, teamBody,
+  principles[]{ emoji, title, description },
+  trackRecordH2, trackRecordBody,
+  bottomCtaH2, bottomCtaBody,
+  locations[]{ city, description },
+  seo
+}`;
+
+const securityPageQuery = groq`
+*[_type == "securityPage" && language == $lang][0]{
+  heroH1, heroH2, intro,
+  sections[]{ title, body },
+  bottomCtaH2, bottomCtaBody, bottomCtaLabel,
+  seo
+}`;
+
+const methodPageQuery = groq`
+*[_type == "methodPage" && language == $lang][0]{
+  heroH1, heroH2, intro,
+  steps[]{ title, body },
+  differentiators,
+  bottomCtaH2, bottomCtaBody, bottomCtaLabel,
+  seo
+}`;
+
+export async function getAboutContent(lang: string): Promise<any | null> {
+  const c = getSanityClient();
+  if (!c) return null;
+  return c.fetch(aboutContentPageQuery, { lang }, { next: { tags: ["aboutContent", `aboutContent:${lang}`] } });
+}
+
+export async function getSecurityPage(lang: string): Promise<any | null> {
+  const c = getSanityClient();
+  if (!c) return null;
+  return c.fetch(securityPageQuery, { lang }, { next: { tags: ["securityPage", `securityPage:${lang}`] } });
+}
+
+export async function getMethodPage(lang: string): Promise<any | null> {
+  const c = getSanityClient();
+  if (!c) return null;
+  return c.fetch(methodPageQuery, { lang }, { next: { tags: ["methodPage", `methodPage:${lang}`] } });
 }
 
 export async function getPricingPlans(): Promise<PricingPlan[]> {

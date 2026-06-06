@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: FAQsPageProps): Promise<Metad
 export default async function FAQsPage({ params }: FAQsPageProps) {
   const { lang } = await params;
   const dict = await getDictionary(lang);
-  const faqs = await getFAQs();
+  const faqs = await getFAQs(lang);
 
   const faqLd = faqPageLd(
     (faqs || []).map((f: { question: string; answer: string }) => ({

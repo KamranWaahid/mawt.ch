@@ -61,6 +61,8 @@ export function middleware(request: NextRequest) {
     "/HeroImage.png",
     "/MAWT Logo.svg",
     "/PlanetBackground.png",
+    "/Service Background.png",
+    "/Service%20Background.png",
     "/file.svg",
     "/globe.svg",
     "/next.svg",

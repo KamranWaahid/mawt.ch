@@ -7,8 +7,8 @@ import { Globe, ChevronDown, Menu, X, ArrowRight } from "lucide-react";
 import { FaLinkedinIn, FaGithub, FaXTwitter } from "react-icons/fa6";
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
-import LogoBlack from "../../../public/MAWT Branding/MAWT Logo - Black.svg";
-import LogoWhite from "../../../public/MAWT Branding/MAWT Logo - White.svg";
+import LogoBlack from "../../../public/logo-black.svg";
+import LogoWhite from "../../../public/logo-white.svg";
 import { getFamilyTitle, familySlugForLang } from "@/lib/routing/url-helpers";
 
 type SiteHeaderProps = {

@@ -1,13 +1,11 @@
 import { getSanityClient } from "@/lib/sanity.client";
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { SectionReveal } from "@/components/ui/section-reveal";
+import { SubpageHero } from "@/components/sections/subpage-hero";
 import { PortableText } from "@portabletext/react";
 import Link from "next/link";
-import Image from "next/image";
-import { urlForImage } from "@/lib/sanity.image";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import * as Icons from "lucide-react";
 import { getFamilyTitle, familySlugForLang, canonicalizeFamilySlug } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/lib/routing/url-map";
@@ -57,9 +55,17 @@ const serviceDetailPageQuery = groq`
       year,
       tags
     },
+    relatedServices[]->{
+      _id,
+      title,
+      "slug": slug.current,
+      family,
+      description,
+      icon
+    },
     seo
   },
-  "relatedServices": *[_type == "service" && family == $family && slug.current != $serviceSlug && language == $lang && displayAsCard == true] | order(tier asc)[0..2]{
+  "siblingServices": *[_type == "service" && family == $family && slug.current != $serviceSlug && language == $lang && displayAsCard == true] | order(tier asc)[0..2]{
     _id,
     title,
     "slug": slug.current,
@@ -114,20 +120,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const components = {
   block: {
-    h1: ({ children }: any) => <h1 className="text-4xl font-normal tracking-tight text-black mt-16 mb-8">{children}</h1>,
-    h2: ({ children }: any) => <h2 className="text-3xl font-normal tracking-tight text-black mt-16 mb-8">{children}</h2>,
-    h3: ({ children }: any) => <h3 className="text-2xl font-normal text-black mt-12 mb-6">{children}</h3>,
-    h4: ({ children }: any) => <h4 className="text-xl font-normal text-black mt-10 mb-4">{children}</h4>,
-    normal: ({ children }: any) => <p className="text-lg text-neutral-600 font-normal leading-relaxed mb-6">{children}</p>,
+    h1: ({ children }: any) => <h1 className="text-2xl font-normal text-black mt-8 mb-4">{children}</h1>,
+    h2: ({ children }: any) => <h2 className="text-xl font-normal text-black mt-8 mb-4">{children}</h2>,
+    h3: ({ children }: any) => <h3 className="text-lg font-normal text-black mt-6 mb-3">{children}</h3>,
+    h4: ({ children }: any) => <h4 className="text-base font-normal text-black mt-4 mb-2">{children}</h4>,
+    normal: ({ children }: any) => <p className="text-base text-neutral-600 font-normal leading-relaxed mb-4">{children}</p>,
     blockquote: ({ children }: any) => (
-      <blockquote className="border-l-4 border-[#75DAB4] pl-8 py-2 italic text-neutral-500 my-12">
+      <blockquote className="border-l-2 border-[#75DAB4] pl-5 py-1 italic text-neutral-500 my-6">
         {children}
       </blockquote>
     ),
   },
   list: {
-    bullet: ({ children }: any) => <ul className="list-disc pl-6 mb-6 text-neutral-600 space-y-2 text-lg">{children}</ul>,
-    number: ({ children }: any) => <ol className="list-decimal pl-6 mb-6 text-neutral-600 space-y-2 text-lg">{children}</ol>,
+    bullet: ({ children }: any) => <ul className="list-disc pl-5 mb-4 text-neutral-600 space-y-1.5 text-base">{children}</ul>,
+    number: ({ children }: any) => <ol className="list-decimal pl-5 mb-4 text-neutral-600 space-y-1.5 text-base">{children}</ol>,
   },
   listItem: {
     bullet: ({ children }: any) => <li className="text-neutral-600">{children}</li>,
@@ -168,7 +174,11 @@ export default async function ServiceDetailPage({ params }: Props) {
     notFound();
   }
 
-  const related = data?.relatedServices || [];
+  // Use explicit references if present in Sanity; fallback to automatically filtered sibling services
+  const related = (svc.relatedServices && svc.relatedServices.length > 0)
+    ? svc.relatedServices
+    : (data?.siblingServices || []);
+
   // Prefer the service's own rich FAQ; fall back to tag matched FAQ docs.
   const faqItems = (svc.faq && svc.faq.length > 0 ? svc.faq : data?.faqs || []) as { question: string; answer: string }[];
   const table = svc.comparisonTable;
@@ -248,8 +258,14 @@ export default async function ServiceDetailPage({ params }: Props) {
     viewCaseStudy: "View Case Study",
   };
 
+  // Helper function to prevent double slash in link URLs
+  const cleanPath = (path: string) => {
+    if (!path) return "";
+    return path.startsWith("/") ? path.slice(1) : path;
+  };
+
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white min-h-screen text-black font-sans selection:bg-[#d7b687]/30">
       {/* JSON-LD — server rendered */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
@@ -257,94 +273,116 @@ export default async function ServiceDetailPage({ params }: Props) {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       )}
 
-      <Breadcrumb
-        items={[
-          { label: labels.breadServices, to: "services" },
-          { label: getFamilyTitle(canonicalFamily, lang as Locale), to: `services/${family}` },
-          { label: svc.title, to: null },
-        ]}
-        lang={lang as Locale}
-      />
+      {/* Header & Hero Background Container spanning to the top of the viewport */}
+      <div 
+        className="relative bg-white border-b border-black/5"
+        style={{
+          backgroundImage: "url('/Service%20Background.png')",
+          backgroundSize: "cover",
+          backgroundPosition: "top",
+          backgroundRepeat: "no-repeat"
+        }}
+      >
+        <div className="relative z-10">
+          <Breadcrumb
+            items={[
+              { label: labels.breadServices, to: "services" },
+              { label: getFamilyTitle(canonicalFamily, lang as Locale), to: `services/${family}` },
+              { label: svc.title, to: null },
+            ]}
+            lang={lang as Locale}
+          />
 
-      {/* Hero Section */}
-      <section className="bg-white px-6 pt-12 pb-16 md:pb-24 sm:px-8 md:px-10 lg:px-12 border-b border-black/5">
-        <div className="max-w-[1440px] mx-auto">
-          <SectionReveal className="space-y-8 max-w-4xl">
-            <div className="flex items-center gap-4 text-[#75DAB4]">
-              <IconComponent size={40} strokeWidth={1.5} />
-              <div className="h-px flex-1 bg-black/10" />
-            </div>
-            
-            <div>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal tracking-tighter text-black leading-[1.05] text-balance">
-                {svc.heroH1 || svc.title}
-              </h1>
-              {svc.h2SeoCapture && (
-                <h2 className="text-lg md:text-xl font-normal text-neutral-400 mt-4 max-w-2xl leading-relaxed">
-                  {svc.h2SeoCapture}
-                </h2>
-              )}
+          <SubpageHero
+            badge={getFamilyTitle(canonicalFamily, lang as Locale)}
+            title={svc.heroH1 || svc.title}
+            bgTransparent={true}
+          />
+        </div>
+      </div>
+
+      {/* Split Grid Content Block (Resume-style vertical stack in white) */}
+      <main className="max-w-[1440px] mx-auto px-6 sm:px-8 md:px-10 lg:px-12 py-8 md:py-16 divide-y divide-black/5">
+        
+        {/* Row 1: Overview */}
+        <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12 first:pt-0">
+          <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
+            {lang === "fr" ? "Aperçu" : "Overview"}
+          </div>
+          <div className="md:col-span-9 lg:col-span-8 space-y-8">
+            <div className="text-[#75DAB4] flex items-center gap-4">
+              <IconComponent size={32} strokeWidth={1} />
+              <div className="h-px flex-1 bg-black/5" />
             </div>
 
-            <p className="text-lg sm:text-xl text-neutral-500 font-normal leading-relaxed max-w-3xl">
-              {svc.heroH2 || svc.description}
-            </p>
+            {(svc.heroH2 || svc.description) && (
+              <p className="text-xl sm:text-2xl text-neutral-800 font-normal leading-relaxed text-balance">
+                {svc.heroH2 || svc.description}
+              </p>
+            )}
+
+            {svc.answerBox && (
+              <div className="border-l border-[#75DAB4] pl-4 py-1">
+                <p className="text-base sm:text-lg text-neutral-600 font-normal leading-relaxed italic">
+                  {svc.answerBox}
+                </p>
+              </div>
+            )}
 
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4">
               <Link
                 href={`/${lang}/contact`}
-                className="px-8 py-4 bg-[#75DAB4] hover:bg-black text-black hover:text-white transition-all duration-300 text-sm font-normal uppercase tracking-widest text-center rounded-sm"
+                className="px-6 py-3.5 bg-[#75DAB4] hover:bg-black text-black hover:text-white transition-all duration-300 text-xs font-normal uppercase tracking-widest text-center rounded-sm"
               >
                 {labels.ctaPrimary}
               </Link>
               {svc.featuredProjects && svc.featuredProjects.length > 0 && (
                 <a
                   href="#projects"
-                  className="px-8 py-4 border border-black/10 hover:border-black text-black transition-all duration-300 text-sm font-normal uppercase tracking-widest text-center rounded-sm"
+                  className="px-6 py-3.5 border border-black/10 hover:border-black text-black transition-all duration-300 text-xs font-normal uppercase tracking-widest text-center rounded-sm"
                 >
                   {labels.ctaSecondary}
                 </a>
               )}
             </div>
-          </SectionReveal>
-        </div>
-      </section>
-
-      {/* Answer box — direct definition, high on the page (GEO) */}
-      {svc.answerBox && (
-        <section className="bg-white px-6 pt-12 md:pt-16 sm:px-8 md:px-10 lg:px-12">
-          <div className="max-w-[1440px] mx-auto">
-            <SectionReveal className="max-w-3xl rounded-sm border-l-4 border-[#75DAB4] bg-neutral-50 p-6 md:p-8">
-              <span className="text-[11px] uppercase tracking-[0.2em] text-[#75DAB4] font-bold block mb-3">
-                {lang === "fr" ? "En bref" : "In short"}
-              </span>
-              <p className="text-lg md:text-xl text-black/80 leading-relaxed">{svc.answerBox}</p>
-            </SectionReveal>
           </div>
-        </section>
-      )}
+        </SectionReveal>
 
-      {/* Main Narrative & Capabilities Grid */}
-      <section className="bg-white px-6 py-20 md:py-32 sm:px-8 md:px-10 lg:px-12 border-b border-black/5">
-        <div className="max-w-[1440px] mx-auto grid lg:grid-cols-12 gap-16 lg:gap-24">
-          {/* Left Column: Narrative (Portable Text) + structured sections */}
-          <div className="lg:col-span-7">
-            <SectionReveal className="space-y-8">
+        {/* Row 2: Target Audience */}
+        {svc.whoFor && (
+          <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
+            <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
+              {lang === "fr" ? "Pour qui" : "Target"}
+            </div>
+            <div className="md:col-span-9 lg:col-span-8">
+              <p className="text-base text-neutral-600 leading-relaxed font-normal">
+                {svc.whoFor}
+              </p>
+            </div>
+          </SectionReveal>
+        )}
+
+        {/* Row 3: Narrative Details */}
+        {(svc.longDescription || (svc.sections && svc.sections.length > 0)) && (
+          <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
+            <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
+              {lang === "fr" ? "Détails" : "Details"}
+            </div>
+            <div className="md:col-span-9 lg:col-span-8 space-y-12">
               {svc.longDescription && (
-                <div className="prose prose-lg max-w-none text-neutral-800">
+                <div className="prose prose-neutral max-w-none text-neutral-800">
                   <PortableText value={svc.longDescription} components={components} />
                 </div>
               )}
 
-              {/* Structured H2 sections */}
               {svc.sections?.map((sec: any, i: number) => (
-                <div key={i}>
-                  <h2 className="text-3xl font-normal tracking-tight text-black mt-4 mb-6">{sec.h2}</h2>
+                <div key={i} className="space-y-4">
+                  <h3 className="text-lg font-normal text-black">{sec.h2}</h3>
                   {sec.paragraphs?.map((p: string, j: number) => (
-                    <p key={j} className="text-lg text-neutral-600 font-normal leading-relaxed mb-6">{p}</p>
+                    <p key={j} className="text-sm sm:text-base text-neutral-600 font-normal leading-relaxed">{p}</p>
                   ))}
                   {sec.bullets && sec.bullets.length > 0 && (
-                    <ul className="list-disc pl-6 mt-2 mb-2 text-neutral-600 space-y-2 text-lg">
+                    <ul className="list-disc pl-5 space-y-1.5 text-sm sm:text-base text-neutral-500">
                       {sec.bullets.map((b: string, j: number) => (
                         <li key={j}>{b}</li>
                       ))}
@@ -352,249 +390,222 @@ export default async function ServiceDetailPage({ params }: Props) {
                   )}
                 </div>
               ))}
+            </div>
+          </SectionReveal>
+        )}
 
-              {/* Comparison table */}
-              {hasTable && (
-                <div>
-                  {table.title && (
-                    <h2 className="text-3xl font-normal tracking-tight text-black mt-4 mb-6">{table.title}</h2>
-                  )}
-                  <div className="overflow-x-auto">
-                    <table className="w-full border-collapse text-left">
-                      {table.columns && table.columns.length > 0 && (
-                        <thead>
-                          <tr className="border-b border-black/10">
-                            {table.columns.map((c: string, i: number) => (
-                              <th key={i} className="py-3 pr-6 text-[11px] uppercase tracking-[0.2em] text-neutral-400 font-bold">{c}</th>
-                            ))}
-                          </tr>
-                        </thead>
-                      )}
-                      <tbody>
-                        {table.rows.map((row: any, i: number) => (
-                          <tr key={i} className="border-b border-black/5">
-                            {row.cells?.map((cell: string, j: number) => (
-                              <td key={j} className={`py-3 pr-6 text-base ${j === 0 ? "text-black font-medium" : "text-neutral-600"}`}>{cell}</td>
-                            ))}
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              )}
-
-              {/* Who it is for */}
-              {svc.whoFor && (
-                <div>
-                  <h2 className="text-3xl font-normal tracking-tight text-black mt-4 mb-6">{lang === "fr" ? "Pour qui" : "Who it is for"}</h2>
-                  <p className="text-lg text-neutral-600 leading-relaxed">{svc.whoFor}</p>
-                </div>
-              )}
-
-              {!svc.longDescription && !svc.sections?.length && (
-                <p className="text-xl text-neutral-600 italic">{svc.description || ""}</p>
-              )}
-            </SectionReveal>
-          </div>
-
-          {/* Right Column: Capabilities + Deliverables */}
-          <div className="lg:col-span-5 space-y-8">
-            {svc.features && svc.features.length > 0 && (
-              <SectionReveal delay={0.2} className="bg-neutral-50/50 p-8 sm:p-12 border border-black/5 rounded-sm">
-                <h2 className="text-[11px] font-bold text-neutral-400 uppercase tracking-[0.2em] mb-8">
-                  {labels.featuresH2}
-                </h2>
-                <ul className="space-y-5">
-                  {svc.features.map((feature: string, i: number) => (
-                    <li key={i} className="flex items-start gap-4 group">
-                      <div className="mt-1 flex items-center justify-center h-5 w-5 rounded-full bg-[#75DAB4]/10 text-black shrink-0">
-                        <Check size={12} className="text-black" />
-                      </div>
-                      <span className="text-[15px] sm:text-[16px] font-normal leading-relaxed text-neutral-600 group-hover:text-black transition-colors">
-                        {feature}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </SectionReveal>
-            )}
-
-            {svc.deliverables && svc.deliverables.length > 0 && (
-              <SectionReveal delay={0.3} className="bg-white p-8 sm:p-12 border border-black/5 rounded-sm">
-                <h2 className="text-[11px] font-bold text-neutral-400 uppercase tracking-[0.2em] mb-8">
-                  {lang === "fr" ? "Ce que vous obtenez" : "What you get"}
-                </h2>
-                <ul className="space-y-5">
-                  {svc.deliverables.map((d: string, i: number) => (
-                    <li key={i} className="flex items-start gap-4">
-                      <div className="mt-1 flex items-center justify-center h-5 w-5 rounded-full bg-[#75DAB4]/10 shrink-0">
-                        <Check size={12} className="text-black" />
-                      </div>
-                      <span className="text-[15px] sm:text-[16px] font-normal leading-relaxed text-neutral-600">{d}</span>
-                    </li>
-                  ))}
-                </ul>
-              </SectionReveal>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Key takeaways */}
-      {svc.keyTakeaways && svc.keyTakeaways.length > 0 && (
-        <section className="bg-white px-6 py-12 md:py-16 sm:px-8 md:px-10 lg:px-12 border-b border-black/5">
-          <div className="max-w-[1440px] mx-auto">
-            <SectionReveal className="rounded-sm bg-black text-white p-8 md:p-12">
-              <h2 className="text-[11px] uppercase tracking-[0.2em] text-[#75DAB4] mb-6 font-bold">
-                {lang === "fr" ? "À retenir" : "Key takeaways"}
-              </h2>
-              <ul className="grid md:grid-cols-2 gap-x-12 gap-y-4">
-                {svc.keyTakeaways.map((k: string, i: number) => (
-                  <li key={i} className="flex items-start gap-4">
-                    <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[#75DAB4] shrink-0" />
-                    <span className="text-lg text-white/90 leading-relaxed">{k}</span>
+        {/* Row 4: Capabilities */}
+        {svc.features && svc.features.length > 0 && (
+          <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
+            <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
+              {labels.featuresH2}
+            </div>
+            <div className="md:col-span-9 lg:col-span-8">
+              <ul className="space-y-3">
+                {svc.features.map((feature: string, i: number) => (
+                  <li key={i} className="text-sm sm:text-base text-neutral-600 font-normal flex items-start gap-2">
+                    <span className="text-[#75DAB4] select-none">•</span>
+                    <span>{feature}</span>
                   </li>
                 ))}
               </ul>
-            </SectionReveal>
-          </div>
-        </section>
-      )}
+            </div>
+          </SectionReveal>
+        )}
 
-      {/* Case Studies / Featured Projects */}
-      {svc.featuredProjects && svc.featuredProjects.length > 0 && (
-        <section id="projects" className="bg-neutral-50/30 px-6 py-20 md:py-32 sm:px-8 md:px-10 lg:px-12 border-b border-black/5">
-          <div className="max-w-[1440px] mx-auto">
-            <SectionReveal className="mb-16">
-              <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-[0.2em] mb-4 block">
-                Proof of Excellence
-              </span>
-              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-black">
-                {labels.projectsH2}
-              </h2>
-            </SectionReveal>
+        {/* Row 5: Deliverables */}
+        {svc.deliverables && svc.deliverables.length > 0 && (
+          <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
+            <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
+              {lang === "fr" ? "Livrables" : "Deliverables"}
+            </div>
+            <div className="md:col-span-9 lg:col-span-8">
+              <ul className="space-y-3">
+                {svc.deliverables.map((d: string, i: number) => (
+                  <li key={i} className="text-sm sm:text-base text-neutral-600 font-normal flex items-start gap-2">
+                    <span className="text-[#75DAB4] select-none">•</span>
+                    <span>{d}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </SectionReveal>
+        )}
 
-            <div className="grid md:grid-cols-2 gap-6">
+        {/* Row 6: Comparison Table */}
+        {hasTable && (
+          <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
+            <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
+              {lang === "fr" ? "Comparatif" : "Comparison"}
+            </div>
+            <div className="md:col-span-9 lg:col-span-8 space-y-4">
+              {table.title && (
+                <h3 className="text-base font-normal text-black">{table.title}</h3>
+              )}
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse text-left">
+                  <thead>
+                    <tr className="border-b border-black/10">
+                      {table.columns?.map((c: string, i: number) => (
+                        <th key={i} className="py-3 pr-4 text-xs font-normal text-neutral-400">{c}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {table.rows?.map((row: any, i: number) => (
+                      <tr key={i} className="border-b border-black/5">
+                        {row.cells?.map((cell: string, j: number) => (
+                          <td key={j} className={`py-3 pr-4 text-xs sm:text-sm ${j === 0 ? "text-black font-normal" : "text-neutral-500"}`}>{cell}</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </SectionReveal>
+        )}
+
+        {/* Row 7: Key Takeaways */}
+        {svc.keyTakeaways && svc.keyTakeaways.length > 0 && (
+          <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
+            <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
+              {lang === "fr" ? "À retenir" : "Takeaways"}
+            </div>
+            <div className="md:col-span-9 lg:col-span-8">
+              <ul className="space-y-4">
+                {svc.keyTakeaways.map((k: string, i: number) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[#75DAB4] shrink-0" />
+                    <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-normal">{k}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </SectionReveal>
+        )}
+
+        {/* Row 8: Featured Projects */}
+        {svc.featuredProjects && svc.featuredProjects.length > 0 && (
+          <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
+            <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
+              {labels.projectsH2}
+            </div>
+            <div className="md:col-span-9 lg:col-span-8 space-y-8" id="projects">
               {svc.featuredProjects.map((project: any, i: number) => (
-                <SectionReveal key={project._id} delay={i * 0.1} className="group bg-white overflow-hidden border border-black/5 rounded-sm flex flex-col justify-between">
-                  <div>
-                    <div className="relative aspect-[16/10] bg-neutral-100 overflow-hidden">
-                      {project.coverImage ? (
-                        <Image
-                          src={urlForImage(project.coverImage)?.width(1000).url() || ""}
-                          alt={project.title}
-                          fill
-                          className="object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                      ) : null}
-                    </div>
-                    <div className="p-8 space-y-4">
-                      <span className="text-[11px] uppercase tracking-[0.2em] text-neutral-400 font-bold">
-                        {project.tags?.[0] || "Case Study"}
-                      </span>
-                      <h3 className="text-2xl font-normal tracking-tight text-black">
-                        {project.title}
-                      </h3>
-                      <p className="text-neutral-500 font-normal leading-relaxed text-sm">
-                        {project.excerpt}
-                      </p>
+                <div key={project._id} className="space-y-2 group">
+                  <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
+                    <h4 className="text-base font-normal text-black group-hover:text-[#75DAB4] transition-colors">
+                      {project.title}
+                    </h4>
+                    <div className="flex items-center gap-2 text-xs text-neutral-400 font-normal">
+                      <span>{project.year}</span>
+                      {project.tags?.[0] && (
+                        <>
+                          <span>•</span>
+                          <span>{project.tags[0]}</span>
+                        </>
+                      )}
                     </div>
                   </div>
-                  <div className="px-8 pb-8 pt-4">
+                  <p className="text-sm text-neutral-500 leading-relaxed max-w-3xl">
+                    {project.excerpt}
+                  </p>
+                  <div className="pt-1">
                     <Link
                       href={`/${lang}/projects/${project.slug}`}
-                      className="inline-flex items-center gap-2 text-sm font-normal text-black border-b border-black pb-1 hover:opacity-60 transition-opacity"
+                      className="inline-flex items-center gap-1.5 text-xs font-normal text-[#75DAB4] hover:text-black transition-colors"
                     >
-                      {labels.viewCaseStudy} <ArrowRight size={14} />
+                      {labels.viewCaseStudy} <ArrowRight size={12} />
                     </Link>
                   </div>
-                </SectionReveal>
+                </div>
               ))}
             </div>
-          </div>
-        </section>
-      )}
+          </SectionReveal>
+        )}
 
-      {/* Related Services */}
-      {related.length > 0 && (
-        <section className="bg-white px-6 py-20 md:py-32 sm:px-8 md:px-10 lg:px-12 border-b border-black/5">
-          <div className="max-w-[1440px] mx-auto">
-            <SectionReveal className="mb-16">
-              <h2 className="text-2xl sm:text-3xl font-normal tracking-tight text-black">
-                {labels.relatedH2}
-              </h2>
-            </SectionReveal>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Row 9: Related Services */}
+        {related.length > 0 && (
+          <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
+            <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
+              {labels.relatedH2}
+            </div>
+            <div className="md:col-span-9 lg:col-span-8 space-y-6">
               {related.map((item: any, i: number) => {
-                const ItemIcon = (Icons as any)[item.icon || "Layers"] || Icons.Layers;
                 const localizedFamily = familySlugForLang(item.family, lang as Locale);
                 return (
-                  <SectionReveal key={item._id} delay={i * 0.08} className="border border-black/5 hover:border-black/20 p-8 rounded-sm hover:shadow-sm transition-all duration-300 flex flex-col justify-between">
-                    <div className="space-y-6">
-                      <div className="text-[#75DAB4]">
-                        <ItemIcon size={28} strokeWidth={1.5} />
-                      </div>
-                      <div className="space-y-3">
-                        <h3 className="text-xl font-normal tracking-tight text-black">{item.title}</h3>
-                        <p className="text-sm text-neutral-500 leading-relaxed font-normal">{item.description}</p>
-                      </div>
-                    </div>
-                    <div className="pt-8">
-                      <Link
-                        href={`/${lang}/services/${localizedFamily}/${item.slug}`}
-                        className="text-xs font-normal uppercase tracking-widest text-[#75DAB4] hover:text-black transition-colors flex items-center gap-1.5"
-                      >
-                        {lang === "fr" ? "Explorer →" : "Explore →"}
+                  <div key={item._id} className="space-y-1 group">
+                    <h4 className="text-base font-normal text-black group-hover:text-[#75DAB4] transition-colors">
+                      <Link href={`/${lang}/services/${localizedFamily}/${item.slug}`}>
+                        {item.title}
                       </Link>
-                    </div>
-                  </SectionReveal>
+                    </h4>
+                    <p className="text-xs sm:text-sm text-neutral-500 leading-relaxed max-w-3xl font-normal">
+                      {item.description}
+                    </p>
+                  </div>
                 );
               })}
             </div>
-          </div>
-        </section>
-      )}
+          </SectionReveal>
+        )}
 
-      {/* FAQ Section */}
-      {faqItems.length > 0 && (
-        <section className="bg-neutral-50/20 py-20 border-b border-black/5">
-          <div className="max-w-[1440px] mx-auto">
-            <SectionReveal className="px-6 sm:px-8 md:px-10 lg:px-12 text-center mb-4">
-              <h2 className="text-3xl font-normal tracking-tighter text-black">
-                {labels.faqH2}
-              </h2>
-            </SectionReveal>
-            <FAQAccordion items={faqItems} />
-          </div>
-        </section>
-      )}
+        {/* Row 10: FAQ */}
+        {faqItems.length > 0 && (
+          <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
+            <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
+              {labels.faqH2}
+            </div>
+            <div className="md:col-span-9 lg:col-span-8">
+              <div className="space-y-4 divide-y divide-black/5">
+                {faqItems.map((item: any, index: number) => (
+                  <details key={index} className="group pt-4 first:pt-0">
+                    <summary className="flex justify-between items-center font-normal text-base text-black cursor-pointer list-none select-none hover:text-neutral-500 transition-colors">
+                      <span>{item.question}</span>
+                      <span className="transition-transform duration-200 group-open:rotate-45 text-neutral-400">
+                        <Icons.Plus size={16} />
+                      </span>
+                    </summary>
+                    <div className="mt-3 text-sm leading-relaxed text-neutral-500 font-normal">
+                      {item.answer}
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </SectionReveal>
+        )}
 
-      {/* Bottom CTA */}
-      <section className="bg-black text-white px-6 py-24 sm:px-8 md:px-10 lg:px-12 text-center">
-        <SectionReveal className="max-w-3xl mx-auto space-y-8">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight leading-[1.15] text-balance">
-            {svc.cta?.headline || labels.bottomCtaH2}
-          </h2>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-4">
-            <Link
-              href={`/${lang}/${svc.cta?.primaryHref || "contact"}`}
-              className="px-8 py-4 bg-[#75DAB4] text-black hover:bg-white transition-colors duration-300 text-sm font-normal uppercase tracking-widest rounded-sm w-full sm:w-auto text-center"
-            >
-              {svc.cta?.primaryLabel || (lang === "fr" ? "Démarrer un projet" : "Start a Conversation")}
-            </Link>
-            {svc.cta?.secondaryLabel && (
+        {/* Row 11: Bottom CTA */}
+        <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12 border-b-0">
+          <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
+            {lang === "fr" ? "Contact" : "Next steps"}
+          </div>
+          <div className="md:col-span-9 lg:col-span-8 space-y-6">
+            <h3 className="text-xl sm:text-2xl font-normal text-black leading-snug text-balance">
+              {svc.cta?.headline || labels.bottomCtaH2}
+            </h3>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
               <Link
-                href={`/${lang}/${svc.cta?.secondaryHref || "projects"}`}
-                className="px-8 py-4 border border-white/20 hover:border-white text-white transition-colors duration-300 text-sm font-normal uppercase tracking-widest rounded-sm w-full sm:w-auto text-center"
+                href={`/${lang}/${cleanPath(svc.cta?.primaryHref || "contact")}`}
+                className="px-6 py-3.5 bg-black hover:bg-[#75DAB4] text-white hover:text-black transition-all duration-300 text-xs font-normal uppercase tracking-widest text-center rounded-sm"
               >
-                {svc.cta.secondaryLabel}
+                {svc.cta?.primaryLabel || (lang === "fr" ? "Démarrer un projet" : "Start a Conversation")}
               </Link>
-            )}
+              {svc.cta?.secondaryLabel && (
+                <Link
+                  href={`/${lang}/${cleanPath(svc.cta?.secondaryHref || "projects")}`}
+                  className="px-6 py-3.5 border border-black/10 hover:border-black text-black transition-all duration-300 text-xs font-normal uppercase tracking-widest text-center rounded-sm"
+                >
+                  {svc.cta.secondaryLabel}
+                </Link>
+              )}
+            </div>
           </div>
         </SectionReveal>
-      </section>
+
+      </main>
     </div>
   );
 }

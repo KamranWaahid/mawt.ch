@@ -13,7 +13,14 @@ import { getHomePageData, getPartners } from "@/lib/sanity.queries";
 import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import { getFamilyTitle, familySlugForLang, hreflangAlternates } from "@/lib/routing/url-helpers";
+import { preload } from "react-dom";
 import type { Metadata } from "next";
+
+// Hero is a JS-driven <canvas> frame sequence; its first frame is the LCP image.
+// Preload it from the server so the browser fetches it during HTML parse,
+// before the hero's client JS even runs — pulls LCP earlier without changing
+// the canvas behaviour or the flat design.
+const HERO_FIRST_FRAME = "/HeroImages/ezgif-frame-001.jpg";
 
 export async function generateMetadata({
   params,
@@ -37,6 +44,8 @@ export default async function HomePage({
   params: Promise<{ lang: Locale }>;
 }) {
   const { lang } = await params;
+  // Inject <link rel="preload" as="image" fetchpriority="high"> for the hero LCP frame.
+  preload(HERO_FIRST_FRAME, { as: "image", fetchPriority: "high" });
   const dictionary = await getDictionary(lang);
   const data = await getHomePageData(lang);
   const partners = await getPartners();

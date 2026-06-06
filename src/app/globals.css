@@ -38,7 +38,9 @@
 html,
 body {
   max-width: 100%;
-  overflow-x: hidden;
+  /* `clip` (not `hidden`) prevents horizontal overflow WITHOUT turning body
+     into a scroll container — which would break `position: sticky` site-wide. */
+  overflow-x: clip;
 }
 
 /*

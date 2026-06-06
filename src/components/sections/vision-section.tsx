@@ -10,7 +10,7 @@ export function VisionSection({ dict, services }: { dict: any; services?: any[] 
   const displayItems = services && services.length > 0 ? services : dict.items;
 
   return (
-    <section className="relative overflow-hidden bg-bg-light py-20 md:py-32 lg:py-40 border-t border-black/5">
+    <section className="relative bg-bg-light py-20 md:py-32 lg:py-40 border-t border-black/5">
       <div className="mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-20">
         
         {/* Header Badge */}
@@ -25,14 +25,16 @@ export function VisionSection({ dict, services }: { dict: any; services?: any[] 
           </div>
         </SectionReveal>
 
-        {/* Horizontal Divider */}
-        <div className="mb-16 h-px w-full bg-black/10" />
-
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-          
-          {/* Left Column: Statement */}
-          <div className="lg:col-span-5 lg:sticky lg:top-32 h-fit">
+
+          {/* Left Column: Statement + its divider line. Sticky at ALL
+              breakpoints: from the horizontal line down, this block pins while
+              the services column on the right keeps scrolling. `self-start`
+              stops the grid item stretching (required for sticky to engage). */}
+          <div className="lg:col-span-5 sticky top-24 lg:top-32 self-start h-fit">
             <SectionReveal delay={0.1}>
+              {/* Horizontal Divider — now pinned together with the text */}
+              <div className="mb-8 h-px w-full bg-black/10" />
               <h2 className="text-2xl font-normal tracking-tight text-black sm:text-3xl md:text-[32px] lg:text-[34px] leading-[1.25] text-balance">
                 {dict.statement}
               </h2>

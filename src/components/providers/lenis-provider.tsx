@@ -17,6 +17,15 @@ function ScrollToTopOnNavigate() {
   const lenis = useLenis();
 
   useEffect(() => {
+    // The homepage hero captures scroll through Lenis (it calls lenis.stop() at
+    // the top to drive its frame animation from wheel/touch input). Resetting
+    // scroll there overrides that stop() and the animation stops playing — so
+    // skip the home roots. Everywhere else, reset to top (the real bug: landing
+    // at the bottom of a shorter content page after navigating).
+    const isHome =
+      pathname === "/" || pathname === "/fr" || pathname === "/en";
+    if (isHome) return;
+
     if (lenis) {
       lenis.scrollTo(0, { immediate: true });
     } else if (typeof window !== "undefined") {

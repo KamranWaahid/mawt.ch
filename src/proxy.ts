@@ -79,6 +79,8 @@ export function proxy(request: NextRequest) {
     "/MAWT Logo.svg",
     "/MAWT Branding/",
     "/PlanetBackground.png",
+    "/Service Background.png",
+    "/Service%20Background.png",
     "/file.svg",
     "/globe.svg",
     "/next.svg",

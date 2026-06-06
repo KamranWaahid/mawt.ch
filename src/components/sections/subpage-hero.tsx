@@ -5,12 +5,27 @@ import { motion } from "motion/react";
 interface SubpageHeroProps {
   badge: string;
   title: string;
+  bgImage?: string;
+  bgTransparent?: boolean;
 }
 
-export function SubpageHero({ badge, title }: SubpageHeroProps) {
+export function SubpageHero({ badge, title, bgImage, bgTransparent }: SubpageHeroProps) {
   return (
-    <section className="bg-white px-6 pt-40 pb-20 sm:px-8 md:px-10 lg:px-12 border-b border-black/5">
-      <div className="max-w-[1440px] mx-auto">
+    <section 
+      className={`relative px-6 pb-20 sm:px-8 md:px-10 lg:px-12 overflow-hidden ${
+        bgTransparent ? "bg-transparent" : "bg-white border-b border-black/5"
+      } ${bgTransparent ? "pt-12 md:pt-16" : "pt-40"}`}
+      style={bgImage ? {
+        backgroundImage: `url('${bgImage}')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat"
+      } : undefined}
+    >
+      {bgImage && (
+        <div className="absolute inset-0 bg-white/30 pointer-events-none" />
+      )}
+      <div className="relative max-w-[1440px] mx-auto z-10">
         <motion.span 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

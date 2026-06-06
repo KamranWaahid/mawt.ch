@@ -148,31 +148,47 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
     ctx.fillRect(0, fadeStart, canvas.width, fadeHeight);
   }, []);
 
-  // Preload images with priority for first frame
-  useEffect(() => {
-    let loadedCount = 0;
-    const loadedImages: HTMLImageElement[] = [];
+  // Frame loading is split to protect LCP/main-thread on mobile:
+  //   1. Load ONLY frame 1 immediately and draw it (first visual).
+  //   2. Defer the remaining 80 frames to requestIdleCallback (post-LCP /
+  //      post-hydration) so the 81-image fetch never competes with the
+  //      critical render. render() already skips not-yet-loaded frames.
+  const frameSrc = (i: number) =>
+    `/HeroImages/ezgif-frame-${String(i).padStart(3, "0")}.jpg`;
 
-    const preloadImages = async () => {
-      for (let i = 1; i <= frameCount; i++) {
+  useEffect(() => {
+    const images: HTMLImageElement[] = new Array(frameCount);
+    imagesRef.current = images;
+
+    const first = new Image();
+    first.src = frameSrc(1);
+    first.onload = () => render(0); // first frame paints the canvas
+    images[0] = first;
+
+    let loadedCount = 1;
+    const loadRest = () => {
+      for (let i = 2; i <= frameCount; i++) {
         const img = new Image();
-        img.src = `/HeroImages/ezgif-frame-${String(i).padStart(3, '0')}.jpg`;
-        
+        img.src = frameSrc(i);
         img.onload = () => {
-          if (i === 1) {
-            render(0); // Draw first frame immediately
-          }
           loadedCount++;
-          if (loadedCount === frameCount) {
-            setIsLoaded(true);
-          }
+          if (loadedCount === frameCount) setIsLoaded(true);
         };
-        loadedImages.push(img);
+        images[i - 1] = img;
       }
-      imagesRef.current = loadedImages;
     };
 
-    preloadImages();
+    type RIC = (cb: () => void, opts?: { timeout: number }) => number;
+    const ric: RIC =
+      (typeof window !== "undefined" && (window as unknown as { requestIdleCallback?: RIC }).requestIdleCallback) ||
+      ((cb) => window.setTimeout(cb, 1500) as unknown as number);
+    const handle = ric(loadRest, { timeout: 3000 });
+
+    return () => {
+      const cic = (window as unknown as { cancelIdleCallback?: (h: number) => void }).cancelIdleCallback;
+      if (cic) cic(handle);
+      else clearTimeout(handle);
+    };
   }, [render]);
 
   // Setup canvas and scroll listener
@@ -326,8 +342,11 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
           { yPercent: 0, duration: 1.2, stagger: 0.1 },
           "-=0.7"
         )
+        // NOTE: hero body text (formerly `.hero-copy`) is intentionally NOT
+        // animated here — it must stay opacity:1 from first paint for LCP.
+        // Only the CTA row keeps the fade-in.
         .fromTo(
-          ".hero-copy, .hero-cta-group",
+          ".hero-cta-group",
           { opacity: 0, y: 10 },
           { opacity: 1, y: 0, duration: 1, stagger: 0.1 },
           "-=0.9"
@@ -359,24 +378,28 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
             </div>
 
             <div className="flex flex-col gap-3">
-              <Reveal direction="up" delay={0.1}>
+              {/* Above-the-fold hero text is rendered eager (opacity:1, no blur)
+                  so it is LCP-eligible at first paint. Only the Y transform
+                  animates in — this fixes the ~10s mobile LCP. */}
+              <Reveal direction="up" delay={0.1} eager>
                 <h1 className="text-[28px] xs:text-[32px] sm:text-[44px] md:text-[56px] lg:text-[68px] font-normal leading-[1.15] md:leading-[1.1] tracking-[-0.04em] text-white">
                   {dict.title_1}
                   <br className="block lg:hidden" />{" "}
                   {dict.title_2}
                 </h1>
               </Reveal>
-              <Reveal direction="up" delay={0.3}>
-                <p className="hero-copy mt-3 md:mt-5 max-w-md text-[13px] sm:text-sm font-normal leading-relaxed text-neutral-400 md:text-base">
+              <Reveal direction="up" delay={0.3} eager>
+                <p className="mt-3 md:mt-5 max-w-md text-[13px] sm:text-sm font-normal leading-relaxed text-neutral-400 md:text-base">
                   {dict.description}
                 </p>
               </Reveal>
               {dict.summary && (
-                <Reveal direction="up" delay={0.4}>
+                <Reveal direction="up" delay={0.4} eager>
                   {/* Bite-sized RAG summary (40-60 words): a dense, entity-rich
                       intent statement placed right under the H1 for AI Overview
-                      extraction. Kept visually quiet to respect the flat hero. */}
-                  <p className="hero-copy mt-3 max-w-lg text-[12px] sm:text-[13px] font-normal leading-relaxed text-neutral-500">
+                      extraction. Kept visually quiet to respect the flat hero.
+                      This <p> is the mobile LCP element — must paint eagerly. */}
+                  <p className="mt-3 max-w-lg text-[12px] sm:text-[13px] font-normal leading-relaxed text-neutral-500">
                     {dict.summary}
                   </p>
                 </Reveal>

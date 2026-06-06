@@ -62,6 +62,23 @@ const navItems = [
   { href: "/contact", label: "Contact" },
 ];
 
+// FR labels keyed by the EN-canonical href. The nav labels are authored in
+// English (whether from Sanity `mainNav` or the fallback above), so on /fr we
+// translate the DISPLAY text here. Unknown hrefs fall back to the English label.
+const NAV_LABELS_FR: Record<string, string> = {
+  "/": "Accueil",
+  "/services": "Services",
+  "/projects": "Projets",
+  "/about": "À propos",
+  "/blog": "Blog",
+  "/contact": "Contact",
+};
+
+function navLabel(item: { href: string; label: string }, lang: string): string {
+  if (lang !== "fr") return item.label;
+  return NAV_LABELS_FR[item.href] ?? item.label;
+}
+
 const platformIcons: Record<string, any> = {
   LinkedIn: FaLinkedinIn,
   Twitter: FaXTwitter,
@@ -174,7 +191,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
                     className={`group relative flex items-center gap-1.5 py-2 text-[15px] font-normal tracking-tight transition-colors duration-300 ${isLight ? "text-black" : "text-neutral-300 hover:text-white"
                       }`}
                   >
-                    {item.label}
+                    {navLabel(item, currentLang)}
                     {item.hasDropdown && (
                       <ChevronDown
                         size={14}
@@ -326,7 +343,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
                           onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
                           className="text-4xl font-normal tracking-tighter text-black flex items-center justify-between group w-full text-left"
                         >
-                          {item.label}
+                          {navLabel(item, currentLang)}
                           <ChevronDown size={24} className={`transition-transform duration-300 ${mobileServicesOpen ? "rotate-180" : "opacity-20"}`} />
                         </button>
                         <AnimatePresence>
@@ -362,7 +379,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="text-4xl font-normal tracking-tighter text-black flex items-center justify-between group"
                       >
-                        {item.label}
+                        {navLabel(item, currentLang)}
                         <ArrowRight className="text-neutral-200 transition-transform group-hover:translate-x-1" size={24} />
                       </Link>
                     )}

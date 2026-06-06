@@ -83,6 +83,7 @@ export function NewsletterForm({ dict }: NewsletterFormProps) {
                 <button
                   type="submit"
                   disabled={status === "submitting"}
+                  aria-label={labels.title}
                   className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-black text-white rounded-sm hover:bg-neutral-800 transition-all disabled:bg-neutral-400 group"
                 >
                   {status === "submitting" ? (

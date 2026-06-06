@@ -59,28 +59,29 @@ export function SiteFooter({
               />
             </div>
             
-            <div className="flex items-center gap-5 text-black/40">
+            <div className="flex items-center gap-5 text-black/60">
               {socialLinks?.map((link, i) => {
                 const Icon = platformIcons[link.platform] || Globe;
                 return (
-                  <Link 
-                    key={i} 
-                    href={link.url} 
-                    target="_blank" 
+                  <Link
+                    key={i}
+                    href={link.url}
+                    target="_blank"
                     rel="noopener noreferrer"
+                    aria-label={link.platform}
                     className="hover:text-black transition-colors"
                   >
-                    <Icon size={18} />
+                    <Icon size={18} aria-hidden="true" />
                   </Link>
                 );
               })}
               {!socialLinks && (
                 <>
-                  <Link href="https://linkedin.com/company/mawt.ch" className="hover:text-black transition-colors"><FaLinkedinIn size={18} /></Link>
-                  <Link href="https://x.com/mawt.ch" className="hover:text-black transition-colors"><FaXTwitter size={18} /></Link>
-                  <Link href="https://github.com/mawt.ch" className="hover:text-black transition-colors"><FaGithub size={18} /></Link>
-                  <Link href="https://instagram.com/mawt.ch" className="hover:text-black transition-colors"><FaInstagram size={18} /></Link>
-                  <Link href="https://facebook.com/mawt.ch" className="hover:text-black transition-colors"><FaFacebookF size={18} /></Link>
+                  <Link href="https://linkedin.com/company/mawt.ch" aria-label="LinkedIn" className="hover:text-black transition-colors"><FaLinkedinIn size={18} aria-hidden="true" /></Link>
+                  <Link href="https://x.com/mawt.ch" aria-label="Twitter" className="hover:text-black transition-colors"><FaXTwitter size={18} aria-hidden="true" /></Link>
+                  <Link href="https://github.com/mawt.ch" aria-label="GitHub" className="hover:text-black transition-colors"><FaGithub size={18} aria-hidden="true" /></Link>
+                  <Link href="https://instagram.com/mawt.ch" aria-label="Instagram" className="hover:text-black transition-colors"><FaInstagram size={18} aria-hidden="true" /></Link>
+                  <Link href="https://facebook.com/mawt.ch" aria-label="Facebook" className="hover:text-black transition-colors"><FaFacebookF size={18} aria-hidden="true" /></Link>
                 </>
               )}
             </div>
@@ -105,7 +106,7 @@ export function SiteFooter({
                   <li key={link.label}>
                     <Link
                       href={localizeHref(link.href)}
-                      className="text-sm font-normal text-black/40 hover:text-black transition-colors"
+                      className="text-sm font-normal text-black/60 hover:text-black transition-colors"
                     >
                       {link.label}
                     </Link>
@@ -124,11 +125,11 @@ export function SiteFooter({
         {/* Bottom Bar */}
         <div className="mt-20 flex flex-col gap-4 border-t border-black/5 pt-8 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-6">
-            <button className="text-[12px] font-normal text-black/40 hover:text-black transition-colors">
+            <button className="text-[12px] font-normal text-black/60 hover:text-black transition-colors">
               {dict.cookieSettings}
             </button>
           </div>
-          <p className="text-[12px] font-normal text-black/30">
+          <p className="text-[12px] font-normal text-black/60">
             {dict.rights}
           </p>
         </div>

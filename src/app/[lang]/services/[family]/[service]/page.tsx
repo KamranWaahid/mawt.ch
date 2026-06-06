@@ -19,6 +19,11 @@ interface Props {
   params: Promise<{ lang: string; family: string; service: string }>;
 }
 
+// ISR: 70 service detail pages are statically pre-rendered (generateStaticParams
+// below) and refreshed from Sanity at most hourly. This is the fix for the
+// ~1.5s TTFB — the pages no longer fetch Sanity on every request.
+export const revalidate = 3600;
+
 const FAMILY_TAG_MAPPING: Record<string, string[]> = {
   "sites-et-branding": ["sites", "branding", "ecommerce"],
   "solutions-ia": ["ia", "automatisation", "crm", "agent-ia", "rag", "mobile"],
@@ -89,6 +94,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description,
       answerBox,
       heroH1,
+      tier,
       seo
     }`,
     { family: canonicalFamily, serviceSlug: service, lang }
@@ -96,14 +102,39 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   if (!data) return {};
 
-  const canonical = `https://mawt.ch/${lang}/services/${family}/${service}`;
+  const currentPath = `/${lang}/services/${family}/${service}`;
+  const canonical = `https://mawt.ch${currentPath}`;
   const title = data.seo?.metaTitle || `${data.title} | MAWT`;
   const description = data.seo?.metaDescription || data.answerBox || data.description;
+
+  // hreflang/canonical for a service detail page needs the SIBLING document's
+  // localized slug — translatePath can't translate Sanity per-doc slugs, so it
+  // would emit a non-existent URL (the cause of the language-switch 404).
+  // FR and EN counterparts share (family, tier), which is a unique 1:1 key.
+  const otherLang: Locale = lang === "fr" ? "en" : "fr";
+  const sibling = await client.fetch<{ slug?: string } | null>(
+    groq`*[_type == "service" && family == $family && tier == $tier && language == $other][0]{ "slug": slug.current }`,
+    { family: canonicalFamily, tier: data.tier ?? -1, other: otherLang }
+  );
+  const SITE = "https://mawt.ch";
+  let alternates;
+  if (sibling?.slug) {
+    const otherPath = `/${otherLang}/services/${familySlugForLang(canonicalFamily, otherLang)}/${sibling.slug}`;
+    const frPath = lang === "fr" ? currentPath : otherPath;
+    const enPath = lang === "en" ? currentPath : otherPath;
+    alternates = {
+      canonical,
+      languages: { fr: `${SITE}${frPath}`, en: `${SITE}${enPath}`, "x-default": `${SITE}${enPath}` },
+    };
+  } else {
+    // Fallback (no sibling found): URL_MAP translation, may be imperfect.
+    alternates = hreflangAlternates(currentPath, lang as Locale);
+  }
 
   return {
     title,
     description,
-    alternates: hreflangAlternates(`/${lang}/services/${family}/${service}`, lang as Locale),
+    alternates,
     openGraph: {
       title,
       description,

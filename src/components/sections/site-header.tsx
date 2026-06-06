@@ -116,10 +116,15 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
 
   const handleLanguageChange = (lang: string) => {
     if (lang === currentLang) return;
-    // Translate the localized slug across languages (e.g. /fr/services/solutions-ia/crm-intelligent
-    // → /en/services/ai-solutions/smart-crm) instead of a naive prefix swap, which 404s.
-    const newPath = translatePath(pathname, currentLang as Locale, lang as Locale);
-    window.location.href = newPath;
+    // Prefer the page's own declared hreflang alternate. It is correct even for
+    // Sanity per-document slugs (e.g. crm-intelligent ↔ smart-crm), which
+    // translatePath cannot translate — the cause of the previous switch 404.
+    // Fall back to URL_MAP translation for pages that emit no per-doc alternate.
+    const alt = document.querySelector<HTMLLinkElement>(
+      `link[rel="alternate"][hreflang="${lang}"]`,
+    );
+    window.location.href =
+      alt?.href || translatePath(pathname, currentLang as Locale, lang as Locale);
   };
 
   return (

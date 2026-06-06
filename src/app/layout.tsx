@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { headers } from "next/headers";
 import { LenisProvider } from "@/components/providers/lenis-provider";
-import { i18n } from "@/i18n-config";
 import "./globals.css";
 
 const inter = Inter({
@@ -35,19 +33,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Locale is forwarded by the proxy (no `lang` route param exists at the root).
-  // Falls back to the default locale for non-localized routes (studio, tutorial).
-  const headerStore = await headers();
-  const lang = headerStore.get("x-mawt-locale") || i18n.defaultLocale;
-
+  // `lang` stays a static default here: reading headers() to make it dynamic
+  // opts the ENTIRE site out of static rendering (SSG), which tanked TTFB.
+  // The localized subtree declares its real language via `<div lang>` in
+  // [lang]/layout.tsx, which is valid HTML and SSG-friendly.
   return (
     <html
-      lang={lang}
+      lang="en"
       className={`${inter.variable} h-full antialiased`}
       suppressHydrationWarning
     >

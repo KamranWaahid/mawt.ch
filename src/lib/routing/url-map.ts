@@ -88,6 +88,7 @@ export const URL_MAP: RouteMapping[] = [
       },
     ],
   },
+  { fr: "geneve", en: "geneva" },
   { fr: "projets", en: "projects" },
   {
     fr: "blog",

@@ -40,6 +40,9 @@ const nextConfig: NextConfig = {
       { source: "/fr/legal", destination: "/fr/confidentialite", permanent: true },
       { source: "/en/legal", destination: "/en/privacy", permanent: true },
       { source: "/fr/legal-notice", destination: "/fr/mentions-legales", permanent: true },
+      // Geneva hub: on-disk folder is `geneve`; the canonical EN URL is `geneva`.
+      // 301 the folder-name variant to avoid duplicate content.
+      { source: "/en/geneve", destination: "/en/geneva", permanent: true },
     ];
   },
 };

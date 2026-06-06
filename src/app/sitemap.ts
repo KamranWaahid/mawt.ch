@@ -32,6 +32,7 @@ function entry(
 // FR-canonical keys for every static (non-dynamic) route. Home handled separately.
 const STATIC_ROUTE_KEYS = [
   "services",
+  "geneve",
   "projets",
   "blog",
   "a-propos",

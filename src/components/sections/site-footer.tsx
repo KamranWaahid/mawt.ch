@@ -48,7 +48,7 @@ export function SiteFooter({
   return (
     <footer className="bg-white px-6 py-[120px] sm:px-10 lg:px-20 border-t border-black/5">
       <div className="mx-auto max-w-[1440px]">
-        <div className="grid gap-x-8 gap-y-16 grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr]">
+        <div className="grid gap-x-8 gap-y-16 grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr_1fr]">
           {/* Logo and Socials Column */}
           <div className="col-span-2 md:col-span-3 lg:col-span-1 space-y-8">
             <div className="flex items-center gap-2">
@@ -115,6 +115,23 @@ export function SiteFooter({
               </ul>
             </div>
           ))}
+
+          {/* Régions / Regions Column */}
+          <div className="space-y-6">
+            <h4 className="text-sm font-normal text-black/80">
+              {currentLang === "fr" ? "Régions" : "Regions"}
+            </h4>
+            <ul className="space-y-4">
+              <li>
+                <Link
+                  href={localizeHref("/geneva")}
+                  className="text-sm font-normal text-black/60 hover:text-black transition-colors"
+                >
+                  {currentLang === "fr" ? "Genève" : "Geneva"}
+                </Link>
+              </li>
+            </ul>
+          </div>
 
           {/* Newsletter Column */}
           <div className="col-span-2 md:col-span-3 lg:col-span-1">

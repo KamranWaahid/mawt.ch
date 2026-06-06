@@ -4,7 +4,6 @@ import { getSanityClient } from "@/lib/sanity.client";
 import {
   SITE_URL,
   localizedHref,
-  translatePath,
   familySlugForLang,
 } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/lib/routing/url-map";
@@ -66,27 +65,42 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const client = getSanityClient();
   if (!client) return out;
 
-  // Service detail pages (70 docs, fr+en). Each doc's own URL + reciprocal alternates.
+  // Service detail pages (70 docs, fr+en). Hreflang alternates are paired by
+  // (family, tier) — the unique 1:1 FR↔EN key — because translatePath cannot
+  // translate Sanity per-document slugs (it would emit non-existent URLs, the
+  // same bug that caused the language-switch 404).
   const services = await client.fetch<
-    { slug: string; family: string; language: Locale }[]
+    { slug: string; family: string; tier: number; language: Locale }[]
   >(
-    groq`*[_type == "service" && !(_id in path("drafts.**")) && defined(slug.current) && defined(family) && defined(language)]{ "slug": slug.current, family, language }`,
+    groq`*[_type == "service" && !(_id in path("drafts.**")) && defined(slug.current) && defined(family) && defined(language)]{ "slug": slug.current, family, tier, language }`,
   );
+  const pathByKeyLang = new Map<string, Partial<Record<Locale, string>>>();
   for (const s of services) {
-    const ownPath = `/${s.language}/services/${familySlugForLang(s.family, s.language)}/${s.slug}`;
-    out.push({
-      url: `${SITE_URL}${ownPath}`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-      alternates: {
-        languages: {
-          fr: `${SITE_URL}${translatePath(ownPath, s.language, "fr")}`,
-          en: `${SITE_URL}${translatePath(ownPath, s.language, "en")}`,
-          "x-default": `${SITE_URL}${translatePath(ownPath, s.language, "en")}`,
-        },
-      },
-    });
+    const key = `${s.family}|${s.tier}`;
+    const path = `/${s.language}/services/${familySlugForLang(s.family, s.language)}/${s.slug}`;
+    const e = pathByKeyLang.get(key) || {};
+    e[s.language] = path;
+    pathByKeyLang.set(key, e);
+  }
+  for (const paths of pathByKeyLang.values()) {
+    // Fall back to the existing-language path if a sibling is missing, so a URL
+    // is never pointed at a non-existent translation.
+    const fr = paths.fr ?? paths.en!;
+    const en = paths.en ?? paths.fr!;
+    const languages = {
+      fr: `${SITE_URL}${fr}`,
+      en: `${SITE_URL}${en}`,
+      "x-default": `${SITE_URL}${en}`,
+    };
+    for (const path of [paths.fr, paths.en].filter(Boolean) as string[]) {
+      out.push({
+        url: `${SITE_URL}${path}`,
+        lastModified: new Date(),
+        changeFrequency: "monthly",
+        priority: 0.7,
+        alternates: { languages },
+      });
+    }
   }
 
   // Blog posts and project case studies are not language-split (single doc per slug,

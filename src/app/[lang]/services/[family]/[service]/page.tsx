@@ -177,11 +177,23 @@ const components = {
     // "highlight" mark → <mark> for TL;DR / answer-style key phrases.
     // The flat teal background comes from globals.css (no radius, no shadow).
     highlight: ({ children }: any) => <mark>{children}</mark>,
-    link: ({ children, value }: any) => (
-      <a href={value?.href} target="_blank" rel="noopener noreferrer" className="text-[#75DAB4] underline hover:text-black transition-colors">
-        {children}
-      </a>
-    ),
+    link: ({ children, value }: any) => {
+      const href = value?.href || "#";
+      // Internal links (root-relative) → next/link, same tab, no rel.
+      // External links (http/https) → new tab + safe rel.
+      if (href.startsWith("/")) {
+        return (
+          <Link href={href} className="text-[#75DAB4] underline hover:text-black transition-colors">
+            {children}
+          </Link>
+        );
+      }
+      return (
+        <a href={href} target="_blank" rel="noopener noreferrer" className="text-[#75DAB4] underline hover:text-black transition-colors">
+          {children}
+        </a>
+      );
+    },
   },
 };
 

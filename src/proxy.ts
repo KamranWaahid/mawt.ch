@@ -129,9 +129,10 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Matcher ignoring `/_next/`, `/api/`, and root metadata files (sitemap, robots,
-  // favicon) so they are not caught by the locale redirect/rewrite.
+  // Matcher ignoring `/_next/`, `/api/`, and root metadata / well-known files
+  // (sitemap, robots, llms.txt, /.well-known/*, favicon) so they are served
+  // as-is and never caught by the locale redirect/rewrite.
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|llms.txt|\\.well-known).*)",
   ],
 };

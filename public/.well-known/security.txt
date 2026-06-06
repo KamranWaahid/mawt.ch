@@ -1,0 +1,6 @@
+# MAWT — Security contact (RFC 9116)
+Contact: mailto:security@mawt.ch
+Contact: https://mawt.ch/en/contact
+Expires: 2027-06-06T00:00:00.000Z
+Preferred-Languages: fr, en
+Canonical: https://mawt.ch/.well-known/security.txt

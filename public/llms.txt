@@ -1,0 +1,64 @@
+# MAWT
+
+> MAWT est un studio suisse d'exécution technique basé à Genève, au service de la Suisse romande (Genève, Vaud). Nous accompagnons PME et scale ups sur la stratégie, le design, le développement web, les solutions IA (CRM intelligent, RAG, agents, automatisation) et le renfort d'équipe. Un interlocuteur unique, du cadrage à la production.
+
+Site bilingue (FR / EN). URLs localisées : `/fr/...` et `/en/...`. Marché cible : Suisse romande.
+
+## Services — Sites & Branding
+- [Site internet](https://mawt.ch/fr/services/sites-et-branding/site-internet) — sites sur mesure, orientés croissance.
+- [E-commerce / E-shop](https://mawt.ch/fr/services/sites-et-branding/e-commerce-eshop) — boutiques avec paiements suisses (TWINT, Stripe, Datatrans), intégration ERP.
+- [Branding & identité](https://mawt.ch/fr/services/sites-et-branding/branding-identite) — système de marque exploitable.
+- [Audit UX / SEO / performance](https://mawt.ch/fr/services/sites-et-branding/audit-ux-seo-performance) — Core Web Vitals, conversion, référencement.
+- [Refonte de site web](https://mawt.ch/fr/services/sites-et-branding/refonte-site-web) — migration de contenus, redirections 301.
+
+## Services — Solutions IA
+- [CRM intelligent](https://mawt.ch/fr/services/solutions-ia/crm-intelligent) — CRM sur mesure augmenté par l'IA, RAG sur l'historique client.
+- [Agent IA / Assistant IA](https://mawt.ch/fr/services/solutions-ia/agent-ia-assistant) — agents autonomes branchés sur vos outils.
+- [RAG / Intelligence embarquée](https://mawt.ch/fr/services/solutions-ia/rag-intelligence-embarquee) — recherche sémantique sur vos données, réponses sourcées.
+- [Chatbots](https://mawt.ch/fr/services/solutions-ia/chatbots) — chatbots branchés CRM et base de connaissance.
+- [Application métier sur mesure](https://mawt.ch/fr/services/solutions-ia/application-metier-logiciel-sur-mesure) — Next.js, TypeScript, Postgres.
+- [Automatisations](https://mawt.ch/fr/services/solutions-ia/automatisations) — n8n, Make, agents custom.
+- [Intégrations & APIs](https://mawt.ch/fr/services/solutions-ia/integrations-apis) — connexions CRM, ERP, middleware.
+- [Application mobile](https://mawt.ch/fr/services/solutions-ia/application-mobile) — React Native, natif.
+- [Portail client & entreprise](https://mawt.ch/fr/services/solutions-ia/portail-client-entreprise) — portails sécurisés sur mesure.
+
+## Services — Conseil IA
+- [Stratégie IA](https://mawt.ch/fr/services/conseil-ia/strategie-ia) — roadmap IA exécutable, cas d'usage priorisés.
+- [Audit opérationnel](https://mawt.ch/fr/services/conseil-ia/audit-operationnel) — cartographie des process et des flux de données.
+- [Conseil organisationnel](https://mawt.ch/fr/services/conseil-ia/conseil-organisationnel) — gouvernance et processus de décision.
+- [Transformation numérique](https://mawt.ch/fr/services/conseil-ia/transformation-numerique) — trajectoire et exécution.
+- [Change management](https://mawt.ch/fr/services/conseil-ia/change-management) — adoption durable.
+- [AI change management](https://mawt.ch/fr/services/conseil-ia/ai-change-management) — gouvernance et adoption IA.
+- [Conseil digitalisation](https://mawt.ch/fr/services/conseil-ia/conseil-digitalisation) — leviers à fort impact.
+
+## Services — Renfort & Équipe
+- [Développeur dédié](https://mawt.ch/fr/services/renfort-equipe/developpeur-dedie)
+- [Expert IA dédié](https://mawt.ch/fr/services/renfort-equipe/expert-ia-dedie) — LLM, RAG, MLOps.
+- [Designer UX dédié](https://mawt.ch/fr/services/renfort-equipe/designer-ux-dedie)
+- [QA & testing](https://mawt.ch/fr/services/renfort-equipe/qa-testing) — Playwright, Cypress, CI/CD.
+- [Pilotage de projet](https://mawt.ch/fr/services/renfort-equipe/pilotage-projet)
+- [Accompagnement design](https://mawt.ch/fr/services/renfort-equipe/accompagnement-design)
+- [Maintenance applicative](https://mawt.ch/fr/services/renfort-equipe/maintenance-applicative)
+- [CTO à temps partiel](https://mawt.ch/fr/services/renfort-equipe/cto-temps-partiel)
+- [Tech Lead à temps partiel](https://mawt.ch/fr/services/renfort-equipe/tech-lead-temps-partiel)
+- [Engineering as a Service](https://mawt.ch/fr/services/renfort-equipe/engineering-as-a-service)
+
+## Services — Formation IA
+- [Formation ChatGPT en entreprise](https://mawt.ch/fr/services/formation-ia/formation-chatgpt-entreprise)
+- [Formation IA pour équipes](https://mawt.ch/fr/services/formation-ia/formation-ia-equipes)
+- [Coaching décideurs IA](https://mawt.ch/fr/services/formation-ia/coaching-decideurs-ia)
+- [Accompagnement adoption IA](https://mawt.ch/fr/services/formation-ia/accompagnement-adoption-ia)
+
+## Pages clés
+- [Tous les services](https://mawt.ch/fr/services)
+- [À propos](https://mawt.ch/fr/a-propos)
+- [Notre méthode](https://mawt.ch/fr/notre-methode)
+- [Projets](https://mawt.ch/fr/projets)
+- [Contact](https://mawt.ch/fr/contact)
+- [FAQ](https://mawt.ch/fr/faqs)
+
+## English
+- [All services](https://mawt.ch/en/services)
+- [About](https://mawt.ch/en/about)
+- [Contact](https://mawt.ch/en/contact)
+- [Sitemap](https://mawt.ch/sitemap.xml)

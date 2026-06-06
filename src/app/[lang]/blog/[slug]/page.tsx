@@ -58,11 +58,21 @@ const components = {
     strong: ({ children }: any) => <strong className="font-normal text-black">{children}</strong>,
     em: ({ children }: any) => <em className="not-italic text-black">{children}</em>,
     highlight: ({ children }: any) => <mark>{children}</mark>,
-    link: ({ children, value }: any) => (
-      <a href={value?.href} target="_blank" rel="noopener noreferrer" className="text-brand-teal underline hover:text-black transition-colors">
-        {children}
-      </a>
-    ),
+    link: ({ children, value }: any) => {
+      const href = value?.href || "#";
+      if (href.startsWith("/")) {
+        return (
+          <Link href={href} className="text-brand-teal underline hover:text-black transition-colors">
+            {children}
+          </Link>
+        );
+      }
+      return (
+        <a href={href} target="_blank" rel="noopener noreferrer" className="text-brand-teal underline hover:text-black transition-colors">
+          {children}
+        </a>
+      );
+    },
   },
   types: {
     code: ({ value }: any) => (

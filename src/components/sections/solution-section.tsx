@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, type Variants } from "motion/react";
+import { Badge } from "@/components/ui/badge";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -84,10 +85,7 @@ export function SolutionSection({ dict }: { dict: any }) {
           variants={containerVariants}
         >
           <motion.div variants={itemVariants}>
-            <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5 backdrop-blur-sm">
-              <span className="h-1.5 w-1.5 rounded-full bg-white" />
-              <span className="text-[10px] font-normal tracking-[0.2em] text-white/90">{dict.badge}</span>
-            </div>
+            <Badge label={dict.badge} theme="dark" />
           </motion.div>
 
           <motion.div variants={itemVariants} className="space-y-6">

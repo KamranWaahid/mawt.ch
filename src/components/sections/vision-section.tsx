@@ -3,6 +3,7 @@
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { SectionReveal } from "@/components/ui/section-reveal";
+import { Badge } from "@/components/ui/badge";
 
 export function VisionSection({ dict, services }: { dict: any; services?: any[] }) {
   const params = useParams();
@@ -15,13 +16,8 @@ export function VisionSection({ dict, services }: { dict: any; services?: any[] 
         
         {/* Header Badge */}
         <SectionReveal>
-          <div className="mb-12 flex items-center gap-3">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand-teal" />
-            <div className="rounded-full border border-black/10 bg-black/[0.03] px-3.5 py-1.5 backdrop-blur-sm w-fit">
-              <span className="text-[10px] font-normal tracking-[0.2em] text-black/80 uppercase">
-                {dict.badge}
-              </span>
-            </div>
+          <div className="mb-12">
+            <Badge label={dict.badge} theme="light" />
           </div>
         </SectionReveal>
 

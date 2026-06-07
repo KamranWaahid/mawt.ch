@@ -38,7 +38,7 @@ const socialLinks = [
 ];
 
 const GeometricSymbol = () => (
-  <svg width="71" height="44" viewBox="0 0 71 44" fill="none" className="hero-kicker mb-6 lg:mb-10 opacity-80" xmlns="http://www.w3.org/2000/svg">
+  <svg width="71" height="44" viewBox="0 0 71 44" fill="none" className="hero-kicker mb-4 lg:mb-6 opacity-80" xmlns="http://www.w3.org/2000/svg">
     <circle cx="35.2503" cy="21.5827" r="16.8204" stroke="white" strokeWidth="0.891184"/>
     <circle cx="21.5825" cy="21.5825" r="21.1369" stroke="white" strokeWidth="0.891184"/>
     <circle cx="48.9204" cy="21.5825" r="21.1369" stroke="white" strokeWidth="0.891184"/>
@@ -124,7 +124,7 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
       if (typeof window !== "undefined" && window.innerWidth < 1024) {
         // Mobile portrait: scale down the visual sequence to occupy the bottom portion
         // of the screen to prevent overlap with the text content at the top.
-        const scale = 0.55;
+        const scale = 0.6;
         drawHeight = canvas.height * scale;
         drawWidth = drawHeight * imgAspect;
         offsetX = canvas.width / 2 - drawWidth * 0.6841;
@@ -160,12 +160,7 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
     `/HeroImages/ezgif-frame-${String(i).padStart(3, "0")}.jpg`;
 
   useEffect(() => {
-    // Option A: the animated 81-frame canvas runs on desktop ONLY. On mobile
-    // we render a single static <NextImage> (below) and never fetch the frames,
-    // which removes the dominant mobile LCP/bandwidth bottleneck.
-    if (typeof window !== "undefined" && !window.matchMedia("(min-width: 1024px)").matches) {
-      return;
-    }
+    // Load first frame immediately and defer the remaining frames.
 
     const images: HTMLImageElement[] = new Array(frameCount);
     imagesRef.current = images;
@@ -201,11 +196,8 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
     };
   }, [render]);
 
-  // Setup canvas and scroll listener — desktop only (see Option A above).
+  // Setup canvas and scroll listener.
   useEffect(() => {
-    if (typeof window !== "undefined" && !window.matchMedia("(min-width: 1024px)").matches) {
-      return;
-    }
     const handleResize = () => {
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -370,24 +362,13 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
 
   return (
     <section ref={containerRef} className="relative h-screen bg-black">
-      <div className="relative h-full w-full overflow-hidden flex items-start pt-[100px] lg:pt-[140px] px-6 sm:px-8 md:px-10 lg:px-12">
+      <div className="relative h-full w-full overflow-hidden flex items-start pt-[85px] lg:pt-[105px] xl:pt-[115px] 2xl:pt-[125px] px-6 sm:px-8 md:px-10 lg:px-12">
         {/* Frame Sequence Canvas Background */}
         <div className="hero-visual-bg pointer-events-none absolute inset-0 z-0 h-full w-full">
-          {/* Mobile (<lg): one static, Next-optimized frame (AVIF/WebP). No canvas,
-              no 81-image fetch — this is the Option A LCP fix. */}
-          <NextImage
-            src="/HeroImages/ezgif-frame-001.jpg"
-            alt=""
-            aria-hidden="true"
-            fill
-            priority
-            sizes="100vw"
-            className="lg:hidden object-contain object-bottom"
-          />
-          {/* Desktop (lg+): animated frame sequence on canvas. */}
+          {/* Animated frame sequence on canvas. */}
           <canvas
             ref={canvasRef}
-            className="hidden lg:block h-full w-full object-cover"
+            className="h-full w-full object-cover"
           />
         </div>
 
@@ -398,23 +379,23 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
           <div className="flex flex-col items-start lg:max-w-3xl">
             <GeometricSymbol />
             
-            <div className="hero-kicker mb-2 text-[11px] font-normal tracking-widest text-white/60 normal-case lg:uppercase md:text-xs">
+            <div className="hero-kicker mb-1.5 text-[11px] font-normal tracking-widest text-white/60 normal-case lg:uppercase md:text-xs">
               {dict.kicker}
             </div>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2 md:gap-2.5">
               {/* Above-the-fold hero text is rendered eager (opacity:1, no blur)
                   so it is LCP-eligible at first paint. Only the Y transform
                   animates in — this fixes the ~10s mobile LCP. */}
               <Reveal direction="up" delay={0.1} eager>
-                <h1 className="text-[28px] xs:text-[32px] sm:text-[44px] md:text-[56px] lg:text-[68px] font-normal leading-[1.15] md:leading-[1.1] tracking-[-0.04em] text-white">
+                <h1 className="text-[26px] xs:text-[30px] sm:text-[40px] md:text-[52px] lg:text-[58px] xl:text-[64px] 2xl:text-[68px] font-normal leading-[1.15] md:leading-[1.1] tracking-[-0.04em] text-white">
                   {dict.title_1}
                   <br className="block lg:hidden" />{" "}
                   {dict.title_2}
                 </h1>
               </Reveal>
               <Reveal direction="up" delay={0.3} eager>
-                <p className="mt-3 md:mt-5 max-w-md text-[13px] sm:text-sm font-normal leading-relaxed text-neutral-400 md:text-base">
+                <p className="mt-1 md:mt-1.5 max-w-md text-[13px] sm:text-sm font-normal leading-relaxed text-neutral-400 md:text-base">
                   {dict.description}
                 </p>
               </Reveal>
@@ -424,14 +405,14 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
                       intent statement placed right under the H1 for AI Overview
                       extraction. Kept visually quiet to respect the flat hero.
                       This <p> is the mobile LCP element — must paint eagerly. */}
-                  <p className="mt-3 max-w-lg text-[12px] sm:text-[13px] font-normal leading-relaxed text-neutral-500">
+                  <p className="mt-1 max-w-lg text-[12px] sm:text-[13px] font-normal leading-relaxed text-neutral-500">
                     {dict.summary}
                   </p>
                 </Reveal>
               )}
             </div>
 
-            <div className="hero-cta-group mt-5 md:mt-8 flex flex-row items-center gap-x-6 lg:gap-x-10">
+            <div className="hero-cta-group mt-4 md:mt-6 flex flex-row items-center gap-x-6 lg:gap-x-10">
               <Link 
                 href={settings.ctaHref}
                 className="group flex items-center gap-3 text-[13px] font-normal text-[#75DAB4] transition-colors hover:text-white md:text-sm"

@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { SectionReveal } from "@/components/ui/section-reveal";
+import { Badge } from "@/components/ui/badge";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -61,11 +62,8 @@ export function ProcessSection({ dict }: { dict: any }) {
       <div className="mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-20">
         <SectionReveal>
           {/* Header Badge */}
-          <div className="mb-12 flex items-center gap-3">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand-teal" />
-            <div className="rounded-full border border-black/10 bg-black/[0.03] px-3.5 py-1.5 backdrop-blur-sm">
-              <span className="text-[10px] font-normal tracking-[0.2em] text-black/80">{dict.badge}</span>
-            </div>
+          <div className="mb-12">
+            <Badge label={dict.badge} theme="light" />
           </div>
 
           {/* Horizontal Divider */}

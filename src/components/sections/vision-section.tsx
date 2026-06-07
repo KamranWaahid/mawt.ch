@@ -14,13 +14,6 @@ export function VisionSection({ dict, services }: { dict: any; services?: any[] 
     <section className="relative bg-bg-light py-20 md:py-32 lg:py-40 border-t border-black/5">
       <div className="mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-20">
         
-        {/* Header Badge */}
-        <SectionReveal>
-          <div className="mb-12">
-            <Badge label={dict.badge} theme="light" />
-          </div>
-        </SectionReveal>
-
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
 
           {/* Left Column: Statement + its divider line. Sticky at ALL
@@ -32,6 +25,10 @@ export function VisionSection({ dict, services }: { dict: any; services?: any[] 
               (required for sticky to engage). */}
           <div className="lg:col-span-5 sticky top-24 lg:top-32 self-start h-fit z-10 bg-bg-light pb-6 lg:pb-0">
             <SectionReveal delay={0.1}>
+              {/* Header Badge */}
+              <div className="mb-12">
+                <Badge label={dict.badge} theme="light" />
+              </div>
               {/* Horizontal Divider — now pinned together with the text */}
               <div className="mb-8 h-px w-full bg-black/10" />
               <h2 className="text-2xl font-normal tracking-tight text-black sm:text-3xl md:text-[32px] lg:text-[34px] leading-[1.25] text-balance">

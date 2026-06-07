@@ -102,7 +102,7 @@ export function ContactForm({ dict }: ContactFormProps) {
   }
 
   return (
-    <div className="flex flex-col gap-12">
+    <div className="flex flex-col gap-12 text-black">
       {/* Progress Indicator */}
       <div className="flex items-center gap-4">
         {[1, 2, 3].map((s) => (
@@ -131,7 +131,7 @@ export function ContactForm({ dict }: ContactFormProps) {
             {/* ... (fields remain the same, ensuring names match schema) */}
             {step === 1 && (
               <div className="flex flex-col gap-12">
-                <h2 className="text-3xl font-normal tracking-tighter">Let's start with the basics</h2>
+                <h2 className="text-3xl font-normal tracking-tighter text-black">Let's start with the basics</h2>
                 <div className="grid md:grid-cols-2 gap-12">
                   <div className="flex flex-col gap-4">
                     <label className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]">{labels.name}</label>
@@ -141,7 +141,7 @@ export function ContactForm({ dict }: ContactFormProps) {
                       type="text" 
                       value={formData.name}
                       onChange={handleInputChange}
-                      className="w-full py-4 border-b border-black/10 focus:border-black focus:outline-none bg-transparent transition-colors font-normal text-xl" 
+                      className="w-full py-4 border-b border-black/10 focus:border-black focus:outline-none bg-transparent transition-colors font-normal text-xl text-black placeholder:text-neutral-400" 
                       placeholder="Your name" 
                     />
                   </div>
@@ -153,7 +153,7 @@ export function ContactForm({ dict }: ContactFormProps) {
                       type="email" 
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="w-full py-4 border-b border-black/10 focus:border-black focus:outline-none bg-transparent transition-colors font-normal text-xl" 
+                      className="w-full py-4 border-b border-black/10 focus:border-black focus:outline-none bg-transparent transition-colors font-normal text-xl text-black placeholder:text-neutral-400" 
                       placeholder="hello@company.com" 
                     />
                   </div>
@@ -163,7 +163,7 @@ export function ContactForm({ dict }: ContactFormProps) {
 
             {step === 2 && (
               <div className="flex flex-col gap-12">
-                <h2 className="text-3xl font-normal tracking-tighter">What are you looking for?</h2>
+                <h2 className="text-3xl font-normal tracking-tighter text-black">What are you looking for?</h2>
                 <div className="grid md:grid-cols-2 gap-12">
                   <div className="flex flex-col gap-4">
                     <label className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]">Service</label>
@@ -171,12 +171,12 @@ export function ContactForm({ dict }: ContactFormProps) {
                       name="service"
                       value={formData.service}
                       onChange={handleInputChange}
-                      className="w-full py-4 border-b border-black/10 focus:border-black focus:outline-none bg-transparent transition-colors font-normal text-xl appearance-none"
+                      className="w-full py-4 border-b border-black/10 focus:border-black focus:outline-none bg-transparent transition-colors font-normal text-xl appearance-none text-black"
                     >
-                      <option>Strategy</option>
-                      <option>Development</option>
-                      <option>Design</option>
-                      <option>AI Automation</option>
+                      <option className="text-black bg-white">Strategy</option>
+                      <option className="text-black bg-white">Development</option>
+                      <option className="text-black bg-white">Design</option>
+                      <option className="text-black bg-white">AI Automation</option>
                     </select>
                   </div>
                   <div className="flex flex-col gap-4">
@@ -185,11 +185,11 @@ export function ContactForm({ dict }: ContactFormProps) {
                       name="timeline"
                       value={formData.timeline}
                       onChange={handleInputChange}
-                      className="w-full py-4 border-b border-black/10 focus:border-black focus:outline-none bg-transparent transition-colors font-normal text-xl appearance-none"
+                      className="w-full py-4 border-b border-black/10 focus:border-black focus:outline-none bg-transparent transition-colors font-normal text-xl appearance-none text-black"
                     >
-                      <option>Under 3 months</option>
-                      <option>3-6 months</option>
-                      <option>Ongoing</option>
+                      <option className="text-black bg-white">Under 3 months</option>
+                      <option className="text-black bg-white">3-6 months</option>
+                      <option className="text-black bg-white">Ongoing</option>
                     </select>
                   </div>
                 </div>
@@ -198,7 +198,7 @@ export function ContactForm({ dict }: ContactFormProps) {
 
             {step === 3 && (
               <div className="flex flex-col gap-12">
-                <h2 className="text-3xl font-normal tracking-tighter">Anything else we should know?</h2>
+                <h2 className="text-3xl font-normal tracking-tighter text-black">Anything else we should know?</h2>
                 <div className="flex flex-col gap-4">
                   <label className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]">{labels.message}</label>
                   <textarea 
@@ -207,7 +207,7 @@ export function ContactForm({ dict }: ContactFormProps) {
                     rows={4} 
                     value={formData.message}
                     onChange={handleInputChange}
-                    className="w-full py-4 border-b border-black/10 focus:border-black focus:outline-none bg-transparent transition-colors font-normal text-xl resize-none" 
+                    className="w-full py-4 border-b border-black/10 focus:border-black focus:outline-none bg-transparent transition-colors font-normal text-xl resize-none text-black placeholder:text-neutral-400" 
                     placeholder="Tell us about your project challenges..." 
                   />
                 </div>

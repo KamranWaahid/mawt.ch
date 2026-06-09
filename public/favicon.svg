@@ -1,15 +1,29 @@
-<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_257_688)">
-<rect width="160" height="160" fill="white"/>
-<circle cx="80" cy="80" r="80" fill="url(#paint0_linear_257_688)"/>
-</g>
-<defs>
-<linearGradient id="paint0_linear_257_688" x1="80" y1="0" x2="80" y2="160" gradientUnits="userSpaceOnUse">
-<stop stop-color="#75DAB4"/>
-<stop offset="1" stop-color="#1E1E1E"/>
-</linearGradient>
-<clipPath id="clip0_257_688">
-<rect width="160" height="160" fill="white"/>
-</clipPath>
-</defs>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 160 160">
+  <!-- Generator: Adobe Illustrator 30.4.0, SVG Export Plug-In . SVG Version: 2.1.4 Build 226)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: none;
+      }
+
+      .st1 {
+        fill: url(#linear-gradient);
+      }
+
+      .st2 {
+        clip-path: url(#clippath);
+      }
+    </style>
+    <clipPath id="clippath">
+      <rect class="st0" y="0" width="160" height="160"/>
+    </clipPath>
+    <linearGradient id="linear-gradient" x1="80" y1="159.89" x2="80" y2="-.11" gradientTransform="translate(0 159.89) scale(1 -1)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#75dab4"/>
+      <stop offset="1" stop-color="#1e1e1e"/>
+    </linearGradient>
+  </defs>
+  <g class="st2">
+    <circle class="st1" cx="80" cy="80" r="80"/>
+  </g>
 </svg>

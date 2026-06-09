@@ -5,7 +5,7 @@ import Link from "next/link";
 // Aliased: the hero uses the browser-global `new Image()` for canvas frames,
 // so next/image must not shadow it.
 import { useGSAP } from "@gsap/react";
-import { useRef, type ReactNode } from "react";
+import { useRef, useEffect, type ReactNode } from "react";
 import { motion, useTransform, useMotionValue, useSpring } from "motion/react";
 import { useLenis } from "lenis/react";
 import { Reveal } from "@/components/ui/reveal";
@@ -46,27 +46,183 @@ const GeometricSymbol = () => (
   </svg>
 );
 
+const totalFrames = 241;
+const getFrameUrl = (index: number) => {
+  return `/HeroImages/ezgif-frame-${String(index).padStart(3, '0')}.jpg`;
+};
+
+function drawImageProp(ctx: CanvasRenderingContext2D, img: HTMLImageElement) {
+  const canvas = ctx.canvas;
+  const imgWidth = img.naturalWidth || img.width;
+  const imgHeight = img.naturalHeight || img.height;
+  
+  const wr = canvas.width / imgWidth;
+  const hr = canvas.height / imgHeight;
+  const r = Math.max(wr, hr);
+  
+  const w = imgWidth * r;
+  const h = imgHeight * r;
+  const x = (canvas.width - w) / 2;
+  const y = (canvas.height - h) / 2;
+  
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, x, y, w, h);
+}
+
 export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { dict: any }) {
   const containerRef = useRef<HTMLElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const imagesRef = useRef<HTMLImageElement[]>([]);
   
   const progressValue = useMotionValue(0);
   const smoothProgress = useSpring(progressValue, {
-    stiffness: 80,
+    stiffness: 150,
     damping: 25,
+    mass: 0.2,
     restDelta: 0.001
   });
 
   useLenis((lenisInstance) => {
     const scroll = lenisInstance.scroll;
     if (typeof window !== "undefined") {
-      const L = window.innerHeight * 0.5;
+      const L = window.innerHeight * 0.3;
       const nextProgress = Math.min(1, scroll / L);
       progressValue.set(nextProgress);
     }
   });
 
-  const contentOpacity = useTransform(smoothProgress, [0, 0.4], [1, 0]);
-  const contentY = useTransform(smoothProgress, [0, 0.4], [0, -30]);
+  const contentOpacity = useTransform(smoothProgress, [0.7, 1.0], [1, 0]);
+  const contentY = useTransform(smoothProgress, [0.7, 1.0], [0, -30]);
+  
+  // Parallax translation: starts moving only after approximately 30% of progress
+  const backgroundY = useTransform(smoothProgress, [0, 0.3, 1], [0, 0, 40]);
+
+  const lastDrawnFrameRef = useRef<number>(1);
+
+  const drawFrame = (frameIndex: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let img = imagesRef.current[frameIndex];
+    if (img && img.complete) {
+      drawImageProp(ctx, img);
+      lastDrawnFrameRef.current = frameIndex;
+    } else {
+      // Fallback to the last successfully drawn frame (O(1) fallback)
+      const fallbackIndex = lastDrawnFrameRef.current;
+      const fallbackImg = imagesRef.current[fallbackIndex];
+      if (fallbackImg && fallbackImg.complete) {
+        drawImageProp(ctx, fallbackImg);
+      }
+    }
+  };
+
+  // Progressive background image loader with concurrency limit
+  useEffect(() => {
+    let active = true;
+    const urls = Array.from({ length: totalFrames }, (_, i) => ({
+      index: i + 1,
+      url: getFrameUrl(i + 1)
+    }));
+
+    // Setup first frame immediately
+    const img1 = new Image();
+    img1.src = urls[0].url;
+    img1.onload = () => {
+      if (!active) return;
+      imagesRef.current[1] = img1;
+      
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const ctx = canvas.getContext("2d");
+        if (ctx) drawImageProp(ctx, img1);
+      }
+      
+      // Load the rest with limited concurrency (6 concurrent requests)
+      const remaining = urls.slice(1);
+      let activeCount = 0;
+      let index = 0;
+      
+      const loadNext = () => {
+        if (!active || index >= remaining.length) return;
+        const item = remaining[index++];
+        activeCount++;
+        
+        const img = new Image();
+        img.src = item.url;
+        img.onload = () => {
+          if (!active) return;
+          imagesRef.current[item.index] = img;
+          
+          // Re-draw if we are currently at this frame
+          const currentProgressFrame = Math.round(progressValue.get() * (totalFrames - 1)) + 1;
+          if (currentProgressFrame === item.index) {
+            drawFrame(item.index);
+          }
+          
+          activeCount--;
+          loadNext();
+        };
+        img.onerror = () => {
+          if (!active) return;
+          activeCount--;
+          loadNext();
+        };
+      };
+      
+      for (let i = 0; i < Math.min(6, remaining.length); i++) {
+        loadNext();
+      }
+    };
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  // Handle canvas sizing and scroll synchronization
+  useEffect(() => {
+    const handleResize = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      
+      const currentProgressFrame = Math.round(smoothProgress.get() * (totalFrames - 1)) + 1;
+      drawFrame(currentProgressFrame);
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // initial size
+
+    let isDrawing = false;
+    let nextFrameIndex = -1;
+
+    const unsubscribe = smoothProgress.on("change", (latest) => {
+      const frameIndex = Math.round(latest * (totalFrames - 1)) + 1;
+      nextFrameIndex = frameIndex;
+      
+      if (!isDrawing) {
+        isDrawing = true;
+        requestAnimationFrame(() => {
+          if (nextFrameIndex !== -1) {
+            drawFrame(nextFrameIndex);
+            nextFrameIndex = -1;
+          }
+          isDrawing = false;
+        });
+      }
+    });
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      unsubscribe();
+    };
+  }, [smoothProgress]);
 
   useGSAP(
     () => {
@@ -98,17 +254,18 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
   );
 
   return (
-    <section ref={containerRef} className="relative h-screen bg-black">
-      <div className="relative h-full w-full overflow-hidden flex items-start pt-[85px] lg:pt-[105px] xl:pt-[115px] 2xl:pt-[125px] px-6 sm:px-8 md:px-10 lg:px-12">
-        {/* GIF Background */}
+    <div className="relative w-full" style={{ height: "130vh" }}>
+      <section ref={containerRef} className="sticky top-0 h-screen bg-black w-full">
+        <div className="relative h-full w-full overflow-hidden flex items-start pt-[85px] lg:pt-[105px] xl:pt-[115px] 2xl:pt-[125px] px-6 sm:px-8 md:px-10 lg:px-12">
+        {/* Canvas Background */}
         <div className="hero-visual-bg pointer-events-none absolute inset-0 z-0 h-full w-full">
-          <img
-            src="/MAWTBackground.gif"
-            alt={visualAlt || "MAWT Background"}
-            className="h-full w-full object-cover lg:object-center object-[68%_bottom]"
+          <motion.canvas
+            ref={canvasRef}
+            style={{ y: backgroundY, scale: 1.05 }}
+            className="h-full w-full object-cover origin-center"
           />
           {/* Opaque gradient fade-out at the bottom to blend the 3D model's wrist */}
-          <div className="absolute bottom-0 left-0 w-full h-[22%] bg-gradient-to-t from-black to-transparent pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-full h-[22%] bg-gradient-to-t from-black to-transparent pointer-events-none z-10" />
         </div>
 
         <motion.div 
@@ -178,7 +335,8 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
             </div>
           </div>
         </motion.div>
-      </div>
-    </section>
+        </div>
+      </section>
+    </div>
   );
 }

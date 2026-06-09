@@ -17,9 +17,9 @@ import { preload } from "react-dom";
 import type { Metadata } from "next";
 
 // Hero is a JS-driven <canvas> frame sequence; its first frame is the LCP image.
-// Preload the hero background GIF so the browser fetches it during HTML parse,
+// Preload the first frame image so the browser fetches it during HTML parse,
 // pulling LCP earlier.
-const HERO_BG_GIF = "/MAWTBackground.gif";
+const FIRST_HERO_IMAGE = "/HeroImages/ezgif-frame-001.jpg";
 
 export async function generateMetadata({
   params,
@@ -43,8 +43,8 @@ export default async function HomePage({
   params: Promise<{ lang: Locale }>;
 }) {
   const { lang } = await params;
-  // Preload the background GIF for all screen sizes
-  preload(HERO_BG_GIF, {
+  // Preload the first frame image for all screen sizes
+  preload(FIRST_HERO_IMAGE, {
     as: "image",
     fetchPriority: "high",
   });

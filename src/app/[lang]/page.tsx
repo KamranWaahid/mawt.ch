@@ -17,10 +17,9 @@ import { preload } from "react-dom";
 import type { Metadata } from "next";
 
 // Hero is a JS-driven <canvas> frame sequence; its first frame is the LCP image.
-// Preload it from the server so the browser fetches it during HTML parse,
-// before the hero's client JS even runs — pulls LCP earlier without changing
-// the canvas behaviour or the flat design.
-const HERO_FIRST_FRAME = "/HeroImages/ezgif-frame-001.jpg";
+// Preload the hero background GIF so the browser fetches it during HTML parse,
+// pulling LCP earlier.
+const HERO_BG_GIF = "/MAWTBackground.gif";
 
 export async function generateMetadata({
   params,
@@ -44,15 +43,10 @@ export default async function HomePage({
   params: Promise<{ lang: Locale }>;
 }) {
   const { lang } = await params;
-  // Preload the raw hero frame ONLY on desktop (>=1024px), where the animated
-  // <canvas> draws it. On mobile the hero is a Next-optimized <Image priority>
-  // (AVIF/WebP) which emits its own high-priority preload — so without the media
-  // scope this raw JPEG preload double-loads and competes with the real mobile
-  // LCP image, inflating mobile LCP.
-  preload(HERO_FIRST_FRAME, {
+  // Preload the background GIF for all screen sizes
+  preload(HERO_BG_GIF, {
     as: "image",
     fetchPriority: "high",
-    media: "(min-width: 1024px)",
   });
   const dictionary = await getDictionary(lang);
   const data = await getHomePageData(lang);

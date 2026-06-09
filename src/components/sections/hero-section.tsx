@@ -4,10 +4,8 @@ import gsap from "gsap";
 import Link from "next/link";
 // Aliased: the hero uses the browser-global `new Image()` for canvas frames,
 // so next/image must not shadow it.
-import NextImage from "next/image";
 import { useGSAP } from "@gsap/react";
-import type { ReactNode } from "react";
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, type ReactNode } from "react";
 import { motion, useTransform, useMotionValue, useSpring } from "motion/react";
 import { useLenis } from "lenis/react";
 import { Reveal } from "@/components/ui/reveal";
@@ -50,9 +48,6 @@ const GeometricSymbol = () => (
 
 export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { dict: any }) {
   const containerRef = useRef<HTMLElement | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const imagesRef = useRef<HTMLImageElement[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
   
   const progressValue = useMotionValue(0);
   const smoothProgress = useSpring(progressValue, {
@@ -60,276 +55,18 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
     damping: 25,
     restDelta: 0.001
   });
-  const lenis = useLenis();
 
   useLenis((lenisInstance) => {
     const scroll = lenisInstance.scroll;
-    if (scroll > 1) {
-      if (typeof window !== "undefined") {
-        const L = window.innerHeight * 0.5;
-        const nextProgress = Math.min(1, 0.3 + (scroll / L) * 0.7);
-        progressValue.set(nextProgress);
-      }
-    } else if (scroll <= 1) {
-      if (progressValue.get() > 0.3) {
-        progressValue.set(0.3);
-      }
-      if (progressValue.get() < 0.3) {
-        lenisInstance.stop();
-      }
+    if (typeof window !== "undefined") {
+      const L = window.innerHeight * 0.5;
+      const nextProgress = Math.min(1, scroll / L);
+      progressValue.set(nextProgress);
     }
   });
 
-  const updateProgress = useCallback((delta: number) => {
-    const current = progressValue.get();
-    const next = Math.max(0, Math.min(0.3, current + delta));
-    progressValue.set(next);
-    return next;
-  }, [progressValue]);
-
-  const frameCount = 81;
-  
-  const render = useCallback((progress: number) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d", { alpha: false });
-    if (!ctx) return;
-
-    // Map progress to frames (0.0 to 0.7 for animation, then hold)
-    const easedProgress = Math.min(1, progress / 0.7);
-    const frameIndex = Math.min(
-      frameCount - 1,
-      Math.floor(easedProgress * (frameCount - 1))
-    );
-    
-    const img = imagesRef.current[frameIndex];
-    if (!img || !img.complete) return;
-
-    // Clear canvas to solid black before drawing the next frame
-    ctx.fillStyle = "#000000";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Draw image with 'cover' logic
-    const canvasAspect = canvas.width / canvas.height;
-    const imgAspect = img.width / img.height;
-    let drawWidth = canvas.width;
-    let drawHeight = canvas.height;
-    let offsetX = 0;
-    let offsetY = 0;
-
-    if (canvasAspect > imgAspect) {
-      drawHeight = canvas.width / imgAspect;
-      offsetY = (canvas.height - drawHeight) / 2;
-    } else {
-      if (typeof window !== "undefined" && window.innerWidth < 1024) {
-        // Mobile portrait: scale down the visual sequence to occupy the bottom portion
-        // of the screen to prevent overlap with the text content at the top.
-        const scale = 0.6;
-        drawHeight = canvas.height * scale;
-        drawWidth = drawHeight * imgAspect;
-        offsetX = canvas.width / 2 - drawWidth * 0.6841;
-        offsetY = canvas.height - drawHeight;
-      } else {
-        drawWidth = canvas.height * imgAspect;
-        offsetX = (canvas.width - drawWidth) / 2;
-      }
-    }
-
-    ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-
-    // Apply a black linear gradient to fade out the bottom of the drawn image
-    // to smoothly blend the flat cut-off wrist of the 3D model.
-    const fadeHeight = drawHeight * 0.22;
-    const fadeStart = offsetY + drawHeight - fadeHeight;
-    const fadeEnd = offsetY + drawHeight;
-
-    const gradient = ctx.createLinearGradient(0, fadeStart, 0, fadeEnd);
-    gradient.addColorStop(0, "rgba(0, 0, 0, 0)");
-    gradient.addColorStop(1, "rgba(0, 0, 0, 1)");
-
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, fadeStart, canvas.width, fadeHeight);
-  }, []);
-
-  // Frame loading is split to protect LCP/main-thread on mobile:
-  //   1. Load ONLY frame 1 immediately and draw it (first visual).
-  //   2. Defer the remaining 80 frames to requestIdleCallback (post-LCP /
-  //      post-hydration) so the 81-image fetch never competes with the
-  //      critical render. render() already skips not-yet-loaded frames.
-  const frameSrc = (i: number) =>
-    `/HeroImages/ezgif-frame-${String(i).padStart(3, "0")}.jpg`;
-
-  useEffect(() => {
-    // Load first frame immediately and defer the remaining frames.
-
-    const images: HTMLImageElement[] = new Array(frameCount);
-    imagesRef.current = images;
-
-    const first = new Image();
-    first.src = frameSrc(1);
-    first.onload = () => render(0); // first frame paints the canvas
-    images[0] = first;
-
-    let loadedCount = 1;
-    const loadRest = () => {
-      for (let i = 2; i <= frameCount; i++) {
-        const img = new Image();
-        img.src = frameSrc(i);
-        img.onload = () => {
-          loadedCount++;
-          if (loadedCount === frameCount) setIsLoaded(true);
-        };
-        images[i - 1] = img;
-      }
-    };
-
-    type RIC = (cb: () => void, opts?: { timeout: number }) => number;
-    const ric: RIC =
-      (typeof window !== "undefined" && (window as unknown as { requestIdleCallback?: RIC }).requestIdleCallback) ||
-      ((cb) => window.setTimeout(cb, 1500) as unknown as number);
-    const handle = ric(loadRest, { timeout: 3000 });
-
-    return () => {
-      const cic = (window as unknown as { cancelIdleCallback?: (h: number) => void }).cancelIdleCallback;
-      if (cic) cic(handle);
-      else clearTimeout(handle);
-    };
-  }, [render]);
-
-  // Setup canvas and scroll listener.
-  useEffect(() => {
-    const handleResize = () => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      render(smoothProgress.get());
-    };
-
-    window.addEventListener("resize", handleResize);
-    handleResize();
-
-    const unsubscribe = smoothProgress.on("change", (latest) => {
-      requestAnimationFrame(() => render(latest));
-    });
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      unsubscribe();
-    };
-  }, [smoothProgress, render]);
-
-  // Hook into Lenis to stop/start scrolling
-  useEffect(() => {
-    if (!lenis) return;
-
-    const handleProgressChange = (latest: number) => {
-      if (latest < 0.3) {
-        if (window.scrollY <= 1) {
-          lenis.stop();
-        } else {
-          lenis.start();
-        }
-      } else {
-        lenis.start();
-      }
-    };
-
-    // Initialize
-    handleProgressChange(progressValue.get());
-
-    const unsubscribe = progressValue.on("change", handleProgressChange);
-    return () => {
-      unsubscribe();
-      lenis.start();
-    };
-  }, [lenis, progressValue]);
-
-  // Handle native scroll/wheel/touch/keyboard inputs to drive progressValue
-  useEffect(() => {
-    let touchStart = 0;
-
-    const handleWheel = (e: WheelEvent) => {
-      const scrollY = window.scrollY;
-      const current = progressValue.get();
-
-      if (scrollY <= 1) {
-        if (e.deltaY > 0 && current < 0.3) {
-          e.preventDefault();
-          updateProgress(e.deltaY * 0.0015);
-        } else if (e.deltaY < 0 && current > 0 && current <= 0.3) {
-          e.preventDefault();
-          progressValue.set(0);
-        }
-      }
-    };
-
-    const handleTouchStart = (e: TouchEvent) => {
-      if (e.touches.length > 0) {
-        touchStart = e.touches[0].clientY;
-      }
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      const scrollY = window.scrollY;
-      const current = progressValue.get();
-
-      if (scrollY <= 1 && e.touches.length > 0) {
-        const touchCurrent = e.touches[0].clientY;
-        const deltaY = touchStart - touchCurrent; // positive is scrolling down (swipe up)
-
-        if (deltaY > 0 && current < 0.3) {
-          e.preventDefault();
-          updateProgress(deltaY * 0.003);
-          touchStart = touchCurrent;
-        } else if (deltaY < 0 && current > 0 && current <= 0.3) {
-          e.preventDefault();
-          progressValue.set(0);
-          touchStart = touchCurrent;
-        }
-      }
-    };
-
-    const keysToPrevent = ["ArrowDown", "ArrowUp", " ", "PageDown", "PageUp", "Home", "End"];
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const scrollY = window.scrollY;
-      const current = progressValue.get();
-
-      if (scrollY <= 1 && keysToPrevent.includes(e.key)) {
-        if ((e.key === "ArrowDown" || e.key === " " || e.key === "PageDown") && current < 0.3) {
-          e.preventDefault();
-          const step = e.key === " " || e.key === "PageDown" ? 0.05 : 0.01;
-          updateProgress(step);
-        } else if ((e.key === "ArrowUp" || e.key === "PageUp") && current > 0 && current <= 0.3) {
-          e.preventDefault();
-          progressValue.set(0);
-        }
-      }
-    };
-
-    window.addEventListener("wheel", handleWheel, { passive: false });
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchmove", handleTouchMove, { passive: false });
-    window.addEventListener("keydown", handleKeyDown, { passive: false });
-
-    return () => {
-      window.removeEventListener("wheel", handleWheel);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchmove", handleTouchMove);
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [progressValue, updateProgress]);
-
-  const contentOpacity = useTransform(smoothProgress, (value) => {
-    if (value <= 0.3) return 1;
-    if (value >= 0.6) return 0;
-    return 1 - (value - 0.3) / 0.3;
-  });
-  const contentY = useTransform(smoothProgress, (value) => {
-    if (value <= 0.3) return 0;
-    if (value >= 0.6) return -30;
-    return -30 * ((value - 0.3) / 0.3);
-  });
+  const contentOpacity = useTransform(smoothProgress, [0, 0.4], [1, 0]);
+  const contentY = useTransform(smoothProgress, [0, 0.4], [0, -30]);
 
   useGSAP(
     () => {
@@ -363,13 +100,15 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
   return (
     <section ref={containerRef} className="relative h-screen bg-black">
       <div className="relative h-full w-full overflow-hidden flex items-start pt-[85px] lg:pt-[105px] xl:pt-[115px] 2xl:pt-[125px] px-6 sm:px-8 md:px-10 lg:px-12">
-        {/* Frame Sequence Canvas Background */}
+        {/* GIF Background */}
         <div className="hero-visual-bg pointer-events-none absolute inset-0 z-0 h-full w-full">
-          {/* Animated frame sequence on canvas. */}
-          <canvas
-            ref={canvasRef}
-            className="h-full w-full object-cover"
+          <img
+            src="/MAWTBackground.gif"
+            alt={visualAlt || "MAWT Background"}
+            className="h-full w-full object-cover lg:object-center object-[68%_bottom]"
           />
+          {/* Opaque gradient fade-out at the bottom to blend the 3D model's wrist */}
+          <div className="absolute bottom-0 left-0 w-full h-[22%] bg-gradient-to-t from-black to-transparent pointer-events-none" />
         </div>
 
         <motion.div 

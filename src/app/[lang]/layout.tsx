@@ -27,18 +27,18 @@ export async function generateMetadata({
   return {
     title: {
       default: isFr
-        ? "MAWT — Partenaire d'exécution technique"
-        : "MAWT — Technical Execution Partner",
+        ? "MAWT | Agence IA à Genève"
+        : "MAWT | AI agency in Geneva",
       template: "%s | MAWT",
     },
     description: isFr
-      ? "Partenaire suisse d'exécution technique pour la Suisse romande : systèmes haute performance et expériences digitales."
-      : "Swiss-based technical execution partner for high-performance systems and digital experiences.",
+      ? "Agence IA à Genève. Intelligence artificielle, automatisation des processus et outils sur mesure pour les PME et entreprises en croissance de Suisse romande."
+      : "AI agency in Geneva. Artificial intelligence, process automation and custom tools for SMEs and growing companies across French speaking Switzerland.",
     openGraph: {
       title: "MAWT",
       description: isFr
-        ? "Exécution technique pour entreprises ambitieuses."
-        : "Technical execution for ambitious companies.",
+        ? "Agence IA à Genève. Des solutions qui tournent, pas des slides."
+        : "AI agency in Geneva. Solutions that run, not slides.",
       url: "https://mawt.ch",
       siteName: "MAWT",
       locale: isFr ? "fr_CH" : "en_US",

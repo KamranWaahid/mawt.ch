@@ -2,7 +2,7 @@ export const ABOUT_COPY = {
   fr: {
     hero: {
       h1: "Une équipe à taille humaine, basée à Genève.",
-      h2: "MAWT construit des systèmes IA-natifs, conseille sur l'adoption de l'IA, et met des experts dédiés au service de votre boîte. Pas une agence. Un studio.",
+      h2: "MAWT est une agence IA à Genève. On construit des systèmes IA-natifs, on conseille sur l'adoption de l'IA et on met des experts dédiés au service de votre boîte. Une agence qui construit elle-même. Pas d'intermédiaires, pas de couches.",
     },
     story: {
       h2: "Pourquoi MAWT",
@@ -50,15 +50,15 @@ export const ABOUT_COPY = {
       ctaSecondary: { label: "Voir nos projets", href: "projets" },
     },
     seo: {
-      title: "À propos | MAWT, solutions IA et conseil pour PME suisses",
+      title: "À propos | MAWT, agence IA à Genève",
       description:
-        "Accompagnement IA, développement sur mesure et conseil stratégique. Équipe à taille humaine basée à Genève. Pour les PME suisses et scale-ups qui veulent avancer.",
+        "MAWT est une agence IA à Genève. Solutions d'intelligence artificielle, automatisation et conseil stratégique. Équipe à taille humaine, pour les PME suisses et entreprises en croissance qui veulent avancer.",
     },
   },
   en: {
     hero: {
       h1: "A senior human team, based in Geneva.",
-      h2: "MAWT builds AI-native systems, advises on AI adoption, and embeds dedicated experts into your organization. Not an agency. A studio.",
+      h2: "MAWT is an AI agency in Geneva. We build AI-native systems, advise on AI adoption, and embed dedicated experts into your organization. An agency that builds things itself. No middlemen, no layers.",
     },
     story: {
       h2: "Why MAWT",
@@ -106,9 +106,9 @@ export const ABOUT_COPY = {
       ctaSecondary: { label: "See our work", href: "projets" },
     },
     seo: {
-      title: "About | MAWT, AI solutions and consulting from Geneva",
+      title: "About | MAWT, AI agency in Geneva",
       description:
-        "AI consulting, custom development, and dedicated experts. Senior team based in Geneva. For Swiss SMBs and scale-ups across Europe.",
+        "MAWT is an AI agency in Geneva. AI consulting, automation, custom development, and dedicated experts. Senior team, for Swiss SMBs and growing companies across Europe.",
     },
   },
 } as const;

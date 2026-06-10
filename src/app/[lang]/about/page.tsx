@@ -13,8 +13,8 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: Loc
     description:
       doc?.seo?.metaDescription ||
       (lang === "fr"
-        ? "MAWT, studio d'exécution technique à taille humaine basé à Genève."
-        : "MAWT, a senior technical execution studio based in Geneva."),
+        ? "MAWT, agence IA à taille humaine basée à Genève. Intelligence artificielle, automatisation et outils sur mesure."
+        : "MAWT, a human scale AI agency based in Geneva. Artificial intelligence, automation and custom tools."),
     alternates: standaloneAlternates("a-propos", lang),
   };
 }

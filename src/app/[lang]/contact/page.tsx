@@ -12,10 +12,10 @@ import type { Metadata } from "next";
 export async function generateMetadata({ params }: { params: Promise<{ lang: Locale }> }): Promise<Metadata> {
   const { lang } = await params;
   return {
-    title: lang === "en" ? "Contact | MAWT Solutions" : "Contact | MAWT Solutions",
+    title: lang === "en" ? "Contact | MAWT, AI agency in Geneva" : "Contact | MAWT, agence IA à Genève",
     description: lang === "en"
-      ? "Get in touch with our technical execution teams in Zürich and London."
-      : "Contactez nos équipes d'exécution technique à Zurich et à Londres.",
+      ? "Talk to MAWT, an AI agency in Geneva. AI integration, process automation and custom tools for SMEs and growing companies across French speaking Switzerland."
+      : "Contactez MAWT, agence IA à Genève. Intégration d'IA, automatisation des processus et outils sur mesure pour les PME et entreprises en croissance de Suisse romande.",
     alternates: standaloneAlternates("contact", lang),
   };
 }

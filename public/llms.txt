@@ -1,8 +1,8 @@
 # MAWT
 
-> MAWT est un studio suisse d'exécution technique basé à Genève, au service de la Suisse romande (Genève, Vaud). Nous accompagnons PME et scale ups sur la stratégie, le design, le développement web, les solutions IA (CRM intelligent, RAG, agents, automatisation) et le renfort d'équipe. Un interlocuteur unique, du cadrage à la production.
+> MAWT est une agence IA basée à Genève, au service de la Suisse romande (Genève, Vaud). Nous aidons les PME et entreprises en croissance à intégrer l'intelligence artificielle, automatiser leurs processus et déployer des outils sur mesure : CRM intelligents, agents IA, RAG, automatisations, applications métier. De la stratégie au déploiement, une équipe technique qui construit elle-même des solutions qui tournent, pas des slides.
 
-Site bilingue (FR / EN). URLs localisées : `/fr/...` et `/en/...`. Marché cible : Suisse romande.
+Site bilingue (FR / EN). URLs localisées : `/fr/...` et `/en/...`. Marché cible : Genève et Suisse romande.
 
 ## Services — Sites & Branding
 - [Site internet](https://mawt.ch/fr/services/sites-et-branding/site-internet) — sites sur mesure, orientés croissance.
@@ -50,6 +50,7 @@ Site bilingue (FR / EN). URLs localisées : `/fr/...` et `/en/...`. Marché cibl
 - [Accompagnement adoption IA](https://mawt.ch/fr/services/formation-ia/accompagnement-adoption-ia)
 
 ## Pages clés
+- [Agence IA à Genève](https://mawt.ch/fr/geneve) — page locale : secteurs servis (finance, négoce, horlogerie, medtech), ancrage Suisse romande.
 - [Tous les services](https://mawt.ch/fr/services)
 - [À propos](https://mawt.ch/fr/a-propos)
 - [Notre méthode](https://mawt.ch/fr/notre-methode)

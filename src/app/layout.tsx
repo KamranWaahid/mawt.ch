@@ -11,15 +11,15 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://mawt.ch"),
   title: {
-    default: "MAWT | Technical Execution for High-Performance Teams",
+    default: "MAWT | AI agency in Geneva",
     template: "%s | MAWT",
   },
   description:
-    "Swiss technical execution partner building high-performance systems, automation, and digital infrastructure for teams that move fast.",
+    "AI agency in Geneva. We integrate artificial intelligence, automate processes and ship custom tools for SMEs and growing companies across French speaking Switzerland.",
   openGraph: {
-    title: "MAWT | Technical Execution for High-Performance Teams",
+    title: "MAWT | AI agency in Geneva",
     description:
-      "Swiss technical execution partner building high-performance systems, automation, and digital infrastructure.",
+      "AI agency in Geneva. Artificial intelligence, process automation and custom tools for SMEs and growing companies. Solutions that run, not slides.",
     type: "website",
     url: "https://mawt.ch",
     siteName: "MAWT",
@@ -27,9 +27,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "MAWT | Technical Execution",
+    title: "MAWT | AI agency in Geneva",
     description:
-      "Swiss technical execution partner building high-performance systems and automation.",
+      "AI agency in Geneva. Artificial intelligence, process automation and custom tools for SMEs and growing companies.",
   },
 };
 

@@ -41,7 +41,7 @@ export function InsightsSection({ dict, posts }: { dict: any; posts?: BlogPost[]
           ? new Date(post.publishedAt).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" })
           : "Recent",
         readTime: "5 min read",
-        excerpt: post.excerpt || "Explore the latest insights and strategic perspectives from our technical execution team.",
+        excerpt: post.excerpt || "Field notes on AI in business and automation, from the team that builds the systems.",
         href: `/${currentLang}/blog/${post.slug}`,
       }))
     : (dict?.articles || []).slice(0, 3).map((article: any, idx: number) => ({

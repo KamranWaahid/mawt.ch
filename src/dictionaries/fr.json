@@ -1,10 +1,10 @@
 {
   "hero": {
-    "kicker": "Entreprise basée en Suisse",
-    "title_1": "Une petite équipe,",
-    "title_2": "entièrement à vos côtés.",
-    "description": "Partenaire basé en Suisse aidant les entreprises, les petites entreprises et les particuliers avec des solutions numériques et stratégiques pratiques.",
-    "summary": "MAWT est un partenaire suisse d'exécution technique pour la Suisse romande. Nous accompagnons PME, scale ups et équipes ambitieuses sur la stratégie, le design, le développement web et l'automatisation. De Genève à Lausanne, nous concevons des systèmes numériques fiables, mesurables et conçus pour durer.",
+    "kicker": "Intelligence artificielle · Genève",
+    "title_1": "Agence IA à Genève.",
+    "title_2": "Automatisation et solutions sur mesure.",
+    "description": "On conçoit vos solutions IA, vos automatisations et vos outils sur mesure. Une équipe technique qui évolue avec les derniers outils, pour des résultats qui tournent.",
+    "summary": "MAWT est une agence IA à Genève. Nous aidons les PME et entreprises en croissance de Suisse romande à intégrer l'intelligence artificielle, automatiser leurs processus et déployer des outils sur mesure. De la stratégie au déploiement, on construit des solutions qui tournent, pas des slides.",
     "cta": "Parlons-en"
   },
   "clients": {
@@ -12,42 +12,42 @@
   },
   "description": {
     "paragraphs": [
-      "Nous sommes un partenaire d'exécution technique basé en Suisse, spécialisé dans la création de systèmes performants et d'expériences numériques pour les entreprises ambitieuses.",
-      "Notre mission est de vous aider à combler l'écart entre la stratégie et l'exécution en fournissant l'infrastructure technique et les talents à la demande dont vous avez besoin pour évoluer.",
-      "De l'automatisation et l'IA aux logiciels personnalisés et à l'intégration d'équipes, nous agissons comme une extension de votre entreprise, vous assurant de rester en tête dans un monde qui évolue rapidement."
+      "MAWT est une agence IA basée à Genève. Nous aidons les PME et les entreprises en croissance de Suisse romande à mettre l'intelligence artificielle au travail : automatiser ce qui se répète, accélérer ce qui compte, déployer des outils pensés pour leur métier.",
+      "Avant d'être une agence IA, nous sommes une équipe technique. Nous écrivons du code depuis des années et nous évoluons avec les derniers outils et les nouvelles pratiques, sans courir après la tendance. C'est ce qui sépare une démo d'un système qui tient en production.",
+      "Notre promesse tient en une phrase : des solutions qui tournent, pas des recommandations. De la première conversation au déploiement, vous parlez aux personnes qui construisent."
     ]
   },
   "problem": {
     "badge": "PROBLÈME",
-    "headline_1": "Votre entreprise évolue rapidement.",
-    "headline_2": "Vos opérations ne suivent pas.",
+    "headline_1": "L'IA est partout.",
+    "headline_2": "Dans votre entreprise, elle reste une promesse.",
     "items": [
       {
-        "title": "Systèmes Fragmentés",
-        "description": "Les données critiques sont dispersées entre des outils qui ne communiquent pas entre eux, créant du travail manuel et des erreurs humaines."
+        "title": "Des outils qui ignorent votre métier",
+        "description": "Les solutions IA génériques impressionnent en démo et déçoivent en réel. Elles ne connaissent ni vos données, ni vos process, ni vos contraintes."
       },
       {
-        "title": "Goulots d'Étranglement",
-        "description": "Les initiatives stratégiques stagnent parce que votre équipe manque de la capacité technique spécialisée pour les construire et les maintenir."
+        "title": "Du temps perdu sur le répétitif",
+        "description": "Saisie, relances, rapports, tri : vos meilleurs profils passent leurs journées sur des tâches qu'une automatisation ferait sans erreur."
       },
       {
-        "title": "Répétition Manuelle",
-        "description": "Les talents à haute valeur ajoutée sont gaspillés dans des tâches administratives répétitives qui pourraient être automatisées pour évoluer."
+        "title": "Beaucoup de conseils, peu de mise en œuvre",
+        "description": "Les ateliers et les slides s'accumulent. Entre une stratégie IA et un système qui tourne vraiment, il manque toujours l'exécution."
       },
       {
-        "title": "Manque de Visibilité",
-        "description": "Les décisions sont prises sur la base de données incomplètes parce que vous manquez de visibilité en temps réel sur la performance de votre entreprise."
+        "title": "La peur de mal faire",
+        "description": "Confidentialité des données, conformité nLPD, fiabilité : intégrer l'IA sans cadre clair fait plus peur que de ne rien faire."
       }
     ]
   },
   "vision": {
     "badge": "Services",
-    "statement": "Un bon design n'est pas un service. C'est une décision. Ce sont les domaines dans lesquels MAWT travaille et où cette décision compte le plus.",
+    "statement": "L'IA n'est pas un gadget qu'on ajoute. C'est une décision qui change comment vous travaillez. Voici les domaines où MAWT intervient et où cette décision compte le plus.",
     "cta": "Voir tous les services",
     "items": [
       {
         "title": "Design Web",
-        "description": "Construire des sites web pensés à tous les niveaux — de la structure et de la mise en page au contenu et aux interactions. Principalement avec Next.js et des CMS modernes."
+        "description": "Construire des sites web pensés à tous les niveaux, de la structure et de la mise en page au contenu et aux interactions. Principalement avec Next.js et des CMS modernes."
       },
       {
         "title": "Identité de Marque",
@@ -60,8 +60,8 @@
     ]
   },
   "work": {
-    "badge": "SOLUTION",
-    "headline": "Conçu pour la vitesse. Prouvé par les résultats.",
+    "badge": "RÉALISATIONS",
+    "headline": "Conçu pour tourner. Prouvé par les résultats.",
     "projects": [
       {
         "id": "crm",
@@ -85,12 +85,12 @@
   },
   "process": {
     "badge": "PROCESSUS",
-    "headline": "Du goulot d'étranglement à l'exécution en quelques jours",
+    "headline": "Du besoin à un système qui tourne, en quelques semaines",
     "items": [
-      { "id": "01", "title": "Audit →", "description": "Identifier les inefficacités" },
-      { "id": "02", "title": "Construction →", "description": "Créer des systèmes et des flux de travail" },
-      { "id": "03", "title": "Déploiement →", "description": "Lancer les équipes et l'automatisation" },
-      { "id": "04", "title": "Optimisation →", "description": "Améliorer continuellement" }
+      { "id": "01", "title": "Cadrage →", "description": "Comprendre vos données et vos enjeux" },
+      { "id": "02", "title": "Conception →", "description": "Choisir l'IA et l'architecture utiles" },
+      { "id": "03", "title": "Déploiement →", "description": "Mettre en production et connecter" },
+      { "id": "04", "title": "Optimisation →", "description": "Mesurer et améliorer en continu" }
     ]
   },
   "insights": {
@@ -180,63 +180,63 @@
     ],
     "newsletter": {
       "title": "Newsletter",
-      "description": "Recevez les dernières informations sur l'exécution technique et la vélocité opérationnelle.",
+      "description": "Recevez nos retours de terrain sur l'IA en entreprise et l'automatisation. Du concret, pas de la théorie.",
       "placeholder": "Adresse e-mail",
       "success": "Merci de vous être abonné."
     }
   },
   "solution": {
     "badge": "SOLUTION",
-    "headline_1": "Nous construisons l'infrastructure",
-    "headline_2": "qui maintient votre entreprise en mouvement.",
+    "headline_1": "On construit l'IA et les systèmes",
+    "headline_2": "qui font tourner votre entreprise.",
     "items": [
       {
-        "title": "Conception de Systèmes",
-        "description": "Nous concevons des systèmes opérationnels qui éliminent les goulots d'étranglement et créent des flux de travail évolutifs."
+        "title": "Intégration d'IA sur mesure",
+        "description": "Nous branchons l'intelligence artificielle sur vos données et vos outils : assistants, agents, recherche interne, génération et analyse de contenu."
       },
       {
-        "title": "Automatisation et IA",
-        "description": "Nous éliminons les tâches répétitives grâce à l'automatisation et aux flux de travail connectés."
+        "title": "Automatisation des processus",
+        "description": "Nous connectons vos applications et automatisons les flux répétitifs, de la saisie au reporting, pour libérer vos équipes."
       },
       {
-        "title": "Équipes d'Exécution Intégrées",
-        "description": "Nous déployons des développeurs, des designers et des spécialistes qui s'intègrent directement dans votre entreprise."
+        "title": "Outils et applications sur mesure",
+        "description": "Nous concevons et développons les logiciels, sites et plateformes que les outils du marché ne couvrent pas."
       },
       {
-        "title": "Optimisation de la Performance",
-        "description": "Nous améliorons continuellement vos systèmes à mesure que votre entreprise grandit."
+        "title": "Du conseil au déploiement",
+        "description": "Nous restons jusqu'à la mise en production, la mesure et l'amélioration continue. Pas seulement un plan, un système qui tourne."
       }
     ]
   },
   "services": {
     "badge": "Ce que nous faisons",
-    "headline": "Exécution technique complète à travers cinq piliers fondamentaux.",
+    "headline": "Solutions IA, automatisation et outils sur mesure. Cinq piliers, une seule équipe.",
     "pillars": [
       {
-        "title": "Stratégie",
-        "description": "Nous vous aidons à définir la bonne feuille de route numérique. De la compréhension des utilisateurs à l'amélioration de la performance itérative."
+        "title": "Solutions IA",
+        "description": "Nous concevons et déployons vos solutions d'intelligence artificielle : CRM intelligents, agents IA, RAG, automatisations et applications sur mesure, branchés sur vos données et vos outils."
       },
       {
-        "title": "Design",
-        "description": "Recherche utilisateur, conception de services et design UX/UI qui privilégient la clarté et la conversion. Nous construisons des systèmes de design cohérents."
+        "title": "Conseil IA",
+        "description": "Stratégie IA, audit de vos opérations et accompagnement de la transformation. Des recommandations qui débouchent sur des systèmes, par des gens qui construisent aussi."
       },
       {
-        "title": "Développement",
-        "description": "Logiciels personnalisés, mise en œuvre de CMS et applications mobiles construites avec des stacks modernes. Spécialisation en intégration d'IA."
+        "title": "Formation IA",
+        "description": "Formation ChatGPT et IA générative par métier, ateliers pratiques et coaching des décideurs. Vos équipes deviennent autonomes sur les bons outils."
       },
       {
-        "title": "Performance",
-        "description": "Optimisation basée sur les données grâce à l'analyse avancée et au SEO. Nous assurons la croissance active de vos systèmes numériques."
+        "title": "Sites & Branding",
+        "description": "Sites internet, e-commerce et identités de marque pensés pour durer et pour convertir. Construits avec Next.js et des CMS modernes, optimisés pour le SEO."
       },
       {
-        "title": "Contenu",
-        "description": "Storytelling stratégique et rédaction UX qui communique efficacement votre valeur. Nous assurons la gouvernance du contenu et la formation."
+        "title": "Renfort & Équipe",
+        "description": "Développeurs, tech leads, CTO et experts IA qui s'intègrent à votre équipe, sans rotation de juniors. Du renfort senior, quand il le faut."
       }
     ]
   },
   "contact": {
     "badge": "Contactez-nous",
-    "headline": "Discutons de la manière dont nous pouvons accélérer votre exécution technique.",
+    "headline": "Discutons de ce que l'IA et l'automatisation peuvent changer dans votre entreprise.",
     "inquiries": "Demandes",
     "address": "Adresse",
     "social": "Social",

@@ -18,7 +18,7 @@ export function NewsletterForm({ dict }: NewsletterFormProps) {
 
   const labels = dict || {
     title: "Newsletter",
-    description: "Get the latest insights on technical execution and operational speed.",
+    description: "Get our field notes on AI in business and automation. Practical, not theoretical.",
     placeholder: "Email address",
     success: "Thank you for subscribing."
   };

@@ -1,10 +1,10 @@
 {
   "hero": {
-    "kicker": "Swiss based Company",
-    "title_1": "A small team,",
-    "title_2": "fully by your side.",
-    "description": "Swiss-based partner helping enterprises, small businesses, and individuals with practical digital and strategy solutions.",
-    "summary": "MAWT is a Swiss technical execution partner serving French speaking Switzerland. We help SMEs, scale ups and ambitious teams with strategy, design, web development and automation. From Geneva to Lausanne, we build reliable digital systems that are measurable, maintainable and designed to last.",
+    "kicker": "Artificial intelligence · Geneva",
+    "title_1": "AI agency in Geneva.",
+    "title_2": "Automation and custom solutions.",
+    "description": "We design your AI solutions, your automations and your custom tools. A technical team that evolves with the latest tools, for results that actually run.",
+    "summary": "MAWT is an AI agency in Geneva. We help SMEs and growing companies across French speaking Switzerland integrate artificial intelligence, automate their processes and ship custom tools. From strategy to deployment, we build solutions that run, not slides.",
     "cta": "Let's talk"
   },
   "clients": {
@@ -12,42 +12,42 @@
   },
   "description": {
     "paragraphs": [
-      "We are a Swiss based technical execution partner focused on building high-performance systems and digital experiences for ambitious companies.",
-      "Our mission is to help you bridge the gap between strategy and execution by providing the technical infrastructure and on-demand talent you need to scale.",
-      "From automation and AI to custom software and team integration, we act as an extension of your business, ensuring you stay ahead in a rapidly moving world."
+      "MAWT is an AI agency based in Geneva. We help SMEs and growing companies across French speaking Switzerland put artificial intelligence to work: automating what repeats, speeding up what matters, shipping tools built for their business.",
+      "Before being an AI agency, we are a technical team. We have written code for years and we evolve with the latest tools and practices, without chasing the hype. That is what separates a demo from a system that holds up in production.",
+      "Our promise fits in one line: solutions that run, not recommendations. From the first conversation to deployment, you talk to the people who build."
     ]
   },
   "problem": {
     "badge": "PROBLEM",
-    "headline_1": "Your business is moving fast.",
-    "headline_2": "Your operations aren't.",
+    "headline_1": "AI is everywhere.",
+    "headline_2": "Inside your company, it is still a promise.",
     "items": [
       {
-        "title": "Fragmented Systems",
-        "description": "Critical data is scattered across tools that don't talk to each other, creating manual work and human error."
+        "title": "Tools that ignore your business",
+        "description": "Generic AI looks great in a demo and falls short in real life. It knows nothing about your data, your processes or your constraints."
       },
       {
-        "title": "Execution Bottlenecks",
-        "description": "Strategic initiatives stall because your team lacks the specialized technical capacity to build and maintain them."
+        "title": "Time lost on repetitive work",
+        "description": "Data entry, follow ups, reports, sorting: your best people spend their days on tasks an automation would handle without errors."
       },
       {
-        "title": "Manual Repetition",
-        "description": "High-value talent is wasted on repetitive administrative tasks that could be automated for scale."
+        "title": "Plenty of advice, little execution",
+        "description": "Workshops and slides pile up. Between an AI strategy and a system that actually runs, execution is always missing."
       },
       {
-        "title": "Lack of Visibility",
-        "description": "Decisions are made on incomplete data because you lack real-time visibility into your business performance."
+        "title": "The fear of getting it wrong",
+        "description": "Data privacy, nFADP compliance, reliability: bringing in AI without a clear framework feels riskier than doing nothing."
       }
     ]
   },
   "vision": {
     "badge": "Services",
-    "statement": "Good design is not a service. It's a decision. These are the areas where MAWT works and where that decision matters most.",
+    "statement": "AI is not a gadget you bolt on. It is a decision that changes how you work. These are the areas where MAWT steps in and where that decision matters most.",
     "cta": "View all services",
     "items": [
       {
         "title": "Web Design",
-        "description": "Building websites that are considered at every level — from structure and layout to copy and interactions. Primarily in Next.js, React, and modern CMS."
+        "description": "Building websites that are considered at every level, from structure and layout to copy and interactions. Primarily in Next.js, React, and modern CMS."
       },
       {
         "title": "Brand Identity",
@@ -60,8 +60,8 @@
     ]
   },
   "work": {
-    "badge": "SOLUTION",
-    "headline": "Built for speed. Proven by results.",
+    "badge": "WORK",
+    "headline": "Built to run. Proven by results.",
     "projects": [
       {
         "id": "crm",
@@ -85,12 +85,12 @@
   },
   "process": {
     "badge": "PROCESS",
-    "headline": "From bottleneck to execution in days",
+    "headline": "From need to a system that runs, in a few weeks",
     "items": [
-      { "id": "01", "title": "Audit →", "description": "Identify inefficiencies" },
-      { "id": "02", "title": "Build →", "description": "Create systems + workflows" },
-      { "id": "03", "title": "Deploy →", "description": "Launch teams/automation" },
-      { "id": "04", "title": "Optimize →", "description": "Improve continuously" }
+      { "id": "01", "title": "Scoping →", "description": "Understand your data and your challenges" },
+      { "id": "02", "title": "Design →", "description": "Choose the right AI and architecture" },
+      { "id": "03", "title": "Deploy →", "description": "Ship to production and connect" },
+      { "id": "04", "title": "Optimize →", "description": "Measure and improve continuously" }
     ]
   },
   "insights": {
@@ -180,63 +180,63 @@
     ],
     "newsletter": {
       "title": "Newsletter",
-      "description": "Get the latest insights on technical execution and operational speed.",
+      "description": "Get our field notes on AI in business and automation. Practical, not theoretical.",
       "placeholder": "Email address",
       "success": "Thank you for subscribing."
     }
   },
   "solution": {
     "badge": "SOLUTION",
-    "headline_1": "We build the infrastructure",
-    "headline_2": "that keeps your business moving.",
+    "headline_1": "We build the AI and the systems",
+    "headline_2": "that keep your business running.",
     "items": [
       {
-        "title": "Systems Design",
-        "description": "We design operational systems that remove bottlenecks and create scalable workflows."
+        "title": "Custom AI integration",
+        "description": "We connect artificial intelligence to your data and your tools: assistants, agents, internal search, content generation and analysis."
       },
       {
-        "title": "Automation & AI",
-        "description": "We eliminate repetitive tasks through automation and connected workflows."
+        "title": "Process automation",
+        "description": "We connect your apps and automate repetitive flows, from data entry to reporting, to free up your teams."
       },
       {
-        "title": "Embedded Execution Teams",
-        "description": "We deploy developers, designers, and specialists that integrate directly into your business."
+        "title": "Custom tools and applications",
+        "description": "We design and build the software, sites and platforms that off the shelf tools do not cover."
       },
       {
-        "title": "Performance Optimization",
-        "description": "We continuously improve your systems as your business grows."
+        "title": "From advice to deployment",
+        "description": "We stay through production, measurement and continuous improvement. Not just a plan, a system that runs."
       }
     ]
   },
   "services": {
     "badge": "What We Do",
-    "headline": "Comprehensive technical execution across five core pillars.",
+    "headline": "AI solutions, automation and custom tools. Five pillars, one team.",
     "pillars": [
       {
-        "title": "Strategy",
-        "description": "We help you define the right digital roadmap. From understanding users and meeting market needs to improving iterative performance."
+        "title": "AI Solutions",
+        "description": "We design and deploy your artificial intelligence solutions: smart CRMs, AI agents, RAG, automations and custom applications, connected to your data and your tools."
       },
       {
-        "title": "Design",
-        "description": "User research, service design, and UX/UI design that prioritizes clarity and conversion. We build design systems that ensure consistency."
+        "title": "AI Consulting",
+        "description": "AI strategy, operational audits and transformation support. Recommendations that turn into systems, from people who also build."
       },
       {
-        "title": "Development",
-        "description": "Custom software, CMS implementation, and mobile applications built with modern stacks. We specialize in AI integration."
+        "title": "AI Training",
+        "description": "ChatGPT and generative AI training by role, hands on workshops and coaching for decision makers. Your teams become autonomous with the right tools."
       },
       {
-        "title": "Performance",
-        "description": "Data-driven optimization through advanced analytics and SEO. We ensure your digital systems are actively growing your business."
+        "title": "Sites & Branding",
+        "description": "Websites, e-commerce and brand identities built to last and to convert. Built with Next.js and modern CMS, optimized for SEO."
       },
       {
-        "title": "Content",
-        "description": "Strategic storytelling and UX writing that communicates your value effectively. We provide content governance and training."
+        "title": "Team Augmentation",
+        "description": "Developers, tech leads, CTOs and AI experts who integrate into your team, with no junior rotation. Senior reinforcement, when you need it."
       }
     ]
   },
   "contact": {
     "badge": "Contact Us",
-    "headline": "Let's discuss how we can accelerate your technical execution.",
+    "headline": "Let's talk about what AI and automation can change in your business.",
     "inquiries": "Inquiries",
     "address": "Address",
     "social": "Social",

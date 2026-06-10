@@ -166,3 +166,18 @@ const FAMILY_TITLES: Record<string, { fr: string; en: string }> = {
 export function getFamilyTitle(family: string, lang: "fr" | "en"): string {
   return FAMILY_TITLES[family]?.[lang] ?? family;
 }
+
+// Canonical display order for service families: AI offers lead, per the
+// "agence IA" positioning. Used everywhere families are listed.
+export const FAMILY_ORDER = [
+  "solutions-ia",
+  "conseil-ia",
+  "formation-ia",
+  "sites-et-branding",
+  "renfort-equipe",
+] as const;
+
+export function familyOrderIndex(family: string): number {
+  const i = FAMILY_ORDER.indexOf(family as (typeof FAMILY_ORDER)[number]);
+  return i === -1 ? FAMILY_ORDER.length : i;
+}

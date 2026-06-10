@@ -149,7 +149,7 @@ export const PILLAR_COPY: Record<FamilyKey, { fr: PillarLangCopy; en: PillarLang
       ],
       servicesH2: "Ce qu'on fait dans cette famille",
       socialProof:
-        "Cas concrets : Crown (transformation 360 avec restructuration organisation, tech et IA), DG Expertise (digitalisation interne après audit), missions de stratégie IA pour scale-ups commerciales en Suisse romande.",
+        "Cas concrets : Crown (transformation 360 avec restructuration organisation, tech et IA), DG Expertise (digitalisation interne après audit), missions de stratégie IA pour les entreprises commerciales en croissance de Suisse romande.",
       projectsH2: "Projets de la famille Conseil IA",
       faqH2: "Questions fréquentes sur le conseil IA et la transformation",
       bottomCtaH2: "Discutons de votre transformation",
@@ -174,7 +174,7 @@ export const PILLAR_COPY: Record<FamilyKey, { fr: PillarLangCopy; en: PillarLang
       ],
       servicesH2: "What we do in this family",
       socialProof:
-        "Real cases : Crown (360 transformation across org, tech and AI), DG Expertise (internal digitalisation after audit), AI strategy missions for commercial scale-ups across French speaking Switzerland.",
+        "Real cases : Crown (360 transformation across org, tech and AI), DG Expertise (internal digitalisation after audit), AI strategy missions for growing commercial companies across French speaking Switzerland.",
       projectsH2: "Featured AI consulting projects",
       faqH2: "Frequently asked questions about AI consulting and transformation",
       bottomCtaH2: "Let's talk about your transformation",

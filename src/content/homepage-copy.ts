@@ -162,14 +162,14 @@ export const HOMEPAGE_COPY = {
   seo: {
     fr: {
       v1_short: {
-        title: "MAWT. Solutions IA et conseil à Genève",
+        title: "MAWT. Agence IA et conseil à Genève",
         description:
-          "Équipe à taille humaine basée à Genève. CRM intelligents, agents IA, conseil et renfort d'équipe pour PME suisses et scale-ups commerciales.",
+          "Équipe à taille humaine basée à Genève. CRM intelligents, agents IA, conseil et renfort d'équipe pour PME suisses et entreprises commerciales en croissance.",
       },
       v2_longer: {
         title: "MAWT. Solutions IA, conseil et développement à Genève",
         description:
-          "Équipe à taille humaine basée à Genève. CRM intelligents, agents IA, conseil et renfort d'équipe pour PME suisses et scale-ups commerciales.",
+          "Équipe à taille humaine basée à Genève. CRM intelligents, agents IA, conseil et renfort d'équipe pour PME suisses et entreprises commerciales en croissance.",
       },
     },
     en: {
@@ -182,6 +182,6 @@ export const HOMEPAGE_COPY = {
   },
   schemaOrg: {
     description:
-      "Studio à taille humaine basé à Genève. Solutions IA sur mesure, conseil IA, sites web et branding, renfort d'équipe, formation IA pour PME suisses et scale-ups commerciales.",
+      "Agence IA à taille humaine basée à Genève. Solutions IA sur mesure, automatisation, conseil IA, sites web et branding, renfort d'équipe, formation IA pour PME suisses et entreprises commerciales en croissance.",
   },
 } as const;

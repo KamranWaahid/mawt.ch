@@ -63,7 +63,7 @@ export function BlogFilter({ posts }: BlogFilterProps) {
                 const title = post.title || "Untitled Post";
                 const date = post.publishedAt ? format(new Date(post.publishedAt), "MMM dd, yyyy") : "Recent";
                 const readTime = "5 min read";
-                const excerpt = post.excerpt || "Explore the latest insights and strategic perspectives from our technical execution team.";
+                const excerpt = post.excerpt || "Field notes on AI in business and automation, from the team that builds the systems.";
 
                 return (
                   <motion.article

@@ -12,7 +12,7 @@ import { SiteHeader } from "@/components/sections/site-header";
 import { getHomePageData, getPartners } from "@/lib/sanity.queries";
 import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
-import { getFamilyTitle, familySlugForLang, hreflangAlternates } from "@/lib/routing/url-helpers";
+import { getFamilyTitle, familySlugForLang, familyOrderIndex, hreflangAlternates } from "@/lib/routing/url-helpers";
 import { preload } from "react-dom";
 import type { Metadata } from "next";
 
@@ -28,11 +28,14 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lang } = await params;
   return {
-    title: lang === "fr" ? "MAWT — Partenaire d'exécution technique" : "MAWT — Technical Execution Partner",
+    title:
+      lang === "fr"
+        ? "Agence IA à Genève. Automatisation sur mesure | MAWT"
+        : "AI agency in Geneva. Custom automation | MAWT",
     description:
       lang === "fr"
-        ? "Partenaire suisse d'exécution technique : systèmes haute performance, solutions IA et expériences digitales."
-        : "Swiss-based technical execution partner for high-performance systems and digital experiences.",
+        ? "Agence IA à Genève. On intègre l'intelligence artificielle, on automatise vos processus et on déploie des outils sur mesure pour les PME et entreprises en croissance de Suisse romande."
+        : "AI agency in Geneva. We integrate artificial intelligence, automate your processes and ship custom tools for SMEs and growing companies across French speaking Switzerland.",
     alternates: hreflangAlternates(`/${lang}`, lang),
   };
 }
@@ -109,8 +112,12 @@ export default async function HomePage({
     }
   ];
 
-  // Group the individual Service documents from Sanity by their family
-  const dynamicServicesGrouped = data.services?.reduce((acc, service) => {
+  // Group the individual Service documents from Sanity by their family.
+  // Families are sorted AI-first (FAMILY_ORDER) so the "agence IA" offers lead.
+  const dynamicServicesGrouped = data.services
+    ?.slice()
+    .sort((a, b) => familyOrderIndex(a.family ?? "") - familyOrderIndex(b.family ?? ""))
+    .reduce((acc, service) => {
     if (!service.family || !service.title) return acc;
     const familyTitle = getFamilyTitle(service.family, lang);
     if (!acc[familyTitle]) {

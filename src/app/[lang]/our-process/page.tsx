@@ -17,8 +17,8 @@ export async function generateMetadata({ params }: ProcessPageProps): Promise<Me
     description:
       doc?.seo?.metaDescription ||
       (lang === "fr"
-        ? "Notre méthode d'exécution technique, étape par étape."
-        : "Our technical execution process, step by step."),
+        ? "Comment MAWT mène un projet IA, du cadrage au déploiement, étape par étape."
+        : "How MAWT runs an AI project, from scoping to deployment, step by step."),
     alternates: standaloneAlternates("notre-methode", lang),
   };
 }

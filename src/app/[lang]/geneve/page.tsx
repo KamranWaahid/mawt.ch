@@ -11,12 +11,13 @@ import {
 import type { Locale } from "@/i18n-config";
 import type { Metadata } from "next";
 
+// AI-first, matching FAMILY_ORDER in url-helpers (agence IA positioning).
 const FAMILY_KEYS = [
-  "sites-et-branding",
   "solutions-ia",
   "conseil-ia",
-  "renfort-equipe",
   "formation-ia",
+  "sites-et-branding",
+  "renfort-equipe",
 ] as const;
 
 const COPY = {
@@ -24,12 +25,12 @@ const COPY = {
     badge: "Genève, Suisse romande",
     title: "IA et transformation digitale à Genève.",
     intro:
-      "MAWT est le partenaire d'exécution technique des entreprises genevoises. Stratégie IA, développement sur mesure, automatisation et renfort d'équipe, livrés par une équipe senior basée à Genève. De la première séance au déploiement, vous parlez à ceux qui construisent.",
+      "MAWT est l'agence IA des entreprises genevoises. Stratégie IA, automatisation, développement sur mesure et renfort d'équipe, livrés par une équipe senior basée à Genève. De la première séance au déploiement, vous parlez à ceux qui construisent.",
     localH2: "Pourquoi MAWT pour une entreprise genevoise",
     local: [
       { t: "Proximité genevoise", d: "Une équipe sur place, disponible pour des séances en personne à Genève et en Suisse romande. Pas de décalage horaire, pas d'intermédiaire." },
       { t: "Conformité nLPD", d: "Données hébergées en Suisse, conformité nLPD et RGPD pensée dès la conception. Vos informations clients restent sous votre contrôle." },
-      { t: "Secteurs clés du bassin", d: "Nous comprenons les enjeux de la finance et de la banque privée, du négoce, de l'horlogerie et du luxe, de la medtech et des scale ups commerciales." },
+      { t: "Secteurs clés du bassin", d: "Nous comprenons les enjeux de la finance et de la banque privée, du négoce, de l'horlogerie et du luxe, de la medtech et des entreprises commerciales en croissance." },
       { t: "Exécution senior", d: "Un interlocuteur unique, du cadrage à la production. Pas de juniors envoyés en rotation, pas de PowerPoint d'agence. Du concret, livré vite." },
     ],
     wikiH2: "Le sommaire de nos services",
@@ -47,12 +48,12 @@ const COPY = {
     badge: "Geneva, Switzerland",
     title: "AI and digital transformation in Geneva.",
     intro:
-      "MAWT is the technical execution partner for Geneva businesses. AI strategy, custom development, automation and team augmentation, delivered by a senior team based in Geneva. From the first session to production, you talk to the people who build.",
+      "MAWT is the AI agency for Geneva businesses. AI strategy, automation, custom development and team augmentation, delivered by a senior team based in Geneva. From the first session to production, you talk to the people who build.",
     localH2: "Why MAWT for a Geneva business",
     local: [
       { t: "Geneva proximity", d: "A team on the ground, available for in person sessions in Geneva and French speaking Switzerland. No time zone gap, no middleman." },
       { t: "nFADP compliance", d: "Data hosted in Switzerland, nFADP and GDPR compliance designed in from the start. Your client information stays under your control." },
-      { t: "Key local sectors", d: "We understand finance and private banking, commodity trading, watchmaking and luxury, medtech, and commercial scale ups." },
+      { t: "Key local sectors", d: "We understand finance and private banking, commodity trading, watchmaking and luxury, medtech, and growing commercial companies." },
       { t: "Senior execution", d: "One point of contact, from scoping to production. No rotating juniors, no agency slide decks. Concrete work, shipped fast." },
     ],
     wikiH2: "Our services, organized",

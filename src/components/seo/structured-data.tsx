@@ -144,12 +144,12 @@ export function StructuredData({
   const localBusinessId = LOCAL_BUSINESS_ID;
   const description =
     lang === "fr"
-      ? "Partenaire suisse d'exécution technique pour la Suisse romande : stratégie, design, développement web et automatisation pour PME et scale ups."
-      : "Swiss technical execution partner for French-speaking Switzerland: strategy, design, web development and automation for SMEs and scale ups.";
+      ? "Agence IA à Genève. Solutions d'intelligence artificielle, automatisation des processus et outils sur mesure pour les PME et entreprises en croissance de Suisse romande. De la stratégie au déploiement."
+      : "AI agency in Geneva. Artificial intelligence solutions, process automation and custom tools for SMEs and growing companies across French speaking Switzerland. From strategy to deployment.";
   const slogan =
     lang === "fr"
-      ? "Une petite équipe, entièrement à vos côtés."
-      : "A small team, fully by your side.";
+      ? "Des solutions qui tournent, pas des slides."
+      : "Solutions that run, not slides.";
   const cleanSameAs = (sameAs || []).filter(
     (u): u is string => typeof u === "string" && /^https?:\/\//.test(u),
   );

@@ -109,7 +109,7 @@ export const serviceType = defineType({
     defineField({
       name: "whoFor",
       title: "Who this is for",
-      description: "Short paragraph qualifying the audience (PME suisses, scale-ups).",
+      description: "Short paragraph qualifying the audience (PME suisses, entreprises en croissance).",
       type: "text",
       rows: 3,
     }),

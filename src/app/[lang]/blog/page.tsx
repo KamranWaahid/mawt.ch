@@ -14,8 +14,8 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
   return {
     title: lang === "en" ? "Insights" : "Insights",
     description: lang === "en"
-      ? "Latest thoughts from the technical execution team."
-      : "Dernières réflexions de l'équipe d'exécution technique.",
+      ? "Field notes on AI in business, automation and custom tools, written by the team that builds them."
+      : "Retours de terrain sur l'IA en entreprise, l'automatisation et les outils sur mesure, écrits par l'équipe qui les construit.",
     alternates: standaloneAlternates("blog", lang),
   };
 }

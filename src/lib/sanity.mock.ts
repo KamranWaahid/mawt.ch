@@ -3,11 +3,11 @@ import type { HomePageData, Project } from "@/lib/types";
 export const mockHomeData: HomePageData = {
   settings: {
     title: "MAWT Solutions AG",
-    tagline: "Technical execution for high-performance teams.",
+    tagline: "AI agency in Geneva.",
     ctaLabel: "Discuss your project",
     ctaHref: "/contact",
     seoDescription:
-      "Swiss technical execution partner building high-performance systems and automation.",
+      "AI agency in Geneva. Artificial intelligence, process automation and custom tools for SMEs and growing companies.",
   },
   about: {
     heading: "Calm strategy. Precise execution.",

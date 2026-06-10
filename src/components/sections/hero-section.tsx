@@ -62,7 +62,12 @@ function drawImageProp(ctx: CanvasRenderingContext2D, img: HTMLImageElement) {
   
   const w = imgWidth * r;
   const h = imgHeight * r;
-  const x = (canvas.width - w) / 2;
+  
+  let alignX = 0.5;
+  if (canvas.width > 768) {
+    alignX = 0.65; // Shift slightly to the right on desktop to prevent overlap with text
+  }
+  const x = (canvas.width - w) * alignX;
   const y = (canvas.height - h) / 2;
   
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -279,7 +284,7 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
           style={{ opacity: contentOpacity, y: contentY }}
           className="relative z-20 mx-auto w-full"
         >
-          <div className="flex flex-col items-start lg:max-w-3xl">
+          <div className="flex flex-col items-start lg:max-w-[590px] xl:max-w-[650px] 2xl:max-w-[720px]">
             <GeometricSymbol />
             
             <div className="hero-kicker mb-1.5 text-[11px] font-normal tracking-widest text-white/60 normal-case lg:uppercase md:text-xs">
@@ -291,7 +296,7 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
                   so it is LCP-eligible at first paint. Only the Y transform
                   animates in — this fixes the ~10s mobile LCP. */}
               <Reveal direction="up" delay={0.1} eager>
-                <h1 className="text-[26px] xs:text-[30px] sm:text-[40px] md:text-[52px] lg:text-[58px] xl:text-[64px] 2xl:text-[68px] font-normal leading-[1.15] md:leading-[1.1] tracking-[-0.04em] text-white">
+                <h1 className="text-[26px] xs:text-[30px] sm:text-[40px] md:text-[48px] lg:text-[54px] xl:text-[60px] 2xl:text-[64px] font-normal leading-[1.15] md:leading-[1.1] tracking-[-0.04em] text-white">
                   {dict.title_1}
                   <br className="block lg:hidden" />{" "}
                   {dict.title_2}

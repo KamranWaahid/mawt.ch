@@ -86,7 +86,7 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
     const scroll = lenisInstance.scroll;
     if (typeof window !== "undefined") {
       const L = window.innerHeight * 0.3;
-      const nextProgress = Math.min(1, scroll / L);
+      const nextProgress = Math.max(0, Math.min(1, scroll / L));
       progressValue.set(nextProgress);
     }
   });
@@ -105,10 +105,13 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let img = imagesRef.current[frameIndex];
+    // Clamp frameIndex to [1, totalFrames] to prevent out of bounds
+    const clampedIndex = Math.max(1, Math.min(totalFrames, frameIndex));
+
+    const img = imagesRef.current[clampedIndex];
     if (img && img.complete) {
       drawImageProp(ctx, img);
-      lastDrawnFrameRef.current = frameIndex;
+      lastDrawnFrameRef.current = clampedIndex;
     } else {
       // Fallback to the last successfully drawn frame (O(1) fallback)
       const fallbackIndex = lastDrawnFrameRef.current;
@@ -142,13 +145,11 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
       
       // Load the rest with limited concurrency (6 concurrent requests)
       const remaining = urls.slice(1);
-      let activeCount = 0;
       let index = 0;
       
       const loadNext = () => {
         if (!active || index >= remaining.length) return;
         const item = remaining[index++];
-        activeCount++;
         
         const img = new Image();
         img.src = item.url;
@@ -156,18 +157,17 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
           if (!active) return;
           imagesRef.current[item.index] = img;
           
-          // Re-draw if we are currently at this frame
-          const currentProgressFrame = Math.round(progressValue.get() * (totalFrames - 1)) + 1;
+          // Re-draw if we are currently at this frame (using the smoothed progress)
+          const clampedSmooth = Math.max(0, Math.min(1, smoothProgress.get()));
+          const currentProgressFrame = Math.round(clampedSmooth * (totalFrames - 1)) + 1;
           if (currentProgressFrame === item.index) {
             drawFrame(item.index);
           }
           
-          activeCount--;
           loadNext();
         };
         img.onerror = () => {
           if (!active) return;
-          activeCount--;
           loadNext();
         };
       };
@@ -180,10 +180,12 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
     return () => {
       active = false;
     };
-  }, []);
+  }, [smoothProgress]);
 
   // Handle canvas sizing and scroll synchronization
   useEffect(() => {
+    let rAFId: number | null = null;
+
     const handleResize = () => {
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -192,7 +194,8 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
       
-      const currentProgressFrame = Math.round(smoothProgress.get() * (totalFrames - 1)) + 1;
+      const clampedSmooth = Math.max(0, Math.min(1, smoothProgress.get()));
+      const currentProgressFrame = Math.round(clampedSmooth * (totalFrames - 1)) + 1;
       drawFrame(currentProgressFrame);
     };
 
@@ -203,12 +206,13 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
     let nextFrameIndex = -1;
 
     const unsubscribe = smoothProgress.on("change", (latest) => {
-      const frameIndex = Math.round(latest * (totalFrames - 1)) + 1;
+      const clampedLatest = Math.max(0, Math.min(1, latest));
+      const frameIndex = Math.round(clampedLatest * (totalFrames - 1)) + 1;
       nextFrameIndex = frameIndex;
       
       if (!isDrawing) {
         isDrawing = true;
-        requestAnimationFrame(() => {
+        rAFId = requestAnimationFrame(() => {
           if (nextFrameIndex !== -1) {
             drawFrame(nextFrameIndex);
             nextFrameIndex = -1;
@@ -221,6 +225,9 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
     return () => {
       window.removeEventListener("resize", handleResize);
       unsubscribe();
+      if (rAFId !== null) {
+        cancelAnimationFrame(rAFId);
+      }
     };
   }, [smoothProgress]);
 

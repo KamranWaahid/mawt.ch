@@ -58,17 +58,35 @@ function drawImageProp(ctx: CanvasRenderingContext2D, img: HTMLImageElement) {
   
   const wr = canvas.width / imgWidth;
   const hr = canvas.height / imgHeight;
-  const r = Math.max(wr, hr);
+  
+  const isPortrait = canvas.width < canvas.height;
+  
+  let r = Math.max(wr, hr);
+  let x = 0;
+  let y = 0;
+  
+  if (isPortrait) {
+    // Mobile/Portrait: Scale up to fill blank space and center the hand/folder (located at ~62.5% of the frame width)
+    r = wr * 1.6;
+    const w = imgWidth * r;
+    const h = imgHeight * r;
+    x = canvas.width / 2 - 0.625 * w;
+    // Push it towards the bottom of the viewport with a small margin (30px)
+    y = canvas.height - h - 30;
+  } else {
+    // Desktop/Landscape: Keep cover scale and shift slightly right
+    const w = imgWidth * r;
+    const h = imgHeight * r;
+    let alignX = 0.5;
+    if (canvas.width > 768) {
+      alignX = 0.65;
+    }
+    x = (canvas.width - w) * alignX;
+    y = (canvas.height - h) / 2;
+  }
   
   const w = imgWidth * r;
   const h = imgHeight * r;
-  
-  let alignX = 0.5;
-  if (canvas.width > 768) {
-    alignX = 0.65; // Shift slightly to the right on desktop to prevent overlap with text
-  }
-  const x = (canvas.width - w) * alignX;
-  const y = (canvas.height - h) / 2;
   
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(img, x, y, w, h);
@@ -95,6 +113,23 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
       progressValue.set(nextProgress);
     }
   });
+
+  // Fallback native scroll listener for mobile browsers where useLenis might not trigger
+  useEffect(() => {
+    const handleScrollFallback = () => {
+      if (typeof window !== "undefined") {
+        const scroll = window.scrollY;
+        const L = window.innerHeight * 0.3;
+        const nextProgress = Math.max(0, Math.min(1, scroll / L));
+        progressValue.set(nextProgress);
+      }
+    };
+
+    window.addEventListener("scroll", handleScrollFallback, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScrollFallback);
+    };
+  }, [progressValue]);
 
   const contentOpacity = useTransform(smoothProgress, [0.7, 1.0], [1, 0]);
   const contentY = useTransform(smoothProgress, [0.7, 1.0], [0, -30]);

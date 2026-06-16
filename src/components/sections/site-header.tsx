@@ -149,6 +149,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
 
   return (
     <header
+      style={{ viewTransitionName: "site-header" }}
       className={`absolute top-0 left-0 right-0 z-40 transition-colors duration-300 px-6 py-8 sm:px-8 md:px-10 lg:px-12 ${activeDropdown || isMobileMenuOpen ? "bg-white" : "bg-transparent"
         }`}
       onMouseLeave={() => setActiveDropdown(null)}

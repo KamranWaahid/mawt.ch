@@ -4,6 +4,7 @@ import { getSecurityPage } from "@/lib/sanity.queries";
 import { standaloneAlternates } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/i18n-config";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: Locale }> }): Promise<Metadata> {
   const { lang } = await params;
@@ -68,9 +69,9 @@ export default async function SecurityPage({ params }: { params: Promise<{ lang:
             <h2 className="text-3xl sm:text-4xl font-normal tracking-tight leading-[1.15]">{doc.bottomCtaH2}</h2>
             {doc.bottomCtaBody && <p className="text-lg text-white/70 font-normal leading-relaxed">{doc.bottomCtaBody}</p>}
             {doc.bottomCtaLabel && (
-              <a href={`/${lang}/contact`} className="inline-block mt-2 px-8 py-4 bg-[#75DAB4] text-black text-sm font-normal uppercase tracking-widest rounded-sm hover:bg-white transition-colors">
+              <Link href={`/${lang}/contact`} className="inline-block mt-2 px-8 py-4 bg-[#75DAB4] text-black text-sm font-normal uppercase tracking-widest rounded-sm hover:bg-white transition-colors">
                 {doc.bottomCtaLabel}
-              </a>
+              </Link>
             )}
           </div>
         </section>

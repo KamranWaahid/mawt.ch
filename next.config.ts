@@ -13,6 +13,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    viewTransition: true,
+  },
   async redirects() {
     return [
       // Localized shortcut redirects.

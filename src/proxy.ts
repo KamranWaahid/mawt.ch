@@ -72,6 +72,7 @@ export function proxy(request: NextRequest) {
   // 2. Ignore public assets from locale redirection.
   const isPublicAsset = [
     "/App Icons/",
+    "/Approach/",
     "/HeroImages/",
     "/Client Logos.png",
     "/HeroImage.gif",

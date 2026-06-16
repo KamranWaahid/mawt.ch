@@ -83,14 +83,34 @@
       }
     ]
   },
-  "process": {
-    "badge": "PROCESSUS",
-    "headline": "Du besoin à un système qui tourne, en quelques semaines",
+  "approach": {
+    "badge": "Approche",
+    "headline": "Notre processus, forgé par des décennies d'expérience partagée",
     "items": [
-      { "id": "01", "title": "Cadrage →", "description": "Comprendre vos données et vos enjeux" },
-      { "id": "02", "title": "Conception →", "description": "Choisir l'IA et l'architecture utiles" },
-      { "id": "03", "title": "Déploiement →", "description": "Mettre en production et connecter" },
-      { "id": "04", "title": "Optimisation →", "description": "Mesurer et améliorer en continu" }
+      {
+        "id": "01",
+        "title": "Penser",
+        "description": "Nous lisons le sol pour trouver où les idées prennent racine, révélant les opportunités, les directions et les missions.",
+        "image": "/Approach/Think.avif"
+      },
+      {
+        "id": "02",
+        "title": "Créer",
+        "description": "Nous transformons l'invisible en inévitable, façonnant des identités et des systèmes pour soutenir votre croissance.",
+        "image": "/Approach/Create.avif"
+      },
+      {
+        "id": "03",
+        "title": "Bâtir",
+        "description": "Nous concevons des produits et des expériences numériques évolutifs, prêts pour un impact concret.",
+        "image": "/Approach/Build.avif"
+      },
+      {
+        "id": "04",
+        "title": "Développer",
+        "description": "Nous cultivons et greffons, faisant évoluer votre empreinte pour que vous puissiez porter vos fruits.",
+        "image": "/Approach/Scale.avif"
+      }
     ]
   },
   "insights": {

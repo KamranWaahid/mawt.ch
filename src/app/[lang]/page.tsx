@@ -2,7 +2,7 @@ import { ClientsSection } from "@/components/sections/clients-section";
 import { DescriptionSection } from "@/components/sections/description-section";
 import { HeroSection } from "@/components/sections/hero-section";
 import { ProblemSection } from "@/components/sections/problem-section";
-import { ProcessSection } from "@/components/sections/process-section";
+import { ApproachSection } from "@/components/sections/approach-section";
 import { SiteFooter } from "@/components/sections/site-footer";
 import { InsightsSection } from "@/components/sections/insights-section";
 import { WorkSection } from "@/components/sections/work-section";
@@ -149,7 +149,7 @@ export default async function HomePage({
       <ProblemSection dict={dictionary.problem} />
       <VisionSection dict={dictionary.vision} services={servicesList} />
       <SolutionSection dict={dictionary.solution} />
-      <ProcessSection dict={dictionary.process} />
+      <ApproachSection dict={dictionary.approach} />
       <WorkSection dict={dictionary.work} projects={data.projects} />
       <InsightsSection dict={dictionary.insights} posts={data.posts} />
     </>

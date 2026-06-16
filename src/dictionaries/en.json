@@ -83,14 +83,34 @@
       }
     ]
   },
-  "process": {
-    "badge": "PROCESS",
-    "headline": "From need to a system that runs, in a few weeks",
+  "approach": {
+    "badge": "Approach",
+    "headline": "Our process, crafted through decades of shared experience",
     "items": [
-      { "id": "01", "title": "Scoping →", "description": "Understand your data and your challenges" },
-      { "id": "02", "title": "Design →", "description": "Choose the right AI and architecture" },
-      { "id": "03", "title": "Deploy →", "description": "Ship to production and connect" },
-      { "id": "04", "title": "Optimize →", "description": "Measure and improve continuously" }
+      {
+        "id": "01",
+        "title": "Think",
+        "description": "We read the soil to find where ideas take root, uncovering opportunities, directions, and missions.",
+        "image": "/Approach/Think.avif"
+      },
+      {
+        "id": "02",
+        "title": "Create",
+        "description": "We coax the invisible into the inevitable, crafting identities and systems to support your growth.",
+        "image": "/Approach/Create.avif"
+      },
+      {
+        "id": "03",
+        "title": "Build",
+        "description": "We engineer scalable digital products and experiences ready for real-world impact.",
+        "image": "/Approach/Build.avif"
+      },
+      {
+        "id": "04",
+        "title": "Scale",
+        "description": "We tend and graft, evolving your footprint so that you may bear fruit.",
+        "image": "/Approach/Scale.avif"
+      }
     ]
   },
   "insights": {

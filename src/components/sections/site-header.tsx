@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Globe, ChevronDown, Menu, X, ArrowRight } from "lucide-react";
 import { FaLinkedinIn, FaGithub, FaXTwitter } from "react-icons/fa6";
 import { motion, AnimatePresence } from "motion/react";
@@ -54,11 +54,11 @@ const defaultServicesData = {
 };
 
 const navItems = [
-  { href: "/", label: "Home" },
-  { href: "/services", label: "Services", hasDropdown: true },
-  { href: "/projects", label: "Projects" },
-  { href: "/about", label: "About Us" },
-  { href: "/blog", label: "Blog" },
+  { href: "/work", label: "Work" },
+  { href: "/approach", label: "Approach" },
+  { href: "/services", label: "Services" },
+  { href: "/news", label: "News" },
+  { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -66,11 +66,11 @@ const navItems = [
 // English (whether from Sanity `mainNav` or the fallback above), so on /fr we
 // translate the DISPLAY text here. Unknown hrefs fall back to the English label.
 const NAV_LABELS_FR: Record<string, string> = {
-  "/": "Accueil",
+  "/work": "Projets",
+  "/approach": "Approche",
   "/services": "Services",
-  "/projects": "Projets",
+  "/news": "Actualités",
   "/about": "À propos",
-  "/blog": "Blog",
   "/contact": "Contact",
 };
 
@@ -87,6 +87,7 @@ const platformIcons: Record<string, any> = {
 
 export function SiteHeader({ title, theme: themeProp, socialLinks, services, mainNav }: SiteHeaderProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const currentLang = pathname.startsWith("/fr") ? "fr" : "en";
   // Hide the FR/EN switch on the contact page only (requested). The global
   // switcher stays everywhere else so language switching still works site-wide.
@@ -95,7 +96,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
 
-  const activeServicesData: Record<string, { title: string; href: string; items: { title: string; href: string }[] }> = services && services.length > 0 
+  const activeServicesData: Record<string, { title: string; href: string; items: { title: string; href: string }[] }> = services && services.length > 0
     ? services.reduce((acc, service) => {
         if (!service.family || !service.title) return acc;
         const familyTitle = getFamilyTitle(service.family, currentLang as any);
@@ -126,7 +127,10 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
         return acc;
       }, {} as Record<string, { title: string; href: string; items: { title: string; href: string }[] }>);
 
-  const activeNavItems = mainNav && mainNav.length > 0 ? mainNav : navItems;
+  const activeNavItems = (mainNav && mainNav.length > 0 ? mainNav : navItems).map((item: any) => ({
+    ...item,
+    hasDropdown: false,
+  }));
 
   // Default to light if not on homepage, unless overridden by prop
   const isHomePage = pathname === "/" || pathname === "/en" || pathname === "/fr";
@@ -136,27 +140,29 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
 
   const handleLanguageChange = (lang: string) => {
     if (lang === currentLang) return;
-    // Prefer the page's own declared hreflang alternate. It is correct even for
-    // Sanity per-document slugs (e.g. crm-intelligent ↔ smart-crm), which
-    // translatePath cannot translate — the cause of the previous switch 404.
-    // Fall back to URL_MAP translation for pages that emit no per-doc alternate.
     const alt = document.querySelector<HTMLLinkElement>(
       `link[rel="alternate"][hreflang="${lang}"]`,
     );
-    window.location.href =
-      alt?.href || translatePath(pathname, currentLang as Locale, lang as Locale);
+    const targetUrl = alt?.getAttribute("href") || translatePath(pathname, currentLang as Locale, lang as Locale);
+
+    try {
+      const url = new URL(targetUrl, window.location.origin);
+      router.push(url.pathname + url.search + url.hash);
+    } catch {
+      router.push(targetUrl);
+    }
   };
 
   return (
     <header
-      style={{ viewTransitionName: "site-header" }}
-      className={`absolute top-0 left-0 right-0 z-40 transition-colors duration-300 px-6 py-8 sm:px-8 md:px-10 lg:px-12 ${activeDropdown || isMobileMenuOpen ? "bg-white" : "bg-transparent"
+      style={{ viewTransitionName: "site-header", paddingTop: "calc(env(safe-area-inset-top) + 2rem)" }}
+      className={`absolute top-0 left-0 right-0 z-40 transition-colors duration-300 pb-8 ${activeDropdown || isMobileMenuOpen ? "bg-white" : "bg-transparent"
         }`}
       onMouseLeave={() => setActiveDropdown(null)}
     >
       <nav
         aria-label="Primary"
-        className="flex w-full items-center justify-between gap-6"
+        className="site-container-wide flex items-center justify-between gap-6"
       >
         <Link
           href={`/${currentLang}`}
@@ -171,8 +177,8 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
           />
         </Link>
 
-        <div className="flex items-center gap-4 md:gap-10">
-          <div className="hidden items-center gap-8 md:flex">
+        <div className="flex items-center gap-4 lg:gap-10">
+          <div className="hidden items-center gap-8 lg:flex">
             {activeNavItems.map((item) => (
               <div
                 key={item.label}
@@ -192,7 +198,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
                   <Link
                     href={navHref(item.href, currentLang as Locale)}
                     aria-current={pathname === navHref(item.href, currentLang as Locale) ? "page" : undefined}
-                    className={`group relative flex items-center gap-1.5 py-2 text-[15px] font-normal tracking-tight transition-colors duration-300 ${isLight ? "text-black" : "text-neutral-300 hover:text-white"
+                    className={`group relative flex items-center gap-1.5 py-2 text-sm transition-colors duration-300 ${isLight ? "text-black" : "text-neutral-300 hover:text-white"
                       }`}
                   >
                     {navLabel(item, currentLang)}
@@ -217,26 +223,29 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
 
           {!isContactPage && (
           <div
-            className={`hidden items-center gap-4 border-l transition-colors duration-300 pl-6 md:flex ${isLight ? "border-black/10" : "border-white/10"
-            }`}
+            className="hidden items-center gap-2 transition-colors duration-300 pl-4 lg:flex"
             onMouseEnter={() => setActiveDropdown(null)}
           >
+            <span className={`text-sm transition-colors duration-300 ${isLight ? "text-neutral-300" : "text-neutral-600"}`}>—</span>
             <motion.button
               whileHover={{ y: -1 }}
+              type="button"
               onClick={() => handleLanguageChange("fr")}
-              className={`text-[14px] font-normal transition-colors duration-300 ${currentLang === "fr"
+              aria-label="Passer en français"
+              className={`text-sm transition-colors duration-300 ${currentLang === "fr"
                 ? (isLight ? "text-black" : "text-white")
                 : (isLight ? "text-neutral-500 hover:text-black" : "text-neutral-400 hover:text-white")
                 }`}
             >
               FR
             </motion.button>
+            <span className={`text-sm transition-colors duration-300 ${isLight ? "text-neutral-300" : "text-neutral-600"}`}>/</span>
             <motion.button
               whileHover={{ y: -1 }}
               onClick={() => handleLanguageChange("en")}
               type="button"
               aria-label="Change language"
-              className={`text-[14px] font-normal transition-colors duration-300 ${currentLang === "en"
+              className={`text-sm transition-colors duration-300 ${currentLang === "en"
                 ? (isLight ? "text-black" : "text-white")
                 : (isLight ? "text-neutral-500 hover:text-black" : "text-neutral-400 hover:text-white")
                 }`}
@@ -247,7 +256,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
           )}
 
           <button
-            className="flex items-center justify-center p-3 md:hidden z-50"
+            className="flex items-center justify-center p-3 lg:hidden z-50"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-expanded={isMobileMenuOpen}
             aria-label="Toggle menu"
@@ -265,25 +274,27 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
       <AnimatePresence>
         {activeDropdown === "Services" && (
           <>
+            {/* BUG-018 fix: removed onMouseEnter that was closing the dropdown when
+                the user moved from the nav trigger into the dropdown area. Closing
+                is handled by header.onMouseLeave instead. */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onMouseEnter={() => setActiveDropdown(null)}
-              className="fixed inset-0 top-[104px] z-[-1] bg-white h-screen w-screen hidden md:block"
+              className="fixed inset-0 top-[104px] z-[-1] bg-white h-screen w-screen hidden lg:block"
             />
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="absolute left-0 right-0 top-full bg-white text-black hidden md:block border-b border-black/5"
+              className="absolute left-0 right-0 top-full bg-white text-black hidden lg:block border-b border-black/5"
             >
-              <div className="mx-auto grid max-w-[1440px] grid-cols-5 gap-12 px-6 py-16 sm:px-8 md:px-10 lg:px-12">
+              <div className="site-container-wide grid grid-cols-5 gap-12 py-16">
                 {Object.values(activeServicesData).map((group) => (
                   <div key={group.title} className="flex flex-col gap-6">
                     <Link href={group.href} onClick={() => setActiveDropdown(null)}>
-                      <h3 className="text-lg font-normal tracking-tight text-black hover:text-[#75DAB4] transition-colors">
+                      <h3 className="text-lg text-black hover:text-[#75DAB4] transition-colors">
                         {group.title}
                       </h3>
                     </Link>
@@ -294,7 +305,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
                             <Link
                               href={item.href}
                               onClick={() => setActiveDropdown(null)}
-                              className="text-[15px] font-normal text-neutral-600 transition-colors hover:text-black"
+                              className="text-sm text-neutral-600 transition-colors hover:text-black"
                             >
                               {item.title}
                             </Link>
@@ -318,7 +329,8 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
             animate={{ opacity: 1, backdropFilter: "blur(24px)" }}
             exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
             transition={{ duration: 0.5, ease: "circOut" }}
-            className="fixed inset-0 bg-white/95 z-40 md:hidden pt-32 px-6 overflow-y-auto"
+            style={{ paddingTop: "calc(env(safe-area-inset-top) + 6rem)", paddingBottom: "calc(env(safe-area-inset-bottom) + 4rem)" }}
+            className="fixed inset-0 bg-white/95 z-40 lg:hidden px-6 overflow-y-auto"
           >
             <div className="flex flex-col gap-16 pb-24">
               <motion.div
@@ -347,7 +359,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
                       <div className="flex flex-col gap-6">
                         <button
                           onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
-                          className="text-4xl font-normal tracking-tighter text-black flex items-center justify-between group w-full text-left"
+                          className="text-4xl tracking-tight text-black flex items-center justify-between group w-full text-left"
                         >
                           {navLabel(item, currentLang)}
                           <ChevronDown size={24} className={`transition-transform duration-300 ${mobileServicesOpen ? "rotate-180" : "opacity-20"}`} />
@@ -383,7 +395,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
                       <Link
                         href={navHref(item.href, currentLang as Locale)}
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className="text-4xl font-normal tracking-tighter text-black flex items-center justify-between group"
+                        className="text-4xl tracking-tight text-black flex items-center justify-between group"
                       >
                         {navLabel(item, currentLang)}
                         <ArrowRight className="text-neutral-200 transition-transform group-hover:translate-x-1" size={24} />
@@ -401,14 +413,18 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
               >
                 {/* Language Switcher (hidden on the contact page) */}
                 {!isContactPage && (
-                <div className="flex items-center gap-8 border-t border-black/10 pt-12">
+                <div className="flex items-center gap-4 border-t border-black/10 pt-12">
+                  <span className="text-lg text-neutral-300">—</span>
                   <button
+                    type="button"
                     onClick={() => handleLanguageChange("fr")}
                     className={`text-lg font-normal transition-colors ${currentLang === "fr" ? "text-black underline underline-offset-4" : "text-neutral-400 hover:text-black"}`}
                   >
                     FR
                   </button>
+                  <span className="text-lg text-neutral-300">/</span>
                   <button
+                    type="button"
                     onClick={() => handleLanguageChange("en")}
                     className={`text-lg font-normal transition-colors ${currentLang === "en" ? "text-black underline underline-offset-4" : "text-neutral-400 hover:text-black"}`}
                   >
@@ -420,7 +436,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
                 {/* Social Media Links */}
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <span className="text-[11px] uppercase tracking-[0.2em] text-neutral-400 font-normal">Follow @mawt.ch</span>
+                    <span className="text-xs-fluid text-neutral-400 font-medium">Follow @mawt.ch</span>
                     <div className="h-px flex-1 bg-black/5 ml-4" />
                   </div>
                   <div className="flex gap-8 text-black">

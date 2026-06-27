@@ -68,7 +68,7 @@ export default async function LangLayout({
   const data = await getHomePageData(lang);
 
   return (
-    <div className="relative" lang={lang}>
+    <div className="relative bg-white min-h-screen" lang={lang}>
       {/* Global JSON-LD (Organization + LocalBusiness + WebSite) — SSR */}
       <StructuredData
         lang={lang as Locale}
@@ -89,10 +89,12 @@ export default async function LangLayout({
         services={data.services}
         mainNav={data.settings.mainNav}
       />
-      <main id="main-content" className="mx-auto w-full">
-        <PageTransition>
-          {children}
-        </PageTransition>
+      <main id="main-content" className="internal-page-shell mx-auto w-full flex-grow flex flex-col">
+        <div className="flex-grow">
+          <PageTransition>
+            {children}
+          </PageTransition>
+        </div>
         <SiteFooter 
           dict={dictionary.footer} 
           socialLinks={data.settings.socialLinks} 

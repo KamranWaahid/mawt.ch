@@ -127,21 +127,21 @@ export default async function GenevaPage({ params }: { params: Promise<{ lang: L
   };
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="min-h-screen">
       <JsonLd data={[localBusinessLd, crumbLd, collectionLd]} />
 
       <SubpageHero badge={c.badge} title={c.title} />
 
       {/* Bite-sized intent statement for RAG / AI Overview */}
-      <section className="bg-white px-6 pt-12 pb-8 sm:px-8 md:px-10 lg:px-12">
+      <section className="px-6 pt-12 pb-8 sm:px-8 md:px-10 lg:px-12">
         <p className="max-w-3xl mx-auto text-xl md:text-2xl text-neutral-600 font-normal leading-relaxed">
           {c.intro}
         </p>
       </section>
 
       {/* 1. Local anchoring */}
-      <section className="bg-white px-6 py-16 sm:px-8 md:px-10 lg:px-12 border-t border-black/5">
-        <div className="max-w-[1440px] mx-auto">
+      <section className="py-16 md:py-24 lg:py-32 border-t border-black/5">
+        <div className="site-container-wide">
           <h2 className="text-3xl font-normal tracking-tight text-black mb-10">{c.localH2}</h2>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {c.local.map((item) => (
@@ -155,8 +155,8 @@ export default async function GenevaPage({ params }: { params: Promise<{ lang: L
       </section>
 
       {/* 2. Wiki summary: the 5 service families */}
-      <section className="bg-neutral-50 px-6 py-16 sm:px-8 md:px-10 lg:px-12 border-t border-black/5">
-        <div className="max-w-[1440px] mx-auto">
+      <section className="bg-neutral-50 py-16 md:py-24 lg:py-32 border-t border-black/5">
+        <div className="site-container-wide">
           <h2 className="text-3xl font-normal tracking-tight text-black">{c.wikiH2}</h2>
           <p className="mt-4 max-w-2xl text-lg text-neutral-500 font-normal leading-relaxed">{c.wikiSub}</p>
           <ul className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -42,7 +42,7 @@ export default async function PartnersPage({ params }: { params: Promise<{ lang:
   ];
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="min-h-screen">
       <SubpageHero 
         badge={d.partners?.badge || "Partner Programs"}
         title={d.partners?.headline || "Scale your impact through the MAWT partner ecosystem."}
@@ -52,8 +52,8 @@ export default async function PartnersPage({ params }: { params: Promise<{ lang:
 
       <PartnerLogoWall partners={partners} />
       
-      <section className="bg-white px-6 py-24 sm:px-8 md:px-10 lg:px-12 border-t border-black/5">
-        <div className="max-w-[1440px] mx-auto text-center">
+      <section className="px-6 py-24 sm:px-8 md:px-10 lg:px-12 border-t border-black/5">
+        <div className="site-container-wide text-center">
           <h2 className="text-3xl font-normal tracking-tight text-black mb-6">Partner with the best.</h2>
           <p className="text-lg text-neutral-500 font-normal mb-10 max-w-3xl mx-auto">
             We work with a select group of partners who share our commitment to technical excellence and operational speed. Join our program to access exclusive resources, training, and support.

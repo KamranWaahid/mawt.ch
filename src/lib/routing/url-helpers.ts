@@ -10,10 +10,10 @@ export const SITE_URL = "https://mawt.ch";
  * real localized slugs (Sanity) and must never be rewritten.
  */
 const FOLDER_BY_FR_CANONICAL: Record<string, string> = {
-  projets: "projects",
+  projets: "work",
   "a-propos": "about",
   clients: "partners",
-  "notre-methode": "our-process",
+  "notre-methode": "approach",
   securite: "security",
   confidentialite: "legal",
   "mentions-legales": "legal-notice",
@@ -91,7 +91,7 @@ export function localizedHref(canonicalRouteKey: string, locale: Locale): string
  * Used by `proxy.ts` to rewrite localized URLs onto their shared on-disk folder.
  * Only top-level standalone routes are rewritten; services and `[slug]` detail
  * routes pass through untouched.
- * e.g. /fr/a-propos → /fr/about, /en/privacy → /en/legal, /fr/projets/x → /fr/projects/x
+ * e.g. /fr/a-propos → /fr/about, /en/privacy → /en/legal, /fr/work/x → /fr/work/x
  */
 export function toFilesystemPathname(pathname: string): string {
   const { locale, segments } = parseRoute(pathname);

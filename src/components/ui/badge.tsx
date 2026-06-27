@@ -25,7 +25,7 @@ export function Badge({ label, theme = "dark", className = "" }: BadgeProps) {
 
   return (
     <div
-      className={`relative inline-flex items-center justify-center px-4.5 py-2.5 text-[10px] font-sans tracking-[0.25em] uppercase select-none transition-all duration-300 group
+      className={`relative inline-flex items-center justify-center px-3.5 py-1.5 text-[10px] font-sans tracking-wide select-none transition-all duration-300 group
         ${bgColor} ${textColor} ${className}`}
     >
       {/* Custom Viewfinder corner brackets with subtle expansion hover effects */}

@@ -1,14 +1,13 @@
 import { ClientsSection } from "@/components/sections/clients-section";
 import { DescriptionSection } from "@/components/sections/description-section";
 import { HeroSection } from "@/components/sections/hero-section";
+import { HeroTransitionSection } from "@/components/sections/hero-transition-section";
 import { ProblemSection } from "@/components/sections/problem-section";
 import { ApproachSection } from "@/components/sections/approach-section";
-import { SiteFooter } from "@/components/sections/site-footer";
 import { InsightsSection } from "@/components/sections/insights-section";
 import { WorkSection } from "@/components/sections/work-section";
 import { SolutionSection } from "@/components/sections/solution-section";
 import { VisionSection } from "@/components/sections/vision-section";
-import { SiteHeader } from "@/components/sections/site-header";
 import { getHomePageData, getPartners } from "@/lib/sanity.queries";
 import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
@@ -21,21 +20,35 @@ import type { Metadata } from "next";
 // pulling LCP earlier.
 const FIRST_HERO_IMAGE = "/HeroImages/ezgif-frame-001.jpg";
 
+type ServiceNavItem = string | { title: string; href: string };
+
+type ServiceNavGroup = {
+  category: string;
+  services: ServiceNavItem[];
+};
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ lang: Locale }>;
 }): Promise<Metadata> {
   const { lang } = await params;
+  const isFr = lang === "fr";
   return {
-    title:
-      lang === "fr"
-        ? "Agence IA à Genève. Automatisation sur mesure | MAWT"
-        : "AI agency in Geneva. Custom automation | MAWT",
-    description:
-      lang === "fr"
-        ? "Agence IA à Genève. On intègre l'intelligence artificielle, on automatise vos processus et on déploie des outils sur mesure pour les PME et entreprises en croissance de Suisse romande."
-        : "AI agency in Geneva. We integrate artificial intelligence, automate your processes and ship custom tools for SMEs and growing companies across French speaking Switzerland.",
+    title: isFr
+      ? "Systèmes IA & Automatisation de Flux à Genève | MAWT"
+      : "AI Systems & Workflow Automation in Geneva | MAWT",
+    description: isFr
+      ? "Agence IA à Genève. Nous concevons et intégrons vos systèmes IA sur mesure, bases documentaires (RAG) et automatisations de flux. Du code qui tourne, pas des slides."
+      : "Geneva-based AI agency. We design and build custom integrations, RAG systems, and workflow automations that run in production. Get custom software, not slides.",
+    openGraph: {
+      title: isFr
+        ? "MAWT | Systèmes IA & Automatisation"
+        : "MAWT | AI Systems & Workflow Automation",
+      description: isFr
+        ? "Nous construisons les intégrations et les automatisations métier qui font tourner votre entreprise en Suisse romande."
+        : "We build the integrations and automations that run your business. Production-ready software tailored to SMEs in Switzerland.",
+    },
     alternates: hreflangAlternates(`/${lang}`, lang),
   };
 }
@@ -55,7 +68,7 @@ export default async function HomePage({
   const data = await getHomePageData(lang);
   const partners = await getPartners();
 
-  const defaultServicesList = [
+  const defaultServicesList: ServiceNavGroup[] = [
     {
       category: "Strategy",
       services: [
@@ -132,7 +145,7 @@ export default async function HomePage({
   }, {} as Record<string, { title: string; href: string }[]>);
 
   // Convert the grouped object into the array format expected by the UI
-  let servicesList: any[] = defaultServicesList;
+  let servicesList: ServiceNavGroup[] = defaultServicesList;
   
   if (dynamicServicesGrouped && Object.keys(dynamicServicesGrouped).length > 0) {
     servicesList = Object.entries(dynamicServicesGrouped).map(([category, services]) => ({
@@ -144,14 +157,17 @@ export default async function HomePage({
   return (
     <>
       <HeroSection settings={data.settings} dict={dictionary.hero} />
-      <ClientsSection dict={dictionary.clients} partners={partners} />
-      <DescriptionSection dict={dictionary.description} />
-      <ProblemSection dict={dictionary.problem} />
-      <VisionSection dict={dictionary.vision} services={servicesList} />
-      <SolutionSection dict={dictionary.solution} />
-      <ApproachSection dict={dictionary.approach} />
-      <WorkSection dict={dictionary.work} projects={data.projects} />
-      <InsightsSection dict={dictionary.insights} posts={data.posts} />
+      <HeroTransitionSection />
+      <div className="homepage-flow">
+        <ClientsSection dict={dictionary.clients} partners={partners} />
+        <DescriptionSection dict={dictionary.description} />
+        <ProblemSection dict={dictionary.problem} />
+        <VisionSection dict={dictionary.vision} services={servicesList} />
+        <SolutionSection dict={dictionary.solution} />
+        <ApproachSection dict={dictionary.approach} />
+        <WorkSection dict={dictionary.work} projects={data.projects} />
+        <InsightsSection dict={dictionary.insights} posts={data.posts} />
+      </div>
     </>
   );
 }

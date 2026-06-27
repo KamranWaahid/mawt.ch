@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { SectionReveal } from "@/components/ui/section-reveal";
 import { SubpageHero } from "@/components/sections/subpage-hero";
+import { AnimatedTitle } from "@/components/ui/animated-title";
 import { PortableText } from "@portabletext/react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -308,7 +309,7 @@ export default async function ServiceDetailPage({ params }: Props) {
   };
 
   return (
-    <div className="bg-white min-h-screen text-black font-sans selection:bg-[#d7b687]/30">
+    <div className="min-h-screen text-black font-sans selection:bg-[#d7b687]/30">
       {/* JSON-LD — server rendered */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
@@ -317,15 +318,7 @@ export default async function ServiceDetailPage({ params }: Props) {
       )}
 
       {/* Header & Hero Background Container spanning to the top of the viewport */}
-      <div 
-        className="relative bg-white border-b border-black/5"
-        style={{
-          backgroundImage: "url('/Service%20Background.png')",
-          backgroundSize: "cover",
-          backgroundPosition: "top",
-          backgroundRepeat: "no-repeat"
-        }}
-      >
+      <div className="relative">
         <div className="relative z-10">
           <Breadcrumb
             items={[
@@ -337,15 +330,15 @@ export default async function ServiceDetailPage({ params }: Props) {
           />
 
           <SubpageHero
-            badge={getFamilyTitle(canonicalFamily, lang as Locale)}
+            eyebrow={getFamilyTitle(canonicalFamily, lang as Locale)}
             title={svc.heroH1 || svc.title}
-            bgTransparent={true}
+            noGradient={true}
           />
         </div>
       </div>
 
       {/* Split Grid Content Block (Resume-style vertical stack in white) */}
-      <main className="max-w-[1440px] mx-auto px-6 sm:px-8 md:px-10 lg:px-12 py-8 md:py-16 divide-y divide-black/5">
+      <main className="site-container-wide py-8 md:py-16 divide-y divide-black/5">
         
         {/* Row 1: Overview */}
         <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12 first:pt-0">
@@ -556,7 +549,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                   </p>
                   <div className="pt-1">
                     <Link
-                      href={`/${lang}/projects/${project.slug}`}
+                      href={`/${lang}/work/${project.slug}`}
                       className="inline-flex items-center gap-1.5 text-xs font-normal text-[#75DAB4] hover:text-black transition-colors"
                     >
                       {labels.viewCaseStudy} <ArrowRight size={12} />
@@ -621,14 +614,17 @@ export default async function ServiceDetailPage({ params }: Props) {
         )}
 
         {/* Row 11: Bottom CTA */}
-        <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12 border-b-0">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12 border-b-0">
           <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
             {lang === "fr" ? "Contact" : "Next steps"}
           </div>
           <div className="md:col-span-9 lg:col-span-8 space-y-6">
-            <h3 className="text-xl sm:text-2xl font-normal text-black leading-snug text-balance">
-              {svc.cta?.headline || labels.bottomCtaH2}
-            </h3>
+            <AnimatedTitle
+              as="h3"
+              text={svc.cta?.headline || labels.bottomCtaH2}
+              className="text-xl sm:text-2xl font-normal text-black leading-snug text-balance"
+              splitBy="word"
+            />
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
               <Link
                 href={`/${lang}/${cleanPath(svc.cta?.primaryHref || "contact")}`}
@@ -646,7 +642,7 @@ export default async function ServiceDetailPage({ params }: Props) {
               )}
             </div>
           </div>
-        </SectionReveal>
+        </div>
 
       </main>
     </div>

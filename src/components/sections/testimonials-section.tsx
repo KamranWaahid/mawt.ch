@@ -43,10 +43,10 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
   const activeItem = displayItems[activeIndex % displayItems.length];
 
   return (
-    <section className="relative overflow-hidden bg-bg-light py-12 md:py-20 h-screen max-h-[100vh] flex items-center justify-center border-t border-black/5">
-      <div className="mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-20 flex items-center justify-center h-full">
+    <section className="relative overflow-hidden bg-bg-light py-16 md:py-24 lg:py-32 flex items-center justify-center border-t border-black/5">
+      <div className="site-container flex items-center justify-center h-full">
         {/* Testimonial Card */}
-        <div className="relative w-full max-w-[420px] aspect-[3/4] md:max-w-[460px] md:aspect-[3/4] bg-neutral-900 rounded-none overflow-hidden flex flex-col justify-between p-8 md:p-10 text-white">
+        <div className="relative w-full max-w-[420px] h-auto min-h-[450px] xs:aspect-[3/4] md:max-w-[460px] md:aspect-[3/4] bg-neutral-900 rounded-none overflow-hidden flex flex-col justify-between p-8 md:p-10 text-white">
           
           {/* Animated Background */}
           <div className="absolute inset-0 z-0">
@@ -71,8 +71,8 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
           </div>
 
           {/* Card Content */}
-          <div className="relative z-10 flex flex-col justify-between h-full w-full">
-            {/* Quote and Author */}
+          <div className="relative z-10 flex flex-col justify-between h-full w-full gap-8">
+            {/* Quote */}
             <div className="max-w-[34ch] pt-2">
               <AnimatePresence mode="wait">
                 <motion.div
@@ -81,40 +81,55 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -15 }}
                   transition={{ duration: 0.5, ease: "easeOut" }}
-                  className="flex flex-col gap-6"
                 >
                   <p className="text-lg sm:text-xl md:text-[22px] font-normal leading-[1.25] text-white tracking-tight">
                     &quot;{activeItem.quote}&quot;
                   </p>
-                  <div className="text-[13px] sm:text-sm font-normal text-white/90">
-                    <span className="font-normal block">{activeItem.name}</span>
-                    {activeItem.role && <span className="opacity-75">{activeItem.role}</span>}
-                  </div>
                 </motion.div>
               </AnimatePresence>
             </div>
 
-            {/* Thumbnail Navigation Indicators (Bottom Right inside the Card) */}
-            <div className="absolute bottom-0 right-0 flex flex-col gap-2.5">
-              {displayItems.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setActiveIndex(i)}
-                  className={`relative w-12 h-12 md:w-14 md:h-14 rounded-none overflow-hidden border-2 transition-all duration-300 outline-none ${
-                    activeIndex === i 
-                      ? "border-white scale-105 z-20"
-                      : "border-white/20 hover:border-white/50 hover:scale-102 opacity-70 hover:opacity-100 z-10"
-                  }`}
-                  aria-label={`Go to slide ${i + 1}`}
-                >
-                  <Image
-                    src={slideImages[i % slideImages.length]}
-                    alt={`Slide ${i + 1} thumbnail`}
-                    fill
-                    className="object-cover"
-                  />
-                </button>
-              ))}
+            {/* Bottom Group: Author Info and Navigation Buttons */}
+            <div className="flex flex-col xs:flex-row justify-between items-start xs:items-end gap-6 w-full mt-auto">
+              {/* Author Info */}
+              <div className="min-w-0 flex-1">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeIndex}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
+                    className="text-[13px] sm:text-sm font-normal text-white/90"
+                  >
+                    <span className="font-normal block truncate">{activeItem.name}</span>
+                    {activeItem.role && <span className="opacity-75 block truncate">{activeItem.role}</span>}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+
+              {/* Thumbnail Navigation Indicators */}
+              <div className="flex flex-row xs:flex-col gap-2.5 shrink-0">
+                {displayItems.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setActiveIndex(i)}
+                    className={`relative w-10 h-10 xs:w-12 xs:h-12 md:w-14 md:h-14 rounded-none overflow-hidden border-2 transition-all duration-300 outline-none ${
+                      activeIndex === i 
+                        ? "border-white scale-105 z-20"
+                        : "border-white/20 hover:border-white/50 hover:scale-102 opacity-70 hover:opacity-100 z-10"
+                    }`}
+                    aria-label={`Go to slide ${i + 1}`}
+                  >
+                    <Image
+                      src={slideImages[i % slideImages.length]}
+                      alt={`Slide ${i + 1} thumbnail`}
+                      fill
+                      className="object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 

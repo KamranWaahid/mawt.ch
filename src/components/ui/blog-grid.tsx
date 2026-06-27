@@ -17,8 +17,8 @@ interface BlogGridProps {
 
 export function BlogGrid({ articles }: BlogGridProps) {
   return (
-    <section className="bg-white px-6 py-24 sm:px-8 md:px-10 lg:px-12">
-      <div className="max-w-[1440px] mx-auto">
+    <section className="bg-white px-6 py-16 sm:px-8 md:px-10 lg:px-12">
+      <div className="site-container-wide">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
           {articles.map((article, index) => (
             <motion.article
@@ -39,13 +39,13 @@ export function BlogGrid({ articles }: BlogGridProps) {
               </div>
               <div className="flex flex-col gap-4">
                 <div className="flex items-center justify-between text-[13px] font-normal tracking-tight">
-                  <span className="text-black uppercase">{article.category}</span>
+                  <span className="text-black/50 normal-case">{article.category}</span>
                   <span className="text-neutral-400">{article.date} • {article.readTime}</span>
                 </div>
-                <h3 className="text-xl font-normal tracking-tight text-black group-hover:text-neutral-600 transition-colors">
+                <h3 className="text-lg-fluid font-medium tracking-tight text-black group-hover:text-neutral-600 transition-colors">
                   {article.title}
                 </h3>
-                <p className="text-[15px] leading-relaxed text-neutral-500 font-normal line-clamp-3">
+                <p className="text-sm-fluid leading-relaxed text-neutral-500 font-normal line-clamp-3">
                   {article.excerpt}
                 </p>
                 <Link 

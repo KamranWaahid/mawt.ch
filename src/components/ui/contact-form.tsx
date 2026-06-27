@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useActionState, useEffect } from "react";
+import { useState, useActionState, useCallback } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Check, ArrowRight, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { submitContactForm } from "@/lib/actions";
+import { submitContactForm, type ContactFormState } from "@/lib/actions";
 
 interface ContactFormProps {
   dict?: {
@@ -19,22 +19,27 @@ interface ContactFormProps {
 
 type FormStep = 1 | 2 | 3;
 
+// BUG-023: Use the typed state from actions.ts
+type ClientErrors = Partial<Record<"name" | "email" | "message", string>>;
+
 export function ContactForm({ dict }: ContactFormProps) {
   const [step, setStep] = useState<FormStep>(1);
-  const [state, formAction, isPending] = useActionState(submitContactForm, null);
+  // BUG-023: Typed action state
+  const [state, formAction, isPending] = useActionState<ContactFormState, FormData>(
+    submitContactForm,
+    null
+  );
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     service: "Strategy",
     timeline: "3-6 months",
-    message: ""
+    message: "",
   });
-
-  useEffect(() => {
-    if (state?.success) {
-      // Logic for success already handled by conditional return below
-    }
-  }, [state]);
+  // BUG-006: Client-side per-step errors
+  const [clientErrors, setClientErrors] = useState<ClientErrors>({});
+  // BUG-015: Track success locally so we can reset without reload
+  const [submitted, setSubmitted] = useState(false);
 
   const labels = dict || {
     name: "Name",
@@ -42,44 +47,107 @@ export function ContactForm({ dict }: ContactFormProps) {
     message: "Project Details",
     submit: "Send Message",
     success: "Message sent.",
-    error: "Something went wrong."
+    error: "Something went wrong.",
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    // Clear field error on change
+    if (name in clientErrors) {
+      setClientErrors((prev) => {
+        const next = { ...prev };
+        delete next[name as keyof ClientErrors];
+        return next;
+      });
+    }
+  };
+
+  // BUG-006: Validate each step before advancing
+  const validateStep1 = (): boolean => {
+    const errors: ClientErrors = {};
+    if (!formData.name.trim() || formData.name.trim().length < 2) {
+      errors.name = "Please enter your full name (at least 2 characters).";
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email.trim() || !emailRegex.test(formData.email.trim())) {
+      errors.email = "Please enter a valid email address.";
+    }
+    setClientErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const validateStep3 = (): boolean => {
+    const errors: ClientErrors = {};
+    if (!formData.message.trim() || formData.message.trim().length < 10) {
+      errors.message = "Please describe your project (at least 10 characters).";
+    }
+    setClientErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleContinue = (e: React.MouseEvent) => {
     e.preventDefault();
+    if (step === 1 && !validateStep1()) return;
     if (step < 3) {
-      setStep(prev => (prev + 1) as FormStep);
+      setStep((prev) => (prev + 1) as FormStep);
     }
   };
 
-  const status = state?.success ? "success" : isPending ? "submitting" : state?.error ? "error" : "idle";
+  // BUG-015: Reset form without window.location.reload()
+  const handleReset = useCallback(() => {
+    setStep(1);
+    setSubmitted(false);
+    setFormData({
+      name: "",
+      email: "",
+      service: "Strategy",
+      timeline: "3-6 months",
+      message: "",
+    });
+    setClientErrors({});
+  }, []);
+
+  const status = state?.success
+    ? "success"
+    : isPending
+    ? "submitting"
+    : state?.error
+    ? "error"
+    : "idle";
+
+  // Track success from server state
+  if (status === "success" && !submitted) {
+    setSubmitted(true);
+  }
 
   const stepVariants = {
     initial: (direction: number) => ({
       x: direction > 0 ? 50 : -50,
       opacity: 0,
-      filter: "blur(10px)"
+      filter: "blur(10px)",
     }),
     animate: {
       x: 0,
       opacity: 1,
-      filter: "blur(0px)"
+      filter: "blur(0px)",
     },
     exit: (direction: number) => ({
       x: direction > 0 ? -50 : 50,
       opacity: 0,
-      filter: "blur(10px)"
-    })
+      filter: "blur(10px)",
+    }),
   };
 
-  if (status === "success") {
+  // BUG-007: Extract server-side field errors
+  const serverFieldError = (field: "name" | "email" | "service" | "timeline" | "message") =>
+    state?.details?.[field]?.[0];
+
+  if (submitted) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         className="flex flex-col gap-8 items-center justify-center py-24 text-center"
@@ -89,10 +157,14 @@ export function ContactForm({ dict }: ContactFormProps) {
         </div>
         <div className="flex flex-col gap-3">
           <h3 className="text-3xl font-normal tracking-tighter text-black">{labels.success}</h3>
-          <p className="text-neutral-500 font-normal text-lg">We've received your request and will reach out shortly.</p>
+          <p className="text-neutral-500 font-normal text-lg">
+            We&apos;ve received your request and will reach out shortly.
+          </p>
         </div>
-        <button 
-          onClick={() => window.location.reload()}
+        {/* BUG-015: Use state reset, not reload */}
+        <button
+          type="button"
+          onClick={handleReset}
           className="px-8 py-4 border border-black text-black hover:bg-black hover:text-white transition-all text-sm font-normal uppercase tracking-widest mt-4"
         >
           Send Another Message
@@ -104,14 +176,14 @@ export function ContactForm({ dict }: ContactFormProps) {
   return (
     <div className="flex flex-col gap-12 text-black">
       {/* Progress Indicator */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4" role="progressbar" aria-valuenow={step} aria-valuemin={1} aria-valuemax={3}>
         {[1, 2, 3].map((s) => (
-          <div 
-            key={s} 
+          <div
+            key={s}
             className={cn(
               "h-1 flex-1 transition-all duration-500",
               s <= step ? "bg-black" : "bg-black/5"
-            )} 
+            )}
           />
         ))}
       </div>
@@ -128,34 +200,72 @@ export function ContactForm({ dict }: ContactFormProps) {
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col gap-12"
           >
-            {/* ... (fields remain the same, ensuring names match schema) */}
             {step === 1 && (
               <div className="flex flex-col gap-12">
-                <h2 className="text-3xl font-normal tracking-tighter text-black">Let's start with the basics</h2>
+                <h2 className="text-3xl font-normal tracking-tighter text-black">
+                  Let&apos;s start with the basics
+                </h2>
                 <div className="grid md:grid-cols-2 gap-12">
+                  {/* BUG-012: htmlFor + id association */}
                   <div className="flex flex-col gap-4">
-                    <label className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]">{labels.name}</label>
-                    <input 
+                    <label
+                      htmlFor="contact-name"
+                      className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]"
+                    >
+                      {labels.name}
+                    </label>
+                    <input
+                      id="contact-name"
                       required
                       name="name"
-                      type="text" 
+                      type="text"
                       value={formData.name}
                       onChange={handleInputChange}
-                      className="w-full py-4 border-b border-black/10 focus:border-black focus:outline-none bg-transparent transition-colors font-normal text-xl text-black placeholder:text-neutral-400" 
-                      placeholder="Your name" 
+                      aria-describedby={clientErrors.name || serverFieldError("name") ? "contact-name-error" : undefined}
+                      aria-invalid={!!(clientErrors.name || serverFieldError("name"))}
+                      className={cn(
+                        "w-full py-4 border-b focus:outline-none bg-transparent transition-colors font-normal text-xl text-black placeholder:text-neutral-400",
+                        clientErrors.name || serverFieldError("name")
+                          ? "border-red-400 focus:border-red-500"
+                          : "border-black/10 focus:border-black"
+                      )}
+                      placeholder="Your name"
                     />
+                    {(clientErrors.name || serverFieldError("name")) && (
+                      <p id="contact-name-error" className="text-sm text-red-500 font-normal">
+                        {clientErrors.name || serverFieldError("name")}
+                      </p>
+                    )}
                   </div>
                   <div className="flex flex-col gap-4">
-                    <label className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]">{labels.email}</label>
-                    <input 
+                    <label
+                      htmlFor="contact-email"
+                      className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]"
+                    >
+                      {labels.email}
+                    </label>
+                    <input
+                      id="contact-email"
                       required
                       name="email"
-                      type="email" 
+                      type="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="w-full py-4 border-b border-black/10 focus:border-black focus:outline-none bg-transparent transition-colors font-normal text-xl text-black placeholder:text-neutral-400" 
-                      placeholder="hello@company.com" 
+                      aria-describedby={clientErrors.email || serverFieldError("email") ? "contact-email-error" : undefined}
+                      aria-invalid={!!(clientErrors.email || serverFieldError("email"))}
+                      className={cn(
+                        "w-full py-4 border-b focus:outline-none bg-transparent transition-colors font-normal text-xl text-black placeholder:text-neutral-400",
+                        clientErrors.email || serverFieldError("email")
+                          ? "border-red-400 focus:border-red-500"
+                          : "border-black/10 focus:border-black"
+                      )}
+                      placeholder="hello@company.com"
                     />
+                    {(clientErrors.email || serverFieldError("email")) && (
+                      <p id="contact-email-error" className="text-sm text-red-500 font-normal">
+                        {clientErrors.email || serverFieldError("email")}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -163,11 +273,20 @@ export function ContactForm({ dict }: ContactFormProps) {
 
             {step === 2 && (
               <div className="flex flex-col gap-12">
-                <h2 className="text-3xl font-normal tracking-tighter text-black">What are you looking for?</h2>
+                <h2 className="text-3xl font-normal tracking-tighter text-black">
+                  What are you looking for?
+                </h2>
                 <div className="grid md:grid-cols-2 gap-12">
                   <div className="flex flex-col gap-4">
-                    <label className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]">Service</label>
-                    <select 
+                    {/* BUG-012: htmlFor + id */}
+                    <label
+                      htmlFor="contact-service"
+                      className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]"
+                    >
+                      Service
+                    </label>
+                    <select
+                      id="contact-service"
                       name="service"
                       value={formData.service}
                       onChange={handleInputChange}
@@ -180,8 +299,15 @@ export function ContactForm({ dict }: ContactFormProps) {
                     </select>
                   </div>
                   <div className="flex flex-col gap-4">
-                    <label className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]">Timeline</label>
-                    <select 
+                    {/* BUG-012: htmlFor + id */}
+                    <label
+                      htmlFor="contact-timeline"
+                      className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]"
+                    >
+                      Timeline
+                    </label>
+                    <select
+                      id="contact-timeline"
                       name="timeline"
                       value={formData.timeline}
                       onChange={handleInputChange}
@@ -198,38 +324,76 @@ export function ContactForm({ dict }: ContactFormProps) {
 
             {step === 3 && (
               <div className="flex flex-col gap-12">
-                <h2 className="text-3xl font-normal tracking-tighter text-black">Anything else we should know?</h2>
+                <h2 className="text-3xl font-normal tracking-tighter text-black">
+                  Anything else we should know?
+                </h2>
                 <div className="flex flex-col gap-4">
-                  <label className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]">{labels.message}</label>
-                  <textarea 
+                  {/* BUG-012: htmlFor + id */}
+                  <label
+                    htmlFor="contact-message"
+                    className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]"
+                  >
+                    {labels.message}
+                  </label>
+                  <textarea
+                    id="contact-message"
                     required
                     name="message"
-                    rows={4} 
+                    rows={4}
                     value={formData.message}
                     onChange={handleInputChange}
-                    className="w-full py-4 border-b border-black/10 focus:border-black focus:outline-none bg-transparent transition-colors font-normal text-xl resize-none text-black placeholder:text-neutral-400" 
-                    placeholder="Tell us about your project challenges..." 
+                    aria-describedby={clientErrors.message || serverFieldError("message") ? "contact-message-error" : undefined}
+                    aria-invalid={!!(clientErrors.message || serverFieldError("message"))}
+                    className={cn(
+                      "w-full py-4 border-b focus:outline-none bg-transparent transition-colors font-normal text-xl resize-none text-black placeholder:text-neutral-400",
+                      clientErrors.message || serverFieldError("message")
+                        ? "border-red-400 focus:border-red-500"
+                        : "border-black/10 focus:border-black"
+                    )}
+                    placeholder="Tell us about your project challenges..."
                   />
+                  {(clientErrors.message || serverFieldError("message")) && (
+                    <p id="contact-message-error" className="text-sm text-red-500 font-normal">
+                      {clientErrors.message || serverFieldError("message")}
+                    </p>
+                  )}
                 </div>
               </div>
             )}
 
-            {state?.error && (
+            {/* BUG-007: General server error (non-field) */}
+            {state?.error && !state.details && (
               <p className="text-sm text-red-500 font-normal">{state.error}</p>
+            )}
+
+            {/* Hidden fields for all steps: always include name/email/service/timeline so
+                the server receives them even though earlier steps are not re-rendered. */}
+            {step !== 1 && (
+              <>
+                <input type="hidden" name="name" value={formData.name} />
+                <input type="hidden" name="email" value={formData.email} />
+              </>
+            )}
+            {step !== 2 && (
+              <>
+                <input type="hidden" name="service" value={formData.service} />
+                <input type="hidden" name="timeline" value={formData.timeline} />
+              </>
             )}
 
             <div className="flex items-center gap-6 mt-8">
               {step > 1 && (
-                <button 
+                <button
                   type="button"
-                  onClick={() => setStep(prev => (prev - 1) as FormStep)}
+                  onClick={() => setStep((prev) => (prev - 1) as FormStep)}
                   className="flex items-center justify-center w-14 h-14 border border-black/10 hover:border-black transition-colors"
+                  aria-label="Go back"
                 >
                   <ArrowLeft size={20} />
                 </button>
               )}
               {step < 3 ? (
-                <button 
+                <button
                   type="button"
                   onClick={handleContinue}
                   className="flex-1 flex items-center justify-center gap-3 py-4 bg-black text-white text-sm font-normal transition-all uppercase tracking-widest hover:bg-neutral-900 group"
@@ -238,13 +402,14 @@ export function ContactForm({ dict }: ContactFormProps) {
                   <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                 </button>
               ) : (
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   disabled={status === "submitting"}
+                  onClick={() => validateStep3()}
                   className="flex-1 flex items-center justify-center gap-3 py-4 bg-black text-white text-sm font-normal disabled:bg-neutral-400 transition-all uppercase tracking-widest hover:bg-neutral-900 group"
                 >
                   {status === "submitting" ? (
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" aria-label="Sending..." />
                   ) : (
                     <>
                       {labels.submit}
@@ -260,4 +425,3 @@ export function ContactForm({ dict }: ContactFormProps) {
     </div>
   );
 }
-

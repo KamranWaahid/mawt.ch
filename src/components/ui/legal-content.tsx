@@ -13,7 +13,7 @@ interface LegalContentProps {
 
 export function LegalContent({ sections }: LegalContentProps) {
   return (
-    <section className="bg-white px-6 py-24 sm:px-8 md:px-10 lg:px-12">
+    <section className="bg-white px-6 py-16 sm:px-8 md:px-10 lg:px-12 md:py-24 lg:py-32">
       <div className="max-w-[800px] mx-auto">
         <div className="flex flex-col gap-16">
           {sections.map((section, index) => (
@@ -26,11 +26,11 @@ export function LegalContent({ sections }: LegalContentProps) {
               className="flex flex-col gap-6"
             >
               {section.title && (
-                <h2 className="text-2xl font-normal tracking-tight text-black">{section.title}</h2>
+                <h2 className="text-xl-fluid font-medium tracking-tight text-black">{section.title}</h2>
               )}
               <div className="flex flex-col gap-4">
                 {section.content.map((paragraph, pIndex) => (
-                  <p key={pIndex} className="text-[16px] leading-relaxed text-neutral-500 font-normal">
+                  <p key={pIndex} className="text-base-fluid leading-relaxed text-neutral-500 font-normal max-w-[65ch]">
                     {paragraph}
                   </p>
                 ))}

@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "motion/react";
-import { SectionReveal } from "@/components/ui/section-reveal";
-import { Badge } from "@/components/ui/badge";
+import { AnimatedTitle } from "@/components/ui/animated-title";
+import { sectionTitleClass } from "@/components/ui/section-title-style";
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -42,7 +42,7 @@ export function InsightsSection({ dict, posts }: { dict: any; posts?: BlogPost[]
           : "Recent",
         readTime: "5 min read",
         excerpt: post.excerpt || "Field notes on AI in business and automation, from the team that builds the systems.",
-        href: `/${currentLang}/blog/${post.slug}`,
+        href: `/${currentLang}/news/${post.slug}`,
       }))
     : (dict?.articles || []).slice(0, 3).map((article: any, idx: number) => ({
         id: `dict-${idx}`,
@@ -51,24 +51,21 @@ export function InsightsSection({ dict, posts }: { dict: any; posts?: BlogPost[]
         date: article.date,
         readTime: article.readTime,
         excerpt: article.excerpt,
-        href: `/${currentLang}/blog`,
+        href: `/${currentLang}/news`,
       }));
 
   return (
-    <section className="bg-bg-light py-[120px] border-t border-black/5">
-      <div className="mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-20">
-        <SectionReveal>
-          {/* Header Badge */}
-          <div className="mb-12">
-            <Badge label={dict?.badge || "INSIGHTS"} theme="light" />
-          </div>
-
-          {/* Headline */}
-          <div className="mb-16">
-            <h2 className="text-3xl font-normal tracking-tight text-black sm:text-4xl md:text-[44px] lg:leading-[1.1]">
-              {dict?.headline || "Latest from the team"}
-            </h2>
-          </div>
+    <section className="py-12 md:py-18 lg:py-24">
+      <div className="site-container">
+        {/* Headline */}
+        <div className="mb-8 md:mb-10 lg:mb-14">
+          <AnimatedTitle
+            as="h2"
+            text={dict?.headline || "Latest from the team"}
+            className={sectionTitleClass}
+            splitBy="word"
+          />
+        </div>
 
           {/* Insights Grid */}
           <motion.div 
@@ -82,15 +79,15 @@ export function InsightsSection({ dict, posts }: { dict: any; posts?: BlogPost[]
               <motion.article
                 key={item.id}
                 variants={itemVariants}
-                className="group relative flex flex-col bg-white p-10 transition-all duration-300 hover:z-10"
+                className="group relative flex flex-col bg-white p-8 transition-all duration-300 hover:z-10"
               >
                 <Link href={item.href} className="flex h-full flex-col justify-between">
-                  <div className="space-y-6 pb-12">
-                    <span className="block text-[11px] font-normal text-black/30 tracking-[0.2em] uppercase">
+                  <div className="space-y-5 pb-8">
+                    <span className="block text-[11px] font-medium text-black/40 tracking-wide">
                       {item.category}
                     </span>
                     
-                    <h3 className="text-xl font-normal leading-tight text-black md:text-2xl group-hover:text-brand-teal transition-colors">
+                    <h3 className="text-lg-fluid font-medium leading-tight text-black group-hover:text-brand-teal transition-colors">
                       {item.title}
                     </h3>
                     
@@ -98,7 +95,7 @@ export function InsightsSection({ dict, posts }: { dict: any; posts?: BlogPost[]
                       {item.date} • {item.readTime}
                     </div>
                     
-                    <p className="text-base font-normal leading-relaxed text-black/60 line-clamp-3">
+                    <p className="text-sm-fluid font-normal leading-relaxed text-black/50 line-clamp-3">
                       {item.excerpt}
                     </p>
                   </div>
@@ -110,7 +107,6 @@ export function InsightsSection({ dict, posts }: { dict: any; posts?: BlogPost[]
               </motion.article>
             ))}
           </motion.div>
-        </SectionReveal>
       </div>
     </section>
   );

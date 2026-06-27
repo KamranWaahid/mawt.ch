@@ -39,7 +39,7 @@ export default async function FAQsPage({ params }: FAQsPageProps) {
   ]);
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="min-h-screen">
       <JsonLd data={faqLd ? [crumbLd, faqLd] : [crumbLd]} />
       <SubpageHero
         badge={dict.faq.badge}
@@ -48,13 +48,13 @@ export default async function FAQsPage({ params }: FAQsPageProps) {
       {faqs.length > 0 ? (
         <FAQAccordion items={faqs} />
       ) : (
-        <section className="bg-white px-6 py-24 sm:px-8 md:px-10 lg:px-12 text-center">
+        <section className="px-6 py-24 sm:px-8 md:px-10 lg:px-12 text-center">
           <p className="text-neutral-500 font-normal italic">{dict.faq.noFaqs}</p>
         </section>
       )}
       
-      <section className="bg-white px-6 py-24 sm:px-8 md:px-10 lg:px-12 border-t border-black/5">
-        <div className="max-w-[1440px] mx-auto text-center">
+      <section className="py-20 md:py-28 lg:py-36 border-t border-black/5">
+        <div className="site-container-wide text-center">
           <h2 className="text-3xl font-normal tracking-tighter text-black mb-6">{dict.faq.stillQuestions}</h2>
           <p className="text-lg text-neutral-500 font-normal mb-10 max-w-2xl mx-auto">
             {dict.faq.contactDesc}

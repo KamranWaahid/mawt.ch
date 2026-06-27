@@ -1,42 +1,38 @@
 {
   "hero": {
-    "kicker": "Intelligence artificielle · Genève",
-    "title_1": "Agence IA à Genève.",
-    "title_2": "Automatisation et solutions sur mesure.",
-    "description": "On conçoit vos solutions IA, vos automatisations et vos outils sur mesure. Une équipe technique qui évolue avec les derniers outils, pour des résultats qui tournent.",
-    "summary": "MAWT est une agence IA à Genève. Nous aidons les PME et entreprises en croissance de Suisse romande à intégrer l'intelligence artificielle, automatiser leurs processus et déployer des outils sur mesure. De la stratégie au déploiement, on construit des solutions qui tournent, pas des slides.",
-    "cta": "Parlons-en"
+    "kicker": "Systèmes IA & Automatisation · Genève",
+    "title_1": "On construit les systèmes IA",
+    "title_2": "qui font tourner votre entreprise.",
+    "description": "Intégrations sur mesure, flux automatisés et applications de production. Pas de recommandations théoriques. Juste du code qui tourne.",
+    "summary": "MAWT est une agence d'ingénierie et d'IA basée à Genève. Nous concevons et déployons des systèmes sur mesure qui automatisent les flux opérationnels des PME et entreprises en Suisse. Du code concret pour connecter vos données à l'IA.",
+    "cta": "Démarrer un projet"
   },
   "clients": {
-    "title": "Qui nous fait confiance ?"
+    "title": "Ils nous font confiance à Genève & en Suisse"
   },
   "description": {
-    "paragraphs": [
-      "MAWT est une agence IA basée à Genève. Nous aidons les PME et les entreprises en croissance de Suisse romande à mettre l'intelligence artificielle au travail : automatiser ce qui se répète, accélérer ce qui compte, déployer des outils pensés pour leur métier.",
-      "Avant d'être une agence IA, nous sommes une équipe technique. Nous écrivons du code depuis des années et nous évoluons avec les derniers outils et les nouvelles pratiques, sans courir après la tendance. C'est ce qui sépare une démo d'un système qui tient en production.",
-      "Notre promesse tient en une phrase : des solutions qui tournent, pas des recommandations. De la première conversation au déploiement, vous parlez aux personnes qui construisent."
-    ]
+    "paragraphs": []
   },
   "problem": {
-    "badge": "PROBLÈME",
-    "headline_1": "L'IA est partout.",
-    "headline_2": "Dans votre entreprise, elle reste une promesse.",
+    "badge": "La réalité",
+    "headline_1": "L'IA est une promesse.",
+    "headline_2": "Votre entreprise a besoin de systèmes.",
     "items": [
       {
-        "title": "Des outils qui ignorent votre métier",
-        "description": "Les solutions IA génériques impressionnent en démo et déçoivent en réel. Elles ne connaissent ni vos données, ni vos process, ni vos contraintes."
+        "title": "Les limites du standard",
+        "description": "Les outils génériques ignorent vos processus internes, vos bases de données et vos contraintes métier."
       },
       {
-        "title": "Du temps perdu sur le répétitif",
-        "description": "Saisie, relances, rapports, tri : vos meilleurs profils passent leurs journées sur des tâches qu'une automatisation ferait sans erreur."
+        "title": "La friction du répétitif",
+        "description": "Vos équipes perdent un temps précieux sur de la saisie manuelle, des relances et du tri de données."
       },
       {
-        "title": "Beaucoup de conseils, peu de mise en œuvre",
-        "description": "Les ateliers et les slides s'accumulent. Entre une stratégie IA et un système qui tourne vraiment, il manque toujours l'exécution."
+        "title": "L'impasse du conseil",
+        "description": "Les audits s'accumulent, mais la capacité technique pour transformer ces idées en logiciels fonctionnels fait défaut."
       },
       {
-        "title": "La peur de mal faire",
-        "description": "Confidentialité des données, conformité nLPD, fiabilité : intégrer l'IA sans cadre clair fait plus peur que de ne rien faire."
+        "title": "Les risques de conformité",
+        "description": "Manipuler des données clients hors de Suisse sans conformité nLPD ou RGPD expose votre entreprise à des risques majeurs."
       }
     ]
   },
@@ -60,8 +56,9 @@
     ]
   },
   "work": {
-    "badge": "RÉALISATIONS",
-    "headline": "Conçu pour tourner. Prouvé par les résultats.",
+    "badge": "Réalisations",
+    "headline": "Nos projets, du pétale à la planète",
+    "seeAll": "Voir tout",
     "projects": [
       {
         "id": "crm",
@@ -114,7 +111,7 @@
     ]
   },
   "insights": {
-    "badge": "APERÇUS",
+    "badge": "Aperçus",
     "headline": "Dernières nouvelles de l'équipe",
     "articles": [
       {
@@ -177,14 +174,14 @@
         "title": "Services",
         "links": [
           { "label": "Tous nos services", "href": "/services" },
-          { "label": "Notre méthode", "href": "/our-process" },
-          { "label": "Projets", "href": "/projects" }
+          { "label": "Notre méthode", "href": "/approach" },
+          { "label": "Projets", "href": "/work" }
         ]
       },
       {
         "title": "Ressources",
         "links": [
-          { "label": "Blog", "href": "/blog" },
+          { "label": "Blog", "href": "/news" },
           { "label": "FAQ", "href": "/faqs" }
         ]
       },
@@ -206,51 +203,51 @@
     }
   },
   "solution": {
-    "badge": "SOLUTION",
-    "headline_1": "On construit l'IA et les systèmes",
-    "headline_2": "qui font tourner votre entreprise.",
+    "badge": "Notre apport",
+    "headline_1": "Nous développons des logiciels",
+    "headline_2": "adaptés à vos opérations.",
     "items": [
       {
-        "title": "Intégration d'IA sur mesure",
-        "description": "Nous branchons l'intelligence artificielle sur vos données et vos outils : assistants, agents, recherche interne, génération et analyse de contenu."
+        "title": "Intégrations IA sur mesure",
+        "description": "Systèmes RAG, agents intelligents et recherche interne entraînés sur vos documents et bases de connaissances privées."
       },
       {
-        "title": "Automatisation des processus",
-        "description": "Nous connectons vos applications et automatisons les flux répétitifs, de la saisie au reporting, pour libérer vos équipes."
+        "title": "Automatisation de flux",
+        "description": "Connexion de vos outils métier et flux automatisés, de la capture de leads au reporting automatique."
       },
       {
-        "title": "Outils et applications sur mesure",
-        "description": "Nous concevons et développons les logiciels, sites et plateformes que les outils du marché ne couvrent pas."
+        "title": "Applications personnalisées",
+        "description": "Plateformes Next.js et portails web développés pour répondre aux cas d'usage où les SaaS standards échouent."
       },
       {
-        "title": "Du conseil au déploiement",
-        "description": "Nous restons jusqu'à la mise en production, la mesure et l'amélioration continue. Pas seulement un plan, un système qui tourne."
+        "title": "Suivi en production",
+        "description": "Nous assurons le déploiement, les tests d'intégration et l'optimisation continue. Nous livrons et nous maintenons."
       }
     ]
   },
   "services": {
-    "badge": "Ce que nous faisons",
-    "headline": "Solutions IA, automatisation et outils sur mesure. Cinq piliers, une seule équipe.",
+    "badge": "Expertises",
+    "headline": "Des systèmes conçus pour connecter, automatiser et durer. Cinq piliers.",
     "pillars": [
       {
-        "title": "Solutions IA",
-        "description": "Nous concevons et déployons vos solutions d'intelligence artificielle : CRM intelligents, agents IA, RAG, automatisations et applications sur mesure, branchés sur vos données et vos outils."
+        "title": "Systèmes IA",
+        "description": "CRMs connectés, agents conversationnels métier, RAG et intégrations de données adaptés à vos flux clients."
       },
       {
-        "title": "Conseil IA",
-        "description": "Stratégie IA, audit de vos opérations et accompagnement de la transformation. Des recommandations qui débouchent sur des systèmes, par des gens qui construisent aussi."
+        "title": "Conseil Technique",
+        "description": "Audits opérationnels, revues d'architecture et due diligence technologique menés par des ingénieurs actifs."
       },
       {
-        "title": "Formation IA",
-        "description": "Formation ChatGPT et IA générative par métier, ateliers pratiques et coaching des décideurs. Vos équipes deviennent autonomes sur les bons outils."
+        "title": "Accompagnement IA",
+        "description": "Ateliers pratiques, formation IA par métier et déploiement d'outils pour rendre vos équipes autonomes."
       },
       {
-        "title": "Sites & Branding",
-        "description": "Sites internet, e-commerce et identités de marque pensés pour durer et pour convertir. Construits avec Next.js et des CMS modernes, optimisés pour le SEO."
+        "title": "Produits Digitaux",
+        "description": "Sites internet, interfaces sur mesure et e-commerce développés en React et Next.js, optimisés pour les moteurs de recherche."
       },
       {
-        "title": "Renfort & Équipe",
-        "description": "Développeurs, tech leads, CTO et experts IA qui s'intègrent à votre équipe, sans rotation de juniors. Du renfort senior, quand il le faut."
+        "title": "Renfort d'Équipe",
+        "description": "Développeurs seniors, tech leads et CTOs fractionnels intégrés directement dans vos équipes, sans rotation."
       }
     ]
   },

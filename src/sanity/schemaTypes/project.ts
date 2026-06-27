@@ -1,4 +1,28 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
+import type { SlugIsUniqueValidator } from "@sanity/types";
+
+const isUniqueProjectSlug: SlugIsUniqueValidator = async (slug, context) => {
+  const documentId = context.document?._id?.replace(/^drafts\./, "");
+
+  if (!documentId) {
+    return context.defaultIsUnique(slug, context);
+  }
+
+  const language = typeof context.document?.language === "string" ? context.document.language : undefined;
+  const client = context.getClient({ apiVersion: "2025-01-01" });
+  const params = {
+    draftId: `drafts.${documentId}`,
+    publishedId: documentId,
+    slug,
+    language,
+  };
+
+  const query = language
+    ? `!defined(*[_type == "project" && slug.current == $slug && language == $language && !(_id in [$draftId, $publishedId])][0]._id)`
+    : `!defined(*[_type == "project" && slug.current == $slug && !(_id in [$draftId, $publishedId])][0]._id)`;
+
+  return client.fetch<boolean>(query, params);
+};
 
 export const projectType = defineType({
   name: "project",
@@ -21,7 +45,7 @@ export const projectType = defineType({
     defineField({
       name: "slug",
       type: "slug",
-      options: { source: "title", maxLength: 96 },
+      options: { source: "title", maxLength: 96, isUnique: isUniqueProjectSlug },
       validation: (Rule) => Rule.required().custom((slug) => {
         if (typeof slug === "undefined") return true;
         const regex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;

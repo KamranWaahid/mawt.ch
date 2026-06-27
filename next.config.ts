@@ -46,6 +46,12 @@ const nextConfig: NextConfig = {
       // Geneva hub: on-disk folder is `geneve`; the canonical EN URL is `geneva`.
       // 301 the folder-name variant to avoid duplicate content.
       { source: "/en/geneve", destination: "/en/geneva", permanent: true },
+      // BUG-019: Standardize on /work (EN) and /projets (FR). Retire /projects.
+      { source: "/en/projects", destination: "/en/work", permanent: true },
+      { source: "/en/projects/:slug*", destination: "/en/work/:slug*", permanent: true },
+      // Prevent /fr/work (English slug with FR prefix) landing as 404.
+      { source: "/fr/work", destination: "/fr/projets", permanent: true },
+      { source: "/fr/work/:slug*", destination: "/fr/projets/:slug*", permanent: true },
     ];
   },
 };

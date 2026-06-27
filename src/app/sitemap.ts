@@ -110,7 +110,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     groq`*[_type == "post" && !(_id in path("drafts.**")) && defined(slug.current)]{ "slug": slug.current }`,
   );
   for (const p of posts) {
-    out.push(...entry({ fr: `/fr/blog/${p.slug}`, en: `/en/blog/${p.slug}` }, 0.6));
+    out.push(...entry({ fr: `/fr/news/${p.slug}`, en: `/en/news/${p.slug}` }, 0.6));
   }
 
   const projects = await client.fetch<{ slug: string }[]>(
@@ -118,7 +118,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   );
   for (const pr of projects) {
     out.push(
-      ...entry({ fr: `/fr/projets/${pr.slug}`, en: `/en/projects/${pr.slug}` }, 0.6),
+      ...entry({ fr: `/fr/work/${pr.slug}`, en: `/en/work/${pr.slug}` }, 0.6),
     );
   }
 

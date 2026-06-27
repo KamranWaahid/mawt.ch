@@ -15,7 +15,7 @@ interface BreadcrumbProps {
 
 export function Breadcrumb({ items, lang }: BreadcrumbProps) {
   return (
-    <nav aria-label="Breadcrumb" className="max-w-[1440px] mx-auto px-6 pt-32 pb-4 sm:px-8 md:px-10 lg:px-12">
+    <nav aria-label="Breadcrumb" className="site-container-wide pt-32 pb-4">
       <ol className="flex items-center space-x-2 text-sm text-neutral-400 font-normal">
         <li>
           <Link href={`/${lang}`} className="hover:text-black transition-colors">

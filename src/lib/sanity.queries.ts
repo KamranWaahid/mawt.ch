@@ -506,19 +506,23 @@ const contactQuery = groq`
 
 export async function getContactSettings(): Promise<ContactSettings> {
   const sanityClient = getSanityClient();
+  // BUG-017: No hardcoded real contact details in source code.
+  // Use environment variables for fallback values, or show a safe empty state.
   const defaultContact: ContactSettings = {
     _id: "default-contact",
-    headline: "Get in touch with us with any question!",
-    email: "info@mawt.ch",
-    phone: "+41 76 636 33 33",
-    offices: [
-      {
-        city: "Carouge",
-        address: "Rue de la fontenette 23\n1227 Carouge",
-        isMain: true
-      }
-    ],
-    socialHeadline: "Social"
+    headline: process.env.CONTACT_FALLBACK_HEADLINE || "Get in touch with us!",
+    email: process.env.CONTACT_FALLBACK_EMAIL || "",
+    phone: process.env.CONTACT_FALLBACK_PHONE || "",
+    offices: process.env.CONTACT_FALLBACK_CITY
+      ? [
+          {
+            city: process.env.CONTACT_FALLBACK_CITY,
+            address: process.env.CONTACT_FALLBACK_ADDRESS || "",
+            isMain: true,
+          },
+        ]
+      : [],
+    socialHeadline: "Social",
   };
 
   if (!sanityClient) return defaultContact;

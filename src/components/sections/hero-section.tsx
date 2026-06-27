@@ -5,9 +5,10 @@ import Link from "next/link";
 // Aliased: the hero uses the browser-global `new Image()` for canvas frames,
 // so next/image must not shadow it.
 import { useGSAP } from "@gsap/react";
-import { useRef, useEffect, type ReactNode } from "react";
+import { useRef, useEffect, useState, useCallback, type ReactNode } from "react";
 import { motion, useTransform, useMotionValue, useSpring } from "motion/react";
 import { useLenis } from "lenis/react";
+import { AnimatedTitle } from "@/components/ui/animated-title";
 import { Reveal } from "@/components/ui/reveal";
 import type { SiteSettings } from "@/lib/types";
 
@@ -18,6 +19,15 @@ type HeroSectionProps = {
   visual?: ReactNode;
   visualSrc?: string;
   visualAlt?: string;
+};
+
+type HeroCopy = {
+  kicker: string;
+  title_1: string;
+  title_2: string;
+  description: string;
+  summary?: string;
+  cta: string;
 };
 
 const socialLinks = [
@@ -92,47 +102,77 @@ function drawImageProp(ctx: CanvasRenderingContext2D, img: HTMLImageElement) {
   ctx.drawImage(img, x, y, w, h);
 }
 
-export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { dict: any }) {
+export function HeroSection({ settings, dict }: HeroSectionProps & { dict: HeroCopy }) {
   const containerRef = useRef<HTMLElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const imagesRef = useRef<HTMLImageElement[]>([]);
+  const [showTransitionStatement, setShowTransitionStatement] = useState(false);
   
   const progressValue = useMotionValue(0);
+  const transitionProgressValue = useMotionValue(0);
+  const gradientProgressValue = useMotionValue(0);
   const smoothProgress = useSpring(progressValue, {
     stiffness: 150,
     damping: 25,
     mass: 0.2,
     restDelta: 0.001
   });
+  const smoothTransitionProgress = useSpring(transitionProgressValue, {
+    stiffness: 120,
+    damping: 28,
+    mass: 0.25,
+    restDelta: 0.001
+  });
+  const smoothGradientProgress = useSpring(gradientProgressValue, {
+    stiffness: 120,
+    damping: 30,
+    mass: 0.25,
+    restDelta: 0.001
+  });
+
+  const updateScrollProgress = useCallback((scroll: number) => {
+    if (typeof window === "undefined") return;
+
+    const sequenceDistance = window.innerHeight * 0.3;
+    const transitionDistance = window.innerHeight * 1.25;
+    const gradientDistance = window.innerHeight * 2.25;
+    const nextSequenceProgress = Math.max(0, Math.min(1, scroll / sequenceDistance));
+    const nextTransitionProgress = Math.max(0, Math.min(1, scroll / transitionDistance));
+    const nextGradientProgress = Math.max(0, Math.min(1, scroll / gradientDistance));
+
+    progressValue.set(nextSequenceProgress);
+    transitionProgressValue.set(nextTransitionProgress);
+    gradientProgressValue.set(nextGradientProgress);
+
+    setShowTransitionStatement(nextTransitionProgress > 0.6);
+  }, [progressValue, transitionProgressValue, gradientProgressValue]);
 
   useLenis((lenisInstance) => {
-    const scroll = lenisInstance.scroll;
-    if (typeof window !== "undefined") {
-      const L = window.innerHeight * 0.3;
-      const nextProgress = Math.max(0, Math.min(1, scroll / L));
-      progressValue.set(nextProgress);
-    }
+    updateScrollProgress(lenisInstance.scroll);
   });
 
   // Fallback native scroll listener for mobile browsers where useLenis might not trigger
   useEffect(() => {
     const handleScrollFallback = () => {
-      if (typeof window !== "undefined") {
-        const scroll = window.scrollY;
-        const L = window.innerHeight * 0.3;
-        const nextProgress = Math.max(0, Math.min(1, scroll / L));
-        progressValue.set(nextProgress);
-      }
+      updateScrollProgress(window.scrollY);
     };
 
+    handleScrollFallback();
     window.addEventListener("scroll", handleScrollFallback, { passive: true });
     return () => {
       window.removeEventListener("scroll", handleScrollFallback);
     };
-  }, [progressValue]);
+  }, [updateScrollProgress]);
 
-  const contentOpacity = useTransform(smoothProgress, [0.7, 1.0], [1, 0]);
-  const contentY = useTransform(smoothProgress, [0.7, 1.0], [0, -30]);
+  const heroOpacity = useTransform(smoothTransitionProgress, [0.28, 0.46], [1, 0]);
+  const gradientOpacity = useTransform(smoothTransitionProgress, [0.42, 0.52], [0, 1]);
+  const gradientY = useTransform(
+    smoothGradientProgress,
+    [0.29, 0.58, 0.68, 0.78, 1],
+    ["0vh", "-194vh", "-216vh", "-224vh", "-345vh"]
+  );
+  const statementY = useTransform(smoothTransitionProgress, [0.6, 0.72], [18, 0]);
+  const statementExitOpacity = useTransform(smoothGradientProgress, [0.92, 0.98], [1, 0]);
   
   // Parallax translation: starts moving only after approximately 30% of progress
   const backgroundY = useTransform(smoothProgress, [0, 0.3, 1], [0, 0, 40]);
@@ -301,8 +341,21 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
   );
 
   return (
-    <div className="relative w-full" style={{ height: "130vh" }}>
-      <section ref={containerRef} className="sticky top-0 h-screen bg-black w-full">
+    /* STICKY SCROLL-SCRUB HERO: outer div = scroll track; inner section = sticky
+       viewport panel. Outer must NOT have overflow:hidden. */
+    <div className="relative w-full" style={{ height: "325vh" }}>
+      <section ref={containerRef} className="sticky top-0 h-screen bg-black w-full overflow-hidden">
+        <motion.div
+          className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[480vh]"
+          style={{
+            opacity: gradientOpacity,
+            y: gradientY,
+            background:
+              "linear-gradient(180deg, #000000 0%, #000000 18%, #001015 28%, #002B36 39%, #28725F 48%, #75DAB4 56%, #A9EFD6 64%, #D5FFEF 72%, #EEF8F3 80%, #F6F5F4 88%, #F6F5F4 100%)",
+          }}
+          aria-hidden="true"
+        />
+        <motion.div className="absolute inset-0 z-10" style={{ opacity: heroOpacity }}>
         <div className="relative h-full w-full overflow-hidden flex items-start pt-[85px] lg:pt-[105px] xl:pt-[115px] 2xl:pt-[125px] px-6 sm:px-8 md:px-10 lg:px-12">
         {/* Canvas Background */}
         <div className="hero-visual-bg pointer-events-none absolute inset-0 z-0 h-full w-full">
@@ -316,7 +369,6 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
         </div>
 
         <motion.div 
-          style={{ opacity: contentOpacity, y: contentY }}
           className="relative z-20 mx-auto w-full"
         >
           <div className="flex flex-col items-start lg:max-w-[590px] xl:max-w-[650px] 2xl:max-w-[720px]">
@@ -383,6 +435,39 @@ export function HeroSection({ settings, dict, visualAlt }: HeroSectionProps & { 
           </div>
         </motion.div>
         </div>
+        </motion.div>
+
+        {showTransitionStatement && (
+          <motion.div
+            className="absolute inset-0 z-20 flex items-start pointer-events-auto pt-[28vh] sm:pt-[29vh] lg:pt-[30vh]"
+            style={{ y: statementY, opacity: statementExitOpacity }}
+          >
+            <div className="site-container">
+              <AnimatedTitle
+                as="h2"
+                text="We create strategies, AI automation systems, digital products, brands and experiences for the world's most ambitious thinkers."
+                splitBy="word"
+                delay={0.02}
+                stagger={0.028}
+                viewportMargin="-24% 0px -24% 0px"
+                className="max-w-[1040px] select-text font-serif text-[clamp(2.15rem,4vw,3.65rem)] font-normal leading-[1.02] tracking-normal text-white"
+              />
+              <motion.div
+                initial={{ opacity: 0, y: 28, filter: "blur(14px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                transition={{ duration: 0.9, delay: 0.62, ease: [0.16, 1, 0.3, 1] }}
+                className="mt-7 pointer-events-auto"
+              >
+                <Link
+                  href="/en/about"
+                  className="inline-flex h-10 items-center rounded-full border border-white/12 bg-white/[0.14] px-[22px] text-[13px] font-normal leading-none text-white/92 backdrop-blur-md transition-colors duration-300 hover:border-white/22 hover:bg-white/[0.2] hover:text-white"
+                >
+                  About us
+                </Link>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
       </section>
     </div>
   );

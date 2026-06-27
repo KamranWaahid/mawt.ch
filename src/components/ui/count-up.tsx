@@ -1,14 +1,13 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useInView, useMotionValue, useSpring } from "framer-motion";
+import { useInView, useMotionValue, useSpring } from "motion/react";
 
 interface CountUpProps {
   value: string;
-  duration?: number;
 }
 
-export function CountUp({ value, duration = 2 }: CountUpProps) {
+export function CountUp({ value }: CountUpProps) {
   const [displayValue, setDisplayValue] = useState("0");
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });

@@ -5,8 +5,8 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { SectionReveal } from "@/components/ui/section-reveal";
-import { Badge } from "@/components/ui/badge";
+import { AnimatedTitle } from "@/components/ui/animated-title";
+import { sectionTitleClass } from "@/components/ui/section-title-style";
 import type { Project } from "@/lib/types";
 import { urlForImage } from "@/lib/sanity.image";
 
@@ -32,71 +32,94 @@ const itemVariants = {
 export function WorkSection({ dict, projects }: { dict: any; projects: Project[] }) {
   const params = useParams();
   const currentLang = (params?.lang as string) || "en";
+  const workPath = currentLang === "fr" ? "projets" : "work";
+  const displayProjects = (projects?.length ? projects : [])
+    .map((project) => {
+      const coverUrl = project.coverImage
+        ? urlForImage(project.coverImage)?.width(1600).height(900).url()
+        : null;
+
+      return coverUrl ? { ...project, coverUrl } : null;
+    })
+    .filter((project): project is Project & { coverUrl: string } => Boolean(project))
+    .slice(0, 3);
+
+  if (!displayProjects.length) return null;
 
   return (
-    <section id="work" className="bg-bg-light py-[120px]">
-      <div className="mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-20">
-        <SectionReveal>
-          {/* Header Badge */}
-          <div className="mb-12">
-            <Badge label={dict.badge} theme="light" />
-          </div>
-
-          {/* Headline */}
-          <div className="mb-20">
-            <h2 className="text-3xl font-normal tracking-tight text-black sm:text-4xl md:text-[44px] lg:leading-[1.1]">
-              {dict.headline}
-            </h2>
-          </div>
-
-          {/* Projects Grid */}
-          <motion.div 
-            className="grid gap-4 md:gap-6 bg-transparent lg:grid-cols-2"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
+    <section
+      id="work"
+      className="py-12 sm:py-14 md:py-18 lg:py-24"
+    >
+      <div className="site-container-wide">
+        <div className="mb-8 flex flex-col items-start gap-5 sm:mb-10 sm:flex-row sm:justify-between sm:gap-6">
+          <AnimatedTitle
+            as="h2"
+            text={dict.headline}
+            className={sectionTitleClass}
+            splitBy="word"
+          />
+          <Link
+            href={`/${currentLang}/${workPath}`}
+            className="inline-flex shrink-0 items-center gap-2 bg-white/80 px-3.5 py-2 text-base font-normal leading-none tracking-tight text-black/45 transition-colors duration-300 hover:text-black sm:px-4 sm:py-1.5 sm:text-[clamp(1.1rem,2vw,1.85rem)]"
           >
-            {projects.map((project, idx) => {
-              const isWide = idx % 3 === 2;
-              return (
-                <motion.div key={project._id} variants={itemVariants} className={`group relative bg-white overflow-hidden ${isWide ? "lg:col-span-2" : ""}`}>
-                  <Link href={`/${currentLang}/${currentLang === "fr" ? "projets" : "projects"}/${project.slug}`} className={`flex h-full ${isWide ? "flex-col lg:flex-row min-h-[480px] md:min-h-[520px]" : "flex-col"}`}>
-                    
-                    {/* Text Container */}
-                    <div className={`p-8 md:p-10 ${isWide ? "flex flex-col justify-between w-full lg:w-1/2 pb-8 md:pb-10" : "flex items-start justify-between w-full pb-12"}`}>
-                      <div className={`${isWide ? "space-y-4 max-w-[90%]" : "max-w-[85%] space-y-3"}`}>
-                        <span className="block text-sm font-normal text-neutral-600">
-                          {project.tags?.[0] || "Case Study"}
-                        </span>
-                        <h3 className={`${isWide ? "text-3xl md:text-[32px] leading-[1.1]" : "text-2xl md:text-[28px] leading-[1.15]"} font-normal text-black tracking-tight`}>
-                          {project.title}
-                        </h3>
-                      </div>
-                      
-                      <div className={`flex shrink-0 items-center justify-center rounded-full bg-black text-white transition-transform duration-300 group-hover:scale-110 ${isWide ? "mt-16 h-12 w-12" : "h-10 w-10"}`}>
-                        <ArrowRight size={isWide ? 20 : 18} strokeWidth={2} />
-                      </div>
+            {dict.seeAll}
+            <ArrowRight className="h-[1em] w-[1em]" strokeWidth={1.8} />
+          </Link>
+        </div>
+
+        <div className="mb-8 h-px w-full bg-black/10 sm:mb-12" />
+
+        <motion.div
+          className="space-y-10 md:space-y-16"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          {displayProjects.map((project) => (
+              <motion.article key={project._id} variants={itemVariants}>
+                <Link
+                  href={`/${currentLang}/${workPath}/${project.slug}`}
+                  className="group grid gap-5 md:grid-cols-[0.85fr_1.9fr] md:gap-12 lg:gap-16"
+                >
+                  <div className="flex flex-col justify-between gap-6 md:min-h-[280px] md:py-2">
+                    <div>
+                      <h3 className="text-[clamp(1.35rem,6vw,2rem)] font-normal leading-[1.1] tracking-tight text-black">
+                        {project.title}
+                      </h3>
+                      <p className="mt-4 max-w-[38ch] text-[15px] font-normal leading-[1.45] tracking-tight text-black/45 md:mt-5 md:text-[17px]">
+                        {project.excerpt}
+                      </p>
                     </div>
 
-                    {/* Image Container */}
-                    <div className={`relative w-full overflow-hidden bg-neutral-100 ${isWide ? "aspect-video lg:aspect-auto lg:w-1/2" : "aspect-[4/3]"}`}>
-                      {project.coverImage ? (
-                        <Image
-                          src={urlForImage(project.coverImage)?.width(isWide ? 1600 : 1200).url() || ""}
-                          alt={project.title}
-                          fill
-                          sizes={isWide ? "100vw" : "(max-width: 1024px) 100vw, 50vw"}
-                          className="object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                      ) : null}
-                    </div>
-                  </Link>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </SectionReveal>
+                    {project.tags?.length ? (
+                      <ul className="flex flex-wrap gap-2.5 sm:gap-4">
+                        {project.tags.slice(0, 2).map((tag) => (
+                          <li
+                            key={tag}
+                            className="rounded-lg bg-white/85 px-3.5 py-2 text-[12px] font-normal leading-none text-black sm:px-4 sm:text-[13px]"
+                          >
+                            {tag}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </div>
+
+                  <div className="relative aspect-[1.45/1] overflow-hidden rounded-[16px] bg-[#F2F2F2] sm:aspect-[1.86/1] md:rounded-[20px]">
+                    <Image
+                      src={project.coverUrl}
+                      alt={project.title}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 64vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-[1.025]"
+                    />
+                  </div>
+                </Link>
+              </motion.article>
+            ))}
+        </motion.div>
       </div>
     </section>
   );

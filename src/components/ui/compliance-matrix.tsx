@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { sectionTitleClass } from "@/components/ui/section-title-style";
 
 interface ComplianceItem {
   title: string;
@@ -15,8 +16,8 @@ interface ComplianceMatrixProps {
 export function ComplianceMatrix({ items }: ComplianceMatrixProps) {
   return (
     <section className="bg-white px-6 py-24 sm:px-8 md:px-10 lg:px-12">
-      <div className="max-w-[1440px] mx-auto">
-        <h2 className="text-2xl font-normal tracking-tight text-black mb-12">Compliance & Certifications</h2>
+      <div className="site-container-wide">
+        <h2 className={`${sectionTitleClass} mb-12`}>Compliance & Certifications</h2>
         <div className="grid gap-px bg-black/5 border border-black/5 overflow-hidden">
           {items.map((item, index) => (
             <motion.div

@@ -8,15 +8,17 @@ const descriptionParagraphs = [
 ];
 
 export function DescriptionSection({ dict }: { dict: any }) {
+  if (!dict?.paragraphs?.length) return null;
+
   return (
-    <section aria-label="Company description" className="bg-bg-light px-6 pb-24 pt-12 sm:px-10 lg:px-20">
+    <section aria-label="Company description" className="pt-6 pb-12 md:pt-8 md:pb-18 lg:pt-10 lg:pb-22">
       <SectionReveal>
-        <div className="mx-auto max-w-[1440px]">
+        <div className="site-container">
           <div className="space-y-8 md:pl-[10%] lg:pl-[20%]">
             {dict.paragraphs.map((paragraph: string) => (
               <p 
                 key={paragraph} 
-                className="text-base font-normal leading-relaxed text-neutral-800 md:text-lg md:leading-relaxed max-w-3xl"
+                className="text-base-fluid font-normal leading-relaxed text-neutral-800 max-w-3xl"
               >
                 {paragraph}
               </p>

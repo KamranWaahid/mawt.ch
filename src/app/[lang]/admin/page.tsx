@@ -1,25 +1,41 @@
-import { getDictionary } from "@/get-dictionary";
-import type { Locale } from "@/i18n-config";
-import { getHomePageData } from "@/lib/sanity.queries";
 import { getSanityClient } from "@/lib/sanity.client";
 import { Activity, Users, MessageSquare, ShieldCheck, Globe } from "lucide-react";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import { verifyAdminSession, SESSION_COOKIE } from "@/lib/session";
+import Link from "next/link";
 
+/**
+ * BUG-003 fix: Server-side authentication check before any data is fetched.
+ * Middleware protection alone is not sufficient — this component double-checks
+ * the session so that even if the middleware is misconfigured, no data leaks.
+ */
 export default async function AdminPage({
   params,
 }: {
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
-  const data = await getHomePageData(lang);
+
+  // ── Defense-in-depth: verify the signed JWT session server-side ──────────
+  const cookieStore = await cookies();
+  const sessionToken = cookieStore.get(SESSION_COOKIE)?.value;
+  const sessionPayload = await verifyAdminSession(sessionToken);
+
+  if (!sessionPayload) {
+    redirect(`/${lang}/login`);
+  }
+  // ─────────────────────────────────────────────────────────────────────────
+
   const client = getSanityClient();
-  
+
   // Basic Health Check
   const isSanityUp = !!client;
-  
-  // Fetch high-level stats (server-side)
+
+  // Fetch high-level stats (server-side) — only after auth is confirmed.
   let leadCount = 0;
   let subscriberCount = 0;
-  
+
   if (client) {
     leadCount = await client.fetch('count(*[_type == "contactLead"])');
     subscriberCount = await client.fetch('count(*[_type == "newsletterSubscriber"])');
@@ -43,7 +59,7 @@ export default async function AdminPage({
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Stats Cards */}
-          <div className="bg-white border border-neutral-100 p-6 rounded-sm hover:border-neutral-200 transition-colors">
+          <div className="border border-neutral-100 p-6 rounded-sm hover:border-neutral-200 transition-colors">
             <div className="flex items-center justify-between mb-4">
               <MessageSquare size={18} className="text-neutral-400" />
               <span className="text-[10px] font-normal uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">Active</span>
@@ -52,7 +68,7 @@ export default async function AdminPage({
             <h2 className="text-3xl font-normal tracking-tighter">{leadCount}</h2>
           </div>
 
-          <div className="bg-white border border-neutral-100 p-6 rounded-sm hover:border-neutral-200 transition-colors">
+          <div className="border border-neutral-100 p-6 rounded-sm hover:border-neutral-200 transition-colors">
             <div className="flex items-center justify-between mb-4">
               <Users size={18} className="text-neutral-400" />
               <span className="text-[10px] font-normal uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Growth</span>
@@ -61,7 +77,7 @@ export default async function AdminPage({
             <h2 className="text-3xl font-normal tracking-tighter">{subscriberCount}</h2>
           </div>
 
-          <div className="bg-white border border-neutral-100 p-6 rounded-sm hover:border-neutral-200 transition-colors">
+          <div className="border border-neutral-100 p-6 rounded-sm hover:border-neutral-200 transition-colors">
             <div className="flex items-center justify-between mb-4">
               <ShieldCheck size={18} className="text-neutral-400" />
             </div>
@@ -69,7 +85,7 @@ export default async function AdminPage({
             <h2 className="text-xl font-normal tracking-tight text-emerald-600">Hardened</h2>
           </div>
 
-          <div className="bg-white border border-neutral-100 p-6 rounded-sm hover:border-neutral-200 transition-colors">
+          <div className="border border-neutral-100 p-6 rounded-sm hover:border-neutral-200 transition-colors">
             <div className="flex items-center justify-between mb-4">
               <Activity size={18} className="text-neutral-400" />
             </div>
@@ -81,7 +97,7 @@ export default async function AdminPage({
         {/* System Details */}
         <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2">
-             <div className="bg-white border border-neutral-100 rounded-sm p-8">
+             <div className="border border-neutral-100 rounded-sm p-8">
                 <h3 className="text-lg font-normal mb-6 flex items-center gap-3">
                   <Globe size={18} />
                   Platform Insights
@@ -99,6 +115,10 @@ export default async function AdminPage({
                       <span className="text-sm font-normal text-neutral-600">Rate Limiting Protection</span>
                       <span className="text-sm font-normal text-emerald-500">Enabled</span>
                    </div>
+                   <div className="flex items-center justify-between border-b border-neutral-50 pb-4">
+                      <span className="text-sm font-normal text-neutral-600">Session Security</span>
+                      <span className="text-sm font-normal text-emerald-500">JWT / HS256</span>
+                   </div>
                 </div>
              </div>
           </div>
@@ -113,8 +133,8 @@ export default async function AdminPage({
              <div className="bg-neutral-100 p-8 rounded-sm">
                 <h3 className="text-sm font-normal uppercase tracking-widest text-neutral-500 mb-4">Quick Links</h3>
                 <ul className="space-y-3">
-                   <li><a href="/studio" className="text-sm font-normal hover:underline">Sanity Studio →</a></li>
-                   <li><a href="https://vercel.com" className="text-sm font-normal hover:underline">Deployment Logs →</a></li>
+                   <li><Link href="/studio" className="text-sm font-normal hover:underline">Sanity Studio →</Link></li>
+                   <li><a href="https://vercel.com" target="_blank" rel="noopener noreferrer" className="text-sm font-normal hover:underline">Deployment Logs →</a></li>
                 </ul>
              </div>
           </div>

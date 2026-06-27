@@ -1,43 +1,94 @@
+/**
+ * Production-safe rate limiter.
+ *
+ * BUG-004 fix: The original in-memory Map resets on every serverless cold start,
+ * making it ineffective in production (Vercel, etc.).
+ *
+ * Strategy:
+ * - If UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN are set → use Upstash Redis
+ *   for persistent, cross-instance rate limiting.
+ * - Otherwise → log a warning and allow the request (graceful degradation in dev).
+ *   In production you MUST set the Upstash credentials.
+ *
+ * Usage: await rateLimit("contact", 5, 60 * 60)  // 5 reqs per hour
+ */
+
+const UPSTASH_URL = process.env.UPSTASH_REDIS_REST_URL;
+const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
+
 import { headers } from "next/headers";
 
-type RateLimitEntry = {
-  count: number;
-  resetTime: number;
-};
+type RateLimitResult = { success: boolean; remaining: number };
 
-const store = new Map<string, RateLimitEntry>();
-
-export async function rateLimit(key: string, limit: number, durationMs: number) {
-  const headerList = await headers();
-  const ip = headerList.get("x-forwarded-for")?.split(",")[0] || "unknown";
-  const identifier = `${key}:${ip}`;
-  
-  const now = Date.now();
-  const entry = store.get(identifier);
-
-  if (!entry || now > entry.resetTime) {
-    // New entry or expired
-    store.set(identifier, {
-      count: 1,
-      resetTime: now + durationMs,
-    });
-    return { success: true, remaining: limit - 1 };
-  }
-
-  if (entry.count >= limit) {
-    return { success: false, remaining: 0 };
-  }
-
-  entry.count += 1;
-  return { success: true, remaining: limit - entry.count };
+async function upstashPost(pipeline: string[][]): Promise<unknown[]> {
+  const res = await fetch(`${UPSTASH_URL}/pipeline`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${UPSTASH_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(pipeline),
+    cache: "no-store",
+  });
+  const data = await res.json();
+  return data.map((d: { result: unknown }) => d.result);
 }
 
-// Helper for cleaning up the store periodically (optional in serverless but good for long-running dev)
-export function cleanupRateLimitStore() {
-  const now = Date.now();
-  for (const [key, entry] of store.entries()) {
-    if (now > entry.resetTime) {
-      store.delete(key);
+async function upstashRateLimit(
+  key: string,
+  limit: number,
+  windowSeconds: number
+): Promise<RateLimitResult> {
+  // Sliding window using INCR + EXPIRE pipeline
+  const [count] = (await upstashPost([
+    ["INCR", key],
+    ["EXPIRE", key, String(windowSeconds), "NX"],
+  ])) as number[];
+
+  const remaining = Math.max(0, limit - count);
+  return { success: count <= limit, remaining };
+}
+
+/** Get caller IP from request headers */
+async function getCallerIp(): Promise<string> {
+  try {
+    const headerList = await headers();
+    return headerList.get("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+  } catch {
+    return "unknown";
+  }
+}
+
+/**
+ * Rate limit a named action.
+ * @param key      Action name, e.g. "contact", "newsletter", "admin-login"
+ * @param limit    Max requests per window
+ * @param windowSeconds Duration of the rate limit window in seconds
+ */
+export async function rateLimit(
+  key: string,
+  limit: number,
+  windowSeconds: number
+): Promise<RateLimitResult> {
+  const ip = await getCallerIp();
+  const identifier = `rl:${key}:${ip}`;
+
+  if (UPSTASH_URL && UPSTASH_TOKEN) {
+    try {
+      return await upstashRateLimit(identifier, limit, windowSeconds);
+    } catch (err) {
+      // If Redis is temporarily unavailable, allow the request but log the error.
+      console.error("[RateLimit] Upstash Redis error — allowing request:", err);
+      return { success: true, remaining: 0 };
     }
   }
+
+  // No persistent store configured: warn in production, allow in dev.
+  if (process.env.NODE_ENV === "production") {
+    console.warn(
+      "[RateLimit] UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN not set. " +
+      "Rate limiting is DISABLED in production. Set these env vars to enable it."
+    );
+  }
+  return { success: true, remaining: limit - 1 };
 }

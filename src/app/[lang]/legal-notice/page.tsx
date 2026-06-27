@@ -40,7 +40,7 @@ export default async function LegalNoticePage({ params }: { params: Promise<{ la
   const sections = page?.body ? portableTextToSections(page.body, page.intro) : fallbackSections;
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="min-h-screen">
       <SubpageHero
         badge={lang === "fr" ? "Mentions légales" : "Legal Notice"}
         title={page?.heroH1 || (lang === "fr" ? "Mentions légales" : "Legal Notice")}

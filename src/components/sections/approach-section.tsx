@@ -2,8 +2,8 @@
 
 import { useRef, useState, useEffect } from "react";
 import { motion } from "motion/react";
-import { SectionReveal } from "@/components/ui/section-reveal";
-import { Badge } from "@/components/ui/badge";
+import { AnimatedTitle } from "@/components/ui/animated-title";
+import { sectionTitleClass } from "@/components/ui/section-title-style";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -82,32 +82,39 @@ export function ApproachSection({ dict }: { dict: any }) {
     updateBlurStates();
   };
 
+  const handleWheel = (e: React.WheelEvent) => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+
+    e.preventDefault();
+    el.scrollLeft += e.deltaX;
+    updateBlurStates();
+  };
+
   return (
-    <section className="bg-[#F1F8F5] py-24 sm:py-28 relative overflow-hidden">
-      <div className="mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-20">
-        <SectionReveal>
-          {/* Header Badge */}
-          {dict.badge && (
-            <div className="mb-8">
-              <Badge label={dict.badge} theme="light" />
-            </div>
-          )}
+    <section className="py-12 sm:py-16 md:py-24 lg:py-32 relative overflow-hidden">
+      <div className="site-container-wide">
 
-          {/* Horizontal Divider */}
-          <div className="mb-10 h-px w-full bg-black/10" />
+        {/* Horizontal Divider */}
+        <div className="mb-10 h-px w-full bg-black/10" />
 
-          {/* Headline */}
-          <div className="mb-14">
-            <h2 className="text-3xl font-medium tracking-[-0.03em] text-black sm:text-4xl md:text-[45px] lg:leading-[1.1] max-w-3xl">
-              {dict.headline}
-            </h2>
-          </div>
+        {/* Headline */}
+        <div className="mb-10 sm:mb-14">
+          <AnimatedTitle
+            as="h2"
+            text={dict.headline}
+            className={sectionTitleClass}
+            splitBy="word"
+          />
+        </div>
 
           {/* Wrapper to align overlay edges perfectly with viewport boundaries */}
-          <div className="relative -mx-6 sm:-mx-10 lg:-mx-20 overflow-hidden">
+          <div className="relative overflow-hidden">
             {/* Left blur overlay */}
             <div
-              className={`absolute left-0 top-0 bottom-6 z-10 pointer-events-none bg-gradient-to-r from-[#F1F8F5] via-[#F1F8F5]/60 to-transparent backdrop-blur-[3px] w-8 sm:w-16 md:w-28 lg:w-36 transition-opacity duration-300 ${
+              className={`absolute left-0 top-0 bottom-6 z-10 pointer-events-none bg-gradient-to-r from-[#F4F8F5] via-[#F4F8F5]/60 to-transparent backdrop-blur-[3px] w-8 sm:w-16 md:w-28 lg:w-36 transition-opacity duration-300 ${
                 showLeftBlur ? "opacity-100" : "opacity-0"
               }`}
               style={{
@@ -118,7 +125,7 @@ export function ApproachSection({ dict }: { dict: any }) {
 
             {/* Right blur overlay */}
             <div
-              className={`absolute right-0 top-0 bottom-6 z-10 pointer-events-none bg-gradient-to-l from-[#F1F8F5] via-[#F1F8F5]/60 to-transparent backdrop-blur-[3px] w-8 sm:w-16 md:w-28 lg:w-36 transition-opacity duration-300 ${
+              className={`absolute right-0 top-0 bottom-6 z-10 pointer-events-none bg-gradient-to-l from-[#F4F8F5] via-[#F4F8F5]/60 to-transparent backdrop-blur-[3px] w-8 sm:w-16 md:w-28 lg:w-36 transition-opacity duration-300 ${
                 showRightBlur ? "opacity-100" : "opacity-0"
               }`}
               style={{
@@ -130,17 +137,18 @@ export function ApproachSection({ dict }: { dict: any }) {
             {/* Approach Horizontal Swipeable / Draggable Container */}
             <div 
               ref={scrollRef}
-              data-lenis-prevent 
+              data-lenis-allow-vertical-scroll
               onMouseDown={handleMouseDown}
               onMouseLeave={handleMouseLeave}
               onMouseUp={handleMouseUp}
               onMouseMove={handleMouseMove}
+              onWheel={handleWheel}
               onScroll={updateBlurStates}
               style={{
                 scrollSnapType: isDragging ? "none" : "x mandatory",
                 cursor: isDragging ? "grabbing" : "grab",
               }}
-              className="px-6 sm:px-10 lg:px-20 overflow-x-auto no-scrollbar pb-6 select-none snap-x snap-mandatory scroll-smooth"
+              className="overflow-x-auto no-scrollbar pb-6 select-none"
             >
               <motion.div 
                 className="flex gap-3"
@@ -153,11 +161,11 @@ export function ApproachSection({ dict }: { dict: any }) {
                   <motion.div
                     key={item.id}
                     variants={itemVariants}
-                    className="group relative flex flex-col justify-between bg-[#EDEDED]/50 hover:bg-[#E3EAE6]/70 border border-black/[0.02] rounded-2xl pt-10 px-8 pb-0 md:pt-12 md:px-10 md:pb-0 transition-all duration-500 ease-out w-[310px] xs:w-[340px] sm:w-[375px] md:w-[410px] shrink-0 snap-align-start min-h-[520px] overflow-hidden"
+                    className="group relative flex flex-col justify-between bg-[#EDEDED]/50 hover:bg-[#E3EAE6]/70 border border-black/[0.02] rounded-2xl pt-8 px-5 xs:px-8 pb-0 md:pt-12 md:px-10 md:pb-0 transition-all duration-500 ease-out w-[calc(100vw-3rem)] sm:w-[375px] md:w-[410px] shrink-0 snap-align-start min-h-[460px] sm:min-h-[500px] md:min-h-[520px] overflow-hidden"
                   >
                     {/* Upper Text */}
                     <div className="space-y-4">
-                      <h3 className="text-2xl font-semibold tracking-[-0.02em] text-neutral-900 leading-tight">
+                      <h3 className="text-xl font-semibold tracking-[-0.02em] text-neutral-900 leading-tight sm:text-2xl">
                         {item.title}
                       </h3>
                       <p className="text-sm font-normal leading-[1.6] tracking-[-0.015em] text-black/50">
@@ -167,7 +175,7 @@ export function ApproachSection({ dict }: { dict: any }) {
                     
                     {/* Bottom Centered Image sits flush on bottom edge */}
                     {item.image && (
-                      <div className="relative w-full h-[260px] md:h-[280px] mt-6 flex items-end justify-center pointer-events-none">
+                      <div className="relative w-full h-[220px] sm:h-[250px] md:h-[280px] mt-6 flex items-end justify-center pointer-events-none">
                         <img
                           src={item.image}
                           alt={item.title}
@@ -181,7 +189,6 @@ export function ApproachSection({ dict }: { dict: any }) {
               </motion.div>
             </div>
           </div>
-        </SectionReveal>
       </div>
     </section>
   );

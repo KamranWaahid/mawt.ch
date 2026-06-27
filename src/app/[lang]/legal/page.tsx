@@ -38,7 +38,7 @@ export default async function LegalPage({ params }: { params: Promise<{ lang: Lo
   const sections = page?.body ? portableTextToSections(page.body, page.intro) : privacySectionsFallback;
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="min-h-screen">
       <SubpageHero
         badge={lang === "fr" ? "Confidentialité" : "Privacy"}
         title={page?.heroH1 || "Transparency and trust at the core of our operations."}

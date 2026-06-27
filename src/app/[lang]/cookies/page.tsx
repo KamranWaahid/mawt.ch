@@ -35,7 +35,7 @@ export default async function CookiesPage({ params }: { params: Promise<{ lang: 
   const sections = page?.body ? portableTextToSections(page.body, page.intro) : cookieSectionsFallback;
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="min-h-screen">
       <SubpageHero
         badge={lang === "fr" ? "Cookies" : "Cookie Policy"}
         title={page?.heroH1 || "Clear transparency regarding tracking and consent."}

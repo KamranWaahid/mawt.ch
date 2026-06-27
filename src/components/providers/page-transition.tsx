@@ -1,136 +1,109 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { 
-  AnimatePresence, 
-  motion, 
-  useMotionValue, 
-  useMotionTemplate,
-  useIsPresent,
-  type Variants, 
-  type Transition 
-} from "motion/react";
-import { ReactNode } from "react";
+import { AnimatePresence, motion, useReducedMotion, type Variants } from "motion/react";
+import { ReactNode, useEffect, createContext, useContext } from "react";
 
-// Premium, gravity-like Framer-style physics with smooth momentum and soft stickiness.
-const transitionPhysics: Transition = {
-  type: "spring",
-  stiffness: 85,
-  damping: 20,
-  mass: 0.8,
-  restDelta: 0.001,
-};
+/**
+ * PAGE TRANSITION — scroll-safe redesign
+ *
+ * Problem with the old approach:
+ *   - The ENTERING page was given `position:fixed; overflow:hidden; height:100vh`
+ *     until `onAnimationComplete` fired.
+ *   - If the animation completed event raced with React hydration or reduced-motion
+ *     rules, the page could stay permanently fixed/locked with no scroll.
+ *   - Lenis was manually stopped/started which caused Lenis internal state to
+ *     desync from the real scroll position, creating "jump" artifacts.
+ *
+ * New approach:
+ *   - Pages use a simple fade + tiny y-shift in normal document flow.
+ *   - AnimatePresence mode="wait" ensures the exit completes before the enter begins.
+ *   - Scroll is NEVER locked. Lenis is NEVER stopped/started.
+ *   - On initial load there is no animation at all.
+ */
 
-// The new page translates upwards like a full-screen fixed curtain.
-// The old page stays exactly where it is and gets visually covered.
+export const PageTransitionContext = createContext<{ isPageTransitionComplete: boolean }>({
+  isPageTransitionComplete: true,
+});
+
+export const usePageTransition = () => useContext(PageTransitionContext);
+
+// Only animate on client after first render
+let isInitialLoad = true;
+
+// Standard transition variants — gentle fade + 8px upward drift on enter
 const pageVariants: Variants = {
-  initial: { 
-    y: "100vh", 
-    zIndex: 10 
+  hidden: {
+    opacity: 0,
+    y: 8,
   },
-  enter: { 
-    y: "0vh", 
-    zIndex: 10,
-    transition: transitionPhysics
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.35,
+      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+    },
   },
-  exit: { 
-    y: "0vh", // Stays perfectly still
-    zIndex: 0, 
-    // We pass the same physics so the exiting component stays alive in the DOM
-    // exactly as long as the new page takes to finish its entrance.
-    transition: transitionPhysics 
-  }
+  exit: {
+    opacity: 0,
+    transition: {
+      duration: 0.2,
+    },
+  },
 };
 
-// This hidden component rides along with the entering page to calculate the blur intensity.
-// It uses `useIsPresent` to guarantee that only the incoming page controls the dock's blur.
-function BlurDockDriver({ blurValue }: { blurValue: any }) {
-  const isPresent = useIsPresent();
-
-  return (
-    <motion.div
-      variants={pageVariants}
-      className="hidden"
-      onUpdate={(latest) => {
-        if (!isPresent) return; // Ignore updates from the exiting page
-
-        const y = latest.y;
-        let vh = 0;
-        
-        if (typeof y === "number") {
-          vh = (y / window.innerHeight) * 100;
-        } else if (typeof y === "string") {
-          vh = parseFloat(y);
-        }
-
-        // The blur dock activates dynamically to "receive" the incoming page.
-        // It fades in as the page approaches the top, stays fully active as the page slides under,
-        // and safely fades to 0 just as the page docks.
-        if (vh > 40) {
-          blurValue.set(0);
-        } else if (vh <= 40 && vh > 20) {
-          // Fade in (from 0 to 24)
-          const progress = (40 - vh) / 20;
-          blurValue.set(progress * 24);
-        } else if (vh <= 20 && vh > 10) {
-          // Full frosted-glass intensity
-          blurValue.set(24);
-        } else if (vh <= 10 && vh >= 0) {
-          // Fade out cleanly so the final resting state is perfectly sharp (0px)
-          const progress = vh / 10;
-          blurValue.set(progress * 24);
-        } else {
-          blurValue.set(0);
-        }
-      }}
-    />
-  );
-}
+// Instant swap for users who prefer reduced motion
+const reducedVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.1 },
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: 0.1 },
+  },
+};
 
 export function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  
-  // Shared motion value to drive the fixed global top dock
-  const blurValue = useMotionValue(0);
-  const backdropFilter = useMotionTemplate`blur(${blurValue}px)`;
+  const shouldReduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    isInitialLoad = false;
+  }, []);
+
+  if (isInitialLoad) {
+    return (
+      <PageTransitionContext.Provider value={{ isPageTransitionComplete: true }}>
+        <div className="w-full">{children}</div>
+      </PageTransitionContext.Provider>
+    );
+  }
+
+  const variants = shouldReduceMotion ? reducedVariants : pageVariants;
 
   return (
-    <div className="relative w-full flex-1">
-      {/* 
-        Fixed Top Blur Dock
-        Pinned permanently to the top of the viewport above all page content.
-        It remains invisible until the new page slides up underneath it.
-      */}
+    <AnimatePresence mode="wait" initial={false}>
       <motion.div
-        className="fixed top-0 left-0 right-0 h-[15vh] z-50 pointer-events-none"
-        style={{
-          backdropFilter,
-          WebkitBackdropFilter: backdropFilter,
-          // A gradient mask restricts the blur to the very top edge, fading out downwards
-          maskImage: 'linear-gradient(to bottom, black 20%, transparent)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black 20%, transparent)',
+        key={pathname}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        variants={variants}
+        className="w-full"
+        onAnimationStart={() => {
+          // Scroll to top on page change — no lock needed
+          if (typeof window !== "undefined") {
+            window.scrollTo({ top: 0 });
+          }
         }}
-      />
-
-      {/* 
-        mode="popLayout" forces the exiting page to become position:absolute.
-        Because its `exit` variant sets y: 0, it stays perfectly in place, fully visible,
-        while the new page slides completely over it like a curtain.
-      */}
-      <AnimatePresence mode="popLayout">
-        <motion.div
-          key={pathname}
-          variants={pageVariants}
-          initial="initial"
-          animate="enter"
-          exit="exit"
-          // bg-background is critical to ensure the rising curtain is solid and fully occludes the old page
-          className="w-full relative bg-background"
-        >
-          <BlurDockDriver blurValue={blurValue} />
+      >
+        <PageTransitionContext.Provider value={{ isPageTransitionComplete: true }}>
           {children}
-        </motion.div>
-      </AnimatePresence>
-    </div>
+        </PageTransitionContext.Provider>
+      </motion.div>
+    </AnimatePresence>
   );
 }

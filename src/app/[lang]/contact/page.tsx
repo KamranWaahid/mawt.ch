@@ -29,14 +29,15 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
   ]);
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="min-h-screen">
       <SubpageHero 
-        badge={dict.contact.badge}
+        eyebrow={dict.contact.badge}
         title={contact?.headline || dict.contact.headline}
+        subtitle={lang === "fr" ? "Discutons de votre projet." : "Let's talk about your project."}
       />
       
-      <section className="bg-white px-6 py-24 sm:px-8 md:px-10 lg:px-12">
-        <div className="max-w-[1440px] mx-auto grid lg:grid-cols-[1fr_2.2fr] gap-24">
+      <section className="py-16 md:py-24 lg:py-32">
+        <div className="site-container-wide grid lg:grid-cols-[1fr_2.2fr] gap-24">
           <div className="flex flex-col gap-16">
             {/* Main Inquiries */}
             <SectionReveal className="flex flex-col gap-6">
@@ -59,7 +60,10 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
 
             {/* Offices */}
             <SectionReveal delay={0.1} className="flex flex-col gap-8">
-              <h3 className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]">Our Presence</h3>
+              <h3 className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]">
+                {/* BUG-021: Localized using lang variable, not hardcoded English */}
+                {lang === "fr" ? "Notre présence" : "Our Presence"}
+              </h3>
               <div className="flex flex-col gap-10">
                  {contact?.offices?.map((office, i) => (
                    <div key={i} className="flex flex-col gap-3 group">

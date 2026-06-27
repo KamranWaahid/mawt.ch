@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { sectionTitleDarkClass } from "@/components/ui/section-title-style";
 import type { Locale } from "@/i18n-config";
 
 /**
@@ -38,21 +39,21 @@ export function AiMaturityCta({
   const target = href ?? `/${lang}/contact`;
 
   return (
-    <section className="bg-black text-white px-6 py-24 sm:px-8 md:px-10 lg:px-12 text-center">
-      <div className="max-w-3xl mx-auto space-y-6">
-        <span className="text-[11px] uppercase tracking-[0.2em] text-[#75DAB4] font-normal block">
+    <section className="bg-black text-white py-16 md:py-20 lg:py-24 text-center">
+      <div className="max-w-3xl mx-auto space-y-5">
+        <span className="text-xs-fluid text-[#75DAB4] font-medium block">
           {c.kicker}
         </span>
-        <h2 className="text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight leading-[1.15] text-balance">
+        <h2 className={`${sectionTitleDarkClass} mx-auto`}>
           {headline ?? c.headline}
         </h2>
-        <p className="text-lg text-white/70 font-normal leading-relaxed max-w-2xl mx-auto">
+        <p className="text-base-fluid text-white/70 font-normal leading-relaxed max-w-[55ch] mx-auto">
           {sub ?? c.sub}
         </p>
         <div className="pt-2">
           <Link
             href={target}
-            className="inline-block px-8 py-4 bg-[#75DAB4] text-black text-sm font-normal uppercase tracking-widest rounded-sm hover:bg-white transition-colors"
+            className="inline-block px-6 py-3 bg-[#75DAB4] text-black text-sm font-medium tracking-tight rounded-sm hover:bg-white transition-colors"
           >
             {label ?? c.label}
           </Link>

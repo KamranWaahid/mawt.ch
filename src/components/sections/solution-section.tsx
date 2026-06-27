@@ -1,7 +1,8 @@
 "use client";
 
 import { motion, type Variants } from "motion/react";
-import { Badge } from "@/components/ui/badge";
+import { AnimatedTitle } from "@/components/ui/animated-title";
+import { sectionTitleClass } from "@/components/ui/section-title-style";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -26,86 +27,38 @@ const itemVariants: Variants = {
   },
 };
 
-function Motif({ index }: { index: number }) {
-  // Variations for each motif based on the index to match the reference's diversity
-  const configurations = [
-    [0, 1, 2, 3, 4, 5, 6, 7, 8], // All solid
-    [0, 1, 3, 4, 6, 7], // Some missing
-    [0, 2, 4, 6, 8], // Checkerboard
-    [1, 3, 4, 5, 7], // Cross pattern
-  ];
-
-  const config = configurations[index % configurations.length];
-
-  return (
-    <div aria-hidden className="grid h-10 w-10 shrink-0 grid-cols-3 gap-[3px] pt-1.5">
-      {Array.from({ length: 9 }).map((_, i) => {
-        const isActive = config.includes(i);
-        const isOutlined = !isActive && i % 2 === 0;
-        const isBlurred = i === 4 || i === 8;
-
-        return (
-          <div
-            key={i}
-            className={`
-              h-2 w-2 rotate-45 border transition-all duration-700
-              ${isActive ? "bg-white border-white" : "bg-transparent border-white/20"}
-              ${isOutlined ? "opacity-40" : ""}
-              ${isBlurred && !isActive ? "blur-[1px] opacity-20" : ""}
-            `}
-          />
-        );
-      })}
-    </div>
-  );
-}
-
 export function SolutionSection({ dict }: { dict: any }) {
   return (
     <section
       aria-labelledby="solution-section-heading"
-      className="relative isolate overflow-hidden bg-bg-dark py-[120px]"
+      className="relative overflow-hidden py-12 sm:py-16 md:py-24 lg:py-32"
     >
-      {/* Premium Glow Background */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10"
-      >
-        <div className="absolute right-0 bottom-0 h-[600px] w-[600px] translate-y-1/4 translate-x-1/4 rounded-full bg-emerald-500/10 blur-[120px]" />
-        <div className="absolute top-0 left-0 h-[500px] w-[500px] -translate-x-1/4 -translate-y-1/4 rounded-full bg-emerald-600/5 blur-[100px]" />
-      </div>
+      <div className="site-container-wide">
+        <div className="mb-10 h-px w-full bg-black/10" />
 
-      <div className="mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-20">
-        {/* Header Section */}
-        <motion.div
-          className="mb-16 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_2.5fr]"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={containerVariants}
-        >
-          <motion.div variants={itemVariants}>
-            <Badge label={dict.badge} theme="dark" />
-          </motion.div>
+        <div className="mb-10 sm:mb-14">
+          <h2
+            id="solution-section-heading"
+            className={`${sectionTitleClass} text-balance`}
+          >
+            <AnimatedTitle
+              as="span"
+              text={dict.headline_1}
+              className="block text-black/45"
+              splitBy="word"
+            />
+            <AnimatedTitle
+              as="span"
+              text={dict.headline_2}
+              className="block"
+              splitBy="word"
+              delay={0.12}
+            />
+          </h2>
+        </div>
 
-          <motion.div variants={itemVariants} className="space-y-6">
-            <h2
-              id="solution-section-heading"
-              className="text-balance text-3xl font-normal tracking-tight text-white sm:text-4xl md:text-[44px] lg:leading-[1.1]"
-            >
-              <span className="opacity-40">{dict.headline_1}</span>
-              <br />
-              <span>{dict.headline_2}</span>
-            </h2>
-          </motion.div>
-        </motion.div>
-
-        {/* Subtle Divider */}
-        <div className="mb-16 h-px w-full bg-white/10" />
-
-        {/* Solution Grid */}
         <motion.div 
-          className="grid gap-x-12 gap-y-12 md:grid-cols-2 lg:gap-x-20"
+          className="grid gap-3 md:grid-cols-2"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
@@ -114,20 +67,20 @@ export function SolutionSection({ dict }: { dict: any }) {
           {dict.items.map((item: any, index: number) => (
             <motion.article
               key={item.title}
-              className="flex items-start gap-6 group"
+              className="group relative flex min-h-[240px] flex-col justify-between overflow-hidden rounded-2xl border border-black/[0.02] bg-[#EDEDED]/50 px-5 py-7 transition-all duration-500 ease-out hover:bg-[#E3EAE6]/70 xs:px-8 sm:min-h-[280px] md:min-h-[340px] md:px-10 md:py-10"
               variants={itemVariants}
             >
-              <div className="pt-1 transition-colors duration-300 group-hover:text-brand-teal text-white/20">
-                <Motif index={index} />
-              </div>
-              <div className="space-y-3">
-                <h3 className="text-xl font-normal tracking-tight text-white group-hover:text-brand-teal transition-colors duration-300">
+              <div className="space-y-4">
+                <div className="text-sm font-normal leading-none text-black/35">
+                  {String(index + 1).padStart(2, "0")}
+                </div>
+                <h3 className="max-w-[18ch] text-xl font-semibold leading-tight tracking-[-0.02em] text-neutral-900 transition-colors duration-300 group-hover:text-[#1D7A65] sm:text-2xl md:max-w-[14ch]">
                   {item.title}
                 </h3>
-                <p className="max-w-[40ch] text-base font-normal leading-relaxed text-neutral-400">
-                  {item.description}
-                </p>
               </div>
+              <p className="mt-10 max-w-[42ch] text-sm font-normal leading-[1.6] tracking-[-0.015em] text-black/50">
+                {item.description}
+              </p>
             </motion.article>
           ))}
         </motion.div>

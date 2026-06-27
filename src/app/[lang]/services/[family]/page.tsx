@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { SectionReveal } from "@/components/ui/section-reveal";
+import { AnimatedTitle } from "@/components/ui/animated-title";
+import { SubpageHero } from "@/components/sections/subpage-hero";
 import Link from "next/link";
 import Image from "next/image";
 import { urlForImage } from "@/lib/sanity.image";
@@ -174,7 +176,7 @@ export default async function FamilyPillarPage({ params }: Props) {
   );
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="min-h-screen">
       <JsonLd data={faqLd ? [crumbLd, serviceItemsLd, faqLd] : [crumbLd, serviceItemsLd]} />
       <Breadcrumb
         items={[
@@ -184,81 +186,65 @@ export default async function FamilyPillarPage({ params }: Props) {
         lang={lang as Locale}
       />
 
-      {/* Hero Section */}
-      <section className="bg-white px-6 pt-12 pb-16 md:pb-24 sm:px-8 md:px-10 lg:px-12 border-b border-black/5">
-        <div className="max-w-[1440px] mx-auto">
-          <SectionReveal className="space-y-8 max-w-4xl">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal tracking-tighter text-black leading-[1.05] text-balance">
-              {copy.h1}
-            </h1>
-            <p className="text-lg sm:text-xl text-neutral-500 font-normal leading-relaxed max-w-3xl">
-              {dynamicSubhead}
-            </p>
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4">
-              <Link
-                href={`/${lang}/${copy.ctaPrimaryHref}`}
-                className="px-8 py-4 bg-[#75DAB4] hover:bg-black text-black hover:text-white transition-all duration-300 text-sm font-normal uppercase tracking-widest text-center rounded-sm"
-              >
-                {copy.ctaPrimary}
-              </Link>
-              <Link
-                href={`/${lang}/${copy.ctaSecondaryHref}`}
-                className="px-8 py-4 border border-black/10 hover:border-black text-black transition-all duration-300 text-sm font-normal uppercase tracking-widest text-center rounded-sm"
-              >
-                {copy.ctaSecondary}
-              </Link>
-            </div>
-          </SectionReveal>
-        </div>
-      </section>
+      {/* Hero Section — uses shared InternalPageHero design */}
+      <SubpageHero
+        eyebrow={getFamilyTitle(canonicalFamily, lang as Locale)}
+        title={copy.h1}
+        description={dynamicSubhead}
+        cta={{ label: copy.ctaPrimary, href: `/${lang}/${copy.ctaPrimaryHref}` }}
+      />
 
       {/* Intro Narrative */}
-      <section className="bg-white px-6 py-20 md:py-32 sm:px-8 md:px-10 lg:px-12 border-b border-black/5">
-        <div className="max-w-[1440px] mx-auto grid lg:grid-cols-12 gap-12 lg:gap-16">
+      <section className="py-16 md:py-24 lg:py-32 border-b border-black/5">
+        <div className="site-container-wide grid lg:grid-cols-12 gap-12 lg:gap-16">
           <div className="lg:col-span-5">
-            <SectionReveal>
-              <h2 className="text-2xl md:text-3xl font-normal tracking-tight text-black leading-[1.25]">
-                {lang === "fr" ? "Pourquoi collaborer avec nous ?" : "Why partner with us?"}
-              </h2>
-            </SectionReveal>
+            <AnimatedTitle
+              as="h2"
+              text={lang === "fr" ? "Pourquoi collaborer avec nous ?" : "Why partner with us?"}
+              className="text-2xl-fluid font-medium tracking-tight text-black"
+              splitBy="word"
+            />
           </div>
           <div className="lg:col-span-7 space-y-6">
-            <SectionReveal className="space-y-6 text-lg text-neutral-600 leading-relaxed font-normal">
-              {copy.introParagraphs.map((p, idx) => (
+            <div className="space-y-6 text-base-fluid text-neutral-500 leading-relaxed font-normal max-w-[55ch]">
+              {copy.introParagraphs.map((p: string, idx: number) => (
                 <p key={idx}>{p}</p>
               ))}
-            </SectionReveal>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Services Cards Grid */}
-      <section className="bg-neutral-50/20 px-6 py-20 md:py-32 sm:px-8 md:px-10 lg:px-12 border-b border-black/5">
-        <div className="max-w-[1440px] mx-auto">
-          <SectionReveal className="mb-16">
-            <h2 className="text-3xl font-normal tracking-tighter text-black">
-              {copy.servicesH2}
-            </h2>
+      <section className="bg-neutral-50/20 py-16 md:py-24 lg:py-32 border-b border-black/5">
+        <div className="site-container-wide">
+          <div className="mb-16">
+            <AnimatedTitle
+              as="h2"
+              text={copy.servicesH2}
+              className="text-3xl-fluid font-medium tracking-tighter text-black"
+              splitBy="word"
+            />
             {copy.socialProof && (
-              <p className="text-neutral-500 font-normal text-sm mt-3 max-w-3xl leading-relaxed">
+              <p className="text-sm-fluid text-neutral-500 font-normal mt-3 max-w-[55ch] leading-relaxed">
                 {copy.socialProof}
               </p>
             )}
-          </SectionReveal>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((item: any, i: number) => {
               const ItemIcon = (Icons as any)[item.icon || "Layers"] || Icons.Layers;
               const localizedFamily = familySlugForLang(item.family, lang as Locale);
               return (
-                <SectionReveal key={item._id} delay={i * 0.08} className="bg-white border border-black/5 hover:border-black/20 p-8 rounded-sm transition-all duration-300 flex flex-col justify-between">
+                <SectionReveal key={item._id} delay={i * 0.08} className="border border-black/5 hover:border-black/20 p-8 rounded-sm transition-all duration-300 flex flex-col justify-between">
                   <div className="space-y-6">
                     <div className="text-[#75DAB4]">
                       <ItemIcon size={32} strokeWidth={1.5} />
                     </div>
                     <div className="space-y-3">
-                      <h3 className="text-xl font-normal tracking-tight text-black">{item.title}</h3>
-                      <p className="text-sm text-neutral-500 leading-relaxed font-normal">{item.description}</p>
+                      <h3 className="text-lg-fluid font-medium tracking-tight text-black">{item.title}</h3>
+                      <p className="text-sm-fluid text-neutral-500 leading-relaxed font-normal">{item.description}</p>
                     </div>
                   </div>
                   <div className="pt-8">
@@ -278,16 +264,19 @@ export default async function FamilyPillarPage({ params }: Props) {
 
       {/* Case Studies Section */}
       {projects.length > 0 && (
-        <section className="bg-white px-6 py-20 md:py-32 sm:px-8 md:px-10 lg:px-12 border-b border-black/5">
-          <div className="max-w-[1440px] mx-auto">
-            <SectionReveal className="mb-16">
-              <span className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em] mb-4 block">
+        <section className="py-16 md:py-24 lg:py-32 border-b border-black/5">
+          <div className="site-container-wide">
+            <div className="mb-16">
+              <span className="text-xs-fluid font-medium text-neutral-400 uppercase tracking-label mb-4 block">
                 Proof of Excellence
               </span>
-              <h2 className="text-3xl md:text-4xl font-normal tracking-tight text-black">
-                {copy.projectsH2}
-              </h2>
-            </SectionReveal>
+              <AnimatedTitle
+                as="h2"
+                text={copy.projectsH2}
+                className="text-3xl-fluid font-medium tracking-tighter text-black"
+                splitBy="word"
+              />
+            </div>
 
             <div className="grid md:grid-cols-2 gap-6">
               {projects.map((project: any, i: number) => (
@@ -304,13 +293,13 @@ export default async function FamilyPillarPage({ params }: Props) {
                       ) : null}
                     </div>
                     <div className="p-8 space-y-4">
-                      <span className="text-[11px] uppercase tracking-[0.2em] text-neutral-400 font-normal">
+                      <span className="text-xs-fluid uppercase tracking-label text-neutral-400 font-medium block">
                         {project.tags?.[0] || "Case Study"}
                       </span>
-                      <h3 className="text-2xl font-normal tracking-tight text-black">
+                      <h3 className="text-xl-fluid font-medium tracking-tight text-black">
                         {project.title}
                       </h3>
-                      <p className="text-neutral-500 font-normal leading-relaxed text-sm">
+                      <p className="text-sm-fluid text-neutral-500 font-normal leading-relaxed max-w-[40ch]">
                         {project.excerpt}
                       </p>
                     </div>
@@ -332,15 +321,15 @@ export default async function FamilyPillarPage({ params }: Props) {
 
       {/* Testimonial Quote */}
       {testimonial && (
-        <section className="bg-black text-white py-24 px-6 sm:px-8 md:px-10 lg:px-12 border-b border-white/5">
+        <section className="bg-black text-white py-16 md:py-24 lg:py-32 border-b border-white/5">
           <div className="max-w-[1000px] mx-auto text-center space-y-8">
             <SectionReveal>
-              <p className="text-2xl sm:text-3xl md:text-4xl font-normal tracking-tight leading-relaxed italic text-neutral-300">
-                "{testimonial.quote}"
+              <p className="text-3xl-fluid font-serif font-normal italic tracking-tight leading-relaxed text-neutral-300">
+                &ldquo;{testimonial.quote}&rdquo;
               </p>
               <div className="pt-6">
-                <p className="text-sm font-normal tracking-wider text-[#75DAB4] uppercase">{testimonial.name}</p>
-                {testimonial.role && <p className="text-xs text-neutral-400 font-normal mt-1">{testimonial.role}</p>}
+                <p className="text-xs-fluid font-medium tracking-label text-[#75DAB4] uppercase">{testimonial.name}</p>
+                {testimonial.role && <p className="text-xs-fluid text-neutral-400 font-normal mt-1">{testimonial.role}</p>}
               </div>
             </SectionReveal>
           </div>
@@ -349,25 +338,31 @@ export default async function FamilyPillarPage({ params }: Props) {
 
       {/* FAQ Section */}
       {faqs.length > 0 && (
-        <section className="bg-neutral-50/20 py-20 border-b border-black/5">
-          <div className="max-w-[1440px] mx-auto">
-            <SectionReveal className="px-6 sm:px-8 md:px-10 lg:px-12 text-center mb-4">
-              <h2 className="text-3xl font-normal tracking-tighter text-black">
-                {copy.faqH2}
-              </h2>
-            </SectionReveal>
-            <FAQAccordion items={faqs} />
+        <section className="bg-neutral-50/20 py-16 md:py-24 lg:py-32 border-b border-black/5">
+          <div className="site-container-wide">
+            <div className="text-center mb-10 md:mb-14">
+              <AnimatedTitle
+                as="h2"
+                text={copy.faqH2}
+                className="text-3xl-fluid font-medium tracking-tighter text-black"
+                splitBy="word"
+              />
+            </div>
+            <FAQAccordion items={faqs} noWrapper={true} />
           </div>
         </section>
       )}
 
       {/* Bottom CTA */}
-      <section className="bg-black text-white px-6 py-24 sm:px-8 md:px-10 lg:px-12 text-center">
-        <SectionReveal className="max-w-3xl mx-auto space-y-8">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight leading-[1.15] text-balance">
-            {copy.bottomCtaH2}
-          </h2>
-          <p className="text-lg text-neutral-400 leading-relaxed font-normal max-w-2xl mx-auto">
+      <section className="bg-black text-white py-20 md:py-28 lg:py-36 text-center">
+        <div className="max-w-3xl mx-auto space-y-8">
+          <AnimatedTitle
+            as="h2"
+            text={copy.bottomCtaH2}
+            className="text-4xl-fluid font-medium tracking-tighter text-white max-w-3xl mx-auto"
+            splitBy="word"
+          />
+          <p className="text-base-fluid text-neutral-400 leading-relaxed font-normal max-w-[55ch] mx-auto">
             {copy.bottomCtaPitch}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-4">
@@ -378,7 +373,7 @@ export default async function FamilyPillarPage({ params }: Props) {
               {copy.bottomCtaLabel}
             </Link>
           </div>
-        </SectionReveal>
+        </div>
       </section>
     </div>
   );

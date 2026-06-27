@@ -19,7 +19,7 @@ interface PricingGridProps {
 export function PricingGrid({ plans }: PricingGridProps) {
   return (
     <section className="bg-white px-6 py-24 sm:px-8 md:px-10 lg:px-12">
-      <div className="max-w-[1440px] mx-auto grid gap-8 md:grid-cols-3">
+      <div className="site-container-wide grid gap-8 md:grid-cols-3">
         {plans.map((plan, index) => (
           <motion.div
             key={plan.name}
@@ -27,7 +27,7 @@ export function PricingGrid({ plans }: PricingGridProps) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.1 }}
-            className={`flex flex-col p-10 border transition-colors ${
+            className={`flex flex-col p-6 sm:p-10 border transition-colors ${
               plan.recommended ? "border-black bg-white" : "border-black/5 bg-white"
             }`}
           >

@@ -89,6 +89,9 @@ export const URL_MAP: RouteMapping[] = [
     ],
   },
   { fr: "geneve", en: "geneva" },
+  // BUG-010/019: The app router folder is `work`; map it to `projets` in FR.
+  // Keep `projects` as an alias too (next.config.ts has a 301 for /en/projects → /en/work)
+  { fr: "projets", en: "work" },
   { fr: "projets", en: "projects" },
   {
     fr: "blog",

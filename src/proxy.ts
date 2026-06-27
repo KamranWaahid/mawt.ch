@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { i18n } from "./i18n-config";
 import { toFilesystemPathname } from "@/lib/routing/url-helpers";
+import { verifyAdminSession, SESSION_COOKIE } from "@/lib/session";
 
 import { match as matchLocale } from "@formatjs/intl-localematcher";
 import Negotiator from "negotiator";
@@ -11,8 +12,7 @@ function getLocale(request: NextRequest): string | undefined {
   const negotiatorHeaders: Record<string, string> = {};
   request.headers.forEach((value, key) => (negotiatorHeaders[key] = value));
 
-  // @ts-ignore locales are readonly
-  const locales: string[] = i18n.locales;
+  const locales = i18n.locales as unknown as string[];
 
   // Use negotiator + intl-localematcher to pick the best locale from Accept-Language.
   const languages = new Negotiator({ headers: negotiatorHeaders }).languages(
@@ -39,7 +39,8 @@ function withLocaleHeader(request: NextRequest, locale: string) {
 }
 
 // Next.js 16 renamed `middleware` to `proxy`. Same functionality.
-export function proxy(request: NextRequest) {
+// BUG-001/002/003 fix: Uses JWT-based session verification, no hardcoded fallback.
+export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   // 1. Studio/Admin normalization & protection.
@@ -56,10 +57,12 @@ export function proxy(request: NextRequest) {
     pathname.startsWith("/studio") || pathname.startsWith("/admin");
 
   if (isStudio) {
-    const adminSecret = process.env.ADMIN_SECRET || "mawt-dev-key";
-    const cookieSecret = request.cookies.get("admin-token")?.value;
+    // BUG-001: No hardcoded fallback secret.
+    // BUG-002: Verify signed JWT — never compare raw secrets.
+    const sessionToken = request.cookies.get(SESSION_COOKIE)?.value;
+    const sessionPayload = await verifyAdminSession(sessionToken);
 
-    if (cookieSecret === adminSecret) {
+    if (sessionPayload) {
       return NextResponse.next();
     }
 
@@ -73,6 +76,8 @@ export function proxy(request: NextRequest) {
   const isPublicAsset = [
     "/App Icons/",
     "/Approach/",
+    "/Approach Page/",
+    "/Approach%20Page/",
     "/HeroImages/",
     "/Client Logos.png",
     "/HeroImage.gif",
@@ -108,7 +113,7 @@ export function proxy(request: NextRequest) {
   if (pathnameIsMissingLocale && !isStudio) {
     const locale = getLocale(request);
     // For the root "/", redirect straight to "/<locale>" (no trailing slash).
-    // Building "/<locale>/" caused a second 308 hop ("/" -> "/en/" -> "/en"),
+    // Building "/<locale>/" caused a second 308 hop ("/"->"/<locale>/"->"/en"),
     // a ~980ms redirect-chain penalty in Lighthouse. `pathname` always starts
     // with "/", so other paths just get the locale prefix.
     const target = pathname === "/" ? `/${locale}` : `/${locale}${pathname}`;

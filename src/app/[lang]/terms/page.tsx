@@ -35,7 +35,7 @@ export default async function TermsPage({ params }: { params: Promise<{ lang: Lo
   const sections = page?.body ? portableTextToSections(page.body, page.intro) : termsSectionsFallback;
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="min-h-screen">
       <SubpageHero
         badge={lang === "fr" ? "Conditions" : "Terms"}
         title={page?.heroH1 || "Clear operational guidelines for professional collaboration."}

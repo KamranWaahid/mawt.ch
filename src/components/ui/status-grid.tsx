@@ -48,7 +48,6 @@ export function StatusGrid({ items }: StatusGridProps) {
       <div className="grid gap-4">
         {items.map((item, index) => {
           const config = statusConfig[item.status];
-          const Icon = config.icon;
 
           return (
             <motion.div
@@ -101,7 +100,7 @@ export function StatusGrid({ items }: StatusGridProps) {
               </div>
 
               {/* Uptime Info */}
-              <div className="flex items-center gap-10 md:gap-16">
+              <div className="flex items-center justify-between gap-4 sm:gap-10 md:gap-16 w-full md:w-auto">
                  {item.latency && (
                    <div className="flex flex-col gap-1">
                       <span className="text-[10px] uppercase tracking-widest text-neutral-400">Latency</span>

@@ -21,7 +21,7 @@ export function MagneticButton({ href, children, className }: MagneticButtonProp
   const baseClass = useMemo(
     () =>
       cn(
-        "inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-3 text-sm font-medium tracking-[0.16em] uppercase transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70",
+        "inline-flex items-center justify-center rounded-full border border-white/20 px-5 py-2 text-sm font-medium tracking-tight transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70",
         hovering ? "bg-white text-black" : "bg-white/5 text-white",
         className,
       ),

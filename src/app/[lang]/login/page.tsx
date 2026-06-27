@@ -22,7 +22,7 @@ export default async function LoginPage({ params }: LoginPageProps) {
   const dict = await getDictionary(lang);
 
   return (
-    <main className="min-h-screen bg-neutral-50 flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <main className="min-h-screen bg-neutral-50 flex flex-col items-center justify-between p-6 relative">
       {/* Background Motifs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-[0.03]">
         <div className="absolute -top-[10%] -left-[5%] w-[40%] aspect-square border border-black rounded-full" />
@@ -31,10 +31,10 @@ export default async function LoginPage({ params }: LoginPageProps) {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-px bg-black" />
       </div>
 
-      <div className="w-full relative z-10 flex flex-col items-center gap-12">
+      <div className="w-full flex-1 flex flex-col items-center justify-center gap-12 py-12 relative z-10">
         {/* Simple Brand Header */}
         <div className="flex items-center gap-2">
-          <span className="text-2xl font-normal tracking-tighter text-[#0A252E]">M&WT</span>
+          <span className="text-2xl font-normal tracking-tighter text-[#0A252E]">MAWT</span>
           <div className="h-2 w-2 bg-[#75DAB4]" />
         </div>
 
@@ -42,7 +42,7 @@ export default async function LoginPage({ params }: LoginPageProps) {
       </div>
 
       {/* Security Footer */}
-      <div className="absolute bottom-8 left-0 w-full px-8 flex justify-between items-center text-[10px] text-black/20 font-normal uppercase tracking-[0.3em]">
+      <div className="w-full max-w-[1440px] px-8 pb-4 flex justify-between items-center text-[10px] text-black/20 font-normal uppercase tracking-[0.3em] mt-auto">
          <span>Node: MAWT-CH-01</span>
          <span>Security Level: Enterprise</span>
       </div>

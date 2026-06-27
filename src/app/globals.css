@@ -7,15 +7,32 @@
   --bg-light: #F5F5F5;
   --bg-dark: #050606;
 
-  /* Fluid Typography */
-  --font-size-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
-  --font-size-h1: clamp(2.5rem, 1.5rem + 5vw, 5rem);
-  --font-size-h2: clamp(2rem, 1.25rem + 3.75vw, 4rem);
-  --font-size-h3: clamp(1.5rem, 1.125rem + 1.875vw, 2.5rem);
-  
   /* Fluid Spacing */
-  --spacing-container: clamp(1.5rem, 1rem + 2.5vw, 3rem);
-  --spacing-section: clamp(4rem, 2rem + 10vw, 10rem);
+  --spacing-container: clamp(1.25rem, 1rem + 1.5vw, 2.5rem);
+  --spacing-section: clamp(3rem, 2rem + 6vw, 7.5rem);
+  --container-max: 1280px;
+  --container-wide: 1280px;
+  --page-gutter: 1.5rem;
+
+  /* Fluid Typography - Premium System Scale */
+  --text-xs: 0.75rem;                                         /* 12px */
+  --text-sm: 0.8125rem;                                       /* 13px */
+  --text-base: 0.9375rem;                                     /* 15px */
+  --text-lg: 1.0625rem;                                       /* 17px */
+  --text-xl: 1.1875rem;                                       /* 19px */
+  --text-2xl: clamp(1.25rem, 1.15rem + 0.35vw, 1.5rem);       /* 20px -> 24px */
+  --text-3xl: clamp(1.375rem, 1.2rem + 0.6vw, 1.75rem);       /* 22px -> 28px */
+  --text-4xl: clamp(1.75rem, 1.55rem + 1.1vw, 2.5rem);        /* 28px -> 40px */
+  --text-5xl: clamp(2.0rem, 1.75rem + 1.75vw, 3.0rem);        /* 32px -> 48px */
+
+  --leading-headline: 1.05;
+  --leading-body: 1.5;
+  --leading-compact: 1.2;
+
+  --tracking-headline: -0.03em;
+  --tracking-subhead: -0.015em;
+  --tracking-body: -0.01em;
+  --tracking-label: 0.02em;
 }
 
 @theme inline {
@@ -25,14 +42,33 @@
   --color-bg-light: var(--bg-light);
   --color-bg-dark: var(--bg-dark);
   --font-sans: var(--font-inter);
+  --font-serif: var(--font-instrument);
 
-  --font-size-fluid-h1: var(--font-size-h1);
-  --font-size-fluid-h2: var(--font-size-h2);
-  --font-size-fluid-h3: var(--font-size-h3);
-  --font-size-fluid-base: var(--font-size-base);
+  --font-size-fluid-h1: var(--text-4xl);
+  --font-size-fluid-h2: var(--text-3xl);
+  --font-size-fluid-h3: var(--text-2xl);
+  --font-size-fluid-base: var(--text-base);
+
+  --font-size-xs-fluid: var(--text-xs);
+  --font-size-sm-fluid: var(--text-sm);
+  --font-size-base-fluid: var(--text-base);
+  --font-size-lg-fluid: var(--text-lg);
+  --font-size-xl-fluid: var(--text-xl);
+  --font-size-2xl-fluid: var(--text-2xl);
+  --font-size-3xl-fluid: var(--text-3xl);
+  --font-size-4xl-fluid: var(--text-4xl);
+  --font-size-5xl-fluid: var(--text-5xl);
+
+  --letter-spacing-tightest: -0.04em;
+  --letter-spacing-tighter: -0.03em;
+  --letter-spacing-tight: -0.01em;
+  --letter-spacing-wide: 0.02em;
+  --letter-spacing-widest: 0.03em;
+  --letter-spacing-label: 0.03em;
 
   --spacing-fluid-container: var(--spacing-container);
   --spacing-fluid-section: var(--spacing-section);
+  --breakpoint-xs: 480px;
 }
 
 html,
@@ -41,6 +77,28 @@ body {
   /* `clip` (not `hidden`) prevents horizontal overflow WITHOUT turning body
      into a scroll container — which would break `position: sticky` site-wide. */
   overflow-x: clip;
+}
+
+.site-container,
+.site-container-wide {
+  width: min(100% - calc(var(--page-gutter) * 2), var(--container-max));
+  margin-inline: auto;
+}
+
+.site-container-wide {
+  width: min(100% - calc(var(--page-gutter) * 2), var(--container-wide));
+}
+
+@media (min-width: 640px) {
+  :root {
+    --page-gutter: 2.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --page-gutter: 5rem;
+  }
 }
 
 /*
@@ -74,6 +132,9 @@ body {
   color: var(--foreground);
   font-family: var(--font-inter), Arial, Helvetica, sans-serif;
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   position: relative;
 }
 
@@ -107,7 +168,9 @@ body::after {
   width: 100%;
   height: 100%;
   opacity: 0.03;
-  z-index: 9999;
+  /* BUG-024: Lowered from 9999 to 9. pointer-events:none means it doesn't block interaction,
+     but a very high z-index could visually interfere with modals/menus at z-40+ */
+  z-index: 9;
   pointer-events: none;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
@@ -116,6 +179,66 @@ body::after {
   background: linear-gradient(-45deg, #050606, #0A252E, #050606, #0D0D0D);
   background-size: 400% 400%;
   animation: drift 15s ease infinite;
+}
+
+.homepage-flow {
+  background:
+    linear-gradient(
+      180deg,
+      #D5FFEF 0%,
+      #E8FBF3 10%,
+      #F1F8F5 24%,
+      #E8FBF3 38%,
+      #F4F8F5 52%,
+      #F6F5F4 66%,
+      #F1F8F5 80%,
+      #F8F8F6 92%,
+      #FFFFFF 100%
+    );
+}
+
+.internal-page-shell {
+  background:
+    linear-gradient(
+      180deg,
+      #D5FFEF 0%,
+      #EEF8F3 16%,
+      #F6F5F4 38%,
+      #F1F8F5 58%,
+      #F8F8F6 78%,
+      #FFFFFF 100%
+    );
+}
+
+.internal-page-shell .homepage-flow {
+  background:
+    linear-gradient(
+      180deg,
+      #D5FFEF 0%,
+      #E8FBF3 10%,
+      #F1F8F5 24%,
+      #E8FBF3 38%,
+      #F4F8F5 52%,
+      #F6F5F4 66%,
+      #F1F8F5 80%,
+      #F8F8F6 92%,
+      #FFFFFF 100%
+    );
+}
+
+.internal-page-shell > div:not(.homepage-flow) section.bg-white,
+.internal-page-shell > div:not(.homepage-flow) section.bg-bg-light,
+.internal-page-shell > div:not(.homepage-flow) section.bg-neutral-50 {
+  background-color: transparent;
+}
+
+.internal-page-shell > div:not(.homepage-flow) .bg-white {
+  background-color: rgba(255, 255, 255, 0.58);
+}
+
+.internal-page-shell > div:not(.homepage-flow) .bg-neutral-50,
+.internal-page-shell > div:not(.homepage-flow) .bg-bg-light {
+  background-color: rgba(255, 255, 255, 0.34);
 }
 
 @keyframes drift {
@@ -161,3 +284,67 @@ body::after {
 }
 
 
+
+@layer base {
+  /* Headings: Refined, confident, tightly tracked, balanced */
+  h1, .h1 {
+    font-size: var(--text-5xl);
+    line-height: var(--leading-headline);
+    letter-spacing: var(--tracking-headline);
+    font-weight: 500;
+    text-wrap: balance;
+  }
+
+  h2, .h2 {
+    font-size: var(--text-3xl);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    font-weight: 500;
+    text-wrap: balance;
+  }
+
+  h3, .h3 {
+    font-size: var(--text-2xl);
+    line-height: 1.15;
+    letter-spacing: var(--tracking-subhead);
+    font-weight: 500;
+    text-wrap: balance;
+  }
+
+  h4, .h4 {
+    font-size: var(--text-lg);
+    line-height: var(--leading-compact);
+    letter-spacing: -0.015em;
+    font-weight: 500;
+  }
+
+  /* Body: Clean, calm, spacious, highly legible */
+  p, li, .body-text {
+    font-size: var(--text-base);
+    line-height: var(--leading-body);
+    letter-spacing: var(--tracking-body);
+    font-weight: 400;
+  }
+
+  /* UI Elements: Sharp, tight */
+  button, nav a, .nav-link, .btn {
+    letter-spacing: -0.01em;
+    font-weight: 500;
+  }
+
+  /* Eyebrows, Labels, UI Metadata */
+  small, .caption {
+    font-size: var(--text-xs);
+    line-height: 1.4;
+    letter-spacing: var(--tracking-body);
+    font-weight: 400;
+  }
+
+  .eyebrow, .label-caps, .label, .meta, .tag {
+    font-size: var(--text-xs);
+    line-height: 1.3;
+    letter-spacing: var(--tracking-label);
+    text-transform: none;
+    font-weight: 500;
+  }
+}

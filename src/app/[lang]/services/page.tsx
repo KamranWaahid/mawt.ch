@@ -7,6 +7,8 @@ import { getFamilyTitle, familySlugForLang, familyOrderIndex, standaloneAlternat
 import { JsonLd, breadcrumbLd, itemListLd, SITE_URL } from "@/components/seo/structured-data";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { ArrowRight } from "lucide-react";
+import { AnimatedTitle } from "@/components/ui/animated-title";
 
 interface ServicesPageProps {
   params: Promise<{ lang: Locale }>;
@@ -135,11 +137,12 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
   );
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="min-h-screen">
       <JsonLd data={catalogItems.length ? [crumbLd, catalogLd] : [crumbLd]} />
       <SubpageHero
-        badge={dict.services.badge}
+        eyebrow={dict.services.badge}
         title={dict.services.headline}
+        subtitle={lang === "fr" ? "Cinq piliers d'expertise." : "Five pillars of expertise."}
       />
       <FlatGrid 
         items={dict.services.pillars.map((pillar: any) => ({
@@ -149,36 +152,44 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
         columns={3} 
       />
       
-      <section className="bg-white px-6 py-24 sm:px-8 md:px-10 lg:px-12 border-t border-black/5">
-        <div className="max-w-[1440px] mx-auto">
+      <section className="py-16 md:py-24 lg:py-32 border-t border-black/5">
+        <div className="site-container-wide">
           <div className="grid md:grid-cols-2 gap-24 items-center">
-            <h2 className="text-4xl font-normal tracking-tighter text-black leading-[1.1]">
-              {lang === "en" 
+            <AnimatedTitle
+              as="h2"
+              text={lang === "en" 
                 ? "We don't just build tools. We build the systems that run your business."
                 : "Nous ne construisons pas seulement des outils. Nous construisons les systèmes qui font tourner votre entreprise."}
-            </h2>
+              className="text-3xl-fluid font-medium tracking-tighter text-black leading-tight max-w-[22ch]"
+              splitBy="word"
+            />
             <div className="flex flex-col gap-8">
-              <p className="text-lg text-neutral-500 font-normal leading-relaxed">
+              <p className="text-base-fluid text-neutral-500 font-normal leading-relaxed max-w-[55ch]">
                 {lang === "en"
                   ? "Our approach is holistic. We look at your entire operational workflow to identify bottlenecks and opportunities for automation."
                   : "Notre approche est holistique. Nous examinons l'ensemble de votre flux opérationnel pour identifier les goulots d'étranglement."}
               </p>
-              <button className="w-fit px-8 py-4 border border-black text-black hover:bg-black hover:text-white transition-all duration-300 text-sm font-normal uppercase tracking-widest">
-                {lang === "en" ? "Explore our methodology" : "Explorer notre méthodologie"}
-              </button>
+              {/* BUG-009: Replaced dead <button> with a working Next.js <Link> to the methodology page */}
+              <Link
+                href={lang === "en" ? `/${lang}/our-process` : `/${lang}/notre-methode`}
+                className="w-fit flex items-center gap-2 px-8 py-4 border border-black text-black hover:bg-black hover:text-white transition-all duration-300 text-sm font-normal tracking-widest group"
+              >
+                {lang === "en" ? "Explore our methodology" : "Explorer notre m\u00e9thodologie"}
+                <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
       {/* Detailed Services List Section */}
-      <section className="bg-white px-6 py-24 sm:px-8 md:px-10 lg:px-12 border-t border-black/5">
-        <div className="max-w-[1440px] mx-auto">
+      <section className="py-16 md:py-24 lg:py-32 border-t border-black/5">
+        <div className="site-container-wide">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
             
             {/* Left Column: Heading */}
             <div className="lg:col-span-4 lg:col-start-1">
-              <h2 className="text-xl md:text-2xl font-normal text-black sticky top-32">
+              <h2 className="text-2xl-fluid font-medium tracking-tight text-black sticky top-32">
                 Services
               </h2>
             </div>
@@ -191,7 +202,7 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
                   className={`grid grid-cols-1 md:grid-cols-2 gap-8 py-10 ${idx === 0 ? "border-t border-black/10 lg:pt-0 lg:border-t-0" : "border-t border-black/5"}`}
                 >
                   <div className="col-span-1">
-                    <h3 className="text-[15px] font-normal text-black">{item.category}</h3>
+                    <h3 className="text-lg-fluid font-medium text-black">{item.category}</h3>
                   </div>
                   <div className="col-span-1">
                     <ul className="flex flex-col gap-2.5">
@@ -201,7 +212,7 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
                         const serviceHref = isObj ? service.href : null;
 
                         return (
-                          <li key={serviceTitle} className="text-[14px] text-neutral-500 font-normal">
+                          <li key={serviceTitle} className="text-sm-fluid text-neutral-500 font-normal leading-relaxed">
                             {serviceHref ? (
                               <Link href={serviceHref} className="hover:text-black hover:underline transition-colors decoration-[#75DAB4] decoration-2 underline-offset-4">
                                 {serviceTitle}

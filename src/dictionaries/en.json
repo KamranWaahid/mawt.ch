@@ -1,42 +1,38 @@
 {
   "hero": {
-    "kicker": "Artificial intelligence · Geneva",
-    "title_1": "AI agency in Geneva.",
-    "title_2": "Automation and custom solutions.",
-    "description": "We design your AI solutions, your automations and your custom tools. A technical team that evolves with the latest tools, for results that actually run.",
-    "summary": "MAWT is an AI agency in Geneva. We help SMEs and growing companies across French speaking Switzerland integrate artificial intelligence, automate their processes and ship custom tools. From strategy to deployment, we build solutions that run, not slides.",
-    "cta": "Let's talk"
+    "kicker": "AI Systems & Workflow Automation · Geneva",
+    "title_1": "We build AI systems",
+    "title_2": "that run your business.",
+    "description": "Custom integrations, automated workflows, and production-ready applications built to last. No generic advice. Just code that executes.",
+    "summary": "MAWT is a Geneva-based AI and engineering agency. We design and build custom systems that automate operational workflows for SMEs and growing companies in Switzerland. We write the code that connects your data to production-ready AI.",
+    "cta": "Start a project"
   },
   "clients": {
-    "title": "Who trust us?"
+    "title": "Trusted by teams in Geneva & Switzerland"
   },
   "description": {
-    "paragraphs": [
-      "MAWT is an AI agency based in Geneva. We help SMEs and growing companies across French speaking Switzerland put artificial intelligence to work: automating what repeats, speeding up what matters, shipping tools built for their business.",
-      "Before being an AI agency, we are a technical team. We have written code for years and we evolve with the latest tools and practices, without chasing the hype. That is what separates a demo from a system that holds up in production.",
-      "Our promise fits in one line: solutions that run, not recommendations. From the first conversation to deployment, you talk to the people who build."
-    ]
+    "paragraphs": []
   },
   "problem": {
-    "badge": "PROBLEM",
-    "headline_1": "AI is everywhere.",
-    "headline_2": "Inside your company, it is still a promise.",
+    "badge": "The reality",
+    "headline_1": "AI is a promise.",
+    "headline_2": "Your business requires systems.",
     "items": [
       {
-        "title": "Tools that ignore your business",
-        "description": "Generic AI looks great in a demo and falls short in real life. It knows nothing about your data, your processes or your constraints."
+        "title": "Off-the-shelf limits",
+        "description": "Generic tools ignore your processes, your database structure, and your operational constraints."
       },
       {
-        "title": "Time lost on repetitive work",
-        "description": "Data entry, follow ups, reports, sorting: your best people spend their days on tasks an automation would handle without errors."
+        "title": "Repetitive friction",
+        "description": "Your teams spend valuable hours copy-pasting data, writing follow-ups, and sorting logs manually."
       },
       {
-        "title": "Plenty of advice, little execution",
-        "description": "Workshops and slides pile up. Between an AI strategy and a system that actually runs, execution is always missing."
+        "title": "Strategic stagnation",
+        "description": "Slide decks and audits pile up, but the execution layer to turn concepts into software is always missing."
       },
       {
-        "title": "The fear of getting it wrong",
-        "description": "Data privacy, nFADP compliance, reliability: bringing in AI without a clear framework feels riskier than doing nothing."
+        "title": "Compliance risks",
+        "description": "Hosting customer data off-shore without nFADP or GDPR safeguards presents unacceptable security risks."
       }
     ]
   },
@@ -60,8 +56,9 @@
     ]
   },
   "work": {
-    "badge": "WORK",
-    "headline": "Built to run. Proven by results.",
+    "badge": "Work",
+    "headline": "Our work, from petal to planet",
+    "seeAll": "See all",
     "projects": [
       {
         "id": "crm",
@@ -114,7 +111,7 @@
     ]
   },
   "insights": {
-    "badge": "INSIGHTS",
+    "badge": "Insights",
     "headline": "Latest from the team",
     "articles": [
       {
@@ -177,14 +174,14 @@
         "title": "Services",
         "links": [
           { "label": "All services", "href": "/services" },
-          { "label": "Our process", "href": "/our-process" },
-          { "label": "Projects", "href": "/projects" }
+          { "label": "Our process", "href": "/approach" },
+          { "label": "Projects", "href": "/work" }
         ]
       },
       {
         "title": "Resources",
         "links": [
-          { "label": "Blog", "href": "/blog" },
+          { "label": "Blog", "href": "/news" },
           { "label": "FAQs", "href": "/faqs" }
         ]
       },
@@ -206,51 +203,51 @@
     }
   },
   "solution": {
-    "badge": "SOLUTION",
-    "headline_1": "We build the AI and the systems",
-    "headline_2": "that keep your business running.",
+    "badge": "Our focus",
+    "headline_1": "We build operational software",
+    "headline_2": "tailored to how you operate.",
     "items": [
       {
-        "title": "Custom AI integration",
-        "description": "We connect artificial intelligence to your data and your tools: assistants, agents, internal search, content generation and analysis."
+        "title": "Custom AI Integrations",
+        "description": "RAG systems, intelligent agents, and internal search tools trained on your document stores and proprietary data."
       },
       {
-        "title": "Process automation",
-        "description": "We connect your apps and automate repetitive flows, from data entry to reporting, to free up your teams."
+        "title": "Workflow Automation",
+        "description": "Connected database pipelines that handle entry, categorization, and reporting automatically."
       },
       {
-        "title": "Custom tools and applications",
-        "description": "We design and build the software, sites and platforms that off the shelf tools do not cover."
+        "title": "Custom Applications",
+        "description": "Next.js platforms and web portals built to solve complex operations where standard SaaS fall short."
       },
       {
-        "title": "From advice to deployment",
-        "description": "We stay through production, measurement and continuous improvement. Not just a plan, a system that runs."
+        "title": "Production Continuity",
+        "description": "We stay through deployment, integration testing, and long-term optimization. We ship and maintain."
       }
     ]
   },
   "services": {
-    "badge": "What We Do",
-    "headline": "AI solutions, automation and custom tools. Five pillars, one team.",
+    "badge": "Capabilities",
+    "headline": "Engineering systems that connect, automate, and scale. Five pillars.",
     "pillars": [
       {
-        "title": "AI Solutions",
-        "description": "We design and deploy your artificial intelligence solutions: smart CRMs, AI agents, RAG, automations and custom applications, connected to your data and your tools."
+        "title": "AI Systems",
+        "description": "Intelligent CRMs, custom agents, RAG, and database integrations tailored to your customer workflows."
       },
       {
-        "title": "AI Consulting",
-        "description": "AI strategy, operational audits and transformation support. Recommendations that turn into systems, from people who also build."
+        "title": "Tech Consulting",
+        "description": "Operational audits, stack architecture reviews, and technical due diligence from engineers who build daily."
       },
       {
-        "title": "AI Training",
-        "description": "ChatGPT and generative AI training by role, hands on workshops and coaching for decision makers. Your teams become autonomous with the right tools."
+        "title": "AI Enablement",
+        "description": "Hands-on workshops, role-specific coaching, and tooling setup to make your internal teams autonomous."
       },
       {
-        "title": "Sites & Branding",
-        "description": "Websites, e-commerce and brand identities built to last and to convert. Built with Next.js and modern CMS, optimized for SEO."
+        "title": "Digital Products",
+        "description": "Websites, user interfaces, and e-commerce platforms engineered in React and Next.js, optimized for search engines."
       },
       {
         "title": "Team Augmentation",
-        "description": "Developers, tech leads, CTOs and AI experts who integrate into your team, with no junior rotation. Senior reinforcement, when you need it."
+        "description": "Senior developers, technical leads, and fractional CTOs embedded directly into your teams without junior rotations."
       }
     ]
   },

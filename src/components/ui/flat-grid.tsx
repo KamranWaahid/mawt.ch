@@ -12,11 +12,22 @@ interface FlatGridProps {
   columns?: number;
 }
 
+const columnMap: Record<number, string> = {
+  1: "lg:grid-cols-1",
+  2: "lg:grid-cols-2",
+  3: "lg:grid-cols-3",
+  4: "lg:grid-cols-4",
+  5: "lg:grid-cols-5",
+  6: "lg:grid-cols-6",
+};
+
 export function FlatGrid({ items, columns = 3 }: FlatGridProps) {
+  const lgGridColsClass = columnMap[columns] || "lg:grid-cols-3";
+
   return (
-    <section className="bg-white px-6 py-24 sm:px-8 md:px-10 lg:px-12">
-      <div className="max-w-[1440px] mx-auto">
-        <div className={`grid gap-x-12 gap-y-16 sm:grid-cols-2 lg:grid-cols-${columns}`}>
+    <section className="py-14 md:py-20 lg:py-28">
+      <div className="site-container-wide">
+        <div className={`grid gap-3 sm:grid-cols-2 ${lgGridColsClass}`}>
           {items.map((item, index) => (
             <motion.div
               key={item.title}
@@ -28,14 +39,14 @@ export function FlatGrid({ items, columns = 3 }: FlatGridProps) {
                 y: { type: "spring", stiffness: 400, damping: 30 },
                 opacity: { duration: 0.5, delay: index * 0.1 }
               }}
-              className="flex flex-col gap-6 p-8 border border-transparent hover:border-black/5 hover:bg-neutral-50 transition-colors duration-500 group cursor-none"
+              className="group flex min-h-[260px] cursor-none flex-col gap-6 rounded-2xl border border-black/[0.02] bg-white/42 p-6 transition-colors duration-500 hover:bg-white/70 xs:p-8"
               data-cursor="pointer"
             >
               <div className="flex flex-col gap-4">
-                <h3 className="text-xl font-normal tracking-tight text-black group-hover:text-black transition-colors">
+                <h3 className="text-xl font-semibold tracking-[-0.02em] text-black transition-colors">
                   {item.title}
                 </h3>
-                <p className="text-[16px] leading-relaxed text-neutral-500 font-normal group-hover:text-neutral-600 transition-colors">
+                <p className="text-[15px] leading-relaxed text-black/50 font-normal transition-colors">
                   {item.description}
                 </p>
               </div>

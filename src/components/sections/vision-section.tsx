@@ -2,8 +2,10 @@
 
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { SectionReveal } from "@/components/ui/section-reveal";
 import { Badge } from "@/components/ui/badge";
+import { AnimatedTitle } from "@/components/ui/animated-title";
+import { SectionReveal } from "@/components/ui/section-reveal";
+import { sectionTitleClass } from "@/components/ui/section-title-style";
 
 export function VisionSection({ dict, services }: { dict: any; services?: any[] }) {
   const params = useParams();
@@ -11,8 +13,8 @@ export function VisionSection({ dict, services }: { dict: any; services?: any[] 
   const displayItems = services && services.length > 0 ? services : dict.items;
 
   return (
-    <section className="relative bg-bg-light py-20 md:py-32 lg:py-40 border-t border-black/5">
-      <div className="mx-auto w-full max-w-[1440px] px-6 sm:px-10 lg:px-20">
+    <section className="relative py-12 md:py-18 lg:py-24">
+      <div className="site-container">
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
 
@@ -23,18 +25,19 @@ export function VisionSection({ dict, services }: { dict: any; services?: any[] 
               the services scroll up cleanly BEHIND the pinned title instead of
               showing through it. `self-start` stops the grid item stretching
               (required for sticky to engage). */}
-          <div className="lg:col-span-5 sticky top-24 lg:top-32 self-start h-fit z-10 bg-bg-light pb-6 lg:pb-0">
-            <SectionReveal delay={0.1}>
-              {/* Header Badge */}
-              <div className="mb-12">
-                <Badge label={dict.badge} theme="light" />
-              </div>
-              {/* Horizontal Divider — now pinned together with the text */}
-              <div className="mb-8 h-px w-full bg-black/10" />
-              <h2 className="text-2xl font-normal tracking-tight text-black sm:text-3xl md:text-[32px] lg:text-[34px] leading-[1.25] text-balance">
-                {dict.statement}
-              </h2>
-            </SectionReveal>
+          <div className="lg:col-span-5 lg:sticky lg:top-32 relative top-auto self-start h-fit z-10 pb-4 lg:pb-0">
+            {/* Header Badge */}
+            <div className="mb-6">
+              <Badge label={dict.badge} theme="light" />
+            </div>
+            {/* Horizontal Divider — now pinned together with the text */}
+            <div className="mb-4 h-px w-full bg-black/10" />
+            <AnimatedTitle
+              as="h2"
+              text={dict.statement}
+              className={`${sectionTitleClass} text-balance`}
+              splitBy="word"
+            />
           </div>
           
           {/* Right Column: Services List & Link */}
@@ -45,11 +48,11 @@ export function VisionSection({ dict, services }: { dict: any; services?: any[] 
                 <div key={`${title}-${idx}`} className="flex flex-col">
                   <SectionReveal delay={idx * 0.08}>
                     <div className="flex flex-col">
-                      <h3 className="text-[22px] md:text-2xl lg:text-[26px] font-normal tracking-tight text-black mb-3">
+                      <h3 className="text-lg-fluid font-medium tracking-tight text-black mb-2">
                         {title}
                       </h3>
                       {item.services && Array.isArray(item.services) ? (
-                        <ul className="flex flex-wrap gap-x-3 gap-y-1.5 text-[15px] leading-relaxed text-neutral-500 max-w-[55ch] mb-8">
+                        <ul className="flex flex-wrap gap-x-3 gap-y-1.5 text-sm-fluid leading-relaxed text-neutral-500 max-w-[55ch] mb-6">
                           {item.services.map((service: any, sIdx: number) => {
                             const isObj = typeof service === "object";
                             const serviceTitle = isObj ? service.title : service;
@@ -70,14 +73,14 @@ export function VisionSection({ dict, services }: { dict: any; services?: any[] 
                           })}
                         </ul>
                       ) : (
-                        <p className="text-base font-normal leading-relaxed text-neutral-600 max-w-[55ch] mb-8">
+                        <p className="text-sm-fluid font-normal leading-relaxed text-neutral-500 max-w-[55ch] mb-6">
                           {item.description}
                         </p>
                       )}
                     </div>
                     
                     {/* Divider */}
-                    <div className="h-px w-full bg-black/10 mb-8" />
+                    <div className="h-px w-full bg-black/10 mb-6" />
                   </SectionReveal>
                 </div>
               );

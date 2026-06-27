@@ -13,9 +13,9 @@ export function PartnerLogoWall({ partners }: PartnerLogoWallProps) {
   const categories = Array.from(new Set(partners.map(p => p.category)));
 
   return (
-    <div className="flex flex-col gap-24 py-24 px-6 sm:px-8 md:px-10 lg:px-12">
+    <div className="flex flex-col gap-24 py-16 md:py-24 lg:py-32">
       {categories.map((category) => (
-        <div key={category} className="max-w-[1440px] mx-auto w-full flex flex-col gap-12">
+        <div key={category} className="site-container-wide w-full flex flex-col gap-12">
            <div className="flex items-center justify-between">
               <h3 className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]">{category} Partners</h3>
               <div className="h-px flex-1 bg-black/5 ml-8" />

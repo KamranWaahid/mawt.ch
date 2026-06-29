@@ -14,26 +14,13 @@
     "paragraphs": []
   },
   "problem": {
-    "badge": "The reality",
-    "headline_1": "AI is a promise.",
-    "headline_2": "Your business requires systems.",
-    "items": [
-      {
-        "title": "Off-the-shelf limits",
-        "description": "Generic tools ignore your processes, your database structure, and your operational constraints."
-      },
-      {
-        "title": "Repetitive friction",
-        "description": "Your teams spend valuable hours copy-pasting data, writing follow-ups, and sorting logs manually."
-      },
-      {
-        "title": "Strategic stagnation",
-        "description": "Slide decks and audits pile up, but the execution layer to turn concepts into software is always missing."
-      },
-      {
-        "title": "Compliance risks",
-        "description": "Hosting customer data off-shore without nFADP or GDPR safeguards presents unacceptable security risks."
-      }
+    "story": [
+      "Everyone tells you AI will change everything.",
+      "But for most businesses, the reality is a mess of disconnected tools and manual workflows.",
+      "Slide decks pile up, but the execution layer to turn concepts into software is missing.",
+      "Because AI is only a promise. Your business requires systems.",
+      "Value is only created when technology is built deep into the core of how you operate.",
+      "We design the strategies, AI automation systems, digital products, brands and experiences that turn potential into production."
     ]
   },
   "vision": {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import { motion } from "motion/react";
+import { motion, useScroll, useTransform, useMotionValueEvent } from "motion/react";
 import { AnimatedTitle } from "@/components/ui/animated-title";
 import { sectionTitleClass } from "@/components/ui/section-title-style";
 
@@ -25,90 +25,63 @@ const itemVariants = {
 };
 
 export function ApproachSection({ dict }: { dict: any }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const [scrollRange, setScrollRange] = useState(0);
   const [showLeftBlur, setShowLeftBlur] = useState(false);
-  const [showRightBlur, setShowRightBlur] = useState(false);
+  const [showRightBlur, setShowRightBlur] = useState(true);
 
-  const updateBlurStates = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    // Check if scrolled past the start (left side has content outside of screen)
-    const canScrollLeft = el.scrollLeft > 10;
-    setShowLeftBlur(canScrollLeft);
-
-    // Check if there's still content to scroll to the right (right side has content outside of screen)
-    const maxScroll = el.scrollWidth - el.clientWidth;
-    const canScrollRight = el.scrollLeft < maxScroll - 10;
-    setShowRightBlur(canScrollRight);
-  };
-
+  // Measure the scrollable range of the cards container
   useEffect(() => {
-    updateBlurStates();
-    
-    // Attach listener to window resize
-    window.addEventListener("resize", updateBlurStates);
-    return () => {
-      window.removeEventListener("resize", updateBlurStates);
+    const calculateScrollRange = () => {
+      if (cardsRef.current && containerRef.current) {
+        const range = cardsRef.current.scrollWidth - containerRef.current.clientWidth;
+        setScrollRange(Math.max(0, range));
+      }
     };
+
+    calculateScrollRange();
+    
+    const resizeObserver = new ResizeObserver(() => calculateScrollRange());
+    if (containerRef.current) resizeObserver.observe(containerRef.current);
+    if (cardsRef.current) resizeObserver.observe(cardsRef.current);
+
+    return () => resizeObserver.disconnect();
   }, [dict?.items]);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+
+  const x = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    setShowLeftBlur(latest > 0.01);
+    setShowRightBlur(latest < 0.99);
+  });
 
   if (!dict) return null;
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!scrollRef.current) return;
-    setIsDragging(true);
-    setStartX(e.pageX - scrollRef.current.offsetLeft);
-    setScrollLeft(scrollRef.current.scrollLeft);
-  };
-
-  const handleMouseLeave = () => {
-    setIsDragging(false);
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !scrollRef.current) return;
-    e.preventDefault();
-    const x = e.pageX - scrollRef.current.offsetLeft;
-    const walk = (x - startX) * 1.5; // Drag speed multiplier
-    scrollRef.current.scrollLeft = scrollLeft - walk;
-    updateBlurStates();
-  };
-
-  const handleWheel = (e: React.WheelEvent) => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
-
-    e.preventDefault();
-    el.scrollLeft += e.deltaX;
-    updateBlurStates();
-  };
-
   return (
-    <section className="py-12 sm:py-16 md:py-24 lg:py-32 relative overflow-hidden">
-      <div className="site-container-wide">
+    <section ref={sectionRef} className="relative h-[250vh] bg-transparent">
+      {/* Sticky viewport container */}
+      <div className="sticky top-0 h-[100dvh] flex flex-col justify-center overflow-hidden py-12 sm:py-16 md:py-24 lg:py-32">
+        <div className="site-container-wide w-full" ref={containerRef}>
 
-        {/* Horizontal Divider */}
-        <div className="mb-10 h-px w-full bg-black/10" />
+          {/* Horizontal Divider */}
+          <div className="mb-10 h-px w-full bg-black/10" />
 
-        {/* Headline */}
-        <div className="mb-10 sm:mb-14">
-          <AnimatedTitle
-            as="h2"
-            text={dict.headline}
-            className={sectionTitleClass}
-            splitBy="word"
-          />
-        </div>
+          {/* Headline */}
+          <div className="mb-10 sm:mb-14">
+            <AnimatedTitle
+              as="h2"
+              text={dict.headline}
+              className={sectionTitleClass}
+              splitBy="word"
+            />
+          </div>
 
           {/* Wrapper to align overlay edges perfectly with viewport boundaries */}
           <div className="relative overflow-hidden">
@@ -135,22 +108,10 @@ export function ApproachSection({ dict }: { dict: any }) {
             />
 
             {/* Approach Horizontal Swipeable / Draggable Container */}
-            <div 
-              ref={scrollRef}
-              data-lenis-allow-vertical-scroll
-              onMouseDown={handleMouseDown}
-              onMouseLeave={handleMouseLeave}
-              onMouseUp={handleMouseUp}
-              onMouseMove={handleMouseMove}
-              onWheel={handleWheel}
-              onScroll={updateBlurStates}
-              style={{
-                scrollSnapType: isDragging ? "none" : "x mandatory",
-                cursor: isDragging ? "grabbing" : "grab",
-              }}
-              className="overflow-x-auto no-scrollbar pb-6 select-none"
-            >
+            <div className="pb-6 select-none overflow-hidden">
               <motion.div 
+                ref={cardsRef}
+                style={{ x }}
                 className="flex gap-3"
                 variants={containerVariants}
                 initial="hidden"
@@ -161,7 +122,7 @@ export function ApproachSection({ dict }: { dict: any }) {
                   <motion.div
                     key={item.id}
                     variants={itemVariants}
-                    className="group relative flex flex-col justify-between bg-[#EDEDED]/50 hover:bg-[#E3EAE6]/70 border border-black/[0.02] rounded-2xl pt-8 px-5 xs:px-8 pb-0 md:pt-12 md:px-10 md:pb-0 transition-all duration-500 ease-out w-[calc(100vw-3rem)] sm:w-[375px] md:w-[410px] shrink-0 snap-align-start min-h-[460px] sm:min-h-[500px] md:min-h-[520px] overflow-hidden"
+                    className="group relative flex flex-col justify-between bg-[#EDEDED]/50 hover:bg-[#E3EAE6]/70 border border-black/[0.02] rounded-2xl pt-8 px-5 xs:px-8 pb-0 md:pt-12 md:px-10 md:pb-0 transition-all duration-500 ease-out w-[calc(100vw-3rem)] sm:w-[375px] md:w-[410px] shrink-0 min-h-[460px] sm:min-h-[500px] md:min-h-[520px] overflow-hidden"
                   >
                     {/* Upper Text */}
                     <div className="space-y-4">
@@ -189,6 +150,7 @@ export function ApproachSection({ dict }: { dict: any }) {
               </motion.div>
             </div>
           </div>
+        </div>
       </div>
     </section>
   );

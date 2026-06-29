@@ -76,11 +76,11 @@ function drawImageProp(ctx: CanvasRenderingContext2D, img: HTMLImageElement) {
   let y = 0;
   
   if (isPortrait) {
-    // Mobile/Portrait: Scale up to fill blank space and center the hand/folder (located at ~62.5% of the frame width)
+    // Mobile/Portrait: Scale up to fill blank space and center the hand/folder (shifted slightly right to center it visually)
     r = wr * 1.6;
     const w = imgWidth * r;
     const h = imgHeight * r;
-    x = canvas.width / 2 - 0.625 * w;
+    x = canvas.width / 2 - 0.57 * w;
     // Push it towards the bottom of the viewport with a small margin (30px)
     y = canvas.height - h - 30;
   } else {

@@ -1,90 +1,110 @@
 "use client";
 
-import { motion, type Variants } from "motion/react";
-import { AnimatedTitle } from "@/components/ui/animated-title";
-import { sectionTitleClass } from "@/components/ui/section-title-style";
+import { useRef, useEffect, useCallback } from "react";
+import { motion, useTransform, MotionValue, useMotionValue } from "motion/react";
+import { useLenis } from "lenis/react";
 
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1,
-    },
-  },
+type ProblemCopy = {
+  story?: string[];
 };
 
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.16, 1, 0.3, 1] as const,
-    },
-  },
-};
-
-export function ProblemSection({ dict }: { dict: any }) {
+const ScrubWord = ({ 
+  children, 
+  progress, 
+  range 
+}: { 
+  children: React.ReactNode; 
+  progress: MotionValue<number>; 
+  range: [number, number];
+}) => {
+  const opacity = useTransform(progress, range, [0.15, 1]);
   return (
-    <section
-      aria-labelledby="problem-section-heading"
-      className="relative overflow-hidden py-12 sm:py-16 md:py-24 lg:py-32"
-    >
-      <div className="site-container-wide">
-        <div className="mb-10 h-px w-full bg-black/10" />
+    <motion.span style={{ opacity }} className="inline-block will-change-[opacity]">
+      {children}
+    </motion.span>
+  );
+};
 
-        <div className="mb-10 sm:mb-14">
-          <h2
-            id="problem-section-heading"
-            className={sectionTitleClass}
-          >
-            <AnimatedTitle
-              as="span"
-              text={dict.headline_1}
-              className="block text-black/45"
-              splitBy="word"
-            />
-            <AnimatedTitle
-              as="span"
-              text={dict.headline_2}
-              className="block"
-              splitBy="word"
-              delay={0.12}
-            />
-          </h2>
-        </div>
+export function ProblemSection({ dict }: { dict: ProblemCopy }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // We use a manual scroll calculation using getBoundingClientRect.
+  // Framer Motion's useScroll can sometimes fail to reach 1.0 or lose sync 
+  // on complex pages with Lenis, pinned sections, or dynamic heights.
+  // Manual DOM measurement guarantees pixel-perfect scroll scrubbing.
+  const progressValue = useMotionValue(0);
 
+  const updateScrollProgress = useCallback(() => {
+    if (!containerRef.current || typeof window === "undefined") return;
+    
+    const rect = containerRef.current.getBoundingClientRect();
+    
+    // We want to scrub from when the top of the container hits the top of viewport (0)
+    // to when the bottom of the container hits the bottom of the viewport (1).
+    const scrollDistance = rect.height - window.innerHeight;
+    
+    if (scrollDistance <= 0) {
+      progressValue.set(1);
+      return;
+    }
+
+    const rawProgress = (0 - rect.top) / scrollDistance;
+    const clampedProgress = Math.max(0, Math.min(1, rawProgress));
+    
+    progressValue.set(clampedProgress);
+  }, [progressValue]);
+
+  useLenis(() => {
+    updateScrollProgress();
+  });
+
+  useEffect(() => {
+    updateScrollProgress();
+    window.addEventListener("scroll", updateScrollProgress, { passive: true });
+    window.addEventListener("resize", updateScrollProgress, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", updateScrollProgress);
+      window.removeEventListener("resize", updateScrollProgress);
+    };
+  }, [updateScrollProgress]);
+
+  if (!dict.story || !Array.isArray(dict.story)) {
+    return null;
+  }
+
+  const text = dict.story.join(" ");
+  const words = text.split(" ");
+
+  // The entire text block fades out and moves up at the very end of the scroll (last 15%)
+  const blockOpacity = useTransform(progressValue, [0.85, 1], [1, 0]);
+  const blockY = useTransform(progressValue, [0.85, 1], [0, -40]);
+
+  return (
+    <div ref={containerRef} style={{ height: "400vh" }} className="relative w-full">
+      <section className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
         <motion.div 
-          className="grid gap-3 md:grid-cols-2"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={containerVariants}
+          className="site-container relative z-10 w-full"
+          style={{ opacity: blockOpacity, y: blockY }}
         >
-          {dict.items.map((item: any, index: number) => (
-            <motion.article
-              key={item.title}
-              className="group relative flex min-h-[240px] flex-col justify-between overflow-hidden rounded-2xl border border-black/[0.02] bg-[#EDEDED]/50 px-5 py-7 transition-all duration-500 ease-out hover:bg-[#E3EAE6]/70 xs:px-8 sm:min-h-[280px] md:min-h-[340px] md:px-10 md:py-10"
-              variants={itemVariants}
-            >
-              <div className="space-y-4">
-                <div className="text-sm font-normal leading-none text-black/35">
-                  {String(index + 1).padStart(2, "0")}
-                </div>
-                <h3 className="max-w-[18ch] text-xl font-semibold leading-tight tracking-[-0.02em] text-neutral-900 transition-colors duration-300 group-hover:text-[#1D7A65] sm:text-2xl md:max-w-[14ch]">
-                  {item.title}
-                </h3>
-              </div>
-              <p className="mt-10 max-w-[42ch] text-sm font-normal leading-[1.6] tracking-[-0.015em] text-black/50">
-                {item.description}
-              </p>
-            </motion.article>
-          ))}
+          {/* Using the exact typography classes from the Hero gradient statement for consistency */}
+          <h2 className="max-w-[1040px] select-text font-serif text-[clamp(2.15rem,4vw,3.65rem)] font-normal leading-[1.02] tracking-normal text-neutral-900">
+            {words.map((word, i) => {
+              // The text scrub runs from 0.05 to 0.8
+              const start = 0.05 + (i / words.length) * 0.75;
+              const end = start + (0.75 / words.length);
+              
+              return (
+                <span key={i} className="inline">
+                  <ScrubWord progress={progressValue} range={[start, end]}>
+                    {word}
+                  </ScrubWord>
+                  {i < words.length - 1 ? " " : null}
+                </span>
+              );
+            })}
+          </h2>
         </motion.div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }

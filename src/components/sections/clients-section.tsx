@@ -21,14 +21,7 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
   };
 
   return (
-    <section className="relative -mt-12 overflow-hidden pt-0 pb-20 md:-mt-14 md:pt-0 md:pb-24 lg:-mt-16 lg:pt-0 lg:pb-28">
-      <div
-        className="pointer-events-none absolute inset-0 z-0"
-        style={{
-          background:
-            "linear-gradient(180deg, #F6F5F4 0%, #ECFBF5 22%, #D5FFEF 48%, #EAFBF4 78%, transparent 100%)",
-        }}
-      />
+    <section className="relative -mt-12 overflow-hidden pt-0 pb-20 md:-mt-14 md:pt-0 md:pb-24 lg:-mt-16 lg:pt-0 lg:pb-28 bg-[#F6F5F4]">
       <div className="site-container relative z-10">
         <motion.h2
           initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}

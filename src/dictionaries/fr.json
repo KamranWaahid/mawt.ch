@@ -14,26 +14,13 @@
     "paragraphs": []
   },
   "problem": {
-    "badge": "La réalité",
-    "headline_1": "L'IA est une promesse.",
-    "headline_2": "Votre entreprise a besoin de systèmes.",
-    "items": [
-      {
-        "title": "Les limites du standard",
-        "description": "Les outils génériques ignorent vos processus internes, vos bases de données et vos contraintes métier."
-      },
-      {
-        "title": "La friction du répétitif",
-        "description": "Vos équipes perdent un temps précieux sur de la saisie manuelle, des relances et du tri de données."
-      },
-      {
-        "title": "L'impasse du conseil",
-        "description": "Les audits s'accumulent, mais la capacité technique pour transformer ces idées en logiciels fonctionnels fait défaut."
-      },
-      {
-        "title": "Les risques de conformité",
-        "description": "Manipuler des données clients hors de Suisse sans conformité nLPD ou RGPD expose votre entreprise à des risques majeurs."
-      }
+    "story": [
+      "Tout le monde vous dit que l'IA va tout changer.",
+      "Mais pour la plupart des entreprises, la réalité se résume à des outils déconnectés et des processus manuels.",
+      "Les audits s'accumulent, mais la capacité technique pour transformer ces idées en logiciels fait défaut.",
+      "Car l'IA n'est qu'une promesse. Votre entreprise a besoin de systèmes.",
+      "La vraie valeur n'est créée que lorsque la technologie est intégrée au cœur même de vos opérations.",
+      "Nous concevons les stratégies, les systèmes d'automatisation IA, les produits numériques et les expériences qui transforment le potentiel en production."
     ]
   },
   "vision": {

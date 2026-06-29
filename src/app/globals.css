@@ -185,14 +185,8 @@ body::after {
   background:
     linear-gradient(
       180deg,
-      #D5FFEF 0%,
-      #E8FBF3 10%,
-      #F1F8F5 24%,
-      #E8FBF3 38%,
-      #F4F8F5 52%,
-      #F6F5F4 66%,
-      #F1F8F5 80%,
-      #F8F8F6 92%,
+      #F6F5F4 0%,
+      #F8F8F6 80%,
       #FFFFFF 100%
     );
 }
@@ -201,10 +195,7 @@ body::after {
   background:
     linear-gradient(
       180deg,
-      #D5FFEF 0%,
-      #EEF8F3 16%,
-      #F6F5F4 38%,
-      #F1F8F5 58%,
+      #F6F5F4 0%,
       #F8F8F6 78%,
       #FFFFFF 100%
     );
@@ -214,14 +205,8 @@ body::after {
   background:
     linear-gradient(
       180deg,
-      #D5FFEF 0%,
-      #E8FBF3 10%,
-      #F1F8F5 24%,
-      #E8FBF3 38%,
-      #F4F8F5 52%,
-      #F6F5F4 66%,
-      #F1F8F5 80%,
-      #F8F8F6 92%,
+      #F6F5F4 0%,
+      #F8F8F6 80%,
       #FFFFFF 100%
     );
 }

@@ -19,16 +19,16 @@ export function LenisProvider({ children }: LenisProviderProps) {
     <ReactLenis
       root
       options={{
-        // Shorter duration = more responsive, less "laggy" feeling.
-        // 1.5 felt stuck on trackpads and touch devices; 0.9 is premium but snappy.
-        duration: 0.9,
-        // Standard ease — feels smooth but not floaty
+        // Slightly slower than native while staying responsive on trackpads.
+        duration: 1.15,
+        // Soft exponential ease similar to Framer-style scroll smoothing.
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
-        // Lower touch multiplier prevents over-scrolling on mobile
-        touchMultiplier: 1.5,
-        // lerp controls momentum: 0.1 is very slow/floaty; 0.12 gives a balanced feel
-        lerp: 0.12,
+        wheelMultiplier: 0.9,
+        // Lower touch multiplier prevents over-scrolling on mobile.
+        touchMultiplier: 1.25,
+        // Lower lerp adds a smoother, more composed glide without feeling stuck.
+        lerp: 0.085,
         // Prevent Lenis from hijacking touch events on elements that need
         // native scrolling (e.g. data-lenis-prevent carousels)
         prevent: (node) => {

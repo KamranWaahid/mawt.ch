@@ -1,7 +1,6 @@
 import { ClientsSection } from "@/components/sections/clients-section";
 import { DescriptionSection } from "@/components/sections/description-section";
-import { HeroSection } from "@/components/sections/hero-section";
-import { HeroTransitionSection } from "@/components/sections/hero-transition-section";
+import { HomepageHeroSection } from "@/components/sections/homepage-hero-section";
 import { ProblemSection } from "@/components/sections/problem-section";
 import { ApproachSection } from "@/components/sections/approach-section";
 import { InsightsSection } from "@/components/sections/insights-section";
@@ -156,8 +155,11 @@ export default async function HomePage({
 
   return (
     <>
-      <HeroSection settings={data.settings} dict={dictionary.hero} />
-      <HeroTransitionSection />
+      <HomepageHeroSection
+        settings={data.settings}
+        dict={dictionary.hero}
+        transitionDict={dictionary.heroTransition}
+      />
       <div className="homepage-flow">
         <ClientsSection dict={dictionary.clients} partners={partners} />
         <DescriptionSection dict={dictionary.description} />

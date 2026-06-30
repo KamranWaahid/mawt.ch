@@ -3,9 +3,14 @@
     "kicker": "AI Systems & Workflow Automation · Geneva",
     "title_1": "We build AI systems",
     "title_2": "that run your business.",
-    "description": "Custom integrations, automated workflows, and production-ready applications built to last. No generic advice. Just code that executes.",
+    "description": "Geneva-based AI and engineering agency building custom automation systems for SMEs and growing companies in Switzerland.",
     "summary": "MAWT is a Geneva-based AI and engineering agency. We design and build custom systems that automate operational workflows for SMEs and growing companies in Switzerland. We write the code that connects your data to production-ready AI.",
-    "cta": "Start a project"
+    "cta": "Let's talk",
+    "statement": "We experiences for the world's most ambitious thinkers."
+  },
+  "heroTransition": {
+    "statement": "We design the strategies, AI automation systems, digital products, brands and experiences that turn potential into production.",
+    "cta": "About us"
   },
   "clients": {
     "title": "Trusted by teams in Geneva & Switzerland"

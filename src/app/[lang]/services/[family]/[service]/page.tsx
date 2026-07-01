@@ -528,7 +528,7 @@ export default async function ServiceDetailPage({ params }: Props) {
               {labels.projectsH2}
             </div>
             <div className="md:col-span-9 lg:col-span-8 space-y-8" id="projects">
-              {svc.featuredProjects.map((project: any, i: number) => (
+              {svc.featuredProjects.map((project: any) => (
                 <div key={project._id} className="space-y-2 group">
                   <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
                     <h4 className="text-base font-normal text-black group-hover:text-[#75DAB4] transition-colors">
@@ -568,7 +568,7 @@ export default async function ServiceDetailPage({ params }: Props) {
               {labels.relatedH2}
             </div>
             <div className="md:col-span-9 lg:col-span-8 space-y-6">
-              {related.map((item: any, i: number) => {
+              {related.map((item: any) => {
                 const localizedFamily = familySlugForLang(item.family, lang as Locale);
                 return (
                   <div key={item._id} className="space-y-1 group">
@@ -595,7 +595,7 @@ export default async function ServiceDetailPage({ params }: Props) {
             </div>
             <div className="md:col-span-9 lg:col-span-8">
               <div className="space-y-4 divide-y divide-black/5">
-                {faqItems.map((item: any, index: number) => (
+                {faqItems.map((item, index: number) => (
                   <details key={index} className="group pt-4 first:pt-0">
                     <summary className="flex justify-between items-center font-normal text-base text-black cursor-pointer list-none select-none hover:text-neutral-500 transition-colors">
                       <span>{item.question}</span>

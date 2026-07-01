@@ -68,16 +68,16 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
     };
   }, [updateScrollProgress]);
 
+  // The entire text block fades out and moves up at the very end of the scroll (last 15%)
+  const blockOpacity = useTransform(progressValue, [0.85, 1], [1, 0]);
+  const blockY = useTransform(progressValue, [0.85, 1], [0, -40]);
+
   if (!dict.story || !Array.isArray(dict.story)) {
     return null;
   }
 
   const text = dict.story.join(" ");
   const words = text.split(" ");
-
-  // The entire text block fades out and moves up at the very end of the scroll (last 15%)
-  const blockOpacity = useTransform(progressValue, [0.85, 1], [1, 0]);
-  const blockY = useTransform(progressValue, [0.85, 1], [0, -40]);
 
   return (
     <div ref={containerRef} style={{ height: "400vh" }} className="relative w-full">

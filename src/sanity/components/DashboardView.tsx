@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Stack, Text, Grid, Button, Box, Heading, Inline, Badge, Spinner } from "@sanity/ui";
+import { Card, Stack, Text, Grid, Button, Heading, Inline, Badge, Spinner } from "@sanity/ui";
 import { MessageSquare, Users, RefreshCw, CheckCircle } from "lucide-react";
 import { useClient } from "sanity";
 
@@ -32,7 +32,7 @@ export function DashboardView() {
       if (res.ok) {
         alert("Revalidation triggered successfully!");
       }
-    } catch (err) {
+    } catch {
       alert("Failed to revalidate.");
     } finally {
       setRevalidating(false);

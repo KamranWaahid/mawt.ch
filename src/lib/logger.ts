@@ -13,7 +13,7 @@ export const logger = {
   },
 
   error: (message: string, error?: any, context?: any) => {
-    console.error(`[ERROR] ${message}`, error || "");
+    console.error(`[ERROR] ${message}`, error || "", context || "");
     
     // In production, send to Sentry/Axiom
     if (process.env.NODE_ENV === "production") {

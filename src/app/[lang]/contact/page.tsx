@@ -4,7 +4,7 @@ import { getDictionary } from "@/get-dictionary";
 import { getContactSettings, getHomePageData } from "@/lib/sanity.queries";
 import type { Locale } from "@/i18n-config";
 import { SectionReveal } from "@/components/ui/section-reveal";
-import { MapPin, Mail, Phone, ExternalLink } from "lucide-react";
+import { Mail, Phone, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { standaloneAlternates } from "@/lib/routing/url-helpers";
 import type { Metadata } from "next";
@@ -123,4 +123,3 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
     </div>
   );
 }
-

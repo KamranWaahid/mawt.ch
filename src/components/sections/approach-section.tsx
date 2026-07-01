@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "motion/react";
+import Image from "next/image";
 import { AnimatedTitle } from "@/components/ui/animated-title";
 import { sectionTitleClass } from "@/components/ui/section-title-style";
 
@@ -137,10 +138,12 @@ export function ApproachSection({ dict }: { dict: any }) {
                     {/* Bottom Centered Image sits flush on bottom edge */}
                     {item.image && (
                       <div className="relative w-full h-[220px] sm:h-[250px] md:h-[280px] mt-6 flex items-end justify-center pointer-events-none">
-                        <img
+                        <Image
                           src={item.image}
                           alt={item.title}
-                          className="h-full w-full object-contain object-bottom select-none"
+                          fill
+                          sizes="(min-width: 768px) 410px, (min-width: 640px) 375px, calc(100vw - 3rem)"
+                          className="object-contain object-bottom select-none"
                           draggable="false"
                         />
                       </div>

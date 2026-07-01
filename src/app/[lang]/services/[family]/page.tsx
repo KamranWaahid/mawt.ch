@@ -8,7 +8,7 @@ import { SubpageHero } from "@/components/sections/subpage-hero";
 import Link from "next/link";
 import Image from "next/image";
 import { urlForImage } from "@/lib/sanity.image";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import * as Icons from "lucide-react";
 import { getFamilyTitle, familySlugForLang, canonicalizeFamilySlug, hreflangAlternates, localizedHref } from "@/lib/routing/url-helpers";
 import { PILLAR_COPY, type FamilyKey } from "@/content/services-pillar-copy";

@@ -180,16 +180,18 @@ function StatementWord({
 function HeroGradientStatement({
   text,
   progress,
+  className = "",
 }: {
   text: string;
   progress: number;
+  className?: string;
 }) {
   const words = text.split(" ");
   const exitProgress = Math.max(0, Math.min(1, (progress - 0.78) / 0.1));
 
   return (
     <h2
-      className="max-w-[1040px] select-text font-serif text-[clamp(2.1rem,4.05vw,3.7rem)] font-normal leading-[1.01] tracking-normal text-white"
+      className={`max-w-[1040px] select-text font-serif text-[clamp(2.1rem,4.05vw,3.7rem)] font-normal leading-[1.01] tracking-normal text-white ${className}`}
       style={{ opacity: 1 - exitProgress }}
     >
       {words.map((word, index) => (
@@ -451,7 +453,34 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
         </div>
       </motion.div>
 
-      <div className="landscapeHero relative z-10 hidden h-[100svh] w-full overflow-hidden bg-black px-8 py-5 text-white lg:hidden">
+      <motion.div
+        className="pointer-events-none absolute inset-x-0 top-[37svh] z-30 px-5 sm:px-7 md:px-9 lg:hidden"
+        style={{ y: transitionStatementY }}
+      >
+        <div className="mx-auto w-full max-w-[48rem]">
+          <HeroGradientStatement
+            text={transitionDict.statement}
+            progress={scrollProgress}
+            className="text-[clamp(2rem,11vw,4rem)] leading-[1.03]"
+          />
+          <motion.div
+            className="mt-8"
+            style={{
+              opacity: scrollProgress < 0.68 ? 0 : scrollProgress > 0.78 ? Math.max(0, 1 - (scrollProgress - 0.78) / 0.1) : 1,
+              y: transitionCtaY,
+            }}
+          >
+            <Link
+              href={localizedHref("a-propos", lang)}
+              className="pointer-events-auto inline-flex h-10 items-center rounded-full border border-white/12 bg-white/[0.12] px-[22px] text-[13px] font-normal leading-none text-white/92 backdrop-blur-md transition-colors duration-300 hover:border-white/22 hover:bg-white/[0.18] hover:text-white"
+            >
+              {transitionDict.cta}
+            </Link>
+          </motion.div>
+        </div>
+      </motion.div>
+
+      <div className="landscapeHero relative z-10 hidden h-[100svh] w-full overflow-hidden bg-transparent px-8 py-5 text-white lg:hidden">
         <div className="relative h-full w-full">
           <motion.h1 aria-label="MAWT" className="absolute left-[2%] top-[5%] w-[82%] select-none" style={{ opacity: compactLogoOpacity, scale: compactLogoScale, y: compactLogoY, transformOrigin: "0% 0%" }}>
             <MawatLogo className="h-auto w-full" videoFill />
@@ -501,7 +530,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
         </div>
       </div>
 
-      <div className="portraitHero relative z-10 flex h-[100svh] w-full flex-col justify-between overflow-hidden bg-black px-5 py-6 text-white sm:px-7 sm:py-8 md:px-9 md:py-10 lg:hidden">
+      <div className="portraitHero relative z-10 flex h-[100svh] w-full flex-col justify-between overflow-hidden bg-transparent px-5 py-6 text-white sm:px-7 sm:py-8 md:px-9 md:py-10 lg:hidden">
         <div className="w-full">
           <motion.h1 aria-label="MAWT" className="select-none" style={{ opacity: compactLogoOpacity, scale: compactLogoScale, y: compactLogoY, transformOrigin: "0% 0%" }}>
             <MawatLogo className="h-auto w-full max-w-[92vw] sm:max-w-[88vw] md:max-w-[82vw]" videoFill />

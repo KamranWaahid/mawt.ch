@@ -30,15 +30,21 @@ function HeroWord({
   total,
   progress,
   muted = false,
+  mutedIndex = 0,
+  mutedTotal = 1,
 }: {
   word: string;
   index: number;
   total: number;
   progress: number;
   muted?: boolean;
+  mutedIndex?: number;
+  mutedTotal?: number;
 }) {
-  const start = 0.08 + (index / Math.max(1, total)) * 0.72;
-  const end = Math.min(0.92, start + 0.18);
+  const start = muted
+    ? 0.04 + (mutedIndex / Math.max(1, mutedTotal - 1)) * 0.5
+    : 0.08 + (index / Math.max(1, total)) * 0.72;
+  const end = muted ? Math.min(0.72, start + 0.16) : Math.min(0.92, start + 0.18);
   const localProgress = Math.max(0, Math.min(1, (progress - start) / (end - start)));
   const grey = [167, 173, 183];
   const black = [6, 40, 51];
@@ -85,6 +91,8 @@ function ScrollHeroTitle({
               total={total}
               progress={progress}
               muted
+              mutedIndex={index}
+              mutedTotal={subtitleWords.length}
             />
           ))}
         </span>

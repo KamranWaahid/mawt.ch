@@ -1,8 +1,7 @@
 import type { Locale } from "@/i18n-config";
-import { ProjectList } from "@/components/ui/project-list";
+import { WorkProjectsSection } from "@/components/ui/work-projects-section";
 import { getAllProjects } from "@/lib/sanity.queries";
 import { standaloneAlternates } from "@/lib/routing/url-helpers";
-import { Menu, LayoutGrid } from "lucide-react";
 import type { Metadata } from "next";
 import { SubpageHero } from "@/components/sections/subpage-hero";
 
@@ -49,31 +48,7 @@ export default async function ProjectsPage({ params }: ProjectsPageProps) {
         subtitle={lang === "fr" ? "De l'idée à la sortie" : "From idea to exit"}
       />
 
-      {/* Filter Bar */}
-      <div className="py-6 border-t border-black/5">
-        <div className="site-container-wide w-full flex justify-between items-center">
-          <div className="flex flex-wrap items-center gap-4 text-[15px]">
-            <button className="font-medium text-black">All</button>
-            <span className="text-neutral-300">—</span>
-            <button className="text-neutral-400 hover:text-black transition-colors">Strategy</button>
-            <button className="text-neutral-400 hover:text-black transition-colors">Design</button>
-            <button className="text-neutral-400 hover:text-black transition-colors">Development</button>
-            <button className="text-neutral-400 hover:text-black transition-colors">Experience</button>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="p-1 text-black hover:opacity-70 transition-opacity flex items-center justify-center">
-              <LayoutGrid size={20} strokeWidth={1.5} />
-            </button>
-            <button className="p-1 text-neutral-300 hover:text-black transition-colors flex items-center justify-center">
-              <Menu size={20} strokeWidth={1.5} />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <section className="site-container-wide pt-8 pb-16 md:pb-24 lg:pb-32">
-        <ProjectList projects={activeProjects} lang={lang} />
-      </section>
+      <WorkProjectsSection projects={activeProjects} lang={lang} />
     </div>
   );
 }

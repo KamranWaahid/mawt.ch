@@ -6,6 +6,7 @@ import { standaloneAlternates, localizedHref } from "@/lib/routing/url-helpers";
 import { JsonLd, faqPageLd, breadcrumbLd, SITE_URL } from "@/components/seo/structured-data";
 import type { Locale } from "@/i18n-config";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 interface FAQsPageProps {
   params: Promise<{ lang: Locale }>;
@@ -59,9 +60,9 @@ export default async function FAQsPage({ params }: FAQsPageProps) {
           <p className="text-lg text-neutral-500 font-normal mb-10 max-w-2xl mx-auto">
             {dict.faq.contactDesc}
           </p>
-          <button className="px-10 py-4 bg-black text-white text-sm font-normal uppercase tracking-widest hover:bg-neutral-800 transition-all duration-300">
+          <Link href={`/${lang}/contact`} className="inline-flex px-10 py-4 bg-black text-white text-sm font-normal uppercase tracking-widest hover:bg-neutral-800 transition-all duration-300">
             {dict.faq.contactBtn}
-          </button>
+          </Link>
         </div>
       </section>
     </div>

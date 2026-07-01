@@ -56,6 +56,7 @@ const homeQuery = groq`
   },
   "posts": *[_type == "post" && language == $lang] | order(publishedAt desc)[0...3]{
     _id,
+    language,
     title,
     "slug": slug.current,
     author->{
@@ -64,9 +65,26 @@ const homeQuery = groq`
       avatar
     },
     mainImage,
-    categories,
+    "categories": coalesce(categories, select(defined(category) => [category], [])),
     publishedAt,
-    excerpt
+    excerpt,
+    body
+  },
+  "fallbackPosts": *[_type == "post" && language == "en"] | order(publishedAt desc)[0...3]{
+    _id,
+    language,
+    title,
+    "slug": slug.current,
+    author->{
+      name,
+      role,
+      avatar
+    },
+    mainImage,
+    "categories": coalesce(categories, select(defined(category) => [category], [])),
+    publishedAt,
+    excerpt,
+    body
   }
 }
 `;
@@ -169,7 +187,7 @@ const docBySlugQuery = groq`
 export async function getHomePageData(lang: string = "en"): Promise<HomePageData> {
   const sanityClient = getSanityClient();
   if (!sanityClient) return mockHomeData;
-  const data = await sanityClient.fetch<HomePageData>(homeQuery, { lang }, {
+  const data = await sanityClient.fetch<HomePageData & { fallbackPosts?: BlogPost[] }>(homeQuery, { lang }, {
     next: { tags: ["home", "project", "service", "testimonial"] }
   });
   return {
@@ -180,7 +198,7 @@ export async function getHomePageData(lang: string = "en"): Promise<HomePageData
     projects: data.projects?.length ? data.projects : mockHomeData.projects,
     services: data.services?.length ? data.services : mockHomeData.services,
     testimonials: data.testimonials?.length ? data.testimonials : mockHomeData.testimonials,
-    posts: data.posts?.length ? data.posts : undefined,
+    posts: data.posts?.length ? data.posts : data.fallbackPosts?.length ? data.fallbackPosts : undefined,
   };
 }
 
@@ -392,6 +410,7 @@ export async function getServiceBySlug(slug: string): Promise<Service> {
 export const allPostsQuery = groq`
 *[_type == "post" && language == $lang] | order(publishedAt desc){
   _id,
+  language,
   title,
   "slug": slug.current,
   author->{
@@ -400,15 +419,17 @@ export const allPostsQuery = groq`
     avatar
   },
   mainImage,
-  categories,
+  "categories": coalesce(categories, select(defined(category) => [category], [])),
   publishedAt,
-  excerpt
+  excerpt,
+  body
 }
 `;
 
 export const postBySlugQuery = groq`
 *[_type == "post" && slug.current == $slug && language == $lang][0]{
   _id,
+  language,
   title,
   "slug": slug.current,
   author->{
@@ -419,8 +440,9 @@ export const postBySlugQuery = groq`
     socialLinks
   },
   mainImage,
-  categories,
+  "categories": coalesce(categories, select(defined(category) => [category], [])),
   publishedAt,
+  excerpt,
   body,
   seo
 }
@@ -531,6 +553,5 @@ export async function getContactSettings(): Promise<ContactSettings> {
   });
   return data || defaultContact;
 }
-
 
 

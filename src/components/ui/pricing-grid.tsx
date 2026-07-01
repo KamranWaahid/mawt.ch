@@ -1,6 +1,8 @@
 "use client";
 
 import { motion } from "motion/react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 
 interface PricingPlan {
   name: string;
@@ -17,6 +19,9 @@ interface PricingGridProps {
 }
 
 export function PricingGrid({ plans }: PricingGridProps) {
+  const params = useParams();
+  const currentLang = (params?.lang as string) || "en";
+
   return (
     <section className="bg-white px-6 py-24 sm:px-8 md:px-10 lg:px-12">
       <div className="site-container-wide grid gap-8 md:grid-cols-3">
@@ -49,13 +54,13 @@ export function PricingGrid({ plans }: PricingGridProps) {
                 </li>
               ))}
             </ul>
-            <button className={`w-full py-3 text-sm font-normal transition-colors border ${
+            <Link href={`/${currentLang}/contact`} className={`block w-full py-3 text-center text-sm font-normal transition-colors border ${
               plan.recommended 
                 ? "bg-black text-white border-black hover:bg-neutral-800" 
                 : "bg-transparent text-black border-black hover:bg-black hover:text-white"
             }`}>
               {plan.cta}
-            </button>
+            </Link>
           </motion.div>
         ))}
       </div>

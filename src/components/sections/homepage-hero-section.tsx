@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef } from "react";
+import { useId, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { motion, useScroll, useTransform, type MotionValue } from "motion/react";
+import { motion, useMotionValueEvent, useScroll, useTransform } from "motion/react";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
+import { Menu, X } from "lucide-react";
 import type { SiteSettings } from "@/lib/types";
 import { localizedHref } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/lib/routing/url-map";
@@ -81,16 +82,63 @@ function SwissMark() {
   );
 }
 
-function MawatLogo({ className }: { className?: string }) {
+const mawatLogoPaths = [
+  "M36.3703 87.5942H0V123.965H36.3703V87.5942Z",
+  "M295.364 122.065L267.051 92.625C257.992 96.2525 250.068 102.133 250.068 114.142C250.068 126.819 261.161 134.293 271.805 134.293C281.771 134.293 289.694 129.759 295.364 122.065Z",
+  "M317.328 144.708C310.598 151.992 302.073 157.376 292.613 160.335H332.497L317.328 144.708Z",
+  "M566.68 0H526.367L500.555 106.667H499.877L471.115 0H430.802L402.269 106.667H401.591L376.228 0H303.554C318.025 5.79443 328.879 17.6124 328.879 36.4658C328.879 56.8465 314.388 69.5332 296.719 78.3632L316.87 98.9731L332.946 74.2871H374.166L339.514 120.709L379.368 160.344H418.555L450.257 51.8635H450.935L482.637 160.344H520.907L557.22 33.0674H611.947V160.344H650.676V33.0674H695.971V0H566.661H566.68Z",
+  "M280.413 22.8723C271.583 22.8723 265.016 29.2109 265.016 37.5923C265.016 45.0668 269.321 52.0831 277.015 58.4217C287.21 54.3455 295.582 47.3292 295.582 37.5923C295.582 29.44 289.692 22.8723 280.413 22.8723Z",
+  "M36.3709 123.965V160.335H72.8271L72.7603 123.965H36.3613H36.3709Z",
+  "M212.934 115.726C212.934 93.0832 228.781 79.041 246.45 71.3374C236.484 61.6004 229.917 50.2789 229.917 36.4658C229.917 17.3356 241.362 5.70852 255.977 0H163.648L128.777 102.82H127.87L91.4039 0H36.3711V87.5942H72.7032L72.6364 46.9569L113.15 160.344H140.327L181.996 46.8805H182.673L181.766 160.344H248.197C228.37 154.359 212.934 139.801 212.934 115.726Z",
+];
+
+function MawatLogo({
+  className,
+  tone = "light",
+  videoFill = false,
+}: {
+  className?: string;
+  tone?: "light" | "dark";
+  videoFill?: boolean;
+}) {
+  const rawId = useId();
+  const logoId = rawId.replace(/:/g, "");
+  const clipPathId = `mawt-logo-shape-${logoId}`;
+
   return (
-    <svg viewBox="0 0 696 160" fill="none" aria-hidden="true" className={className}>
-      <path d="M36.3703 87.5942H0V123.965H36.3703V87.5942Z" fill="#75DAB4" />
-      <path d="M295.364 122.065L267.051 92.625C257.992 96.2525 250.068 102.133 250.068 114.142C250.068 126.819 261.161 134.293 271.805 134.293C281.771 134.293 289.694 129.759 295.364 122.065Z" fill="white" />
-      <path d="M317.328 144.708C310.598 151.992 302.073 157.376 292.613 160.335H332.497L317.328 144.708Z" fill="white" />
-      <path d="M566.68 0H526.367L500.555 106.667H499.877L471.115 0H430.802L402.269 106.667H401.591L376.228 0H303.554C318.025 5.79443 328.879 17.6124 328.879 36.4658C328.879 56.8465 314.388 69.5332 296.719 78.3632L316.87 98.9731L332.946 74.2871H374.166L339.514 120.709L379.368 160.344H418.555L450.257 51.8635H450.935L482.637 160.344H520.907L557.22 33.0674H611.947V160.344H650.676V33.0674H695.971V0H566.661H566.68Z" fill="white" />
-      <path d="M280.413 22.8723C271.583 22.8723 265.016 29.2109 265.016 37.5923C265.016 45.0668 269.321 52.0831 277.015 58.4217C287.21 54.3455 295.582 47.3292 295.582 37.5923C295.582 29.44 289.692 22.8723 280.413 22.8723Z" fill="white" />
-      <path d="M36.3709 123.965V160.335H72.8271L72.7603 123.965H36.3613H36.3709Z" fill="white" />
-      <path d="M212.934 115.726C212.934 93.0832 228.781 79.041 246.45 71.3374C236.484 61.6004 229.917 50.2789 229.917 36.4658C229.917 17.3356 241.362 5.70852 255.977 0H163.648L128.777 102.82H127.87L91.4039 0H36.3711V87.5942H72.7032L72.6364 46.9569L113.15 160.344H140.327L181.996 46.8805H182.673L181.766 160.344H248.197C228.37 154.359 212.934 139.801 212.934 115.726Z" fill="white" />
+    <svg
+      viewBox="0 0 696 160"
+      fill="none"
+      aria-hidden="true"
+      className={className}
+    >
+      <defs>
+        <clipPath id={clipPathId}>
+          {mawatLogoPaths.map((path) => (
+            <path key={`clip-${path}`} d={path} />
+          ))}
+        </clipPath>
+      </defs>
+
+      {mawatLogoPaths.map((path) => (
+        <path key={`base-${path}`} d={path} fill={tone === "dark" ? "#050505" : "white"} />
+      ))}
+
+      {videoFill ? (
+        <g clipPath={`url(#${clipPathId})`}>
+          <foreignObject x="-18" y="-38" width="732" height="236">
+            <video
+              src="/Approach%20Page/10577f87-9a42-46fc-8b99-321218f53096.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              className="h-full w-full object-cover"
+            />
+          </foreignObject>
+        </g>
+      ) : null}
     </svg>
   );
 }
@@ -104,19 +152,23 @@ function StatementWord({
   word: string;
   index: number;
   total: number;
-  progress: MotionValue<number>;
+  progress: number;
 }) {
-  const start = 0.86 + index * 0.003;
-  const end = Math.min(0.995, start + 0.045);
-  const opacity = useTransform(progress, [start, end], [0, 1]);
-  const y = useTransform(progress, [start, end], [14, 0]);
-  const blur = useTransform(progress, [start, end], ["blur(10px)", "blur(0px)"]);
+  const start = 0.58 + index * 0.004;
+  const end = Math.min(0.76, start + 0.07);
+  const localProgress = Math.max(0, Math.min(1, (progress - start) / (end - start)));
+  const y = (1 - localProgress) * 14;
+  const blur = (1 - localProgress) * 10;
 
   return (
     <span className="inline">
       <motion.span
         className="inline-block will-change-[transform,opacity,filter]"
-        style={{ opacity, y, filter: blur }}
+        style={{
+          opacity: localProgress,
+          transform: `translateY(${y}px)`,
+          filter: `blur(${blur}px)`,
+        }}
       >
         {word}
       </motion.span>
@@ -130,12 +182,16 @@ function HeroGradientStatement({
   progress,
 }: {
   text: string;
-  progress: MotionValue<number>;
+  progress: number;
 }) {
   const words = text.split(" ");
+  const exitProgress = Math.max(0, Math.min(1, (progress - 0.78) / 0.1));
 
   return (
-    <h2 className="max-w-[1040px] select-text font-serif text-[clamp(2.1rem,4.05vw,3.7rem)] font-normal leading-[1.01] tracking-normal text-white">
+    <h2
+      className="max-w-[1040px] select-text font-serif text-[clamp(2.1rem,4.05vw,3.7rem)] font-normal leading-[1.01] tracking-normal text-white"
+      style={{ opacity: 1 - exitProgress }}
+    >
       {words.map((word, index) => (
         <StatementWord
           key={`${word}-${index}`}
@@ -151,29 +207,53 @@ function HeroGradientStatement({
 
 export function HomepageHeroSection({ settings, dict, transitionDict }: HomepageHeroSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [isHeroMobileMenuOpen, setIsHeroMobileMenuOpen] = useState(false);
   const params = useParams();
   const lang = (params?.lang === "fr" ? "fr" : "en") as Locale;
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
   });
-  const navbarOpacity = useTransform(scrollYProgress, [0.08, 0.32], [0, 1]);
-  const navbarY = useTransform(scrollYProgress, [0.08, 0.32], [-20, 0]);
-  const navLinksOpacity = useTransform(scrollYProgress, [0.28, 0.55], [0, 1]);
-  const heroLogoScale = useTransform(scrollYProgress, [0, 0.74], [1, 0.072]);
-  const heroLogoX = useTransform(scrollYProgress, [0, 0.74], ["0%", "-0.6%"]);
-  const heroLogoY = useTransform(scrollYProgress, [0, 0.74], ["0svh", "-4.2svh"]);
-  const heroContentOpacity = useTransform(scrollYProgress, [0, 0.6, 0.7], [1, 1, 0]);
-  const desktopContentY = useTransform(scrollYProgress, [0, 0.64, 1], ["0svh", "-42svh", "-42svh"]);
-  const compactContentY = useTransform(scrollYProgress, [0, 0.64, 1], ["0svh", "-20svh", "-20svh"]);
-  const transitionGradientOpacity = useTransform(scrollYProgress, [0.74, 0.88], [0, 1]);
-  const transitionStatementOpacity = useTransform(scrollYProgress, [0.82, 0.92, 0.995, 1], [0, 1, 1, 0]);
-  const transitionStatementY = useTransform(scrollYProgress, [0.82, 0.94, 1], [26, 0, -4]);
-  const transitionCtaOpacity = useTransform(scrollYProgress, [0.91, 0.97, 1], [0, 1, 0]);
-  const transitionCtaY = useTransform(scrollYProgress, [0.91, 0.98, 1], [16, 0, -4]);
-  const compactLogoScale = useTransform(scrollYProgress, [0, 0.8], [1, 0.72]);
-  const compactLogoY = useTransform(scrollYProgress, [0, 0.8], ["0svh", "-2svh"]);
-  const compactLogoOpacity = useTransform(scrollYProgress, [0.55, 0.9], [1, 0.25]);
+  useMotionValueEvent(scrollYProgress, "change", setScrollProgress);
+  const navbarOpacity = useTransform(scrollYProgress, [0.005, 0.07], [0, 1]);
+  const navbarY = useTransform(scrollYProgress, [0.005, 0.07], [-12, 0]);
+  const navLinksOpacity = useTransform(scrollYProgress, [0.018, 0.075], [0, 1]);
+  const heroLogoScale = useTransform(scrollYProgress, [0, 0.52], [1, 0.072]);
+  const heroLogoX = useTransform(scrollYProgress, [0, 0.52], ["0%", "-0.6%"]);
+  const heroLogoY = useTransform(scrollYProgress, [0, 0.52], ["0svh", "-3.05svh"]);
+  const heroLogoOpacity =
+    scrollProgress <= 0.38 ? 1 : scrollProgress >= 0.48 ? 0 : 1 - (scrollProgress - 0.38) / 0.1;
+  const navLogoOpacity =
+    scrollProgress <= 0.38 ? 0 : scrollProgress >= 0.48 ? 1 : (scrollProgress - 0.38) / 0.1;
+  const heroContentOpacity =
+    scrollProgress <= 0.5 ? 1 : scrollProgress >= 0.6 ? 0 : 1 - (scrollProgress - 0.5) / 0.1;
+  const isHomeNavLight = scrollProgress >= 0.82;
+  const homeNavTextClass = isHomeNavLight ? "text-black/70" : "text-white/72";
+  const homeNavHoverClass = isHomeNavLight ? "hover:text-black" : "hover:text-white";
+  const homeNavDividerClass = isHomeNavLight ? "text-black/25" : "text-white/25";
+  const homeNavSlashClass = isHomeNavLight ? "text-black/45" : "text-white/45";
+  const desktopContentY = useTransform(scrollYProgress, [0, 0.28, 0.52, 1], ["0svh", "0svh", "-42svh", "-42svh"]);
+  const compactContentY = useTransform(scrollYProgress, [0, 0.28, 0.52, 1], ["0svh", "0svh", "-24svh", "-24svh"]);
+  const transitionGradientY = useTransform(
+    scrollYProgress,
+    [0.5, 0.64, 0.72, 0.8, 0.98],
+    ["0vh", "-194vh", "-216vh", "-224vh", "-345vh"]
+  );
+  const transitionStatementY = useTransform(
+    scrollYProgress,
+    [0, 0.54, 0.64, 0.82, 0.94],
+    ["56svh", "56svh", "0svh", "0svh", "42svh"]
+  );
+  const transitionCtaY = useTransform(
+    scrollYProgress,
+    [0, 0.6, 0.68, 0.82, 0.94],
+    ["56svh", "56svh", "0svh", "0svh", "42svh"]
+  );
+  const compactLogoScale = useTransform(scrollYProgress, [0, 0.34], [1, 0.34]);
+  const compactLogoY = useTransform(scrollYProgress, [0, 0.34], ["0svh", "-2.5svh"]);
+  const compactLogoOpacity =
+    scrollProgress <= 0.5 ? 1 : scrollProgress >= 0.6 ? 0 : 1 - (scrollProgress - 0.5) / 0.1;
 
   const navHref = (route: string) => {
     if (route === "news") return `/${lang}/news`;
@@ -181,53 +261,95 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   };
 
   return (
-    <section ref={sectionRef} className="relative z-50 h-[300svh] w-full bg-black text-white">
+    <section ref={sectionRef} className="relative z-50 h-[430svh] w-full bg-black text-white">
       <div className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden bg-black">
         <motion.div
+          data-homepage-gradient
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-0 bg-[linear-gradient(180deg,#000000_0%,#020807_9%,#001015_20%,#00212A_33%,#002B36_43%,#0F4C46_55%,#28725F_66%,#3D9479_76%,#5EC9A0_84%,#75DAB4_90%,#A9EFD6_95%,#D5FFEF_98%,#F6F5F4_100%)]"
-          style={{ opacity: transitionGradientOpacity }}
+          className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[480vh]"
+          style={{
+            y: transitionGradientY,
+            background:
+              "linear-gradient(180deg, #000000 0%, #000000 18%, #001015 28%, #002B36 39%, #28725F 48%, #75DAB4 56%, #A9EFD6 64%, #D5FFEF 72%, #EEF8F3 80%, #F6F5F4 88%, #F6F5F4 100%)",
+          }}
         />
 
         <motion.nav
           aria-label="Homepage transition navigation"
-          className="absolute left-0 right-0 top-0 z-50 px-5 pt-[clamp(1.15rem,3.5vh,2.3rem)] sm:px-7 md:px-9 lg:px-[2.5vw]"
+          className="absolute left-0 right-0 top-0 z-50 h-[71px] border-b border-transparent bg-transparent px-5 sm:px-7 md:px-9 lg:px-[2.5vw]"
           style={{ opacity: navbarOpacity, y: navbarY }}
         >
-          <div className="mx-auto flex w-full max-w-[1760px] items-start justify-between gap-5 md:gap-8">
+          <div className="mx-auto flex h-full w-full max-w-[1760px] items-center justify-between gap-5 md:gap-8">
+            <motion.div style={{ opacity: navLogoOpacity }} className="shrink-0">
+              <Link href={`/${lang}`} aria-label="MAWT home" className="block w-[98px]">
+                <MawatLogo className="h-auto w-full" tone={isHomeNavLight ? "dark" : "light"} />
+              </Link>
+            </motion.div>
+
             <motion.div
-              className="ml-auto hidden flex-wrap items-center justify-end gap-x-5 gap-y-3 bg-black/10 text-[13px] font-normal leading-none text-white/72 md:flex lg:gap-x-8 lg:text-[14px]"
+              className={`ml-auto hidden flex-wrap items-center justify-end gap-x-5 gap-y-3 text-[13px] font-normal leading-none transition-colors duration-300 md:flex lg:gap-x-8 lg:text-[14px] ${homeNavTextClass}`}
               style={{ opacity: navLinksOpacity }}
             >
               {navItems.map((item) => (
-                <Link key={item.route} href={navHref(item.route)} className="transition-colors hover:text-white">
+                <Link key={item.route} href={navHref(item.route)} className={`transition-colors ${homeNavHoverClass}`}>
                   {item.label}
                 </Link>
               ))}
-              <span className="text-white/25">—</span>
-              <Link href="/fr" className={`transition-colors hover:text-white ${lang === "fr" ? "text-white" : ""}`}>
+              <span className={homeNavDividerClass}>—</span>
+              <Link href="/fr" className={`transition-colors ${homeNavHoverClass} ${lang === "fr" ? (isHomeNavLight ? "text-black" : "text-white") : ""}`}>
                 FR
               </Link>
-              <span className="text-white/45">/</span>
-              <Link href="/en" className={`transition-colors hover:text-white ${lang === "en" ? "text-white" : ""}`}>
+              <span className={homeNavSlashClass}>/</span>
+              <Link href="/en" className={`transition-colors ${homeNavHoverClass} ${lang === "en" ? (isHomeNavLight ? "text-black" : "text-white") : ""}`}>
                 EN
               </Link>
             </motion.div>
 
             <motion.div
-              className="flex items-center gap-2 text-[13px] font-normal leading-none text-white/72 md:hidden"
+              className={`ml-auto flex items-center gap-3 text-[13px] font-normal leading-none transition-colors duration-300 md:hidden ${homeNavTextClass}`}
               style={{ opacity: navLinksOpacity }}
             >
-              <Link href="/fr" className={`transition-colors hover:text-white ${lang === "fr" ? "text-white" : ""}`}>
+              <Link href="/fr" className={`transition-colors ${homeNavHoverClass} ${lang === "fr" ? (isHomeNavLight ? "text-black" : "text-white") : ""}`}>
                 FR
               </Link>
-              <span className="text-white/45">/</span>
-              <Link href="/en" className={`transition-colors hover:text-white ${lang === "en" ? "text-white" : ""}`}>
+              <span className={homeNavSlashClass}>/</span>
+              <Link href="/en" className={`transition-colors ${homeNavHoverClass} ${lang === "en" ? (isHomeNavLight ? "text-black" : "text-white") : ""}`}>
                 EN
               </Link>
+              <button
+                type="button"
+                aria-label={isHeroMobileMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={isHeroMobileMenuOpen}
+                onClick={() => setIsHeroMobileMenuOpen((open) => !open)}
+                className={`ml-1 inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors ${isHomeNavLight ? "bg-black/5 text-black" : "bg-white/10 text-white"}`}
+              >
+                {isHeroMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+              </button>
             </motion.div>
           </div>
         </motion.nav>
+
+        {isHeroMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, filter: "blur(10px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, y: -8, filter: "blur(10px)" }}
+            className="fixed inset-0 z-[49] bg-black/94 px-6 pb-10 pt-[calc(env(safe-area-inset-top)+6rem)] text-white md:hidden"
+          >
+            <div className="flex flex-col gap-7">
+              {navItems.map((item) => (
+                <Link
+                  key={item.route}
+                  href={navHref(item.route)}
+                  onClick={() => setIsHeroMobileMenuOpen(false)}
+                  className="text-[clamp(2rem,10vw,3.35rem)] font-normal leading-none tracking-tight text-white"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
       {/* Desktop Canvas (lg screens) */}
       <div
@@ -240,10 +362,11 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
             scale: heroLogoScale,
             x: heroLogoX,
             y: heroLogoY,
+            opacity: heroLogoOpacity,
             transformOrigin: "0% 0%",
           }}
         >
-          <MawatLogo className="h-auto w-full" />
+          <MawatLogo className="h-auto w-full" videoFill />
         </motion.h1>
 
         <motion.div
@@ -307,13 +430,16 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
 
       <motion.div
         className="pointer-events-none absolute inset-x-0 top-[43svh] z-30 hidden px-5 sm:px-7 md:px-9 lg:block lg:px-[2.5vw]"
-        style={{ opacity: transitionStatementOpacity, y: transitionStatementY }}
+        style={{ y: transitionStatementY }}
       >
         <div className="mx-auto w-full max-w-[1760px]">
-          <HeroGradientStatement text={transitionDict.statement} progress={scrollYProgress} />
+          <HeroGradientStatement text={transitionDict.statement} progress={scrollProgress} />
           <motion.div
-            className="mt-10"
-            style={{ opacity: transitionCtaOpacity, y: transitionCtaY }}
+            className="mt-12"
+            style={{
+              opacity: scrollProgress < 0.68 ? 0 : scrollProgress > 0.78 ? Math.max(0, 1 - (scrollProgress - 0.78) / 0.1) : 1,
+              y: transitionCtaY,
+            }}
           >
             <Link
               href={localizedHref("a-propos", lang)}
@@ -328,18 +454,18 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
       <div className="landscapeHero relative z-10 hidden h-[100svh] w-full overflow-hidden bg-black px-8 py-5 text-white lg:hidden">
         <div className="relative h-full w-full">
           <motion.h1 aria-label="MAWT" className="absolute left-[2%] top-[5%] w-[82%] select-none" style={{ opacity: compactLogoOpacity, scale: compactLogoScale, y: compactLogoY, transformOrigin: "0% 0%" }}>
-            <MawatLogo className="h-auto w-full" />
+            <MawatLogo className="h-auto w-full" videoFill />
           </motion.h1>
 
-          <motion.div className="absolute left-[2%] top-[56%]" style={{ y: compactContentY }}>
+          <motion.div className="absolute left-[2%] top-[56%]" style={{ opacity: heroContentOpacity, y: compactContentY }}>
             <GeometricSymbol className="h-7 w-[45px] text-white" />
           </motion.div>
 
-          <motion.p className="absolute left-[2%] top-[65%] w-[48%] text-[clamp(1.2rem,3vw,1.55rem)] font-normal leading-[1.06] tracking-[-0.02em] text-white" style={{ y: compactContentY }}>
+          <motion.p className="absolute left-[2%] top-[65%] w-[48%] text-[clamp(1.2rem,3vw,1.55rem)] font-normal leading-[1.06] tracking-[-0.02em] text-white" style={{ opacity: heroContentOpacity, y: compactContentY }}>
             {dict.statement}
           </motion.p>
 
-          <motion.div className="absolute left-[6.5%] top-[88%]" style={{ y: compactContentY }}>
+          <motion.div className="absolute left-[6.5%] top-[88%]" style={{ opacity: heroContentOpacity, y: compactContentY }}>
           <Link
             href={settings.ctaHref}
             className="inline-flex items-center text-[0.8125rem] font-normal leading-none text-white transition-colors hover:text-[#75DAB4]"
@@ -351,13 +477,13 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           </Link>
           </motion.div>
 
-          <motion.p className="absolute left-[59%] top-[68%] w-[38%] text-[0.8125rem] font-normal leading-[1.32] tracking-[-0.01em] text-white/74" style={{ y: compactContentY }}>
+          <motion.p className="absolute left-[59%] top-[68%] w-[38%] text-[0.8125rem] font-normal leading-[1.32] tracking-[-0.01em] text-white/74" style={{ opacity: heroContentOpacity, y: compactContentY }}>
             <span className="text-white">MAWT is a</span>
             <SwissMark />
             {dict.description}
           </motion.p>
 
-          <motion.ul className="absolute right-[2%] top-[88%] flex items-center gap-4" aria-label="Social links" style={{ y: compactContentY }}>
+          <motion.ul className="absolute right-[2%] top-[88%] flex items-center gap-4" aria-label="Social links" style={{ opacity: heroContentOpacity, y: compactContentY }}>
             {socialLinks.map(({ href, label, icon: Icon }) => (
               <li key={label}>
                 <Link
@@ -378,11 +504,11 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
       <div className="portraitHero relative z-10 flex h-[100svh] w-full flex-col justify-between overflow-hidden bg-black px-5 py-6 text-white sm:px-7 sm:py-8 md:px-9 md:py-10 lg:hidden">
         <div className="w-full">
           <motion.h1 aria-label="MAWT" className="select-none" style={{ opacity: compactLogoOpacity, scale: compactLogoScale, y: compactLogoY, transformOrigin: "0% 0%" }}>
-            <MawatLogo className="h-auto w-full max-w-[92vw] sm:max-w-[88vw] md:max-w-[82vw]" />
+            <MawatLogo className="h-auto w-full max-w-[92vw] sm:max-w-[88vw] md:max-w-[82vw]" videoFill />
           </motion.h1>
         </div>
 
-        <motion.div className="mt-auto flex flex-col gap-[clamp(1rem,3svh,2rem)] pt-5 sm:pt-8" style={{ y: compactContentY }}>
+        <motion.div className="mt-auto flex flex-col gap-[clamp(1rem,3svh,2rem)] pt-5 sm:pt-8" style={{ opacity: heroContentOpacity, y: compactContentY }}>
           <div>
             <GeometricSymbol className="h-[clamp(2rem,6vw,3.25rem)] w-[clamp(3.25rem,10vw,5.25rem)] text-white" />
           </div>

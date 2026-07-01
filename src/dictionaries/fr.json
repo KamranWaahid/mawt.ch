@@ -24,13 +24,12 @@
       "Mais pour la plupart des entreprises, la réalité se résume à des outils déconnectés et des processus manuels.",
       "Les audits s'accumulent, mais la capacité technique pour transformer ces idées en logiciels fait défaut.",
       "Car l'IA n'est qu'une promesse. Votre entreprise a besoin de systèmes.",
-      "La vraie valeur n'est créée que lorsque la technologie est intégrée au cœur même de vos opérations.",
-      "Nous concevons les stratégies, les systèmes d'automatisation IA, les produits numériques et les expériences qui transforment le potentiel en production."
+      "La vraie valeur n'est créée que lorsque la technologie est intégrée au cœur même de vos opérations."
     ]
   },
   "vision": {
     "badge": "Services",
-    "statement": "L'IA n'est pas un gadget qu'on ajoute. C'est une décision qui change comment vous travaillez. Voici les domaines où MAWT intervient et où cette décision compte le plus.",
+    "statement": "Nous transformons les opérations dispersées en systèmes connectés, plus simples à piloter, mesurer et faire évoluer.",
     "cta": "Voir tous les services",
     "items": [
       {
@@ -105,6 +104,10 @@
   "insights": {
     "badge": "Aperçus",
     "headline": "Dernières nouvelles de l'équipe",
+    "fallbackCategory": "Aperçu",
+    "recentLabel": "Récent",
+    "readTimeUnit": "min de lecture",
+    "fallbackExcerpt": "Notes de terrain sur l'IA en entreprise, l'automatisation et les systèmes qui améliorent les opérations.",
     "articles": [
       {
         "category": "Design UI/UX",

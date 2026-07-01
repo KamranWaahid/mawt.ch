@@ -3,14 +3,16 @@
 import { motion } from "motion/react";
 import { Locale } from "@/i18n-config";
 import Link from "next/link";
-interface Project {
+import type { Project as ProjectType } from "@/lib/types";
+
+type Project = Partial<ProjectType> & {
   _id?: string;
   slug?: string;
   title?: string;
   workType?: string;
   industry?: string;
   year?: number;
-}
+};
 
 interface ProjectListProps {
   projects: Project[];
@@ -39,7 +41,7 @@ export function ProjectList({ projects, lang }: ProjectListProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.03 }}
           >
-            <Link 
+            <Link
               href={`/${lang}/${lang === "fr" ? "projets" : "work"}/${project.slug || ""}`}
               className="group flex flex-col gap-2 border-b border-black/[0.06] py-4 transition-colors hover:bg-white/45 md:grid md:grid-cols-12 md:items-center md:gap-4 md:px-3 md:py-5"
             >

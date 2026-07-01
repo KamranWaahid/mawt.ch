@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Globe, ChevronDown, Menu, X, ArrowRight } from "lucide-react";
@@ -95,6 +95,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const activeServicesData: Record<string, { title: string; href: string; items: { title: string; href: string }[] }> = services && services.length > 0
     ? services.reduce((acc, service) => {
@@ -129,14 +130,25 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
 
   const activeNavItems = (mainNav && mainNav.length > 0 ? mainNav : navItems).map((item: any) => ({
     ...item,
-    hasDropdown: false,
+    hasDropdown: item.hasDropdown ?? item.href === "/services",
   }));
 
   // Default to light if not on homepage, unless overridden by prop
   const isHomePage = pathname === "/" || pathname === "/en" || pathname === "/fr";
   const theme = themeProp || (isHomePage ? "dark" : "light");
-
   const isLight = theme === "light" || activeDropdown !== null || isMobileMenuOpen;
+  const showGlass = isScrolled || activeDropdown !== null || isMobileMenuOpen;
+
+  useEffect(() => {
+    const updateScrolled = () => setIsScrolled(window.scrollY > 12);
+    updateScrolled();
+    window.addEventListener("scroll", updateScrolled, { passive: true });
+    return () => window.removeEventListener("scroll", updateScrolled);
+  }, []);
+
+  if (isHomePage) {
+    return null;
+  }
 
   const handleLanguageChange = (lang: string) => {
     if (lang === currentLang) return;
@@ -155,25 +167,28 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
 
   return (
     <header
-      style={{ viewTransitionName: "site-header", paddingTop: "calc(env(safe-area-inset-top) + 2rem)" }}
-      className={`absolute top-0 left-0 right-0 z-40 transition-colors duration-300 pb-8 ${activeDropdown || isMobileMenuOpen ? "bg-white" : "bg-transparent"
-        }`}
+      style={{ viewTransitionName: "site-header" }}
+      className={`fixed left-0 right-0 top-0 z-[80] h-[71px] px-5 transition-all duration-300 sm:px-7 md:px-9 lg:px-[2.5vw] ${
+        showGlass
+          ? "border-b border-black/[0.04] bg-transparent"
+          : "border-b border-transparent bg-transparent"
+      }`}
       onMouseLeave={() => setActiveDropdown(null)}
     >
       <nav
         aria-label="Primary"
-        className="site-container-wide flex items-center justify-between gap-6"
+        className="mx-auto flex h-full w-full max-w-[1760px] items-center justify-between gap-6"
       >
         <Link
           href={`/${currentLang}`}
           aria-label={`${title} home`}
           onMouseEnter={() => setActiveDropdown(null)}
-          className="shrink-0 transition-opacity hover:opacity-80 z-50 flex items-center"
+          className="z-50 flex w-[98px] shrink-0 items-center transition-opacity hover:opacity-80"
         >
           <Image
             src={isLight ? LogoBlack : LogoWhite}
             alt="MAWT Logo"
-            className="h-5 w-auto"
+            className="h-auto w-full"
           />
         </Link>
 
@@ -198,7 +213,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
                   <Link
                     href={navHref(item.href, currentLang as Locale)}
                     aria-current={pathname === navHref(item.href, currentLang as Locale) ? "page" : undefined}
-                    className={`group relative flex items-center gap-1.5 py-2 text-sm transition-colors duration-300 ${isLight ? "text-black" : "text-neutral-300 hover:text-white"
+                    className={`group relative flex items-center gap-1.5 py-2 text-[14px] font-normal leading-none transition-colors duration-300 ${isLight ? "text-black/72 hover:text-black" : "text-white/72 hover:text-white"
                       }`}
                   >
                     {navLabel(item, currentLang)}
@@ -256,7 +271,7 @@ export function SiteHeader({ title, theme: themeProp, socialLinks, services, mai
           )}
 
           <button
-            className="flex items-center justify-center p-3 lg:hidden z-50"
+            className="z-50 flex items-center justify-center p-3 lg:hidden"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-expanded={isMobileMenuOpen}
             aria-label="Toggle menu"

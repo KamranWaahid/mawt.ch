@@ -279,13 +279,18 @@ export default async function FamilyPillarPage({ params }: Props) {
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
-              {projects.map((project: any, i: number) => (
+              {projects.map((project: any, i: number) => {
+                const coverImage = project.coverImage
+                  ? urlForImage(project.coverImage)?.width(1000).url()
+                  : null;
+
+                return (
                 <SectionReveal key={project._id} delay={i * 0.1} className="group bg-white overflow-hidden border border-black/5 rounded-sm flex flex-col justify-between">
                   <div>
                     <div className="relative aspect-[16/10] bg-neutral-100 overflow-hidden">
-                      {project.coverImage ? (
+                      {coverImage ? (
                         <Image
-                          src={urlForImage(project.coverImage)?.width(1000).url() || ""}
+                          src={coverImage}
                           alt={project.title}
                           fill
                           className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -306,14 +311,15 @@ export default async function FamilyPillarPage({ params }: Props) {
                   </div>
                   <div className="px-8 pb-8 pt-4">
                     <Link
-                      href={`/${lang}/${lang === "fr" ? "projets" : "projects"}/${project.slug}`}
+                      href={`/${lang}/${lang === "fr" ? "projets" : "work"}/${project.slug}`}
                       className="inline-flex items-center gap-2 text-sm font-normal text-black border-b border-black pb-1 hover:opacity-60 transition-opacity"
                     >
                       {labels.viewCaseStudy} <ArrowRight size={14} />
                     </Link>
                   </div>
                 </SectionReveal>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>

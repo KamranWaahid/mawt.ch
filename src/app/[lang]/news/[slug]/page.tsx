@@ -23,13 +23,17 @@ export async function generateMetadata({
   
   if (!post) return {};
 
+  const imageUrl = post.mainImage
+    ? urlForImage(post.mainImage)?.width(1200).height(630).url()
+    : null;
+
   return {
     title: post.title,
     description: post.excerpt || post.title,
     openGraph: {
       title: post.title,
       description: post.excerpt,
-      images: post.mainImage ? [urlForImage(post.mainImage)?.width(1200).height(630).url() || ""] : [],
+      images: imageUrl ? [imageUrl] : [],
     },
   };
 }
@@ -102,13 +106,23 @@ export default async function BlogPostPage({
   }
 
   const postUrl = `${SITE_URL}/${lang}/news/${slug}`;
+  const articleImage = post.mainImage
+    ? urlForImage(post.mainImage)?.width(1200).height(630).url()
+    : null;
+  const mainImage = post.mainImage
+    ? urlForImage(post.mainImage)?.width(1600).height(900).url()
+    : null;
+  const authorAvatarSmall = post.author?.avatar
+    ? urlForImage(post.author.avatar)?.width(100).height(100).url()
+    : null;
+  const authorAvatarLarge = post.author?.avatar
+    ? urlForImage(post.author.avatar)?.width(200).height(200).url()
+    : null;
   const postLd = articleLd({
     url: postUrl,
     headline: post.title,
     description: post.excerpt,
-    image: post.mainImage
-      ? urlForImage(post.mainImage)?.width(1200).height(630).url() || undefined
-      : undefined,
+    image: articleImage ?? undefined,
     datePublished: post.publishedAt,
     dateModified: post.publishedAt,
     authorName: post.author?.name,
@@ -150,11 +164,11 @@ export default async function BlogPostPage({
             
             <div className="flex items-center justify-between py-8 border-y border-black/5">
                <div className="flex items-center gap-4">
-                  {post.author?.avatar && (
+                  {authorAvatarSmall && (
                     <div className="w-12 h-12 rounded-full bg-neutral-100 overflow-hidden relative">
                        <Image 
-                         src={urlForImage(post.author.avatar)?.width(100).height(100).url() || ""}
-                         alt={post.author.name}
+                         src={authorAvatarSmall}
+                         alt={post.author?.name ?? "Team MAWT"}
                          fill
                          className="object-cover"
                        />
@@ -171,11 +185,11 @@ export default async function BlogPostPage({
             </div>
           </div>
 
-          {post.mainImage && (
+          {mainImage && (
             <SectionReveal delay={0.1} className="mb-16 aspect-[16/9] relative overflow-hidden rounded-sm border border-black/5">
                <Image 
-                 src={urlForImage(post.mainImage)?.width(1600).height(900).url() || ""}
-                 alt={post.mainImage.alt || post.title}
+                 src={mainImage}
+                 alt={post.mainImage?.alt || post.title}
                  fill
                  priority
                  className="object-cover"
@@ -196,10 +210,10 @@ export default async function BlogPostPage({
         <section className="bg-neutral-50 px-6 py-16 sm:px-8 md:px-10 lg:px-12 md:py-24 lg:py-32 border-t border-black/5">
           <div className="max-w-[800px] mx-auto">
              <div className="flex flex-col md:flex-row gap-8 items-start md:items-center p-8 bg-white border border-black/5 rounded-sm">
-                {post.author.avatar && (
+                {authorAvatarLarge && (
                   <div className="w-20 h-20 rounded-full bg-neutral-100 overflow-hidden relative shrink-0">
                      <Image 
-                       src={urlForImage(post.author.avatar)?.width(200).height(200).url() || ""}
+                       src={authorAvatarLarge}
                        alt={post.author.name}
                        fill
                        className="object-cover"

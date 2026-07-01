@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
 interface Article {
   category: string;
@@ -16,6 +17,9 @@ interface BlogGridProps {
 }
 
 export function BlogGrid({ articles }: BlogGridProps) {
+  const params = useParams();
+  const currentLang = (params?.lang as string) || "en";
+
   return (
     <section className="bg-white px-6 py-16 sm:px-8 md:px-10 lg:px-12">
       <div className="site-container-wide">
@@ -49,7 +53,7 @@ export function BlogGrid({ articles }: BlogGridProps) {
                   {article.excerpt}
                 </p>
                 <Link 
-                  href="#" 
+                  href={`/${currentLang}/news`}
                   className="inline-flex items-center gap-2 text-sm font-normal text-black mt-2 group/link"
                 >
                   Read Article 

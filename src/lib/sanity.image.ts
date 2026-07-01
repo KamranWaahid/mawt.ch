@@ -18,5 +18,10 @@ const getImageBuilder = (): ImageUrlBuilder | null => {
   return builder;
 };
 
-export const urlForImage = (source: SanityImageSource) =>
-  getImageBuilder()?.image(source) ?? null;
+export const urlForImage = (source?: SanityImageSource | null) => {
+  if (!source?.asset?._ref) {
+    return null;
+  }
+
+  return getImageBuilder()?.image(source) ?? null;
+};

@@ -24,13 +24,12 @@
       "But for most businesses, the reality is a mess of disconnected tools and manual workflows.",
       "Slide decks pile up, but the execution layer to turn concepts into software is missing.",
       "Because AI is only a promise. Your business requires systems.",
-      "Value is only created when technology is built deep into the core of how you operate.",
-      "We design the strategies, AI automation systems, digital products, brands and experiences that turn potential into production."
+      "Value is only created when technology is built deep into the core of how you operate."
     ]
   },
   "vision": {
     "badge": "Services",
-    "statement": "AI is not a gadget you bolt on. It is a decision that changes how you work. These are the areas where MAWT steps in and where that decision matters most.",
+    "statement": "We turn scattered operations into connected systems that are easier to run, measure, and scale.",
     "cta": "View all services",
     "items": [
       {
@@ -105,6 +104,10 @@
   "insights": {
     "badge": "Insights",
     "headline": "Latest from the team",
+    "fallbackCategory": "Insight",
+    "recentLabel": "Recent",
+    "readTimeUnit": "min read",
+    "fallbackExcerpt": "Field notes on AI in business, automation, and the systems behind better operations.",
     "articles": [
       {
         "category": "UI/UX Design",

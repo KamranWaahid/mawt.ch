@@ -60,6 +60,23 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const heroImage = project.coverImage
     ? urlForImage(project.coverImage)?.width(2400).height(1200).url()
     : null;
+  const problemImage = project.problemImage
+    ? urlForImage(project.problemImage)?.width(1600).url()
+    : null;
+  const solutionImage = project.solutionImage
+    ? urlForImage(project.solutionImage)?.width(1600).url()
+    : null;
+  const galleryImages =
+    project.gallery
+      ?.map((image, idx) => {
+        const src = urlForImage(image)?.width(1600).url();
+
+        return src ? { image, idx, src } : null;
+      })
+      .filter(
+        (item): item is { image: NonNullable<typeof project.gallery>[number]; idx: number; src: string } =>
+          Boolean(item),
+      ) ?? [];
 
   return (
     <main className="w-full text-black min-h-screen">
@@ -85,11 +102,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </SectionReveal>
 
           {/* Problem Image */}
-          {project.problemImage && (
+          {problemImage && (
             <SectionReveal className="w-full relative overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={urlForImage(project.problemImage)?.width(1600).url() || ""}
+                src={problemImage}
                 alt="Problem visualization"
                 className="w-full h-auto object-contain"
               />
@@ -97,11 +114,11 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           )}
 
           {/* Solution Image */}
-          {project.solutionImage && (
+          {solutionImage && (
             <SectionReveal className="w-full relative overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={urlForImage(project.solutionImage)?.width(1600).url() || ""}
+                src={solutionImage}
                 alt="Solution visualization"
                 className="w-full h-auto object-contain"
               />
@@ -109,13 +126,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           )}
 
           {/* Project Gallery Images */}
-          {project.gallery && project.gallery.length > 0 && (
+          {galleryImages.length > 0 && (
             <>
-              {project.gallery.map((image, idx) => (
+              {galleryImages.map(({ image, idx, src }) => (
                 <SectionReveal key={idx} className="w-full relative overflow-hidden rounded-2xl bg-white/45">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={urlForImage(image)?.width(1600).url() || ""}
+                    src={src}
                     alt={image.alt || `Gallery image ${idx}`}
                     className="w-full h-auto object-contain"
                   />

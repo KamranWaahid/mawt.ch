@@ -8,6 +8,51 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import type { BlogPost } from "@/lib/types";
 
+const getPortableTextWordCount = (blocks?: unknown[]) => {
+  if (!Array.isArray(blocks)) return 0;
+
+  return blocks.reduce<number>((count, block) => {
+    if (!block || typeof block !== "object" || !("children" in block)) return count;
+    const children = (block as { children?: unknown[] }).children;
+    if (!Array.isArray(children)) return count;
+
+    return count + children.reduce<number>((childCount, child) => {
+      if (!child || typeof child !== "object" || !("text" in child)) return childCount;
+      const text = (child as { text?: unknown }).text;
+      if (typeof text !== "string") return childCount;
+      return childCount + text.trim().split(/\s+/).filter(Boolean).length;
+    }, 0);
+  }, 0);
+};
+
+const getReadTime = (post: BlogPost, unitLabel: string) => {
+  const bodyWords = getPortableTextWordCount(post.body);
+  const excerptWords = post.excerpt?.trim().split(/\s+/).filter(Boolean).length || 0;
+  const minutes = Math.max(1, Math.ceil((bodyWords || excerptWords || 180) / 220));
+
+  return `${minutes} ${unitLabel}`;
+};
+
+const formatCategory = (category: string | undefined, fallbackCategory: string) => {
+  if (!category) return fallbackCategory;
+
+  return category
+    .split("-")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
+const formatPostDate = (publishedAt: string | undefined, lang: string, recentLabel: string) => {
+  if (!publishedAt) return recentLabel;
+
+  return new Intl.DateTimeFormat(lang === "fr" ? "fr-FR" : "en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+  }).format(new Date(publishedAt));
+};
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -30,19 +75,19 @@ const itemVariants = {
 export function InsightsSection({ dict, posts }: { dict: any; posts?: BlogPost[] }) {
   const params = useParams();
   const currentLang = (params?.lang as string) || "en";
+  const fallbackCategory = dict?.fallbackCategory || "Insight";
+  const recentLabel = dict?.recentLabel || "Recent";
+  const readTimeUnit = dict?.readTimeUnit || "min read";
 
-  // Use Sanity posts if available (slice to 3), otherwise fallback to dict.articles (slice to 3)
   const displayItems = posts && posts.length > 0 
     ? posts.slice(0, 3).map((post) => ({
         id: post._id,
-        category: post.categories?.[0] || "Insight",
+        category: formatCategory(post.categories?.[0], fallbackCategory),
         title: post.title,
-        date: post.publishedAt 
-          ? new Date(post.publishedAt).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" })
-          : "Recent",
-        readTime: "5 min read",
-        excerpt: post.excerpt || "Field notes on AI in business and automation, from the team that builds the systems.",
-        href: `/${currentLang}/news/${post.slug}`,
+        date: formatPostDate(post.publishedAt, post.language || currentLang, recentLabel),
+        readTime: getReadTime(post, readTimeUnit),
+        excerpt: post.excerpt || dict?.fallbackExcerpt,
+        href: `/${post.language || currentLang}/news/${post.slug}`,
       }))
     : (dict?.articles || []).slice(0, 3).map((article: any, idx: number) => ({
         id: `dict-${idx}`,

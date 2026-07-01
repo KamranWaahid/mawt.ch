@@ -15,9 +15,15 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
   const revealTransition = { duration: 0.95, ease: [0.16, 1, 0.3, 1] as const };
 
   const getLogoUrl = (partner: Partner) => {
-    if (!partner.logo) return "";
+    if (!partner.logo) return null;
     if (typeof partner.logo === "string") return partner.logo;
-    return urlForImage(partner.logo)?.width(300).url() || "";
+    return urlForImage(partner.logo)?.width(300).url() ?? null;
+  };
+
+  const getPartnerUrl = (partner: Partner) => {
+    if (partner.url) return partner.url;
+    if (partner.name.toLowerCase().includes("mellender")) return "https://www.mellender.ch/";
+    return null;
   };
 
   return (
@@ -43,6 +49,7 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
           >
             {displayPartners.map((partner) => {
               const logoSrc = getLogoUrl(partner);
+              const partnerUrl = getPartnerUrl(partner);
               if (!logoSrc) return null;
 
               return (
@@ -50,9 +57,9 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
                   key={partner._id} 
                   className="relative h-8 w-full max-w-[135px] sm:h-10 sm:max-w-[155px]"
                 >
-                  {partner.url ? (
+                  {partnerUrl ? (
                     <a 
-                      href={partner.url} 
+                      href={partnerUrl} 
                       target="_blank" 
                       rel="noopener noreferrer" 
                       className="block relative h-full w-full"
@@ -93,6 +100,13 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
                 fill
                 className="object-contain object-left opacity-45 grayscale contrast-75 brightness-90 mix-blend-multiply"
                 priority
+              />
+              <a
+                href="https://www.mellender.ch/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Visit Mellender Real Estate"
+                className="absolute left-0 top-[18%] h-[64%] w-[16%] rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
               />
             </motion.div>
           </div>

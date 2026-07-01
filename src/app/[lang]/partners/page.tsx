@@ -6,6 +6,7 @@ import { getPartners } from "@/lib/sanity.queries";
 import { standaloneAlternates } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/i18n-config";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
@@ -58,9 +59,9 @@ export default async function PartnersPage({ params }: { params: Promise<{ lang:
           <p className="text-lg text-neutral-500 font-normal mb-10 max-w-3xl mx-auto">
             We work with a select group of partners who share our commitment to technical excellence and operational speed. Join our program to access exclusive resources, training, and support.
           </p>
-          <button className="px-8 py-3 bg-black text-white text-sm font-normal hover:bg-neutral-800 transition-colors">
+          <Link href={`/${lang}/contact`} className="inline-flex px-8 py-3 bg-black text-white text-sm font-normal hover:bg-neutral-800 transition-colors">
             Apply to Program
-          </button>
+          </Link>
         </div>
       </section>
     </div>

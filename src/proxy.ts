@@ -80,6 +80,7 @@ export async function proxy(request: NextRequest) {
     "/Approach%20Page/",
     "/HeroImages/",
     "/Client Logos.png",
+    "/cover-image.png",
     "/HeroImage.gif",
     "/HeroImage.png",
     "/MAWTBackground.gif",

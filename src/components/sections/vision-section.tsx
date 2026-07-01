@@ -2,7 +2,6 @@
 
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import { AnimatedTitle } from "@/components/ui/animated-title";
 import { SectionReveal } from "@/components/ui/section-reveal";
 import { sectionTitleClass } from "@/components/ui/section-title-style";
@@ -26,10 +25,6 @@ export function VisionSection({ dict, services }: { dict: any; services?: any[] 
               showing through it. `self-start` stops the grid item stretching
               (required for sticky to engage). */}
           <div className="lg:col-span-5 lg:sticky lg:top-32 relative top-auto self-start h-fit z-10 pb-4 lg:pb-0">
-            {/* Header Badge */}
-            <div className="mb-6">
-              <Badge label={dict.badge} theme="light" />
-            </div>
             {/* Horizontal Divider — now pinned together with the text */}
             <div className="mb-4 h-px w-full bg-black/10" />
             <AnimatedTitle

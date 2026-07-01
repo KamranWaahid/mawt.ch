@@ -634,7 +634,7 @@ export default async function ServiceDetailPage({ params }: Props) {
               </Link>
               {svc.cta?.secondaryLabel && (
                 <Link
-                  href={`/${lang}/${cleanPath(svc.cta?.secondaryHref || "projects")}`}
+                  href={`/${lang}/${cleanPath(svc.cta?.secondaryHref || (lang === "fr" ? "projets" : "work"))}`}
                   className="px-6 py-3.5 border border-black/10 hover:border-black text-black transition-all duration-300 text-xs font-normal uppercase tracking-widest text-center rounded-sm"
                 >
                   {svc.cta.secondaryLabel}

@@ -86,8 +86,7 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
           className="site-container relative z-10 w-full"
           style={{ opacity: blockOpacity, y: blockY }}
         >
-          {/* Using the exact typography classes from the Hero gradient statement for consistency */}
-          <h2 className="max-w-[1040px] select-text font-serif text-[clamp(2.15rem,4vw,3.65rem)] font-normal leading-[1.02] tracking-normal text-neutral-900">
+          <h2 className="max-w-[1280px] select-text font-serif text-[clamp(1.85rem,3.15vw,3rem)] font-normal leading-[1.04] tracking-normal text-neutral-900">
             {words.map((word, i) => {
               // The text scrub runs from 0.05 to 0.8
               const start = 0.05 + (i / words.length) * 0.75;

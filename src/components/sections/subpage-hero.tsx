@@ -1,8 +1,8 @@
 "use client";
 
-import { AnimatedTitle } from "@/components/ui/animated-title";
 import Link from "next/link";
-import { motion } from "motion/react";
+import { motion, useMotionValueEvent, useScroll } from "motion/react";
+import { useRef, useState } from "react";
 
 interface SubpageHeroProps {
   /** Small eyebrow label above the title */
@@ -24,6 +24,75 @@ interface SubpageHeroProps {
   badge?: string;
 }
 
+function HeroWord({
+  word,
+  index,
+  total,
+  progress,
+  muted = false,
+}: {
+  word: string;
+  index: number;
+  total: number;
+  progress: number;
+  muted?: boolean;
+}) {
+  const start = 0.08 + (index / Math.max(1, total)) * 0.72;
+  const end = Math.min(0.92, start + 0.18);
+  const localProgress = Math.max(0, Math.min(1, (progress - start) / (end - start)));
+  const grey = [167, 173, 183];
+  const black = [6, 40, 51];
+  const color = muted
+    ? `rgb(${grey.map((channel, i) => Math.round(channel + (black[i] - channel) * localProgress)).join(", ")})`
+    : "#062833";
+
+  return (
+    <span className="inline">
+      <span style={{ color }} className="inline-block will-change-[color]">
+        {word}
+      </span>{" "}
+    </span>
+  );
+}
+
+function ScrollHeroTitle({
+  title,
+  subtitle,
+  progress,
+}: {
+  title: string;
+  subtitle?: string;
+  progress: number;
+}) {
+  const titleWords = title.split(" ");
+  const subtitleWords = subtitle?.split(" ") ?? [];
+  const total = titleWords.length + subtitleWords.length;
+
+  return (
+    <h1 className="max-w-[1180px] font-serif text-[clamp(2.55rem,6vw,4.45rem)] font-normal leading-[0.94] tracking-normal text-[#062833] md:max-w-[1240px]">
+      <span className="block">
+        {titleWords.map((word, index) => (
+          <HeroWord key={`title-${word}-${index}`} word={word} index={index} total={total} progress={progress} />
+        ))}
+      </span>
+      {subtitle ? (
+        <span className="mt-1 block">
+          {subtitleWords.map((word, index) => (
+            <HeroWord
+              key={`subtitle-${word}-${index}`}
+              word={word}
+              index={titleWords.length + index}
+              total={total}
+              progress={progress}
+              muted
+            />
+          ))}
+        </span>
+      ) : null}
+    </h1>
+  );
+}
+
 /**
  * InternalPageHero — the master hero layout for all non-home pages.
  */
@@ -36,10 +105,17 @@ export function SubpageHero({
   noGradient = false,
   badge,
 }: SubpageHeroProps) {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const eyebrowLabel = eyebrow ?? badge;
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
+  useMotionValueEvent(scrollYProgress, "change", setScrollProgress);
 
   return (
-    <section className="relative isolate overflow-hidden pt-[140px] pb-14 sm:pt-[160px] md:min-h-[72vh] md:pt-[180px] lg:min-h-[76vh]">
+    <section ref={sectionRef} className="relative isolate overflow-hidden pt-[132px] pb-14 sm:pt-[150px] md:min-h-[72vh] md:pt-[170px] lg:min-h-[76vh]">
       {!noGradient && (
         <div
           className="pointer-events-none absolute inset-0 -z-10"
@@ -60,27 +136,10 @@ export function SubpageHero({
       )}
 
       <div className="site-container-wide relative z-10 flex min-h-[calc(72vh-220px)] flex-col justify-center md:justify-end md:pb-[12vh]">
-        <div className="max-w-[720px]">
+        <div className="max-w-[1240px]">
           {eyebrowLabel && <span className="sr-only">{eyebrowLabel}</span>}
 
-          <AnimatedTitle
-            as="h1"
-            text={title}
-            className="max-w-[720px] font-serif text-[clamp(2.75rem,7.1vw,4.95rem)] font-normal leading-[0.9] tracking-normal text-[#062833]"
-            splitBy="word"
-            eager={true}
-          />
-
-          {subtitle && (
-            <AnimatedTitle
-              as="p"
-              text={subtitle}
-              className="mt-1 max-w-[720px] font-serif text-[clamp(2.25rem,6.1vw,4.3rem)] font-normal leading-[0.92] tracking-normal text-[#A7ADB7]"
-              splitBy="word"
-              delay={0.12}
-              eager={true}
-            />
-          )}
+          <ScrollHeroTitle title={title} subtitle={subtitle} progress={scrollProgress} />
 
           {description && (
             <motion.p

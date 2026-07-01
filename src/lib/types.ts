@@ -130,6 +130,7 @@ export type SiteSettings = {
 
 export type BlogPost = {
   _id: string;
+  language?: string;
   title: string;
   slug: string;
   author?: Author;

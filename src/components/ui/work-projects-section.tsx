@@ -12,22 +12,28 @@ type WorkProjectsSectionProps = {
 };
 
 const normalizeWorkType = (value?: string) => value?.trim() || "Other";
+const hasCoverImage = (project: Partial<Project>) => Boolean(project.coverImage?.asset?._ref);
 
 export function WorkProjectsSection({ projects, lang }: WorkProjectsSectionProps) {
   const [activeType, setActiveType] = useState("All");
+  const imageBackedProjects = useMemo(() => projects.filter(hasCoverImage), [projects]);
 
   const workTypes = useMemo(() => {
     const unique = new Set<string>();
-    projects.forEach((project) => {
+    imageBackedProjects.forEach((project) => {
       unique.add(normalizeWorkType(project.workType));
     });
     return ["All", ...Array.from(unique)];
-  }, [projects]);
+  }, [imageBackedProjects]);
 
   const filteredProjects = useMemo(() => {
-    if (activeType === "All") return projects;
-    return projects.filter((project) => normalizeWorkType(project.workType) === activeType);
-  }, [activeType, projects]);
+    if (activeType === "All") return imageBackedProjects;
+    return imageBackedProjects.filter((project) => normalizeWorkType(project.workType) === activeType);
+  }, [activeType, imageBackedProjects]);
+
+  if (imageBackedProjects.length === 0) {
+    return null;
+  }
 
   return (
     <>

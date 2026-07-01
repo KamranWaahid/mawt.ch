@@ -369,6 +369,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           }}
         >
           <MawatLogo className="h-auto w-full" videoFill />
+          <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-black" />
         </motion.h1>
 
         <motion.div

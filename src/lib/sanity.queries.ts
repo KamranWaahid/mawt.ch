@@ -69,22 +69,6 @@ const homeQuery = groq`
     publishedAt,
     excerpt,
     body
-  },
-  "fallbackPosts": *[_type == "post" && language == "en"] | order(publishedAt desc)[0...3]{
-    _id,
-    language,
-    title,
-    "slug": slug.current,
-    author->{
-      name,
-      role,
-      avatar
-    },
-    mainImage,
-    "categories": coalesce(categories, select(defined(category) => [category], [])),
-    publishedAt,
-    excerpt,
-    body
   }
 }
 `;
@@ -187,7 +171,7 @@ const docBySlugQuery = groq`
 export async function getHomePageData(lang: string = "en"): Promise<HomePageData> {
   const sanityClient = getSanityClient();
   if (!sanityClient) return mockHomeData;
-  const data = await sanityClient.fetch<HomePageData & { fallbackPosts?: BlogPost[] }>(homeQuery, { lang }, {
+  const data = await sanityClient.fetch<HomePageData>(homeQuery, { lang }, {
     next: { tags: ["home", "project", "service", "testimonial"] }
   });
   return {
@@ -198,7 +182,7 @@ export async function getHomePageData(lang: string = "en"): Promise<HomePageData
     projects: data.projects?.length ? data.projects : mockHomeData.projects,
     services: data.services?.length ? data.services : mockHomeData.services,
     testimonials: data.testimonials?.length ? data.testimonials : mockHomeData.testimonials,
-    posts: data.posts?.length ? data.posts : data.fallbackPosts?.length ? data.fallbackPosts : undefined,
+    posts: data.posts?.length ? data.posts : undefined,
   };
 }
 
@@ -209,7 +193,8 @@ export const allProjectsQuery = groq`
   "slug": slug.current,
   workType,
   industry,
-  year
+  year,
+  coverImage
 }
 `;
 
@@ -553,5 +538,3 @@ export async function getContactSettings(): Promise<ContactSettings> {
   });
   return data || defaultContact;
 }
-
-

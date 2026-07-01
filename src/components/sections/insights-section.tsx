@@ -8,6 +8,14 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import type { BlogPost } from "@/lib/types";
 
+type InsightsDict = {
+  headline?: string;
+  fallbackCategory?: string;
+  recentLabel?: string;
+  readTimeUnit?: string;
+  fallbackExcerpt?: string;
+};
+
 const getPortableTextWordCount = (blocks?: unknown[]) => {
   if (!Array.isArray(blocks)) return 0;
 
@@ -72,32 +80,26 @@ const itemVariants = {
   },
 };
 
-export function InsightsSection({ dict, posts }: { dict: any; posts?: BlogPost[] }) {
+export function InsightsSection({ dict, posts }: { dict: InsightsDict; posts?: BlogPost[] }) {
   const params = useParams();
   const currentLang = (params?.lang as string) || "en";
   const fallbackCategory = dict?.fallbackCategory || "Insight";
   const recentLabel = dict?.recentLabel || "Recent";
   const readTimeUnit = dict?.readTimeUnit || "min read";
 
-  const displayItems = posts && posts.length > 0 
-    ? posts.slice(0, 3).map((post) => ({
-        id: post._id,
-        category: formatCategory(post.categories?.[0], fallbackCategory),
-        title: post.title,
-        date: formatPostDate(post.publishedAt, post.language || currentLang, recentLabel),
-        readTime: getReadTime(post, readTimeUnit),
-        excerpt: post.excerpt || dict?.fallbackExcerpt,
-        href: `/${post.language || currentLang}/news/${post.slug}`,
-      }))
-    : (dict?.articles || []).slice(0, 3).map((article: any, idx: number) => ({
-        id: `dict-${idx}`,
-        category: article.category,
-        title: article.title,
-        date: article.date,
-        readTime: article.readTime,
-        excerpt: article.excerpt,
-        href: `/${currentLang}/news`,
-      }));
+  if (!posts?.length) {
+    return null;
+  }
+
+  const displayItems = posts.slice(0, 3).map((post) => ({
+    id: post._id,
+    category: formatCategory(post.categories?.[0], fallbackCategory),
+    title: post.title,
+    date: formatPostDate(post.publishedAt, post.language || currentLang, recentLabel),
+    readTime: getReadTime(post, readTimeUnit),
+    excerpt: post.excerpt || dict?.fallbackExcerpt,
+    href: `/${post.language || currentLang}/news/${post.slug}`,
+  }));
 
   return (
     <section className="py-12 md:py-18 lg:py-24">
@@ -120,7 +122,7 @@ export function InsightsSection({ dict, posts }: { dict: any; posts?: BlogPost[]
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
           >
-            {displayItems.map((item: any) => (
+            {displayItems.map((item) => (
               <motion.article
                 key={item.id}
                 variants={itemVariants}

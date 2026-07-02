@@ -171,9 +171,17 @@ const docBySlugQuery = groq`
 export async function getHomePageData(lang: string = "en"): Promise<HomePageData> {
   const sanityClient = getSanityClient();
   if (!sanityClient) return mockHomeData;
-  const data = await sanityClient.fetch<HomePageData>(homeQuery, { lang }, {
-    next: { tags: ["home", "project", "service", "testimonial"] }
-  });
+  let data: HomePageData;
+
+  try {
+    data = await sanityClient.fetch<HomePageData>(homeQuery, { lang }, {
+      next: { tags: ["home", "project", "service", "testimonial"] }
+    });
+  } catch (error) {
+    console.warn("Failed to fetch Sanity homepage data, falling back to local data:", error);
+    return mockHomeData;
+  }
+
   return {
     ...mockHomeData,
     ...data,
@@ -459,9 +467,14 @@ const partnersQuery = groq`
 export async function getPartners(): Promise<Partner[]> {
   const sanityClient = getSanityClient();
   if (!sanityClient) return [];
-  return sanityClient.fetch<Partner[]>(partnersQuery, {}, {
-    next: { tags: ["partners"] }
-  });
+  try {
+    return await sanityClient.fetch<Partner[]>(partnersQuery, {}, {
+      next: { tags: ["partners"] }
+    });
+  } catch (error) {
+    console.warn("Failed to fetch Sanity partners, falling back to local logo wall:", error);
+    return [];
+  }
 }
 
 // Static pages (legal + list-page headers) stored as `pageContent`

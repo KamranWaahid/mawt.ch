@@ -252,8 +252,8 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     [0, 0.6, 0.68, 0.82, 0.94],
     ["56svh", "56svh", "0svh", "0svh", "42svh"]
   );
-  const compactLogoScale = useTransform(scrollYProgress, [0, 0.34], [1, 0.34]);
-  const compactLogoY = useTransform(scrollYProgress, [0, 0.34], ["0svh", "-2.5svh"]);
+  const compactLogoScale = useTransform(scrollYProgress, [0, 0.34], [1, 0.36]);
+  const compactLogoY = useTransform(scrollYProgress, [0, 0.34], ["0svh", "0svh"]);
   const compactLogoOpacity =
     scrollProgress <= 0.5 ? 1 : scrollProgress >= 0.6 ? 0 : 1 - (scrollProgress - 0.5) / 0.1;
 
@@ -484,7 +484,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
       <div className="landscapeHero relative z-10 hidden h-[100svh] w-full overflow-hidden bg-transparent px-8 py-5 text-white lg:hidden">
         <div className="relative h-full w-full">
           <motion.h1 aria-label="MAWT" className="absolute left-[2%] top-[5%] w-[82%] select-none" style={{ opacity: compactLogoOpacity, scale: compactLogoScale, y: compactLogoY, transformOrigin: "0% 0%" }}>
-            <MawatLogo className="h-auto w-full" videoFill />
+            <MawatLogo className="h-auto w-full" />
           </motion.h1>
 
           <motion.div className="absolute left-[2%] top-[56%]" style={{ opacity: heroContentOpacity, y: compactContentY }}>
@@ -534,7 +534,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
       <div className="portraitHero relative z-10 flex h-[100svh] w-full flex-col justify-between overflow-hidden bg-transparent px-5 py-6 text-white sm:px-7 sm:py-8 md:px-9 md:py-10 lg:hidden">
         <div className="w-full">
           <motion.h1 aria-label="MAWT" className="select-none" style={{ opacity: compactLogoOpacity, scale: compactLogoScale, y: compactLogoY, transformOrigin: "0% 0%" }}>
-            <MawatLogo className="h-auto w-full max-w-[92vw] sm:max-w-[88vw] md:max-w-[82vw]" videoFill />
+            <MawatLogo className="h-auto w-full max-w-[92vw] sm:max-w-[88vw] md:max-w-[82vw]" />
           </motion.h1>
         </div>
 

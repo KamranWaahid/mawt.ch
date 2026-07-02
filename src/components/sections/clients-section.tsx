@@ -2,6 +2,7 @@
 
 import type { CSSProperties } from "react";
 import { motion } from "motion/react";
+import { urlForImage } from "@/lib/sanity.image";
 import { sectionTitleClass } from "@/components/ui/section-title-style";
 import type { Partner } from "@/lib/types";
 
@@ -17,6 +18,13 @@ type LogoSprite = {
   width: number;
   height: number;
   emphasis?: "wide" | "compact";
+};
+
+type RenderablePartnerLogo = {
+  id: string;
+  name: string;
+  href: string | null;
+  logoSrc: string;
 };
 
 const spriteSize = {
@@ -39,23 +47,81 @@ const fallbackLogos: LogoSprite[] = [
 ];
 
 export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partners?: Partner[] }) {
-  void partners;
   const revealTransition = { duration: 0.95, ease: [0.16, 1, 0.3, 1] as const };
+  const partnerLogos: RenderablePartnerLogo[] = (partners ?? [])
+    .filter((partner) => partner.featured !== false)
+    .map((partner) => {
+      const asset = partner.logo?.asset as (NonNullable<Partner["logo"]["asset"]> & { url?: string }) | undefined;
+      const logoSrc = asset?.url ?? urlForImage(partner.logo)?.width(360).fit("max").url() ?? null;
+
+      if (!logoSrc) return null;
+
+      return {
+        id: partner._id,
+        name: partner.logo?.alt || partner.name,
+        href: partner.url ?? null,
+        logoSrc,
+      };
+    })
+    .filter((item): item is RenderablePartnerLogo => Boolean(item));
+  const hasPartnerLogos = partnerLogos.length > 0;
 
   return (
-    <section className="relative -mt-[8svh] overflow-hidden bg-[#F6F5F4] pt-0 pb-20 md:-mt-[10svh] md:pb-24 lg:-mt-[12svh] lg:pb-28">
+    <section className="relative overflow-hidden bg-[#F6F5F4] pt-10 pb-20 md:pt-12 md:pb-24 lg:pt-14 lg:pb-28">
       <div className="site-container relative z-10">
         <motion.h2
           initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
           whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           viewport={{ once: true, amount: 0.45 }}
           transition={revealTransition}
-          className={sectionTitleClass}
+          className={`${sectionTitleClass} text-black`}
         >
           {dict?.title || "Who trust us?"}
         </motion.h2>
         
-        <motion.ul
+        {hasPartnerLogos ? (
+          <motion.ul
+            initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, amount: 0.28 }}
+            transition={{ ...revealTransition, delay: 0.1 }}
+            className="mt-7 grid grid-cols-2 items-center gap-x-6 gap-y-7 sm:mt-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7"
+            aria-label={dict?.title}
+          >
+            {partnerLogos.map((logo) => {
+              const mark = (
+                <img
+                  src={logo.logoSrc}
+                  alt={logo.name}
+                  loading="lazy"
+                  decoding="async"
+                  className="block max-h-10 w-full max-w-[150px] object-contain opacity-45 grayscale contrast-75 brightness-90 mix-blend-multiply transition duration-300 group-hover:opacity-70 group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-95"
+                />
+              );
+
+              return (
+                <li key={logo.id} className="flex h-16 items-center justify-center px-3 sm:h-18">
+                  {logo.href ? (
+                    <a
+                      href={logo.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={logo.name}
+                      className="group flex h-full w-full items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
+                    >
+                      {mark}
+                    </a>
+                  ) : (
+                    <span className="group flex h-full w-full items-center justify-center">
+                      {mark}
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </motion.ul>
+        ) : (
+          <motion.ul
           initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
           whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           viewport={{ once: true, amount: 0.28 }}
@@ -111,7 +177,8 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
               </li>
             );
           })}
-        </motion.ul>
+          </motion.ul>
+        )}
       </div>
     </section>
   );

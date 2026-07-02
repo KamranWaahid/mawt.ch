@@ -263,7 +263,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   };
 
   return (
-    <section ref={sectionRef} className="relative z-50 h-[430svh] w-full bg-black text-white">
+    <section ref={sectionRef} className="relative z-50 h-[360svh] w-full bg-black text-white">
       <div className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden bg-black">
         <motion.div
           data-homepage-gradient

@@ -457,7 +457,16 @@ const partnersQuery = groq`
 *[_type == "partner"] | order(order asc){
   _id,
   name,
-  logo,
+  logo{
+    ...,
+    asset->{
+      url,
+      mimeType,
+      metadata{
+        dimensions
+      }
+    }
+  },
   url,
   category,
   featured

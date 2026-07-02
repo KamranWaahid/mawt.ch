@@ -249,8 +249,11 @@
   "contact": {
     "badge": "Contactez-nous",
     "headline": "Discutons de ce que l'IA et l'automatisation peuvent changer dans votre entreprise.",
+    "subtitle": "Discutons de votre projet.",
     "inquiries": "Demandes",
     "address": "Adresse",
+    "presence": "Notre présence",
+    "mapLabel": "Voir sur la carte",
     "social": "Social",
     "form": {
       "name": "Nom",
@@ -258,7 +261,38 @@
       "message": "Message",
       "submit": "Envoyer le message",
       "success": "Message envoyé avec succès.",
-      "error": "Une erreur est survenue. Veuillez réessayer."
+      "error": "Une erreur est survenue. Veuillez réessayer.",
+      "successBody": "Nous avons bien reçu votre demande et vous répondrons rapidement.",
+      "reset": "Envoyer un autre message",
+      "stepBasics": "Commençons par les bases",
+      "stepProject": "Que recherchez-vous ?",
+      "stepDetails": "Autre chose à nous préciser ?",
+      "service": "Service",
+      "timeline": "Calendrier",
+      "serviceOptions": [
+        { "value": "Strategy", "label": "Stratégie" },
+        { "value": "Development", "label": "Développement" },
+        { "value": "Design", "label": "Design" },
+        { "value": "AI Automation", "label": "Automatisation IA" }
+      ],
+      "timelineOptions": [
+        { "value": "Under 3 months", "label": "Moins de 3 mois" },
+        { "value": "3-6 months", "label": "3 à 6 mois" },
+        { "value": "Ongoing", "label": "En continu" }
+      ],
+      "placeholders": {
+        "name": "Votre nom",
+        "email": "bonjour@entreprise.com",
+        "message": "Parlez-nous de vos enjeux..."
+      },
+      "validation": {
+        "name": "Veuillez saisir votre nom complet (au moins 2 caractères).",
+        "email": "Veuillez saisir une adresse e-mail valide.",
+        "message": "Veuillez décrire votre projet (au moins 10 caractères)."
+      },
+      "back": "Retour",
+      "continue": "Continuer",
+      "sending": "Envoi..."
     }
   },
   "faq": {

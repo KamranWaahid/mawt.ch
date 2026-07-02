@@ -32,8 +32,8 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
     <div className="min-h-screen">
       <SubpageHero 
         eyebrow={dict.contact.badge}
-        title={contact?.headline || dict.contact.headline}
-        subtitle={lang === "fr" ? "Discutons de votre projet." : "Let's talk about your project."}
+        title={dict.contact.headline}
+        subtitle={dict.contact.subtitle}
       />
       
       <section className="py-16 md:py-24 lg:py-32">
@@ -61,8 +61,7 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
             {/* Offices */}
             <SectionReveal delay={0.1} className="flex flex-col gap-8">
               <h3 className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]">
-                {/* BUG-021: Localized using lang variable, not hardcoded English */}
-                {lang === "fr" ? "Notre présence" : "Our Presence"}
+                {dict.contact.presence}
               </h3>
               <div className="flex flex-col gap-10">
                  {contact?.offices?.map((office, i) => (
@@ -81,7 +80,7 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
                           rel="noopener noreferrer"
                           className="text-sm font-normal text-neutral-400 hover:text-black transition-colors flex items-center gap-2 mt-2 group-hover:translate-x-1 duration-300"
                         >
-                          View on Map <ExternalLink size={12} />
+                          {dict.contact.mapLabel} <ExternalLink size={12} />
                         </a>
                       )}
                    </div>
@@ -91,7 +90,7 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
 
             {/* Social */}
             <SectionReveal delay={0.2} className="flex flex-col gap-6 pt-8 border-t border-black/5">
-              <h3 className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]">{contact?.socialHeadline || dict.contact.social}</h3>
+              <h3 className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]">{dict.contact.social}</h3>
               <div className="flex flex-wrap gap-x-8 gap-y-4">
                 {siteData?.settings?.socialLinks
                   ?.filter((link) => {
@@ -115,7 +114,7 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
           
           <SectionReveal delay={0.1}>
              <div className="px-5 py-8 sm:p-8 md:p-16 bg-neutral-50/50 border border-black/5 rounded-sm">
-                <ContactForm dict={dict.contact.form} />
+                <ContactForm dict={dict.contact.form} lang={lang} />
              </div>
           </SectionReveal>
         </div>

@@ -14,7 +14,30 @@ interface ContactFormProps {
     submit: string;
     success: string;
     error: string;
+    successBody: string;
+    reset: string;
+    stepBasics: string;
+    stepProject: string;
+    stepDetails: string;
+    service: string;
+    timeline: string;
+    serviceOptions: { value: string; label: string }[];
+    timelineOptions: { value: string; label: string }[];
+    placeholders: {
+      name: string;
+      email: string;
+      message: string;
+    };
+    validation: {
+      name: string;
+      email: string;
+      message: string;
+    };
+    back: string;
+    continue: string;
+    sending: string;
   };
+  lang?: "en" | "fr";
 }
 
 type FormStep = 1 | 2 | 3;
@@ -22,7 +45,61 @@ type FormStep = 1 | 2 | 3;
 // BUG-023: Use the typed state from actions.ts
 type ClientErrors = Partial<Record<"name" | "email" | "message", string>>;
 
-export function ContactForm({ dict }: ContactFormProps) {
+const defaultLabels = {
+  name: "Name",
+  email: "Email",
+  message: "Project details",
+  submit: "Send message",
+  success: "Message sent.",
+  error: "Something went wrong.",
+  successBody: "We've received your request and will reach out shortly.",
+  reset: "Send another message",
+  stepBasics: "Let's start with the basics",
+  stepProject: "What are you looking for?",
+  stepDetails: "Anything else we should know?",
+  service: "Service",
+  timeline: "Timeline",
+  serviceOptions: [
+    { value: "Strategy", label: "Strategy" },
+    { value: "Development", label: "Development" },
+    { value: "Design", label: "Design" },
+    { value: "AI Automation", label: "AI automation" },
+  ],
+  timelineOptions: [
+    { value: "Under 3 months", label: "Under 3 months" },
+    { value: "3-6 months", label: "3-6 months" },
+    { value: "Ongoing", label: "Ongoing" },
+  ],
+  placeholders: {
+    name: "Your name",
+    email: "hello@company.com",
+    message: "Tell us about your project challenges...",
+  },
+  validation: {
+    name: "Please enter your full name (at least 2 characters).",
+    email: "Please enter a valid email address.",
+    message: "Please describe your project (at least 10 characters).",
+  },
+  back: "Go back",
+  continue: "Continue",
+  sending: "Sending...",
+};
+
+export function ContactForm({ dict, lang = "en" }: ContactFormProps) {
+  const labels = {
+    ...defaultLabels,
+    ...dict,
+    placeholders: {
+      ...defaultLabels.placeholders,
+      ...dict?.placeholders,
+    },
+    validation: {
+      ...defaultLabels.validation,
+      ...dict?.validation,
+    },
+    serviceOptions: dict?.serviceOptions?.length ? dict.serviceOptions : defaultLabels.serviceOptions,
+    timelineOptions: dict?.timelineOptions?.length ? dict.timelineOptions : defaultLabels.timelineOptions,
+  };
   const [step, setStep] = useState<FormStep>(1);
   // BUG-023: Typed action state
   const [state, formAction, isPending] = useActionState<ContactFormState, FormData>(
@@ -32,23 +109,14 @@ export function ContactForm({ dict }: ContactFormProps) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    service: "Strategy",
-    timeline: "3-6 months",
+    service: labels.serviceOptions[0]?.value || "Strategy",
+    timeline: labels.timelineOptions[1]?.value || labels.timelineOptions[0]?.value || "3-6 months",
     message: "",
   });
   // BUG-006: Client-side per-step errors
   const [clientErrors, setClientErrors] = useState<ClientErrors>({});
   // BUG-015: Track success locally so we can reset without reload
   const [submitted, setSubmitted] = useState(false);
-
-  const labels = dict || {
-    name: "Name",
-    email: "Email",
-    message: "Project Details",
-    submit: "Send Message",
-    success: "Message sent.",
-    error: "Something went wrong.",
-  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -69,11 +137,11 @@ export function ContactForm({ dict }: ContactFormProps) {
   const validateStep1 = (): boolean => {
     const errors: ClientErrors = {};
     if (!formData.name.trim() || formData.name.trim().length < 2) {
-      errors.name = "Please enter your full name (at least 2 characters).";
+      errors.name = labels.validation.name;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email.trim() || !emailRegex.test(formData.email.trim())) {
-      errors.email = "Please enter a valid email address.";
+      errors.email = labels.validation.email;
     }
     setClientErrors(errors);
     return Object.keys(errors).length === 0;
@@ -82,7 +150,7 @@ export function ContactForm({ dict }: ContactFormProps) {
   const validateStep3 = (): boolean => {
     const errors: ClientErrors = {};
     if (!formData.message.trim() || formData.message.trim().length < 10) {
-      errors.message = "Please describe your project (at least 10 characters).";
+      errors.message = labels.validation.message;
     }
     setClientErrors(errors);
     return Object.keys(errors).length === 0;
@@ -103,12 +171,12 @@ export function ContactForm({ dict }: ContactFormProps) {
     setFormData({
       name: "",
       email: "",
-      service: "Strategy",
-      timeline: "3-6 months",
+      service: labels.serviceOptions[0]?.value || "Strategy",
+      timeline: labels.timelineOptions[1]?.value || labels.timelineOptions[0]?.value || "3-6 months",
       message: "",
     });
     setClientErrors({});
-  }, []);
+  }, [labels.serviceOptions, labels.timelineOptions]);
 
   const status = state?.success
     ? "success"
@@ -158,7 +226,7 @@ export function ContactForm({ dict }: ContactFormProps) {
         <div className="flex flex-col gap-3">
           <h3 className="text-3xl font-normal tracking-tighter text-black">{labels.success}</h3>
           <p className="text-neutral-500 font-normal text-lg">
-            We&apos;ve received your request and will reach out shortly.
+            {labels.successBody}
           </p>
         </div>
         {/* BUG-015: Use state reset, not reload */}
@@ -167,7 +235,7 @@ export function ContactForm({ dict }: ContactFormProps) {
           onClick={handleReset}
           className="px-8 py-4 border border-black text-black hover:bg-black hover:text-white transition-all text-sm font-normal uppercase tracking-widest mt-4"
         >
-          Send Another Message
+          {labels.reset}
         </button>
       </motion.div>
     );
@@ -203,7 +271,7 @@ export function ContactForm({ dict }: ContactFormProps) {
             {step === 1 && (
               <div className="flex flex-col gap-12">
                 <h2 className="text-3xl font-normal tracking-tighter text-black">
-                  Let&apos;s start with the basics
+                  {labels.stepBasics}
                 </h2>
                 <div className="grid md:grid-cols-2 gap-12">
                   {/* BUG-012: htmlFor + id association */}
@@ -229,7 +297,7 @@ export function ContactForm({ dict }: ContactFormProps) {
                           ? "border-red-400 focus:border-red-500"
                           : "border-black/10 focus:border-black"
                       )}
-                      placeholder="Your name"
+                      placeholder={labels.placeholders.name}
                     />
                     {(clientErrors.name || serverFieldError("name")) && (
                       <p id="contact-name-error" className="text-sm text-red-500 font-normal">
@@ -259,7 +327,7 @@ export function ContactForm({ dict }: ContactFormProps) {
                           ? "border-red-400 focus:border-red-500"
                           : "border-black/10 focus:border-black"
                       )}
-                      placeholder="hello@company.com"
+                      placeholder={labels.placeholders.email}
                     />
                     {(clientErrors.email || serverFieldError("email")) && (
                       <p id="contact-email-error" className="text-sm text-red-500 font-normal">
@@ -274,7 +342,7 @@ export function ContactForm({ dict }: ContactFormProps) {
             {step === 2 && (
               <div className="flex flex-col gap-12">
                 <h2 className="text-3xl font-normal tracking-tighter text-black">
-                  What are you looking for?
+                  {labels.stepProject}
                 </h2>
                 <div className="grid md:grid-cols-2 gap-12">
                   <div className="flex flex-col gap-4">
@@ -283,7 +351,7 @@ export function ContactForm({ dict }: ContactFormProps) {
                       htmlFor="contact-service"
                       className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]"
                     >
-                      Service
+                      {labels.service}
                     </label>
                     <select
                       id="contact-service"
@@ -292,10 +360,11 @@ export function ContactForm({ dict }: ContactFormProps) {
                       onChange={handleInputChange}
                       className="w-full py-4 border-b border-black/10 focus:border-black focus:outline-none bg-transparent transition-colors font-normal text-xl appearance-none text-black"
                     >
-                      <option className="text-black bg-white">Strategy</option>
-                      <option className="text-black bg-white">Development</option>
-                      <option className="text-black bg-white">Design</option>
-                      <option className="text-black bg-white">AI Automation</option>
+                      {labels.serviceOptions.map((option) => (
+                        <option key={option.value} value={option.value} className="text-black bg-white">
+                          {option.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
                   <div className="flex flex-col gap-4">
@@ -304,7 +373,7 @@ export function ContactForm({ dict }: ContactFormProps) {
                       htmlFor="contact-timeline"
                       className="text-[11px] font-normal text-neutral-400 uppercase tracking-[0.2em]"
                     >
-                      Timeline
+                      {labels.timeline}
                     </label>
                     <select
                       id="contact-timeline"
@@ -313,9 +382,11 @@ export function ContactForm({ dict }: ContactFormProps) {
                       onChange={handleInputChange}
                       className="w-full py-4 border-b border-black/10 focus:border-black focus:outline-none bg-transparent transition-colors font-normal text-xl appearance-none text-black"
                     >
-                      <option className="text-black bg-white">Under 3 months</option>
-                      <option className="text-black bg-white">3-6 months</option>
-                      <option className="text-black bg-white">Ongoing</option>
+                      {labels.timelineOptions.map((option) => (
+                        <option key={option.value} value={option.value} className="text-black bg-white">
+                          {option.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -325,7 +396,7 @@ export function ContactForm({ dict }: ContactFormProps) {
             {step === 3 && (
               <div className="flex flex-col gap-12">
                 <h2 className="text-3xl font-normal tracking-tighter text-black">
-                  Anything else we should know?
+                  {labels.stepDetails}
                 </h2>
                 <div className="flex flex-col gap-4">
                   {/* BUG-012: htmlFor + id */}
@@ -350,7 +421,7 @@ export function ContactForm({ dict }: ContactFormProps) {
                         ? "border-red-400 focus:border-red-500"
                         : "border-black/10 focus:border-black"
                     )}
-                    placeholder="Tell us about your project challenges..."
+                    placeholder={labels.placeholders.message}
                   />
                   {(clientErrors.message || serverFieldError("message")) && (
                     <p id="contact-message-error" className="text-sm text-red-500 font-normal">
@@ -382,12 +453,13 @@ export function ContactForm({ dict }: ContactFormProps) {
             )}
 
             <div className="flex items-center gap-6 mt-8">
+              <input type="hidden" name="lang" value={lang} />
               {step > 1 && (
                 <button
                   type="button"
                   onClick={() => setStep((prev) => (prev - 1) as FormStep)}
                   className="flex items-center justify-center w-14 h-14 border border-black/10 hover:border-black transition-colors"
-                  aria-label="Go back"
+                  aria-label={labels.back}
                 >
                   <ArrowLeft size={20} />
                 </button>
@@ -398,7 +470,7 @@ export function ContactForm({ dict }: ContactFormProps) {
                   onClick={handleContinue}
                   className="flex-1 flex items-center justify-center gap-3 py-4 bg-black text-white text-sm font-normal transition-all uppercase tracking-widest hover:bg-neutral-900 group"
                 >
-                  Continue
+                  {labels.continue}
                   <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                 </button>
               ) : (
@@ -409,7 +481,7 @@ export function ContactForm({ dict }: ContactFormProps) {
                   className="flex-1 flex items-center justify-center gap-3 py-4 bg-black text-white text-sm font-normal disabled:bg-neutral-400 transition-all uppercase tracking-widest hover:bg-neutral-900 group"
                 >
                   {status === "submitting" ? (
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" aria-label="Sending..." />
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" aria-label={labels.sending} />
                   ) : (
                     <>
                       {labels.submit}

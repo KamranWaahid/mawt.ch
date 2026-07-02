@@ -188,11 +188,12 @@ function HeroGradientStatement({
 }) {
   const words = text.split(" ");
   const exitProgress = Math.max(0, Math.min(1, (progress - 0.78) / 0.1));
+  const textColor = progress < 0.64 ? "#F6F5F4" : "#050505";
 
   return (
     <h2
-      className={`max-w-[1040px] select-text font-serif text-[clamp(2.1rem,4.05vw,3.7rem)] font-normal leading-[1.01] tracking-normal text-white ${className}`}
-      style={{ opacity: 1 - exitProgress }}
+      className={`max-w-[1040px] select-text font-serif text-[clamp(2.1rem,4.05vw,3.7rem)] font-normal leading-[1.01] tracking-normal transition-colors duration-300 ${className}`}
+      style={{ opacity: 1 - exitProgress, color: textColor }}
     >
       {words.map((word, index) => (
         <StatementWord
@@ -235,6 +236,10 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   const homeNavHoverClass = isHomeNavLight ? "hover:text-black" : "hover:text-white";
   const homeNavDividerClass = isHomeNavLight ? "text-black/25" : "text-white/25";
   const homeNavSlashClass = isHomeNavLight ? "text-black/45" : "text-white/45";
+  const isTransitionTextDark = scrollProgress >= 0.64;
+  const transitionCtaClass = isTransitionTextDark
+    ? "border-black/12 bg-black/[0.04] text-black/92 hover:border-black/22 hover:bg-black/[0.08] hover:text-black"
+    : "border-white/14 bg-white/[0.10] text-white/92 hover:border-white/24 hover:bg-white/[0.16] hover:text-white";
   const desktopContentY = useTransform(scrollYProgress, [0, 0.28, 0.52, 1], ["0svh", "0svh", "-42svh", "-42svh"]);
   const compactContentY = useTransform(scrollYProgress, [0, 0.28, 0.52, 1], ["0svh", "0svh", "-24svh", "-24svh"]);
   const transitionGradientY = useTransform(
@@ -446,7 +451,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           >
             <Link
               href={localizedHref("a-propos", lang)}
-              className="pointer-events-auto inline-flex h-10 items-center rounded-full border border-white/12 bg-white/[0.12] px-[22px] text-[13px] font-normal leading-none text-white/92 backdrop-blur-md transition-colors duration-300 hover:border-white/22 hover:bg-white/[0.18] hover:text-white"
+              className={`pointer-events-auto inline-flex h-10 items-center rounded-full border px-[22px] text-[13px] font-normal leading-none backdrop-blur-md transition-colors duration-300 ${transitionCtaClass}`}
             >
               {transitionDict.cta}
             </Link>
@@ -473,7 +478,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           >
             <Link
               href={localizedHref("a-propos", lang)}
-              className="pointer-events-auto inline-flex h-10 items-center rounded-full border border-white/12 bg-white/[0.12] px-[22px] text-[13px] font-normal leading-none text-white/92 backdrop-blur-md transition-colors duration-300 hover:border-white/22 hover:bg-white/[0.18] hover:text-white"
+              className={`pointer-events-auto inline-flex h-10 items-center rounded-full border px-[22px] text-[13px] font-normal leading-none backdrop-blur-md transition-colors duration-300 ${transitionCtaClass}`}
             >
               {transitionDict.cta}
             </Link>

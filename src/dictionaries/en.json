@@ -249,8 +249,11 @@
   "contact": {
     "badge": "Contact Us",
     "headline": "Let's talk about what AI and automation can change in your business.",
+    "subtitle": "Let's talk about your project.",
     "inquiries": "Inquiries",
     "address": "Address",
+    "presence": "Our presence",
+    "mapLabel": "View on map",
     "social": "Social",
     "form": {
       "name": "Name",
@@ -258,7 +261,38 @@
       "message": "Message",
       "submit": "Send Message",
       "success": "Message sent successfully.",
-      "error": "Something went wrong. Please try again."
+      "error": "Something went wrong. Please try again.",
+      "successBody": "We've received your request and will reach out shortly.",
+      "reset": "Send another message",
+      "stepBasics": "Let's start with the basics",
+      "stepProject": "What are you looking for?",
+      "stepDetails": "Anything else we should know?",
+      "service": "Service",
+      "timeline": "Timeline",
+      "serviceOptions": [
+        { "value": "Strategy", "label": "Strategy" },
+        { "value": "Development", "label": "Development" },
+        { "value": "Design", "label": "Design" },
+        { "value": "AI Automation", "label": "AI automation" }
+      ],
+      "timelineOptions": [
+        { "value": "Under 3 months", "label": "Under 3 months" },
+        { "value": "3-6 months", "label": "3-6 months" },
+        { "value": "Ongoing", "label": "Ongoing" }
+      ],
+      "placeholders": {
+        "name": "Your name",
+        "email": "hello@company.com",
+        "message": "Tell us about your project challenges..."
+      },
+      "validation": {
+        "name": "Please enter your full name (at least 2 characters).",
+        "email": "Please enter a valid email address.",
+        "message": "Please describe your project (at least 10 characters)."
+      },
+      "back": "Go back",
+      "continue": "Continue",
+      "sending": "Sending..."
     }
   },
   "faq": {

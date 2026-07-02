@@ -56,6 +56,15 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
     return null;
   };
 
+  const partnerLogos = displayPartners
+    .map((partner) => ({
+      partner,
+      logoSrc: getLogoUrl(partner),
+      partnerUrl: getPartnerUrl(partner),
+    }))
+    .filter((item): item is { partner: Partner; logoSrc: string; partnerUrl: string | null } => Boolean(item.logoSrc));
+  const shouldUsePartnerLogos = partnerLogos.length >= fallbackLogos.length;
+
   return (
     <section className="relative -mt-[8svh] overflow-hidden bg-[#F6F5F4] pt-0 pb-20 md:-mt-[10svh] md:pb-24 lg:-mt-[12svh] lg:pb-28">
       <div className="site-container relative z-10">
@@ -69,7 +78,7 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
           {dict?.title || "Who trust us?"}
         </motion.h2>
         
-        {displayPartners.length > 0 ? (
+        {shouldUsePartnerLogos ? (
           <motion.div 
             initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
             whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -77,11 +86,7 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
             transition={{ ...revealTransition, delay: 0.1 }}
             className="mt-7 grid grid-cols-2 items-center gap-x-6 gap-y-7 sm:mt-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7"
           >
-            {displayPartners.map((partner) => {
-              const logoSrc = getLogoUrl(partner);
-              const partnerUrl = getPartnerUrl(partner);
-              if (!logoSrc) return null;
-
+            {partnerLogos.map(({ partner, logoSrc, partnerUrl }) => {
               return (
                 <div 
                   key={partner._id} 

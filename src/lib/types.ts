@@ -3,6 +3,15 @@ export type SanityImageSource = {
   asset?: {
     _ref: string;
     _type: "reference";
+    url?: string;
+    mimeType?: string;
+    metadata?: {
+      dimensions?: {
+        width?: number;
+        height?: number;
+        aspectRatio?: number;
+      };
+    };
   };
   alt?: string;
   caption?: string;

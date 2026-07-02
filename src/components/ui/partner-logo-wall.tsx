@@ -30,7 +30,8 @@ export function PartnerLogoWall({ partners }: PartnerLogoWallProps) {
               {partners
                 .filter(p => p.category === category)
                 .map((partner) => {
-                  const logoSrc = urlForImage(partner.logo)?.width(400).url();
+                  const asset = partner.logo?.asset as (NonNullable<Partner["logo"]["asset"]> & { url?: string }) | undefined;
+                  const logoSrc = asset?.url ?? urlForImage(partner.logo)?.width(400).fit("max").url();
                   const partnerUrl = getPartnerUrl(partner);
                   if (!logoSrc) return null;
 

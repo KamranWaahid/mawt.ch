@@ -459,10 +459,12 @@ const partnersQuery = groq`
   name,
   logo{
     ...,
-    asset->{
-      url,
-      mimeType,
-      metadata{
+    "asset": {
+      "_ref": asset._ref,
+      "_type": asset._type,
+      "url": asset->url,
+      "mimeType": asset->mimeType,
+      "metadata": asset->metadata{
         dimensions
       }
     }

@@ -268,13 +268,13 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   ]);
 
   const heroLogoTransformLandscape = useTransform(smoothProgress, [0, 0.15, 0.35], [
-    "translate(0px, 0px) scale(1)",
+    "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(50vw - 318px), calc(40vh - 91.75px)) scale(6)",
     "translate(calc(50vw - 21217px), calc(50vh - 7909px)) scale(700)"
   ]);
 
   const heroLogoTransformPortrait = useTransform(smoothProgress, [0, 0.15, 0.35], [
-    "translate(0px, 0px) scale(1)",
+    "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(50vw - 191.5px), calc(40vh - 63.675px)) scale(3.5)",
     "translate(calc(50vw - 21213px), calc(50vh - 7909px)) scale(700)"
   ]);

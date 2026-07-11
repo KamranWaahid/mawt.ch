@@ -15,36 +15,23 @@ interface ProcessPageProps {
 }
 
 const approachFrameFolder = "Approach Page";
-const approachFirstFrame = "f2af8e2c-8861-4c64-9f4e-4e65fd9eda22.jpg";
-const approachLastFrame = "a6001da5-f533-4597-bf7b-a767d2272a5b.jpg";
 
 function getApproachFrameUrls() {
   const folderPath = path.join(process.cwd(), "public", approachFrameFolder);
 
   try {
-    const frames = readdirSync(folderPath)
+    return readdirSync(folderPath)
       .filter((file) => file.toLowerCase().endsWith(".jpg"))
-      .map((file) => {
+      .map((file, index) => {
         const stats = statSync(path.join(folderPath, file));
         return {
           file,
           order: stats.birthtimeMs || stats.mtimeMs,
+          index,
         };
       })
-      .sort((a, b) => a.order - b.order || a.file.localeCompare(b.file))
-      .map(({ file }) => file);
-
-    const firstIndex = frames.indexOf(approachFirstFrame);
-    const lastIndex = frames.indexOf(approachLastFrame);
-
-    if (firstIndex === -1 || lastIndex === -1) return [];
-
-    const sequence =
-      firstIndex <= lastIndex
-        ? frames.slice(firstIndex, lastIndex + 1)
-        : frames.slice(lastIndex, firstIndex + 1).reverse();
-
-    return sequence.map((file) => `/${encodeURIComponent(approachFrameFolder)}/${file}`);
+      .sort((a, b) => a.order - b.order || a.index - b.index)
+      .map(({ file }) => `/${encodeURIComponent(approachFrameFolder)}/${file}`);
   } catch {
     return [];
   }

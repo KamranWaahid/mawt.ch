@@ -1,3 +1,3 @@
 "use client";
 
-export { FolderAnimationHeroSection as HeroSection } from "./folder-animation-hero-section";
+export { CinematicHeroSection as HeroSection } from "./cinematic-hero-section";

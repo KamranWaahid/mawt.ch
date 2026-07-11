@@ -7,19 +7,25 @@ type ApproachFlowerSequenceProps = {
   frames: string[];
 };
 
-function drawContain(ctx: CanvasRenderingContext2D, img: HTMLImageElement) {
+function fillCanvas(ctx: CanvasRenderingContext2D) {
+  const canvas = ctx.canvas;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#F6F5F4";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function drawCover(ctx: CanvasRenderingContext2D, img: HTMLImageElement) {
   const canvas = ctx.canvas;
   const imgWidth = img.naturalWidth || img.width;
   const imgHeight = img.naturalHeight || img.height;
-  const ratio = Math.min(canvas.width / imgWidth, canvas.height / imgHeight);
+  const ratio = Math.max(canvas.width / imgWidth, canvas.height / imgHeight);
   const width = imgWidth * ratio;
   const height = imgHeight * ratio;
   const x = (canvas.width - width) / 2;
   const y = (canvas.height - height) / 2;
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "#F6F5F4";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  fillCanvas(ctx);
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
   ctx.drawImage(img, x, y, width, height);
@@ -32,6 +38,7 @@ export function ApproachFlowerSequence({ frames }: ApproachFlowerSequenceProps) 
   const lastDrawnFrameRef = useRef(0);
   const desiredFrameRef = useRef(0);
   const rafRef = useRef<number | null>(null);
+  const loadedFramesRef = useRef<Set<number>>(new Set());
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -52,17 +59,33 @@ export function ApproachFlowerSequence({ frames }: ApproachFlowerSequenceProps) 
 
     const clampedIndex = Math.max(0, Math.min(frames.length - 1, frameIndex));
     const img = imagesRef.current[clampedIndex];
-    const fallbackImg = imagesRef.current[lastDrawnFrameRef.current];
 
     if (img?.complete) {
-      drawContain(ctx, img);
+      drawCover(ctx, img);
       lastDrawnFrameRef.current = clampedIndex;
       return;
     }
 
+    const loadedFrames = loadedFramesRef.current;
+    let nearestFrame = lastDrawnFrameRef.current;
+    let nearestDistance = Number.POSITIVE_INFINITY;
+
+    loadedFrames.forEach((loadedIndex) => {
+      const distance = Math.abs(loadedIndex - clampedIndex);
+      if (distance < nearestDistance) {
+        nearestDistance = distance;
+        nearestFrame = loadedIndex;
+      }
+    });
+
+    const fallbackImg = imagesRef.current[nearestFrame];
     if (fallbackImg?.complete) {
-      drawContain(ctx, fallbackImg);
+      drawCover(ctx, fallbackImg);
+      lastDrawnFrameRef.current = nearestFrame;
+      return;
     }
+
+    fillCanvas(ctx);
   }, [frames.length]);
 
   const scheduleDraw = useCallback((progress: number) => {
@@ -70,7 +93,7 @@ export function ApproachFlowerSequence({ frames }: ApproachFlowerSequenceProps) 
 
     rafRef.current = requestAnimationFrame(() => {
       const easedProgress = Math.max(0, Math.min(1, progress));
-      const frameIndex = Math.round(easedProgress * (frames.length - 1));
+      const frameIndex = Math.floor(easedProgress * (frames.length - 1));
       desiredFrameRef.current = frameIndex;
       drawFrame(frameIndex);
     });
@@ -90,7 +113,9 @@ export function ApproachFlowerSequence({ frames }: ApproachFlowerSequenceProps) 
       canvas.width = width;
       canvas.height = height;
       canvas.style.width = "100vw";
-      canvas.style.height = "100vh";
+      canvas.style.height = "100svh";
+      const ctx = canvas.getContext("2d");
+      if (ctx) fillCanvas(ctx);
       drawFrame(lastDrawnFrameRef.current);
     };
 
@@ -109,12 +134,13 @@ export function ApproachFlowerSequence({ frames }: ApproachFlowerSequenceProps) 
     firstImage.onload = () => {
       if (!active) return;
       imagesRef.current[0] = firstImage;
+      loadedFramesRef.current.add(0);
       drawFrame(0);
     };
 
     const remainingFrames = frames.slice(1).map((src, index) => ({ src, index: index + 1 }));
     let cursor = 0;
-    const concurrency = 8;
+    const concurrency = 18;
 
     const loadNext = () => {
       if (!active || cursor >= remainingFrames.length) return;
@@ -123,9 +149,16 @@ export function ApproachFlowerSequence({ frames }: ApproachFlowerSequenceProps) 
       const img = new Image();
       img.decoding = "async";
       img.src = frame.src;
-      img.onload = () => {
+      img.onload = async () => {
+        if (!active) return;
+        try {
+          await img.decode();
+        } catch {
+          // The onload event is enough for drawImage; decode just improves smoothness when available.
+        }
         if (!active) return;
         imagesRef.current[frame.index] = img;
+        loadedFramesRef.current.add(frame.index);
         if (frame.index === desiredFrameRef.current) {
           drawFrame(frame.index);
         }
@@ -142,6 +175,7 @@ export function ApproachFlowerSequence({ frames }: ApproachFlowerSequenceProps) 
       active = false;
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       imagesRef.current = [];
+      loadedFramesRef.current = new Set();
     };
   }, [drawFrame, frames]);
 
@@ -150,18 +184,14 @@ export function ApproachFlowerSequence({ frames }: ApproachFlowerSequenceProps) 
   return (
     <section
       ref={sectionRef}
-      className="relative h-[320vh] bg-[#F6F5F4]"
+      className="relative h-[560vh] bg-[#F6F5F4]"
       aria-label="Approach flower growth animation"
     >
-      <div className="sticky top-0 h-screen overflow-hidden">
+      <div className="sticky top-0 h-[100svh] overflow-hidden">
         <motion.canvas
           ref={canvasRef}
-          className="block h-screen w-screen select-none"
+          className="block h-[100svh] w-screen select-none"
           aria-hidden="true"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         />
       </div>
     </section>

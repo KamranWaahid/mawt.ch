@@ -3,7 +3,7 @@
 import { useId, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { motion, useMotionValueEvent, useScroll, useTransform } from "motion/react";
+import { motion, useMotionValueEvent, useScroll, useTransform, useSpring, MotionValue } from "motion/react";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
 import { Menu, X } from "lucide-react";
 import type { SiteSettings } from "@/lib/types";
@@ -128,7 +128,7 @@ function MawatLogo({
         <g clipPath={`url(#${clipPathId})`}>
           <foreignObject x="-18" y="-38" width="732" height="236">
             <video
-              src="/Approach%20Page/10577f87-9a42-46fc-8b99-321218f53096.mp4"
+              src="/MotionMAWT.mp4"
               autoPlay
               muted
               loop
@@ -143,6 +143,32 @@ function MawatLogo({
   );
 }
 
+function MawatLogoMask({ className }: { className?: string }) {
+  const rawId = useId();
+  const maskId = `mawt-logo-hole-${rawId.replace(/:/g, "")}`;
+
+  return (
+    <svg
+      viewBox="0 0 696 160"
+      preserveAspectRatio="xMidYMid meet"
+      fill="none"
+      aria-hidden="true"
+      className={className}
+      style={{ overflow: 'visible' }}
+    >
+      <defs>
+        <mask id={maskId}>
+          <rect x="-10000" y="-10000" width="20000" height="20000" fill="white" />
+          {mawatLogoPaths.map((path) => (
+            <path key={`hole-${path}`} d={path} fill="black" />
+          ))}
+        </mask>
+      </defs>
+      <rect x="-10000" y="-10000" width="20000" height="20000" fill="black" mask={`url(#${maskId})`} />
+    </svg>
+  );
+}
+
 function StatementWord({
   word,
   index,
@@ -152,22 +178,24 @@ function StatementWord({
   word: string;
   index: number;
   total: number;
-  progress: number;
+  progress: MotionValue<number>;
 }) {
-  const start = 0.58 + index * 0.004;
-  const end = Math.min(0.76, start + 0.07);
-  const localProgress = Math.max(0, Math.min(1, (progress - start) / (end - start)));
-  const y = (1 - localProgress) * 14;
-  const blur = (1 - localProgress) * 10;
+  const start = 0.60 + index * 0.005;
+  const end = Math.min(0.80, start + 0.05);
+  
+  const opacity = useTransform(progress, [start, end], [0, 1]);
+  const y = useTransform(progress, [start, end], [14, 0]);
+  const blurValue = useTransform(progress, [start, end], [10, 0]);
+  const filter = useTransform(blurValue, (b) => `blur(${b}px)`);
 
   return (
     <span className="inline">
       <motion.span
         className="inline-block will-change-[transform,opacity,filter]"
         style={{
-          opacity: localProgress,
-          transform: `translateY(${y}px)`,
-          filter: `blur(${blur}px)`,
+          opacity,
+          y,
+          filter,
         }}
       >
         {word}
@@ -183,17 +211,16 @@ function HeroGradientStatement({
   className = "",
 }: {
   text: string;
-  progress: number;
+  progress: MotionValue<number>;
   className?: string;
 }) {
   const words = text.split(" ");
-  const exitProgress = Math.max(0, Math.min(1, (progress - 0.78) / 0.1));
-  const textColor = progress < 0.64 ? "#F6F5F4" : "#050505";
+  const exitOpacity = useTransform(progress, [0.90, 0.98], [1, 0]);
 
   return (
-    <h2
+    <motion.h2
       className={`max-w-[1040px] select-text font-serif text-[clamp(2.1rem,4.05vw,3.7rem)] font-normal leading-[1.01] tracking-normal transition-colors duration-300 ${className}`}
-      style={{ opacity: 1 - exitProgress, color: textColor }}
+      style={{ opacity: exitOpacity, color: "#F6F5F4" }}
     >
       {words.map((word, index) => (
         <StatementWord
@@ -204,12 +231,13 @@ function HeroGradientStatement({
           progress={progress}
         />
       ))}
-    </h2>
+    </motion.h2>
   );
 }
 
 export function HomepageHeroSection({ settings, dict, transitionDict }: HomepageHeroSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isHeroMobileMenuOpen, setIsHeroMobileMenuOpen] = useState(false);
   const params = useParams();
@@ -218,19 +246,38 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     target: sectionRef,
     offset: ["start start", "end end"],
   });
-  useMotionValueEvent(scrollYProgress, "change", setScrollProgress);
-  const navbarOpacity = useTransform(scrollYProgress, [0.005, 0.07], [0, 1]);
-  const navbarY = useTransform(scrollYProgress, [0.005, 0.07], [-12, 0]);
-  const navLinksOpacity = useTransform(scrollYProgress, [0.018, 0.075], [0, 1]);
-  const heroLogoScale = useTransform(scrollYProgress, [0, 0.52], [1, 0.072]);
-  const heroLogoX = useTransform(scrollYProgress, [0, 0.52], ["0%", "-0.6%"]);
-  const heroLogoY = useTransform(scrollYProgress, [0, 0.52], ["0svh", "-3.05svh"]);
-  const heroLogoOpacity =
-    scrollProgress <= 0.38 ? 1 : scrollProgress >= 0.48 ? 0 : 1 - (scrollProgress - 0.38) / 0.1;
-  const navLogoOpacity =
-    scrollProgress <= 0.38 ? 0 : scrollProgress >= 0.48 ? 1 : (scrollProgress - 0.38) / 0.1;
-  const heroContentOpacity =
-    scrollProgress <= 0.5 ? 1 : scrollProgress >= 0.6 ? 0 : 1 - (scrollProgress - 0.5) / 0.1;
+  
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 300, damping: 40 });
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    setScrollProgress(latest);
+    if (latest > 0.01 && videoRef.current && videoRef.current.paused) {
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(e => {
+          console.log("Autoplay prevented:", e);
+        });
+      }
+    }
+  });
+
+  const navbarOpacity = useTransform(smoothProgress, [0.005, 0.07], [0, 1]);
+  const navbarY = useTransform(smoothProgress, [0.005, 0.07], [-12, 0]);
+  const navLinksOpacity = useTransform(smoothProgress, [0.8, 0.9], [0, 1]);
+  const heroLogoScale = useTransform(smoothProgress, [0.15, 0.45], [1, 60]);
+  const videoScale = useTransform(smoothProgress, [0.15, 0.45], [1, 1.1]);
+  const heroLogoX = useTransform(smoothProgress, [0, 1], ["0%", "0%"]);
+  const heroLogoY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
+  
+  // Hero initial text fades out early, well before logo zoom gets large
+  const heroContentOpacity = useTransform(smoothProgress, [0.05, 0.20], [1, 0]);
+  
+  // Video and logo mask fade out after logo is fully zoomed
+  const heroLogoOpacity = useTransform(smoothProgress, [0.45, 0.52], [1, 0]);
+  const videoContainerOpacity = useTransform(smoothProgress, [0.45, 0.52], [1, 0]);
+  
+  const navLogoOpacity = useTransform(smoothProgress, [0.8, 0.9], [0, 1]);
+  
   const isHomeNavLight = scrollProgress >= 0.82;
   const homeNavTextClass = isHomeNavLight ? "text-black/70" : "text-white/72";
   const homeNavHoverClass = isHomeNavLight ? "hover:text-black" : "hover:text-white";
@@ -240,27 +287,21 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   const transitionCtaClass = isTransitionTextDark
     ? "border-black/12 bg-black/[0.04] text-black/92 hover:border-black/22 hover:bg-black/[0.08] hover:text-black"
     : "border-white/14 bg-white/[0.10] text-white/92 hover:border-white/24 hover:bg-white/[0.16] hover:text-white";
-  const desktopContentY = useTransform(scrollYProgress, [0, 0.28, 0.52, 1], ["0svh", "0svh", "-42svh", "-42svh"]);
-  const compactContentY = useTransform(scrollYProgress, [0, 0.28, 0.52, 1], ["0svh", "0svh", "-24svh", "-24svh"]);
+  const desktopContentY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
+  const compactContentY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
+  
+  // Gradient slides up from below the screen (100vh) to 0, then continues up
   const transitionGradientY = useTransform(
-    scrollYProgress,
-    [0.5, 0.64, 0.72, 0.8, 0.98],
-    ["0vh", "-194vh", "-216vh", "-224vh", "-345vh"]
+    smoothProgress,
+    [0.52, 0.70, 0.85, 1.0],
+    ["100vh", "0vh", "-120vh", "-250vh"]
   );
-  const transitionStatementY = useTransform(
-    scrollYProgress,
-    [0, 0.54, 0.64, 0.82, 0.94],
-    ["56svh", "56svh", "0svh", "0svh", "42svh"]
-  );
-  const transitionCtaY = useTransform(
-    scrollYProgress,
-    [0, 0.6, 0.68, 0.82, 0.94],
-    ["56svh", "56svh", "0svh", "0svh", "42svh"]
-  );
-  const compactLogoScale = useTransform(scrollYProgress, [0, 0.34], [1, 0.36]);
-  const compactLogoY = useTransform(scrollYProgress, [0, 0.34], ["0svh", "0svh"]);
-  const compactLogoOpacity =
-    scrollProgress <= 0.5 ? 1 : scrollProgress >= 0.6 ? 0 : 1 - (scrollProgress - 0.5) / 0.1;
+  
+  const transitionCtaOpacity = useTransform(smoothProgress, [0.70, 0.75, 0.90, 0.98], [0, 1, 1, 0]);
+
+  const compactLogoScale = useTransform(smoothProgress, [0.15, 0.45], [1, 60]);
+  const compactLogoY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
+  const compactLogoOpacity = useTransform(smoothProgress, [0.45, 0.52], [1, 0]);
 
   const navHref = (route: string) => {
     if (route === "news") return `/${lang}/news`;
@@ -268,19 +309,219 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   };
 
   return (
-    <section ref={sectionRef} className="relative z-50 h-[360svh] w-full bg-black text-white">
+    <section ref={sectionRef} className="relative z-50 h-[250svh] w-full bg-black text-white">
       <div className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden bg-black">
         <motion.div
           data-homepage-gradient
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[480vh]"
+          className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[400vh]"
           style={{
             y: transitionGradientY,
             background:
-              "linear-gradient(180deg, #000000 0%, #000000 18%, #001015 28%, #002B36 39%, #28725F 48%, #75DAB4 56%, #A9EFD6 64%, #D5FFEF 72%, #EEF8F3 80%, #F6F5F4 88%, #F6F5F4 100%)",
+              "linear-gradient(180deg, #000000 0%, #000000 10%, #001015 20%, #002B36 30%, #28725F 45%, #75DAB4 65%, #F6F5F4 85%, #F6F5F4 100%)",
           }}
         />
 
+        {/* Z-10: THE VIDEO CONTAINER */}
+        <motion.div 
+          className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center"
+          style={{ opacity: videoContainerOpacity, scale: videoScale }}
+        >
+          <video
+            ref={videoRef}
+            src="/MotionMAWT.mp4"
+            className="w-full h-full object-cover"
+            playsInline
+            muted
+            loop
+            preload="auto"
+          />
+        </motion.div>
+
+        {/* Z-15: THE SVG HOLE MASK */}
+        <motion.div 
+          className="absolute inset-0 z-[15] pointer-events-none overflow-hidden"
+          style={{ opacity: videoContainerOpacity }}
+        >
+          {/* Desktop Mask */}
+          <div className="hidden lg:block absolute inset-0 mx-auto w-full max-w-[1760px]">
+            <motion.h1
+              className="absolute left-[2.5%] top-[6.5%] w-[95%]"
+              style={{
+                scale: heroLogoScale,
+                transformOrigin: "53.23% 33.1%",
+                opacity: heroLogoOpacity,
+              }}
+            >
+              <MawatLogoMask className="h-auto w-full" />
+            </motion.h1>
+          </div>
+
+          {/* Landscape Mobile Mask */}
+          <div className="landscapeHero absolute inset-0 px-8 py-5 lg:hidden">
+            <div className="relative h-full w-full">
+              <motion.h1 className="absolute left-[2%] top-[5%] w-[82%]" style={{ scale: compactLogoScale, transformOrigin: "53.23% 33.1%", opacity: compactLogoOpacity }}>
+                <MawatLogoMask className="h-auto w-full" />
+              </motion.h1>
+            </div>
+          </div>
+
+          {/* Portrait Mobile Mask */}
+          <div className="portraitHero absolute inset-0 px-5 py-6 sm:px-7 sm:py-8 md:px-9 md:py-10 lg:hidden">
+            <div className="w-full">
+              <motion.h1 style={{ scale: compactLogoScale, transformOrigin: "53.23% 33.1%", opacity: compactLogoOpacity }}>
+                <MawatLogoMask className="h-auto w-full max-w-[92vw] sm:max-w-[88vw] md:max-w-[82vw]" />
+              </motion.h1>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Z-20: TEXT AND UI ELEMENTS */}
+        <motion.div 
+          className="absolute inset-0 z-20 pointer-events-none"
+          style={{ opacity: heroContentOpacity }}
+        >
+          {/* Desktop Text */}
+          <div className="hidden lg:block relative h-full w-full max-w-[1760px] mx-auto">
+
+            <motion.div className="absolute left-[2.5%] top-[62%]" style={{ y: desktopContentY }}>
+              <GeometricSymbol className="h-[4.35cqw] w-[7.03cqw] max-h-[56px] max-w-[90px] text-white" />
+            </motion.div>
+            <motion.p className="absolute left-[2.5%] top-[74%] w-[43%] text-[2.45cqw] font-normal leading-[1.16] tracking-[-0.02em] text-white" style={{ y: desktopContentY }}>
+              {dict.statement}
+            </motion.p>
+            <motion.div className="absolute left-[2.85%] top-[91.5%]" style={{ y: desktopContentY }}>
+              <Link href={settings.ctaHref} className="pointer-events-auto inline-flex items-center text-[1.17cqw] font-normal leading-none text-white transition-colors hover:text-[#75DAB4]">
+                <span aria-hidden="true" className="mr-[0.46875cqw]">→</span>
+                {dict.cta}
+              </Link>
+            </motion.div>
+            <motion.p className="absolute left-[65.5%] top-[74.4%] w-[30.5%] text-[1.17cqw] font-normal leading-[1.35] tracking-[-0.01em] text-white/74" style={{ y: desktopContentY }}>
+              <span className="text-white">MAWT is a</span> <SwissMark /> {dict.description}
+            </motion.p>
+            <motion.ul className="absolute right-[2.5%] top-[91.5%] flex items-center gap-[1.5625cqw] pointer-events-auto" aria-label="Social links" style={{ y: desktopContentY }}>
+              {socialLinks.map(({ href, label, icon: Icon }) => (
+                <li key={label}>
+                  <Link href={href} target="_blank" rel="noreferrer" aria-label={label} className="pointer-events-auto flex h-[1.5625cqw] w-[1.5625cqw] items-center justify-center text-white transition-colors hover:text-[#75DAB4]">
+                    <Icon className="h-[1.17cqw] w-[1.17cqw]" aria-hidden="true" />
+                  </Link>
+                </li>
+              ))}
+            </motion.ul>
+          </div>
+
+          {/* Landscape Mobile Text */}
+          <div className="landscapeHero absolute inset-0 px-8 py-5 lg:hidden">
+            <div className="relative h-full w-full">
+              <motion.div className="absolute left-[2%] top-[56%]" style={{ y: compactContentY }}>
+                <GeometricSymbol className="h-7 w-[45px] text-white" />
+              </motion.div>
+              <motion.p className="absolute left-[2%] top-[65%] w-[48%] text-[clamp(1.2rem,3vw,1.55rem)] font-normal leading-[1.06] tracking-[-0.02em] text-white" style={{ y: compactContentY }}>
+                {dict.statement}
+              </motion.p>
+              <motion.div className="absolute left-[6.5%] top-[88%]" style={{ y: compactContentY }}>
+                <Link href={settings.ctaHref} className="pointer-events-auto inline-flex items-center text-[0.8125rem] font-normal leading-none text-white transition-colors hover:text-[#75DAB4]">
+                  <span aria-hidden="true" className="mr-1.5">→</span>
+                  {dict.cta}
+                </Link>
+              </motion.div>
+              <motion.p className="absolute left-[59%] top-[68%] w-[38%] text-[0.8125rem] font-normal leading-[1.32] tracking-[-0.01em] text-white/74" style={{ y: compactContentY }}>
+                <span className="text-white">MAWT is a</span> <SwissMark /> {dict.description}
+              </motion.p>
+              <motion.ul className="absolute right-[2%] top-[88%] flex items-center gap-4" aria-label="Social links" style={{ y: compactContentY }}>
+                {socialLinks.map(({ href, label, icon: Icon }) => (
+                  <li key={label}>
+                    <Link href={href} target="_blank" rel="noreferrer" aria-label={label} className="pointer-events-auto flex h-5 w-5 items-center justify-center text-white transition-colors hover:text-[#75DAB4]">
+                      <Icon className="h-4 w-4" aria-hidden="true" />
+                    </Link>
+                  </li>
+                ))}
+              </motion.ul>
+            </div>
+          </div>
+
+          {/* Portrait Mobile Text */}
+          <div className="portraitHero absolute inset-0 flex flex-col justify-between px-5 py-6 sm:px-7 sm:py-8 md:px-9 md:py-10 lg:hidden">
+            <div className="w-full" />
+            <motion.div className="mt-auto flex flex-col gap-[clamp(1rem,3svh,2rem)] pt-5 sm:pt-8" style={{ y: compactContentY }}>
+              <div>
+                <GeometricSymbol className="h-[clamp(2rem,6vw,3.25rem)] w-[clamp(3.25rem,10vw,5.25rem)] text-white" />
+              </div>
+              <div className="grid gap-[clamp(1rem,3svh,1.75rem)] md:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.8fr)] md:items-end md:gap-10">
+                <div>
+                  <p className="text-[clamp(1.35rem,7vw,2.25rem)] font-normal leading-[1.14] tracking-[-0.02em] text-white md:text-[clamp(1.75rem,4vw,2.4rem)]">
+                    {dict.statement}
+                  </p>
+                  <div className="mt-[clamp(1rem,3svh,1.6rem)] inline-flex items-center">
+                    <Link href={settings.ctaHref} className="pointer-events-auto text-[0.875rem] font-normal leading-none text-white transition-colors hover:text-[#75DAB4] sm:text-[0.9375rem]">
+                      <span aria-hidden="true" className="mr-1.5">→</span>
+                      {dict.cta}
+                    </Link>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-[clamp(1rem,3svh,1.5rem)] md:items-start">
+                  <p className="max-w-[26rem] text-[0.8125rem] font-normal leading-[1.35] tracking-[-0.01em] text-white/74 sm:text-[0.9375rem] md:max-w-none">
+                    <span className="text-white">MAWT is a</span> <SwissMark /> {dict.description}
+                  </p>
+                  <ul className="flex items-center gap-4" aria-label="Social links">
+                    {socialLinks.map(({ href, label, icon: Icon }) => (
+                      <li key={label}>
+                        <Link href={href} target="_blank" rel="noreferrer" aria-label={label} className="pointer-events-auto flex h-5 w-5 items-center justify-center text-white transition-colors hover:text-[#75DAB4]">
+                          <Icon className="h-4 w-4" aria-hidden="true" />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Z-30: GRADIENT TRANSITION TEXTS */}
+        <motion.div
+        className="pointer-events-none absolute inset-x-0 top-0 z-30 hidden px-5 sm:px-7 md:px-9 lg:block lg:px-[2.5vw]"
+      >
+        <div className="mx-auto w-full max-w-[1760px] pt-[28vh]">
+          <HeroGradientStatement text={transitionDict.statement} progress={smoothProgress} />
+          <motion.div
+            className="mt-12"
+            style={{ opacity: transitionCtaOpacity }}
+          >
+            <Link
+              href={localizedHref("a-propos", lang)}
+              className={`pointer-events-auto inline-flex h-10 items-center rounded-full border px-[22px] text-[13px] font-normal leading-none backdrop-blur-md transition-colors duration-300 ${transitionCtaClass}`}
+            >
+              {transitionDict.cta}
+            </Link>
+          </motion.div>
+        </div>
+      </motion.div>
+
+      <motion.div
+        className="pointer-events-none absolute inset-x-0 top-0 z-30 px-5 sm:px-7 md:px-9 lg:hidden"
+      >
+        <div className="mx-auto w-full max-w-[48rem] pt-[28vh]">
+          <HeroGradientStatement
+            text={transitionDict.statement}
+            progress={smoothProgress}
+            className="text-[clamp(2rem,11vw,4rem)] leading-[1.03]"
+          />
+          <motion.div
+            className="mt-8"
+            style={{ opacity: transitionCtaOpacity }}
+          >
+            <Link
+              href={localizedHref("a-propos", lang)}
+              className={`pointer-events-auto inline-flex h-10 items-center rounded-full border px-[22px] text-[13px] font-normal leading-none backdrop-blur-md transition-colors duration-300 ${transitionCtaClass}`}
+            >
+              {transitionDict.cta}
+            </Link>
+          </motion.div>
+        </div>
+      </motion.div>
+
+        {/* Z-50: NAVIGATION */}
         <motion.nav
           aria-label="Homepage transition navigation"
           className="absolute left-0 right-0 top-0 z-50 h-[71px] border-b border-transparent bg-transparent px-5 sm:px-7 md:px-9 lg:px-[2.5vw]"
@@ -357,239 +598,6 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
             </div>
           </motion.div>
         )}
-
-      {/* Desktop Canvas (lg screens) */}
-      <div
-        className="relative z-10 hidden h-full w-full max-w-[1760px] flex-shrink-0 bg-transparent @container lg:block"
-      >
-        <motion.h1
-          aria-label="MAWT"
-          className="absolute left-[2.5%] top-[6.5%] z-40 w-[95%]"
-          style={{
-            scale: heroLogoScale,
-            x: heroLogoX,
-            y: heroLogoY,
-            opacity: heroLogoOpacity,
-            transformOrigin: "0% 0%",
-          }}
-        >
-          <MawatLogo className="h-auto w-full" videoFill />
-          <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-black" />
-        </motion.h1>
-
-        <motion.div
-          className="absolute left-[2.5%] top-[62%]"
-          style={{ opacity: heroContentOpacity, y: desktopContentY }}
-        >
-          <GeometricSymbol className="h-[4.35cqw] w-[7.03cqw] max-h-[56px] max-w-[90px] text-white" />
-        </motion.div>
-
-        <motion.p
-          className="absolute left-[2.5%] top-[74%] w-[43%] text-[2.45cqw] font-normal leading-[1.16] tracking-[-0.02em] text-white"
-          style={{ opacity: heroContentOpacity, y: desktopContentY }}
-        >
-          {dict.statement}
-        </motion.p>
-
-        <motion.div
-          className="absolute left-[2.85%] top-[91.5%]"
-          style={{ opacity: heroContentOpacity, y: desktopContentY }}
-        >
-        <Link
-          href={settings.ctaHref}
-          className="inline-flex items-center text-[1.17cqw] font-normal leading-none text-white transition-colors hover:text-[#75DAB4]"
-        >
-          <span aria-hidden="true" className="mr-[0.46875cqw]">
-            →
-          </span>
-          {dict.cta}
-        </Link>
-        </motion.div>
-
-        <motion.p
-          className="absolute left-[65.5%] top-[74.4%] w-[30.5%] text-[1.17cqw] font-normal leading-[1.35] tracking-[-0.01em] text-white/74"
-          style={{ opacity: heroContentOpacity, y: desktopContentY }}
-        >
-          <span className="text-white">MAWT is a</span>
-          <SwissMark />
-          {dict.description}
-        </motion.p>
-
-        <motion.ul
-          className="absolute right-[2.5%] top-[91.5%] flex items-center gap-[1.5625cqw]"
-          aria-label="Social links"
-          style={{ opacity: heroContentOpacity, y: desktopContentY }}
-        >
-          {socialLinks.map(({ href, label, icon: Icon }) => (
-            <li key={label}>
-              <Link
-                href={href}
-                target="_blank"
-                rel="noreferrer"
-                aria-label={label}
-                className="flex h-[1.5625cqw] w-[1.5625cqw] items-center justify-center text-white transition-colors hover:text-[#75DAB4]"
-              >
-                <Icon className="h-[1.17cqw] w-[1.17cqw]" aria-hidden="true" />
-              </Link>
-            </li>
-          ))}
-        </motion.ul>
-      </div>
-
-      <motion.div
-        className="pointer-events-none absolute inset-x-0 top-[43svh] z-30 hidden px-5 sm:px-7 md:px-9 lg:block lg:px-[2.5vw]"
-        style={{ y: transitionStatementY }}
-      >
-        <div className="mx-auto w-full max-w-[1760px]">
-          <HeroGradientStatement text={transitionDict.statement} progress={scrollProgress} />
-          <motion.div
-            className="mt-12"
-            style={{
-              opacity: scrollProgress < 0.68 ? 0 : scrollProgress > 0.78 ? Math.max(0, 1 - (scrollProgress - 0.78) / 0.1) : 1,
-              y: transitionCtaY,
-            }}
-          >
-            <Link
-              href={localizedHref("a-propos", lang)}
-              className={`pointer-events-auto inline-flex h-10 items-center rounded-full border px-[22px] text-[13px] font-normal leading-none backdrop-blur-md transition-colors duration-300 ${transitionCtaClass}`}
-            >
-              {transitionDict.cta}
-            </Link>
-          </motion.div>
-        </div>
-      </motion.div>
-
-      <motion.div
-        className="pointer-events-none absolute inset-x-0 top-[37svh] z-30 px-5 sm:px-7 md:px-9 lg:hidden"
-        style={{ y: transitionStatementY }}
-      >
-        <div className="mx-auto w-full max-w-[48rem]">
-          <HeroGradientStatement
-            text={transitionDict.statement}
-            progress={scrollProgress}
-            className="text-[clamp(2rem,11vw,4rem)] leading-[1.03]"
-          />
-          <motion.div
-            className="mt-8"
-            style={{
-              opacity: scrollProgress < 0.68 ? 0 : scrollProgress > 0.78 ? Math.max(0, 1 - (scrollProgress - 0.78) / 0.1) : 1,
-              y: transitionCtaY,
-            }}
-          >
-            <Link
-              href={localizedHref("a-propos", lang)}
-              className={`pointer-events-auto inline-flex h-10 items-center rounded-full border px-[22px] text-[13px] font-normal leading-none backdrop-blur-md transition-colors duration-300 ${transitionCtaClass}`}
-            >
-              {transitionDict.cta}
-            </Link>
-          </motion.div>
-        </div>
-      </motion.div>
-
-      <div className="landscapeHero relative z-10 hidden h-[100svh] w-full overflow-hidden bg-transparent px-8 py-5 text-white lg:hidden">
-        <div className="relative h-full w-full">
-          <motion.h1 aria-label="MAWT" className="absolute left-[2%] top-[5%] w-[82%] select-none" style={{ opacity: compactLogoOpacity, scale: compactLogoScale, y: compactLogoY, transformOrigin: "0% 0%" }}>
-            <MawatLogo className="h-auto w-full" />
-          </motion.h1>
-
-          <motion.div className="absolute left-[2%] top-[56%]" style={{ opacity: heroContentOpacity, y: compactContentY }}>
-            <GeometricSymbol className="h-7 w-[45px] text-white" />
-          </motion.div>
-
-          <motion.p className="absolute left-[2%] top-[65%] w-[48%] text-[clamp(1.2rem,3vw,1.55rem)] font-normal leading-[1.06] tracking-[-0.02em] text-white" style={{ opacity: heroContentOpacity, y: compactContentY }}>
-            {dict.statement}
-          </motion.p>
-
-          <motion.div className="absolute left-[6.5%] top-[88%]" style={{ opacity: heroContentOpacity, y: compactContentY }}>
-          <Link
-            href={settings.ctaHref}
-            className="inline-flex items-center text-[0.8125rem] font-normal leading-none text-white transition-colors hover:text-[#75DAB4]"
-          >
-            <span aria-hidden="true" className="mr-1.5">
-              →
-            </span>
-            {dict.cta}
-          </Link>
-          </motion.div>
-
-          <motion.p className="absolute left-[59%] top-[68%] w-[38%] text-[0.8125rem] font-normal leading-[1.32] tracking-[-0.01em] text-white/74" style={{ opacity: heroContentOpacity, y: compactContentY }}>
-            <span className="text-white">MAWT is a</span>
-            <SwissMark />
-            {dict.description}
-          </motion.p>
-
-          <motion.ul className="absolute right-[2%] top-[88%] flex items-center gap-4" aria-label="Social links" style={{ opacity: heroContentOpacity, y: compactContentY }}>
-            {socialLinks.map(({ href, label, icon: Icon }) => (
-              <li key={label}>
-                <Link
-                  href={href}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={label}
-                  className="flex h-5 w-5 items-center justify-center text-white transition-colors hover:text-[#75DAB4]"
-                >
-                  <Icon className="h-4 w-4" aria-hidden="true" />
-                </Link>
-              </li>
-            ))}
-          </motion.ul>
-        </div>
-      </div>
-
-      <div className="portraitHero relative z-10 flex h-[100svh] w-full flex-col justify-between overflow-hidden bg-transparent px-5 py-6 text-white sm:px-7 sm:py-8 md:px-9 md:py-10 lg:hidden">
-        <div className="w-full">
-          <motion.h1 aria-label="MAWT" className="select-none" style={{ opacity: compactLogoOpacity, scale: compactLogoScale, y: compactLogoY, transformOrigin: "0% 0%" }}>
-            <MawatLogo className="h-auto w-full max-w-[92vw] sm:max-w-[88vw] md:max-w-[82vw]" />
-          </motion.h1>
-        </div>
-
-        <motion.div className="mt-auto flex flex-col gap-[clamp(1rem,3svh,2rem)] pt-5 sm:pt-8" style={{ opacity: heroContentOpacity, y: compactContentY }}>
-          <div>
-            <GeometricSymbol className="h-[clamp(2rem,6vw,3.25rem)] w-[clamp(3.25rem,10vw,5.25rem)] text-white" />
-          </div>
-
-          <div className="grid gap-[clamp(1rem,3svh,1.75rem)] md:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.8fr)] md:items-end md:gap-10">
-            <div>
-              <p className="text-[clamp(1.35rem,7vw,2.25rem)] font-normal leading-[1.14] tracking-[-0.02em] text-white md:text-[clamp(1.75rem,4vw,2.4rem)]">
-                {dict.statement}
-              </p>
-              <Link
-                href={settings.ctaHref}
-                className="mt-[clamp(1rem,3svh,1.6rem)] inline-flex items-center text-[0.875rem] font-normal leading-none text-white transition-colors hover:text-[#75DAB4] sm:text-[0.9375rem]"
-              >
-                <span aria-hidden="true" className="mr-1.5">
-                  →
-                </span>
-                {dict.cta}
-              </Link>
-            </div>
-
-            <div className="flex flex-col gap-[clamp(1rem,3svh,1.5rem)] md:items-start">
-              <p className="max-w-[26rem] text-[0.8125rem] font-normal leading-[1.35] tracking-[-0.01em] text-white/74 sm:text-[0.9375rem] md:max-w-none">
-                <span className="text-white">MAWT is a</span>
-                <SwissMark />
-                {dict.description}
-              </p>
-
-              <ul className="flex items-center gap-4" aria-label="Social links">
-                {socialLinks.map(({ href, label, icon: Icon }) => (
-                  <li key={label}>
-                    <Link
-                      href={href}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={label}
-                      className="flex h-5 w-5 items-center justify-center text-white transition-colors hover:text-[#75DAB4]"
-                    >
-                      <Icon className="h-4 w-4" aria-hidden="true" />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </motion.div>
-      </div>
 
       <style jsx>{`
         @media (max-width: 1023px) and (max-height: 520px) and (orientation: landscape) {

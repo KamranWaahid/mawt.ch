@@ -1,242 +1,20 @@
-"use client";
+import re
 
-import { useId, useRef, useState } from "react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useWindowSize } from "@/hooks/use-window-size";
-import { motion, useMotionValueEvent, useScroll, useTransform, useSpring, MotionValue } from "motion/react";
-import { FaFacebookF, FaInstagram, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
-import { Menu, X } from "lucide-react";
-import type { SiteSettings } from "@/lib/types";
-import { localizedHref } from "@/lib/routing/url-helpers";
-import type { Locale } from "@/lib/routing/url-map";
+with open("src/components/sections/homepage-hero-section.tsx", "r") as f:
+    content = f.read()
 
-type HomepageHeroCopy = {
-  statement: string;
-  description: string;
-  cta: string;
-};
+# Add useWindowSize import if not present
+if "useWindowSize" not in content:
+    content = content.replace('import { useParams } from "next/navigation";', 'import { useParams } from "next/navigation";\nimport { useWindowSize } from "@/hooks/use-window-size";')
 
-type HomepageTransitionCopy = {
-  statement: string;
-  cta: string;
-};
+# Find the start of HomepageHeroSection
+start_idx = content.find("export function HomepageHeroSection({")
 
-type HomepageHeroSectionProps = {
-  settings: SiteSettings;
-  dict: HomepageHeroCopy;
-  transitionDict: HomepageTransitionCopy;
-};
+# Extract the top part
+top_part = content[:start_idx]
 
-const socialLinks = [
-  { href: "https://facebook.com/mawt.ch", label: "Facebook", icon: FaFacebookF },
-  { href: "https://x.com/mawt.ch", label: "X", icon: FaXTwitter },
-  { href: "https://instagram.com/mawt.ch", label: "Instagram", icon: FaInstagram },
-  { href: "https://linkedin.com/company/mawt.ch", label: "LinkedIn", icon: FaLinkedinIn },
-];
-
-const navItems = [
-  { label: "Work", route: "projets" },
-  { label: "Approach", route: "notre-methode" },
-  { label: "Services", route: "services" },
-  { label: "News", route: "news" },
-  { label: "About", route: "a-propos" },
-  { label: "Contact", route: "contact" },
-];
-
-function GeometricSymbol({ className }: { className?: string }) {
-  return (
-    <svg
-      width="90"
-      height="56"
-      viewBox="0 0 90 56"
-      fill="none"
-      aria-hidden="true"
-      className={className || "h-10 w-[65px] text-white sm:h-12 sm:w-[78px]"}
-    >
-      <circle cx="45" cy="28" r="21" stroke="currentColor" strokeWidth="1" />
-      <circle cx="27.8" cy="28" r="26.5" stroke="currentColor" strokeWidth="1" />
-      <circle cx="62.2" cy="28" r="26.5" stroke="currentColor" strokeWidth="1" />
-      <line x1="0" y1="28" x2="90" y2="28" stroke="currentColor" strokeWidth="1" />
-      <line x1="12.2" y1="6.3" x2="77.1" y2="49.8" stroke="currentColor" strokeWidth="1" />
-      <line x1="77.4" y1="6.3" x2="12.5" y2="49.8" stroke="currentColor" strokeWidth="1" />
-    </svg>
-  );
-}
-
-function SwissMark() {
-  return (
-    <span className="mx-[0.3em] inline-flex h-[1.08em] w-[1.55em] translate-y-[0.16em] items-center justify-center align-baseline">
-      <svg
-        viewBox="0 0 28 20"
-        fill="none"
-        aria-hidden="true"
-        className="block h-full w-full"
-        shapeRendering="crispEdges"
-      >
-        <rect width="28" height="20" fill="#E1251B" />
-        <rect x="12" y="4" width="4" height="12" fill="white" />
-        <rect x="8" y="8" width="12" height="4" fill="white" />
-      </svg>
-      <span className="sr-only">Swiss</span>
-    </span>
-  );
-}
-
-const mawatLogoPaths = [
-  "M36.3703 87.5942H0V123.965H36.3703V87.5942Z",
-  "M295.364 122.065L267.051 92.625C257.992 96.2525 250.068 102.133 250.068 114.142C250.068 126.819 261.161 134.293 271.805 134.293C281.771 134.293 289.694 129.759 295.364 122.065Z",
-  "M317.328 144.708C310.598 151.992 302.073 157.376 292.613 160.335H332.497L317.328 144.708Z",
-  "M566.68 0H526.367L500.555 106.667H499.877L471.115 0H430.802L402.269 106.667H401.591L376.228 0H303.554C318.025 5.79443 328.879 17.6124 328.879 36.4658C328.879 56.8465 314.388 69.5332 296.719 78.3632L316.87 98.9731L332.946 74.2871H374.166L339.514 120.709L379.368 160.344H418.555L450.257 51.8635H450.935L482.637 160.344H520.907L557.22 33.0674H611.947V160.344H650.676V33.0674H695.971V0H566.661H566.68Z",
-  "M280.413 22.8723C271.583 22.8723 265.016 29.2109 265.016 37.5923C265.016 45.0668 269.321 52.0831 277.015 58.4217C287.21 54.3455 295.582 47.3292 295.582 37.5923C295.582 29.44 289.692 22.8723 280.413 22.8723Z",
-  "M36.3709 123.965V160.335H72.8271L72.7603 123.965H36.3613H36.3709Z",
-  "M212.934 115.726C212.934 93.0832 228.781 79.041 246.45 71.3374C236.484 61.6004 229.917 50.2789 229.917 36.4658C229.917 17.3356 241.362 5.70852 255.977 0H163.648L128.777 102.82H127.87L91.4039 0H36.3711V87.5942H72.7032L72.6364 46.9569L113.15 160.344H140.327L181.996 46.8805H182.673L181.766 160.344H248.197C228.37 154.359 212.934 139.801 212.934 115.726Z",
-];
-
-function MawatLogo({
-  className,
-  tone = "light",
-  videoFill = false,
-}: {
-  className?: string;
-  tone?: "light" | "dark";
-  videoFill?: boolean;
-}) {
-  const rawId = useId();
-  const logoId = rawId.replace(/:/g, "");
-  const clipPathId = `mawt-logo-shape-${logoId}`;
-
-  return (
-    <svg
-      viewBox="0 0 696 160"
-      fill="none"
-      aria-hidden="true"
-      className={className}
-    >
-      <defs>
-        <clipPath id={clipPathId}>
-          {mawatLogoPaths.map((path) => (
-            <path key={`clip-${path}`} d={path} />
-          ))}
-        </clipPath>
-      </defs>
-
-      {mawatLogoPaths.map((path) => (
-        <path key={`base-${path}`} d={path} fill={tone === "dark" ? "#050505" : "white"} />
-      ))}
-
-      {videoFill ? (
-        <g clipPath={`url(#${clipPathId})`}>
-          <foreignObject x="-18" y="-38" width="732" height="236">
-            <video
-              src="/MotionMAWT.mp4"
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              className="h-full w-full object-cover"
-            />
-          </foreignObject>
-        </g>
-      ) : null}
-    </svg>
-  );
-}
-
-function MawatLogoMask({ className }: { className?: string }) {
-  const rawId = useId();
-  const maskId = `mawt-logo-hole-${rawId.replace(/:/g, "")}`;
-
-  return (
-    <svg
-      viewBox="0 0 696 160"
-      preserveAspectRatio="xMidYMid meet"
-      fill="none"
-      aria-hidden="true"
-      className={className}
-      style={{ overflow: 'visible' }}
-    >
-      <defs>
-        <mask id={maskId}>
-          <rect x="-10000" y="-10000" width="20000" height="20000" fill="white" />
-          {mawatLogoPaths.map((path) => (
-            <path key={`hole-${path}`} d={path} fill="black" />
-          ))}
-        </mask>
-      </defs>
-      <rect x="-10000" y="-10000" width="20000" height="20000" fill="black" mask={`url(#${maskId})`} />
-    </svg>
-  );
-}
-
-function StatementWord({
-  word,
-  index,
-  total,
-  progress,
-}: {
-  word: string;
-  index: number;
-  total: number;
-  progress: MotionValue<number>;
-}) {
-  const start = 0.72 + index * 0.005;
-  const end = Math.min(0.88, start + 0.05);
-  
-  const opacity = useTransform(progress, [start, end], [0, 1]);
-  const y = useTransform(progress, [start, end], [14, 0]);
-  const blurValue = useTransform(progress, [start, end], [10, 0]);
-  const filter = useTransform(blurValue, (b) => `blur(${b}px)`);
-
-  return (
-    <span className="inline">
-      <motion.span
-        className="inline-block will-change-[transform,opacity,filter]"
-        style={{
-          opacity,
-          y,
-          filter,
-        }}
-      >
-        {word}
-      </motion.span>
-      {index < total - 1 ? " " : null}
-    </span>
-  );
-}
-
-function HeroGradientStatement({
-  text,
-  progress,
-  className = "",
-}: {
-  text: string;
-  progress: MotionValue<number>;
-  className?: string;
-}) {
-  const words = text.split(" ");
-  const exitOpacity = useTransform(progress, [0.92, 0.98], [1, 0]);
-
-  return (
-    <motion.h2
-      className={`max-w-[1040px] select-text font-serif text-[clamp(2.1rem,4.05vw,3.7rem)] font-normal leading-[1.01] tracking-normal transition-colors duration-300 ${className}`}
-      style={{ opacity: exitOpacity, color: "#F6F5F4" }}
-    >
-      {words.map((word, index) => (
-        <StatementWord
-          key={`${word}-${index}`}
-          word={word}
-          index={index}
-          total={words.length}
-          progress={progress}
-        />
-      ))}
-    </motion.h2>
-  );
-}
-
-export function HomepageHeroSection({ settings, dict, transitionDict }: HomepageHeroSectionProps) {
+# Our new HomepageHeroSection code
+new_component = """export function HomepageHeroSection({ settings, dict, transitionDict }: HomepageHeroSectionProps) {
   const lang = useParams().lang as Locale;
   const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -493,3 +271,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     </section>
   );
 }
+"""
+
+with open("src/components/sections/homepage-hero-section.tsx", "w") as f:
+    f.write(top_part + new_component)

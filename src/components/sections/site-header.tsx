@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "motion/react";
 import Image from "next/image";
 import LogoBlack from "../../../public/logo-black.svg";
 import LogoWhite from "../../../public/logo-white.svg";
@@ -76,18 +76,24 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
     hasDropdown: false,
   }));
 
-  // Default to light if not on homepage, unless overridden by prop
   const isHomePage = pathname === "/" || pathname === "/en" || pathname === "/fr";
-  const theme = themeProp || (isHomePage ? "dark" : "light");
-  const isLight = theme === "light" || isMobileMenuOpen;
-  const navTextClass = isLight ? "text-black/70" : "text-white/72";
-  const navHoverClass = isLight ? "hover:text-black" : "hover:text-white";
-  const navDividerClass = isLight ? "text-black/25" : "text-white/25";
-  const navSlashClass = isLight ? "text-black/45" : "text-white/45";
+  const navTextClass = isMobileMenuOpen ? "text-black/70" : "text-white/80";
+  const navHoverClass = isMobileMenuOpen ? "hover:text-black" : "hover:text-white";
+  const navDividerClass = isMobileMenuOpen ? "text-black/25" : "text-white/30";
+  const navSlashClass = isMobileMenuOpen ? "text-black/45" : "text-white/50";
 
-  if (isHomePage) {
-    return null;
-  }
+  const [isPastHero, setIsPastHero] = useState(!isHomePage);
+  const { scrollY } = useScroll();
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    if (isHomePage && typeof window !== "undefined") {
+      // The hero section is 250svh, and sticky container is 100svh.
+      // It starts scrolling up at 1.5 * window.innerHeight.
+      // We reveal the sticky header right after it scrolls out of view (around 1.8 * vh).
+      const vh = window.innerHeight;
+      setIsPastHero(latest > 1.8 * vh);
+    }
+  });
 
   const handleLanguageChange = (lang: string) => {
     if (lang === currentLang) return;
@@ -105,9 +111,18 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
   };
 
   return (
-    <header
+    <motion.header
       style={{ viewTransitionName: "site-header" }}
-      className="fixed left-0 right-0 top-0 z-[80] h-[71px] border-b border-transparent bg-transparent px-5 transition-all duration-300 sm:px-7 md:px-9 lg:px-[2.5vw]"
+      initial={isHomePage ? "hidden" : "visible"}
+      animate={isPastHero ? "visible" : "hidden"}
+      variants={{
+        visible: { y: "0%", opacity: 1 },
+        hidden: { y: "-100%", opacity: 0 },
+      }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      className={`fixed left-0 right-0 top-0 z-[80] h-[71px] border-b border-transparent px-5 transition-colors duration-300 sm:px-7 md:px-9 lg:px-[2.5vw] bg-transparent ${
+        isPastHero ? "pointer-events-auto" : "pointer-events-none"
+      } ${!isMobileMenuOpen ? "mix-blend-difference" : ""}`}
     >
       <nav
         aria-label="Primary"
@@ -119,7 +134,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
           className="z-50 block w-[98px] shrink-0 transition-opacity hover:opacity-80"
         >
           <Image
-            src={isLight ? LogoBlack : LogoWhite}
+            src={isMobileMenuOpen ? LogoBlack : LogoWhite}
             alt="MAWT Logo"
             className="h-auto w-full"
           />
@@ -144,7 +159,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
                   type="button"
                   onClick={() => handleLanguageChange("fr")}
                   aria-label="Passer en français"
-                  className={`transition-colors ${navHoverClass} ${currentLang === "fr" ? (isLight ? "text-black" : "text-white") : ""}`}
+                  className={`transition-colors ${navHoverClass} ${currentLang === "fr" ? (isMobileMenuOpen ? "text-black font-medium" : "text-white font-medium") : ""}`}
                 >
                   FR
                 </button>
@@ -153,7 +168,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
                   onClick={() => handleLanguageChange("en")}
                   type="button"
                   aria-label="Change language"
-                  className={`transition-colors ${navHoverClass} ${currentLang === "en" ? (isLight ? "text-black" : "text-white") : ""}`}
+                  className={`transition-colors ${navHoverClass} ${currentLang === "en" ? (isMobileMenuOpen ? "text-black font-medium" : "text-white font-medium") : ""}`}
                 >
                   EN
                 </button>
@@ -169,7 +184,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
                   type="button"
                   onClick={() => handleLanguageChange("fr")}
                   aria-label="Passer en français"
-                  className={`transition-colors ${navHoverClass} ${currentLang === "fr" ? (isLight ? "text-black" : "text-white") : ""}`}
+                  className={`transition-colors ${navHoverClass} ${currentLang === "fr" ? (isMobileMenuOpen ? "text-black font-medium" : "text-white font-medium") : ""}`}
                 >
                   FR
                 </motion.button>
@@ -179,7 +194,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
                   onClick={() => handleLanguageChange("en")}
                   type="button"
                   aria-label="Change language"
-                  className={`transition-colors ${navHoverClass} ${currentLang === "en" ? (isLight ? "text-black" : "text-white") : ""}`}
+                  className={`transition-colors ${navHoverClass} ${currentLang === "en" ? (isMobileMenuOpen ? "text-black font-medium" : "text-white font-medium") : ""}`}
                 >
                   EN
                 </motion.button>
@@ -187,7 +202,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
             )}
 
             <button
-              className={`z-50 ml-1 inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors md:hidden ${isLight ? "bg-black/5 text-black" : "bg-white/10 text-white"}`}
+              className={`z-50 ml-1 inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors md:hidden ${isMobileMenuOpen ? "bg-black/5 text-black hover:bg-black/10" : "bg-white/15 text-white hover:bg-white/25"}`}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-expanded={isMobileMenuOpen}
               aria-label="Toggle menu"
@@ -275,6 +290,6 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 }

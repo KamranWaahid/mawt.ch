@@ -294,6 +294,9 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   const heroLogoOpacity = useTransform(smoothProgress, [0.60, 0.65], [1, 0]);
   const videoContainerOpacity = useTransform(smoothProgress, [0.60, 0.65], [1, 0]);
   
+  // The solid white logo covers the mask initially so it looks normal, then fades out to reveal video
+  const maskCoverOpacity = useTransform(smoothProgress, [0, 0.05], [1, 0]);
+  
   // Scroll indicator is visible initially and fades out at the end
   const scrollIndicatorOpacity = useTransform(smoothProgress, [0.55, 0.60], [1, 0]);
   
@@ -370,47 +373,56 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
         >
           {/* Desktop Mask */}
           <div className="hidden lg:block absolute inset-0">
-            <motion.h1
-              className="absolute left-[2.5vw] w-[98px]"
+            <motion.div
+              className="absolute left-5 top-[23px] sm:left-7 md:left-9 lg:left-[2.5vw] z-40 hidden md:block"
               style={{
-                top: "24.25px",
+                width: "98px",
                 transform: heroLogoTransformDesktop,
                 transformOrigin: "top left",
                 opacity: heroLogoOpacity,
               }}
             >
               <MawatLogoMask className="h-auto w-full" />
-            </motion.h1>
+              <motion.div className="absolute inset-0" style={{ opacity: maskCoverOpacity }}>
+                <MawatLogo className="h-auto w-full" tone="light" />
+              </motion.div>
+            </motion.div>
           </div>
 
           {/* Landscape Mobile Mask */}
           <div className="absolute inset-0 hidden max-lg:landscape:block">
-            <motion.h1 
-              className="absolute left-[32px] w-[98px]" 
-              style={{ 
-                top: "24.25px",
-                transform: heroLogoTransformLandscape, 
-                transformOrigin: "top left", 
-                opacity: heroLogoOpacity 
+            <motion.div
+              className="absolute left-5 top-[23px] sm:left-7 md:left-9 lg:left-[2.5vw] z-40 hidden sm:block md:hidden landscape:block"
+              style={{
+                width: "98px",
+                transform: heroLogoTransformLandscape,
+                transformOrigin: "top left",
+                opacity: heroLogoOpacity,
               }}
             >
               <MawatLogoMask className="h-auto w-full" />
-            </motion.h1>
+              <motion.div className="absolute inset-0" style={{ opacity: maskCoverOpacity }}>
+                <MawatLogo className="h-auto w-full" tone="light" />
+              </motion.div>
+            </motion.div>
           </div>
 
           {/* Portrait Mobile Mask */}
           <div className="absolute inset-0 hidden max-lg:portrait:block">
-            <motion.h1 
-              className="absolute left-[20px] w-[98px]" 
-              style={{ 
-                top: "24.25px",
-                transform: heroLogoTransformPortrait, 
-                transformOrigin: "top left", 
-                opacity: heroLogoOpacity 
+            <motion.div
+              className="absolute left-5 top-[23px] sm:left-7 md:left-9 lg:left-[2.5vw] z-40 block sm:hidden landscape:hidden"
+              style={{
+                width: "98px",
+                transform: heroLogoTransformPortrait,
+                transformOrigin: "top left",
+                opacity: heroLogoOpacity,
               }}
             >
               <MawatLogoMask className="h-auto w-full" />
-            </motion.h1>
+              <motion.div className="absolute inset-0" style={{ opacity: maskCoverOpacity }}>
+                <MawatLogo className="h-auto w-full" tone="light" />
+              </motion.div>
+            </motion.div>
           </div>
         </motion.div>
 

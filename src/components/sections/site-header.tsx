@@ -76,7 +76,9 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
     hasDropdown: false,
   }));
 
-  const isHomePage = pathname === "/" || pathname === "/en" || pathname === "/fr";
+  const normalizedPath = pathname.replace(/\/$/, "") || "/";
+  const isHomePage = normalizedPath === "/" || normalizedPath === "/en" || normalizedPath === "/fr";
+  
   const navTextClass = isMobileMenuOpen ? "text-black/70" : "text-white/80";
   const navHoverClass = isMobileMenuOpen ? "hover:text-black" : "hover:text-white";
   const navDividerClass = isMobileMenuOpen ? "text-black/25" : "text-white/30";

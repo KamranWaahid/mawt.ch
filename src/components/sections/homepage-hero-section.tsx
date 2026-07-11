@@ -600,6 +600,9 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
         )}
 
       <style jsx>{`
+        .landscapeHero {
+          display: none;
+        }
         @media (max-width: 1023px) and (max-height: 520px) and (orientation: landscape) {
           .portraitHero {
             display: none;

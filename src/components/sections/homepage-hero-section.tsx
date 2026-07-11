@@ -261,25 +261,44 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     }
   });
 
-  const navbarOpacity = useTransform(smoothProgress, [0.005, 0.05], [0, 1]);
-  const navbarY = useTransform(smoothProgress, [0.005, 0.05], [-12, 0]);
-  const navLinksOpacity = useTransform(smoothProgress, [0.85, 0.92], [0, 1]);
-  const heroLogoScale = useTransform(smoothProgress, [0.10, 0.30], [1, 60]);
-  const videoScale = useTransform(smoothProgress, [0.10, 0.30], [1, 1.1]);
-  const heroLogoX = useTransform(smoothProgress, [0, 1], ["0%", "0%"]);
-  const heroLogoY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
+  const heroLogoTransformDesktop = useTransform(smoothProgress, [0, 0.15, 0.20, 0.35], [
+    "translate(0vw, 0px) scale(1)",
+    "translate(calc(47.5vw - 588px), calc(50vh - 159.25px)) scale(12)",
+    "translate(calc(47.5vw - 588px), calc(50vh - 159.25px)) scale(12)",
+    "translate(calc(47.5vw - 7350px), calc(50vh - 1711.75px)) scale(150)"
+  ]);
+
+  const heroLogoTransformLandscape = useTransform(smoothProgress, [0, 0.15, 0.20, 0.35], [
+    "translate(0px, 0px) scale(1)",
+    "translate(calc(50vw - 326px), calc(50vh - 91.75px)) scale(6)",
+    "translate(calc(50vw - 326px), calc(50vh - 91.75px)) scale(6)",
+    "translate(calc(50vw - 7382px), calc(50vh - 1711.75px)) scale(150)"
+  ]);
+
+  const heroLogoTransformPortrait = useTransform(smoothProgress, [0, 0.15, 0.20, 0.35], [
+    "translate(0px, 0px) scale(1)",
+    "translate(calc(50vw - 191.5px), calc(50vh - 63.625px)) scale(3.5)",
+    "translate(calc(50vw - 191.5px), calc(50vh - 63.625px)) scale(3.5)",
+    "translate(calc(50vw - 7370px), calc(50vh - 1711.75px)) scale(150)"
+  ]);
+
+  const videoScale = useTransform(smoothProgress, [0.15, 0.35], [1, 1.1]);
   
-  // Hero initial text fades out early, well before logo zoom gets large
-  const heroContentOpacity = useTransform(smoothProgress, [0.02, 0.10], [1, 0]);
+  // White filler makes the mask look like a solid white logo initially
+  const whiteFillerOpacity = useTransform(smoothProgress, [0.15, 0.20], [1, 0]);
   
-  // Video and logo mask fade out after logo is fully zoomed and held
+  // Hero text stays visible until the end of the video hold
+  const heroContentOpacity = useTransform(smoothProgress, [0.60, 0.65], [1, 0]);
+  
+  // Video and logo mask fade out
   const heroLogoOpacity = useTransform(smoothProgress, [0.60, 0.65], [1, 0]);
   const videoContainerOpacity = useTransform(smoothProgress, [0.60, 0.65], [1, 0]);
   
-  // Scroll indicator shows during the hold phase
-  const scrollIndicatorOpacity = useTransform(smoothProgress, [0.25, 0.30, 0.55, 0.60], [0, 1, 1, 0]);
+  // Scroll indicator is visible initially and fades out at the end
+  const scrollIndicatorOpacity = useTransform(smoothProgress, [0.55, 0.60], [1, 0]);
   
-  const navLogoOpacity = useTransform(smoothProgress, [0.85, 0.92], [0, 1]);
+  // Navbar logo fades in as the mask leaves the top-left corner
+  const navLogoOpacity = useTransform(smoothProgress, [0.0, 0.15, 0.20], [0, 0, 1]);
   
   const isHomeNavLight = scrollProgress >= 0.88;
   const homeNavTextClass = isHomeNavLight ? "text-black/70" : "text-white/72";
@@ -301,13 +320,6 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   );
   
   const transitionCtaOpacity = useTransform(smoothProgress, [0.80, 0.85, 0.92, 0.98], [0, 1, 1, 0]);
-
-  // Use explicit transform string to prevent Safari from adding translateZ(0) which causes SVG blur on 1x rasterization
-  const heroLogoTransform = useTransform(smoothProgress, [0.10, 0.30], ["scale(1)", "scale(60)"]);
-  const compactLogoTransform = useTransform(smoothProgress, [0.10, 0.30], ["scale(1)", "scale(60)"]);
-
-  const compactLogoY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
-  const compactLogoOpacity = useTransform(smoothProgress, [0.60, 0.65], [1, 0]);
 
   const navHref = (route: string) => {
     if (route === "news") return `/${lang}/news`;
@@ -345,18 +357,25 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           />
         </motion.div>
 
+        {/* Z-12: WHITE FILLER FOR LOGO */}
+        <motion.div
+          className="absolute inset-0 z-[12] bg-white pointer-events-none"
+          style={{ opacity: whiteFillerOpacity }}
+        />
+
         {/* Z-15: THE SVG HOLE MASK */}
         <motion.div 
           className="absolute inset-0 z-[15] pointer-events-none overflow-hidden"
           style={{ opacity: videoContainerOpacity }}
         >
           {/* Desktop Mask */}
-          <div className="hidden lg:block absolute inset-0 mx-auto w-full max-w-[1760px]">
+          <div className="hidden lg:block absolute inset-0">
             <motion.h1
-              className="absolute left-[2.5%] top-[6.5%] w-[95%]"
+              className="absolute left-[2.5vw] w-[98px]"
               style={{
-                transform: heroLogoTransform,
-                transformOrigin: "53.23% 33.1%",
+                top: "24.25px",
+                transform: heroLogoTransformDesktop,
+                transformOrigin: "top left",
                 opacity: heroLogoOpacity,
               }}
             >
@@ -365,21 +384,33 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           </div>
 
           {/* Landscape Mobile Mask */}
-          <div className="absolute inset-0 px-8 py-5 hidden max-lg:landscape:block">
-            <div className="relative h-full w-full">
-              <motion.h1 className="absolute left-[2%] top-[5%] w-[82%]" style={{ transform: compactLogoTransform, transformOrigin: "53.23% 33.1%", opacity: compactLogoOpacity }}>
-                <MawatLogoMask className="h-auto w-full" />
-              </motion.h1>
-            </div>
+          <div className="absolute inset-0 hidden max-lg:landscape:block">
+            <motion.h1 
+              className="absolute left-[32px] w-[98px]" 
+              style={{ 
+                top: "24.25px",
+                transform: heroLogoTransformLandscape, 
+                transformOrigin: "top left", 
+                opacity: heroLogoOpacity 
+              }}
+            >
+              <MawatLogoMask className="h-auto w-full" />
+            </motion.h1>
           </div>
 
           {/* Portrait Mobile Mask */}
-          <div className="absolute inset-0 px-5 py-6 sm:px-7 sm:py-8 md:px-9 md:py-10 hidden max-lg:portrait:block">
-            <div className="w-full">
-              <motion.h1 style={{ transform: compactLogoTransform, transformOrigin: "53.23% 33.1%", opacity: compactLogoOpacity }}>
-                <MawatLogoMask className="h-auto w-full max-w-[92vw] sm:max-w-[88vw] md:max-w-[82vw]" />
-              </motion.h1>
-            </div>
+          <div className="absolute inset-0 hidden max-lg:portrait:block">
+            <motion.h1 
+              className="absolute left-[20px] w-[98px]" 
+              style={{ 
+                top: "24.25px",
+                transform: heroLogoTransformPortrait, 
+                transformOrigin: "top left", 
+                opacity: heroLogoOpacity 
+              }}
+            >
+              <MawatLogoMask className="h-auto w-full" />
+            </motion.h1>
           </div>
         </motion.div>
 
@@ -485,9 +516,9 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           </div>
         </motion.div>
 
-        {/* Z-25: SCROLL INDICATOR DURING VIDEO HOLD */}
+        {/* Z-25: SCROLL INDICATOR */}
         <motion.div 
-          className="absolute bottom-[8vh] left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none z-25 animate-bounce"
+          className="absolute bottom-[8vh] right-5 sm:right-7 md:right-9 lg:right-[2.5vw] flex flex-col items-center gap-3 pointer-events-none z-25 animate-bounce"
           style={{ opacity: scrollIndicatorOpacity }}
         >
           <span className="text-[10px] uppercase tracking-[0.2em] text-white/60">Scroll</span>
@@ -541,7 +572,6 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
         <motion.nav
           aria-label="Homepage transition navigation"
           className="absolute left-0 right-0 top-0 z-50 h-[71px] border-b border-transparent bg-transparent px-5 sm:px-7 md:px-9 lg:px-[2.5vw]"
-          style={{ opacity: navbarOpacity, y: navbarY }}
         >
           <div className="mx-auto flex h-full w-full max-w-[1760px] items-center justify-between gap-5 md:gap-8">
             <motion.div style={{ opacity: navLogoOpacity }} className="shrink-0">
@@ -552,7 +582,6 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
 
             <motion.div
               className={`ml-auto hidden flex-wrap items-center justify-end gap-x-5 gap-y-3 text-[13px] font-normal leading-none transition-colors duration-300 md:flex lg:gap-x-8 lg:text-[14px] ${homeNavTextClass}`}
-              style={{ opacity: navLinksOpacity }}
             >
               {navItems.map((item) => (
                 <Link key={item.route} href={navHref(item.route)} className={`transition-colors ${homeNavHoverClass}`}>
@@ -571,7 +600,6 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
 
             <motion.div
               className={`ml-auto flex items-center gap-3 text-[13px] font-normal leading-none transition-colors duration-300 md:hidden ${homeNavTextClass}`}
-              style={{ opacity: navLinksOpacity }}
             >
               <Link href="/fr" className={`transition-colors ${homeNavHoverClass} ${lang === "fr" ? (isHomeNavLight ? "text-black" : "text-white") : ""}`}>
                 FR

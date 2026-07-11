@@ -247,7 +247,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     offset: ["start start", "end end"],
   });
   
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 300, damping: 40 });
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 80, damping: 25, restDelta: 0.0001 });
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     setScrollProgress(latest);
@@ -261,23 +261,20 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     }
   });
 
-  const heroLogoTransformDesktop = useTransform(smoothProgress, [0, 0.15, 0.20, 0.35], [
+  const heroLogoTransformDesktop = useTransform(smoothProgress, [0, 0.15, 0.35], [
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
-    "translate(calc(47.5vw - 588px), calc(40vh - 159.25px)) scale(12)",
     "translate(calc(47.5vw - 588px), calc(40vh - 159.25px)) scale(12)",
     "translate(calc(47.5vw - 21193px), calc(50vh - 7909px)) scale(700)"
   ]);
 
-  const heroLogoTransformLandscape = useTransform(smoothProgress, [0, 0.15, 0.20, 0.35], [
+  const heroLogoTransformLandscape = useTransform(smoothProgress, [0, 0.15, 0.35], [
     "translate(calc(0vw - 49px), calc(0vh - 0px)) scale(1)",
-    "translate(calc(0vw - 294px), calc(40vh - 91.75px)) scale(6)",
     "translate(calc(0vw - 294px), calc(40vh - 91.75px)) scale(6)",
     "translate(calc(0vw - 21193px), calc(50vh - 7909px)) scale(700)"
   ]);
 
-  const heroLogoTransformPortrait = useTransform(smoothProgress, [0, 0.15, 0.20, 0.35], [
+  const heroLogoTransformPortrait = useTransform(smoothProgress, [0, 0.15, 0.35], [
     "translate(calc(0vw - 49px), calc(0vh - 0px)) scale(1)",
-    "translate(calc(0vw - 171.5px), calc(40vh - 63.675px)) scale(3.5)",
     "translate(calc(0vw - 171.5px), calc(40vh - 63.675px)) scale(3.5)",
     "translate(calc(0vw - 21193px), calc(50vh - 7909px)) scale(700)"
   ]);
@@ -285,17 +282,17 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   const videoScale = useTransform(smoothProgress, [0.15, 0.35], [1, 1.1]);
   
   // White filler makes the mask look like a solid white logo initially
-  const whiteFillerOpacity = useTransform(smoothProgress, [0.15, 0.20], [1, 0]);
+  const whiteFillerOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
   
   // Hero text fades out as the video reveals
-  const heroContentOpacity = useTransform(smoothProgress, [0.20, 0.25], [1, 0]);
+  const heroContentOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
   
   // Video and logo mask fade out
   const heroLogoOpacity = useTransform(smoothProgress, [0.60, 0.65], [1, 0]);
   const videoContainerOpacity = useTransform(smoothProgress, [0.60, 0.65], [1, 0]);
   
   // The solid white logo covers the mask initially so it looks normal, then fades out to reveal video
-  const maskCoverOpacity = useTransform(smoothProgress, [0, 0.05], [1, 0]);
+  const maskCoverOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
   
   // Scroll indicator is visible initially and fades out at the end
   const scrollIndicatorOpacity = useTransform(smoothProgress, [0.55, 0.60], [1, 0]);

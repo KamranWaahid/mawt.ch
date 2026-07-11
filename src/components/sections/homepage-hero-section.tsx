@@ -296,8 +296,8 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   // Gradient slides up from below the screen (100vh) to 0, then continues up
   const transitionGradientY = useTransform(
     smoothProgress,
-    [0.65, 0.80, 0.92, 1.0],
-    ["100vh", "0vh", "-120vh", "-250vh"]
+    [0.70, 0.90, 1.0],
+    ["100vh", "0vh", "0vh"]
   );
   
   const transitionCtaOpacity = useTransform(smoothProgress, [0.80, 0.85, 0.92, 0.98], [0, 1, 1, 0]);
@@ -321,7 +321,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           style={{
             y: transitionGradientY,
             background:
-              "linear-gradient(180deg, #000000 0%, #000000 10%, #001015 20%, #002B36 30%, #28725F 45%, #75DAB4 65%, #F6F5F4 85%, #F6F5F4 100%)",
+              "linear-gradient(180deg, #000000 0%, #000000 10%, #001015 20%, #002B36 30%, #28725F 45%, #75DAB4 55%, #F6F5F4 75%, #F6F5F4 100%)",
           }}
         />
 

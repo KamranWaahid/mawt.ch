@@ -302,7 +302,10 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   
   const transitionCtaOpacity = useTransform(smoothProgress, [0.80, 0.85, 0.92, 0.98], [0, 1, 1, 0]);
 
-  const compactLogoScale = useTransform(smoothProgress, [0.10, 0.30], [1, 60]);
+  // Use explicit transform string to prevent Safari from adding translateZ(0) which causes SVG blur on 1x rasterization
+  const heroLogoTransform = useTransform(smoothProgress, [0.10, 0.30], ["scale(1)", "scale(60)"]);
+  const compactLogoTransform = useTransform(smoothProgress, [0.10, 0.30], ["scale(1)", "scale(60)"]);
+
   const compactLogoY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
   const compactLogoOpacity = useTransform(smoothProgress, [0.60, 0.65], [1, 0]);
 
@@ -352,7 +355,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
             <motion.h1
               className="absolute left-[2.5%] top-[6.5%] w-[95%]"
               style={{
-                scale: heroLogoScale,
+                transform: heroLogoTransform,
                 transformOrigin: "53.23% 33.1%",
                 opacity: heroLogoOpacity,
               }}
@@ -364,7 +367,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           {/* Landscape Mobile Mask */}
           <div className="absolute inset-0 px-8 py-5 hidden max-lg:landscape:block">
             <div className="relative h-full w-full">
-              <motion.h1 className="absolute left-[2%] top-[5%] w-[82%]" style={{ scale: compactLogoScale, transformOrigin: "53.23% 33.1%", opacity: compactLogoOpacity }}>
+              <motion.h1 className="absolute left-[2%] top-[5%] w-[82%]" style={{ transform: compactLogoTransform, transformOrigin: "53.23% 33.1%", opacity: compactLogoOpacity }}>
                 <MawatLogoMask className="h-auto w-full" />
               </motion.h1>
             </div>
@@ -373,7 +376,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           {/* Portrait Mobile Mask */}
           <div className="absolute inset-0 px-5 py-6 sm:px-7 sm:py-8 md:px-9 md:py-10 hidden max-lg:portrait:block">
             <div className="w-full">
-              <motion.h1 style={{ scale: compactLogoScale, transformOrigin: "53.23% 33.1%", opacity: compactLogoOpacity }}>
+              <motion.h1 style={{ transform: compactLogoTransform, transformOrigin: "53.23% 33.1%", opacity: compactLogoOpacity }}>
                 <MawatLogoMask className="h-auto w-full max-w-[92vw] sm:max-w-[88vw] md:max-w-[82vw]" />
               </motion.h1>
             </div>
@@ -445,7 +448,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           </div>
 
           {/* Portrait Mobile Text */}
-          <div className="absolute inset-0 flex-col justify-between px-5 py-6 sm:px-7 sm:py-8 md:px-9 md:py-10 hidden max-lg:portrait:flex">
+          <div className="absolute inset-0 flex-col justify-between px-5 pt-6 pb-[12vh] sm:px-7 sm:pt-8 sm:pb-[14vh] md:px-9 md:pt-10 md:pb-[16vh] hidden max-lg:portrait:flex">
             <div className="w-full" />
             <motion.div className="mt-auto flex flex-col gap-[clamp(1rem,3svh,2rem)] pt-5 sm:pt-8" style={{ y: compactContentY }}>
               <div>

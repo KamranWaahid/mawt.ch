@@ -333,3 +333,16 @@ body::after {
     font-weight: 500;
   }
 }
+
+/* Mobile Hero Orientation display */
+.landscapeHero {
+  display: none !important;
+}
+@media (max-width: 1023px) and (max-height: 520px) and (orientation: landscape) {
+  .portraitHero {
+    display: none !important;
+  }
+  .landscapeHero {
+    display: block !important;
+  }
+}

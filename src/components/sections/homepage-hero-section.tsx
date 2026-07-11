@@ -599,20 +599,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           </motion.div>
         )}
 
-      <style jsx>{`
-        .landscapeHero {
-          display: none;
-        }
-        @media (max-width: 1023px) and (max-height: 520px) and (orientation: landscape) {
-          .portraitHero {
-            display: none;
-          }
 
-          .landscapeHero {
-            display: block;
-          }
-        }
-      `}</style>
       </div>
     </section>
   );

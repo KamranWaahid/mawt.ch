@@ -180,8 +180,8 @@ function StatementWord({
   total: number;
   progress: MotionValue<number>;
 }) {
-  const start = 0.60 + index * 0.005;
-  const end = Math.min(0.80, start + 0.05);
+  const start = 0.72 + index * 0.005;
+  const end = Math.min(0.88, start + 0.05);
   
   const opacity = useTransform(progress, [start, end], [0, 1]);
   const y = useTransform(progress, [start, end], [14, 0]);
@@ -215,7 +215,7 @@ function HeroGradientStatement({
   className?: string;
 }) {
   const words = text.split(" ");
-  const exitOpacity = useTransform(progress, [0.90, 0.98], [1, 0]);
+  const exitOpacity = useTransform(progress, [0.92, 0.98], [1, 0]);
 
   return (
     <motion.h2
@@ -261,29 +261,32 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     }
   });
 
-  const navbarOpacity = useTransform(smoothProgress, [0.005, 0.07], [0, 1]);
-  const navbarY = useTransform(smoothProgress, [0.005, 0.07], [-12, 0]);
-  const navLinksOpacity = useTransform(smoothProgress, [0.8, 0.9], [0, 1]);
-  const heroLogoScale = useTransform(smoothProgress, [0.15, 0.45], [1, 60]);
-  const videoScale = useTransform(smoothProgress, [0.15, 0.45], [1, 1.1]);
+  const navbarOpacity = useTransform(smoothProgress, [0.005, 0.05], [0, 1]);
+  const navbarY = useTransform(smoothProgress, [0.005, 0.05], [-12, 0]);
+  const navLinksOpacity = useTransform(smoothProgress, [0.85, 0.92], [0, 1]);
+  const heroLogoScale = useTransform(smoothProgress, [0.10, 0.30], [1, 60]);
+  const videoScale = useTransform(smoothProgress, [0.10, 0.30], [1, 1.1]);
   const heroLogoX = useTransform(smoothProgress, [0, 1], ["0%", "0%"]);
   const heroLogoY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
   
   // Hero initial text fades out early, well before logo zoom gets large
-  const heroContentOpacity = useTransform(smoothProgress, [0.05, 0.20], [1, 0]);
+  const heroContentOpacity = useTransform(smoothProgress, [0.02, 0.10], [1, 0]);
   
-  // Video and logo mask fade out after logo is fully zoomed
-  const heroLogoOpacity = useTransform(smoothProgress, [0.45, 0.52], [1, 0]);
-  const videoContainerOpacity = useTransform(smoothProgress, [0.45, 0.52], [1, 0]);
+  // Video and logo mask fade out after logo is fully zoomed and held
+  const heroLogoOpacity = useTransform(smoothProgress, [0.60, 0.65], [1, 0]);
+  const videoContainerOpacity = useTransform(smoothProgress, [0.60, 0.65], [1, 0]);
   
-  const navLogoOpacity = useTransform(smoothProgress, [0.8, 0.9], [0, 1]);
+  // Scroll indicator shows during the hold phase
+  const scrollIndicatorOpacity = useTransform(smoothProgress, [0.25, 0.30, 0.55, 0.60], [0, 1, 1, 0]);
   
-  const isHomeNavLight = scrollProgress >= 0.82;
+  const navLogoOpacity = useTransform(smoothProgress, [0.85, 0.92], [0, 1]);
+  
+  const isHomeNavLight = scrollProgress >= 0.88;
   const homeNavTextClass = isHomeNavLight ? "text-black/70" : "text-white/72";
   const homeNavHoverClass = isHomeNavLight ? "hover:text-black" : "hover:text-white";
   const homeNavDividerClass = isHomeNavLight ? "text-black/25" : "text-white/25";
   const homeNavSlashClass = isHomeNavLight ? "text-black/45" : "text-white/45";
-  const isTransitionTextDark = scrollProgress >= 0.64;
+  const isTransitionTextDark = scrollProgress >= 0.75;
   const transitionCtaClass = isTransitionTextDark
     ? "border-black/12 bg-black/[0.04] text-black/92 hover:border-black/22 hover:bg-black/[0.08] hover:text-black"
     : "border-white/14 bg-white/[0.10] text-white/92 hover:border-white/24 hover:bg-white/[0.16] hover:text-white";
@@ -293,15 +296,15 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   // Gradient slides up from below the screen (100vh) to 0, then continues up
   const transitionGradientY = useTransform(
     smoothProgress,
-    [0.52, 0.70, 0.85, 1.0],
+    [0.65, 0.80, 0.92, 1.0],
     ["100vh", "0vh", "-120vh", "-250vh"]
   );
   
-  const transitionCtaOpacity = useTransform(smoothProgress, [0.70, 0.75, 0.90, 0.98], [0, 1, 1, 0]);
+  const transitionCtaOpacity = useTransform(smoothProgress, [0.80, 0.85, 0.92, 0.98], [0, 1, 1, 0]);
 
-  const compactLogoScale = useTransform(smoothProgress, [0.15, 0.45], [1, 60]);
+  const compactLogoScale = useTransform(smoothProgress, [0.10, 0.30], [1, 60]);
   const compactLogoY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
-  const compactLogoOpacity = useTransform(smoothProgress, [0.45, 0.52], [1, 0]);
+  const compactLogoOpacity = useTransform(smoothProgress, [0.60, 0.65], [1, 0]);
 
   const navHref = (route: string) => {
     if (route === "news") return `/${lang}/news`;
@@ -309,7 +312,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   };
 
   return (
-    <section ref={sectionRef} className="relative z-50 h-[250svh] w-full bg-black text-white">
+    <section ref={sectionRef} className="relative z-50 h-[400svh] w-full bg-black text-white">
       <div className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden bg-black">
         <motion.div
           data-homepage-gradient
@@ -334,6 +337,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
             playsInline
             muted
             loop
+            autoPlay
             preload="auto"
           />
         </motion.div>
@@ -476,6 +480,15 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
               </div>
             </motion.div>
           </div>
+        </motion.div>
+
+        {/* Z-25: SCROLL INDICATOR DURING VIDEO HOLD */}
+        <motion.div 
+          className="absolute bottom-[8vh] left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none z-25"
+          style={{ opacity: scrollIndicatorOpacity }}
+        >
+          <span className="text-[10px] uppercase tracking-[0.2em] text-white/60">Scroll</span>
+          <div className="w-[1px] h-10 bg-gradient-to-b from-white/40 to-transparent" />
         </motion.div>
 
         {/* Z-30: GRADIENT TRANSITION TEXTS */}

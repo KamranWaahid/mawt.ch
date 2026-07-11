@@ -279,7 +279,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     "translate(calc(0vw - 21193px), calc(50vh - 7909px)) scale(700)"
   ]);
 
-  const videoScale = useTransform(smoothProgress, [0.15, 0.35], [1, 1.1]);
+  const videoScale = useTransform(smoothProgress, [0.15, 0.35], [1, 1]);
   
   // White filler makes the mask look like a solid white logo initially
   const whiteFillerOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
@@ -348,7 +348,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           <video
             ref={videoRef}
             src="/MotionMAWT.mp4"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-contain"
             playsInline
             muted
             loop

@@ -89,11 +89,10 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     if (isHomePage && typeof window !== "undefined") {
-      // The hero section is 250svh, and sticky container is 100svh.
-      // It starts scrolling up at 1.5 * window.innerHeight.
-      // We reveal the sticky header right after it scrolls out of view (around 1.8 * vh).
+      // The hero section is 400svh, and sticky container is 100svh.
+      // We reveal the sticky header right after the hero finishes (around 3.9 * vh).
       const vh = window.innerHeight;
-      setIsPastHero(latest > 1.8 * vh);
+      setIsPastHero(latest > 3.9 * vh);
     }
   });
 

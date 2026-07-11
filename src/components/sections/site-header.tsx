@@ -77,7 +77,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
   }));
 
   const normalizedPath = pathname.replace(/\/$/, "") || "/";
-  const isHomePage = normalizedPath === "/" || normalizedPath === "/en" || normalizedPath === "/fr";
+  const isHomePage = ["/", "/en", "/fr", ""].includes(normalizedPath);
   
   const navTextClass = isMobileMenuOpen ? "text-black/70" : "text-white/80";
   const navHoverClass = isMobileMenuOpen ? "hover:text-black" : "hover:text-white";
@@ -124,7 +124,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       className={`fixed left-0 right-0 top-0 z-[80] h-[71px] border-b border-transparent px-5 transition-colors duration-300 sm:px-7 md:px-9 lg:px-[2.5vw] bg-transparent ${
         isPastHero ? "pointer-events-auto" : "pointer-events-none"
-      } ${!isMobileMenuOpen ? "mix-blend-difference" : ""}`}
+      } ${(!isMobileMenuOpen && (!isHomePage || isPastHero)) ? "mix-blend-difference" : ""}`}
     >
       <nav
         aria-label="Primary"

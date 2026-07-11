@@ -374,7 +374,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           {/* Desktop Mask */}
           <div className="hidden lg:block absolute inset-0">
             <motion.div
-              className="absolute left-5 top-[23px] sm:left-7 md:left-9 lg:left-[2.5vw] z-40 hidden md:block"
+              className="absolute left-5 top-[23px] sm:left-7 md:left-9 lg:left-[2.5vw] z-40 block"
               style={{
                 width: "98px",
                 transform: heroLogoTransformDesktop,
@@ -392,7 +392,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           {/* Landscape Mobile Mask */}
           <div className="absolute inset-0 hidden max-lg:landscape:block">
             <motion.div
-              className="absolute left-5 top-[23px] sm:left-7 md:left-9 lg:left-[2.5vw] z-40 hidden sm:block md:hidden landscape:block"
+              className="absolute left-5 top-[23px] sm:left-7 md:left-9 lg:left-[2.5vw] z-40 block"
               style={{
                 width: "98px",
                 transform: heroLogoTransformLandscape,
@@ -410,7 +410,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           {/* Portrait Mobile Mask */}
           <div className="absolute inset-0 hidden max-lg:portrait:block">
             <motion.div
-              className="absolute left-5 top-[23px] sm:left-7 md:left-9 lg:left-[2.5vw] z-40 block sm:hidden landscape:hidden"
+              className="absolute left-5 top-[23px] sm:left-7 md:left-9 lg:left-[2.5vw] z-40 block"
               style={{
                 width: "98px",
                 transform: heroLogoTransformPortrait,
@@ -491,7 +491,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           </div>
 
           {/* Portrait Mobile Text */}
-          <div className="absolute inset-0 flex-col justify-between px-5 pt-6 pb-[12vh] sm:px-7 sm:pt-8 sm:pb-[14vh] md:px-9 md:pt-10 md:pb-[16vh] hidden max-lg:portrait:flex">
+          <div className="absolute inset-0 flex-col justify-between px-5 pt-6 pb-[8vh] max-sm:pb-[5vh] sm:px-7 sm:pt-8 md:px-9 md:pt-10 hidden max-lg:portrait:flex">
             <div className="w-full" />
             <motion.div className="mt-auto flex flex-col gap-[clamp(1rem,3svh,2rem)] pt-5 sm:pt-8" style={{ y: compactContentY }}>
               <div>

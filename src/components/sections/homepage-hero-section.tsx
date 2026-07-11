@@ -3,7 +3,6 @@
 import { useId, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useWindowSize } from "@/hooks/use-window-size";
 import { motion, useMotionValueEvent, useScroll, useTransform, useSpring, MotionValue } from "motion/react";
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
 import { Menu, X } from "lucide-react";
@@ -237,18 +236,18 @@ function HeroGradientStatement({
 }
 
 export function HomepageHeroSection({ settings, dict, transitionDict }: HomepageHeroSectionProps) {
-  const lang = useParams().lang as Locale;
-  const sectionRef = useRef<HTMLElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isHeroMobileMenuOpen, setIsHeroMobileMenuOpen] = useState(false);
+  const params = useParams();
+  const lang = (params?.lang === "fr" ? "fr" : "en") as Locale;
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
   });
-
+  
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 300, damping: 40 });
-  const windowSize = useWindowSize();
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     setScrollProgress(latest);
@@ -262,37 +261,24 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     }
   });
 
-  const LOGO_ORIGINAL_WIDTH = 696;
-  const LOGO_ORIGINAL_HEIGHT = 160;
-  
-  const initialWidth = 98;
-  const initialScale = initialWidth / LOGO_ORIGINAL_WIDTH;
-  const initialX = windowSize.width < 1024 ? 20 : windowSize.width * 0.025;
-  const initialY = windowSize.width < 1024 ? 24 : 32;
-  
-  const targetWidth = windowSize.width * 0.85;
-  const targetScale = targetWidth / LOGO_ORIGINAL_WIDTH;
-  const targetX = (windowSize.width - targetWidth) / 2;
-  const targetY = (windowSize.height - (LOGO_ORIGINAL_HEIGHT * targetScale)) / 2;
-
-  const finalScale = targetScale * 1.05;
-  const finalX = (windowSize.width - (LOGO_ORIGINAL_WIDTH * finalScale)) / 2;
-  const finalY = (windowSize.height - (LOGO_ORIGINAL_HEIGHT * finalScale)) / 2;
-
-  const logoScale = useTransform(smoothProgress, [0, 0.25, 0.65], [initialScale, targetScale, finalScale]);
-  const logoX = useTransform(smoothProgress, [0, 0.25, 0.65], [initialX, targetX, finalX]);
-  const logoY = useTransform(smoothProgress, [0, 0.25, 0.65], [initialY, targetY, finalY]);
-
-  const solidLogoOpacity = useTransform(smoothProgress, [0.25, 0.35], [1, 0]);
-  const scrollIndicatorOpacity = useTransform(smoothProgress, [0.05, 0.15, 0.50, 0.60], [0, 1, 1, 0]);
-
-  // Transition gradient slides up from bottom
-  const transitionGradientY = useTransform(smoothProgress, [0.65, 0.85, 1], ["100vh", "0vh", "0vh"]);
-  const transitionCtaOpacity = useTransform(smoothProgress, [0.80, 0.85, 0.92, 0.98], [0, 1, 1, 0]);
-  
   const navbarOpacity = useTransform(smoothProgress, [0.005, 0.05], [0, 1]);
   const navbarY = useTransform(smoothProgress, [0.005, 0.05], [-12, 0]);
   const navLinksOpacity = useTransform(smoothProgress, [0.85, 0.92], [0, 1]);
+  const heroLogoScale = useTransform(smoothProgress, [0.10, 0.30], [1, 60]);
+  const videoScale = useTransform(smoothProgress, [0.10, 0.30], [1, 1.1]);
+  const heroLogoX = useTransform(smoothProgress, [0, 1], ["0%", "0%"]);
+  const heroLogoY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
+  
+  // Hero initial text fades out early, well before logo zoom gets large
+  const heroContentOpacity = useTransform(smoothProgress, [0.02, 0.10], [1, 0]);
+  
+  // Video and logo mask fade out after logo is fully zoomed and held
+  const heroLogoOpacity = useTransform(smoothProgress, [0.60, 0.65], [1, 0]);
+  const videoContainerOpacity = useTransform(smoothProgress, [0.60, 0.65], [1, 0]);
+  
+  // Scroll indicator shows during the hold phase
+  const scrollIndicatorOpacity = useTransform(smoothProgress, [0.25, 0.30, 0.55, 0.60], [0, 1, 1, 0]);
+  
   const navLogoOpacity = useTransform(smoothProgress, [0.85, 0.92], [0, 1]);
   
   const isHomeNavLight = scrollProgress >= 0.88;
@@ -300,11 +286,25 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   const homeNavHoverClass = isHomeNavLight ? "hover:text-black" : "hover:text-white";
   const homeNavDividerClass = isHomeNavLight ? "text-black/25" : "text-white/25";
   const homeNavSlashClass = isHomeNavLight ? "text-black/45" : "text-white/45";
-  
   const isTransitionTextDark = scrollProgress >= 0.75;
   const transitionCtaClass = isTransitionTextDark
     ? "border-black/12 bg-black/[0.04] text-black/92 hover:border-black/22 hover:bg-black/[0.08] hover:text-black"
     : "border-white/14 bg-white/[0.10] text-white/92 hover:border-white/24 hover:bg-white/[0.16] hover:text-white";
+  const desktopContentY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
+  const compactContentY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
+  
+  // Gradient slides up from below the screen (100vh) to 0, then continues up
+  const transitionGradientY = useTransform(
+    smoothProgress,
+    [0.65, 0.80, 0.92, 1.0],
+    ["100vh", "0vh", "-120vh", "-250vh"]
+  );
+  
+  const transitionCtaOpacity = useTransform(smoothProgress, [0.80, 0.85, 0.92, 0.98], [0, 1, 1, 0]);
+
+  const compactLogoScale = useTransform(smoothProgress, [0.10, 0.30], [1, 60]);
+  const compactLogoY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
+  const compactLogoOpacity = useTransform(smoothProgress, [0.60, 0.65], [1, 0]);
 
   const navHref = (route: string) => {
     if (route === "news") return `/${lang}/news`;
@@ -312,11 +312,24 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   };
 
   return (
-    <section ref={sectionRef} className="relative z-50 h-[400svh] w-full bg-[#F6F5F4] text-white">
+    <section ref={sectionRef} className="relative z-50 h-[400svh] w-full bg-black text-white">
       <div className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden bg-black">
-        
-        {/* Layer 1: The Video Container */}
-        <div className="absolute inset-0 z-10 pointer-events-none">
+        <motion.div
+          data-homepage-gradient
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[400vh]"
+          style={{
+            y: transitionGradientY,
+            background:
+              "linear-gradient(180deg, #000000 0%, #000000 10%, #001015 20%, #002B36 30%, #28725F 45%, #75DAB4 65%, #F6F5F4 85%, #F6F5F4 100%)",
+          }}
+        />
+
+        {/* Z-10: THE VIDEO CONTAINER */}
+        <motion.div 
+          className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center"
+          style={{ opacity: videoContainerOpacity, scale: videoScale }}
+        >
           <video
             ref={videoRef}
             src="/MotionMAWT.mp4"
@@ -327,88 +340,199 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
             autoPlay
             preload="auto"
           />
-        </div>
-
-        {/* Layer 2: The Mask Overlay */}
-        <div className="absolute inset-0 z-20 pointer-events-none bg-black mix-blend-multiply flex overflow-hidden">
-          <motion.div 
-            className="origin-top-left absolute top-0 left-0" 
-            style={{ scale: logoScale, x: logoX, y: logoY }}
-          >
-            <svg width="696" height="160" viewBox="0 0 696 160" fill="white" preserveAspectRatio="xMidYMid meet">
-              {mawatLogoPaths.map(p => <path key={p} d={p} />)}
-            </svg>
-          </motion.div>
-        </div>
-
-        {/* Layer 3: The Solid White Logo */}
-        <motion.div 
-          className="absolute inset-0 z-[25] pointer-events-none overflow-hidden"
-          style={{ opacity: solidLogoOpacity }}
-        >
-          <motion.div 
-            className="origin-top-left absolute top-0 left-0" 
-            style={{ scale: logoScale, x: logoX, y: logoY }}
-          >
-            <svg width="696" height="160" viewBox="0 0 696 160" fill="white" preserveAspectRatio="xMidYMid meet">
-              {mawatLogoPaths.map(p => <path key={p} d={p} />)}
-            </svg>
-          </motion.div>
         </motion.div>
 
-        {/* Gradient Transition */}
-        <motion.div
-          data-homepage-gradient
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 z-30 h-[400vh]"
-          style={{
-            y: transitionGradientY,
-            background:
-              "linear-gradient(180deg, #000000 0%, #000000 10%, #001015 20%, #002B36 30%, #28725F 45%, #75DAB4 55%, #F6F5F4 75%, #F6F5F4 100%)",
-          }}
-        />
-
-        {/* Scroll Indicator */}
+        {/* Z-15: THE SVG HOLE MASK */}
         <motion.div 
-          className="absolute bottom-[8vh] left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none z-35 animate-bounce"
+          className="absolute inset-0 z-[15] pointer-events-none overflow-hidden"
+          style={{ opacity: videoContainerOpacity }}
+        >
+          {/* Desktop Mask */}
+          <div className="hidden lg:block absolute inset-0 mx-auto w-full max-w-[1760px]">
+            <motion.h1
+              className="absolute left-[2.5%] top-[6.5%] w-[95%]"
+              style={{
+                scale: heroLogoScale,
+                transformOrigin: "53.23% 33.1%",
+                opacity: heroLogoOpacity,
+              }}
+            >
+              <MawatLogoMask className="h-auto w-full" />
+            </motion.h1>
+          </div>
+
+          {/* Landscape Mobile Mask */}
+          <div className="absolute inset-0 px-8 py-5 hidden max-lg:landscape:block">
+            <div className="relative h-full w-full">
+              <motion.h1 className="absolute left-[2%] top-[5%] w-[82%]" style={{ scale: compactLogoScale, transformOrigin: "53.23% 33.1%", opacity: compactLogoOpacity }}>
+                <MawatLogoMask className="h-auto w-full" />
+              </motion.h1>
+            </div>
+          </div>
+
+          {/* Portrait Mobile Mask */}
+          <div className="absolute inset-0 px-5 py-6 sm:px-7 sm:py-8 md:px-9 md:py-10 hidden max-lg:portrait:block">
+            <div className="w-full">
+              <motion.h1 style={{ scale: compactLogoScale, transformOrigin: "53.23% 33.1%", opacity: compactLogoOpacity }}>
+                <MawatLogoMask className="h-auto w-full max-w-[92vw] sm:max-w-[88vw] md:max-w-[82vw]" />
+              </motion.h1>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Z-20: TEXT AND UI ELEMENTS */}
+        <motion.div 
+          className="absolute inset-0 z-20 pointer-events-none"
+          style={{ opacity: heroContentOpacity }}
+        >
+          {/* Desktop Text */}
+          <div className="hidden lg:block relative h-full w-full max-w-[1760px] mx-auto">
+
+            <motion.div className="absolute left-[2.5%] top-[62%]" style={{ y: desktopContentY }}>
+              <GeometricSymbol className="h-[4.35cqw] w-[7.03cqw] max-h-[56px] max-w-[90px] text-white" />
+            </motion.div>
+            <motion.p className="absolute left-[2.5%] top-[74%] w-[43%] text-[2.45cqw] font-normal leading-[1.16] tracking-[-0.02em] text-white" style={{ y: desktopContentY }}>
+              {dict.statement}
+            </motion.p>
+            <motion.div className="absolute left-[2.85%] top-[91.5%]" style={{ y: desktopContentY }}>
+              <Link href={settings.ctaHref} className="pointer-events-auto inline-flex items-center text-[1.17cqw] font-normal leading-none text-white transition-colors hover:text-[#75DAB4]">
+                <span aria-hidden="true" className="mr-[0.46875cqw]">→</span>
+                {dict.cta}
+              </Link>
+            </motion.div>
+            <motion.p className="absolute left-[65.5%] top-[74.4%] w-[30.5%] text-[1.17cqw] font-normal leading-[1.35] tracking-[-0.01em] text-white/74" style={{ y: desktopContentY }}>
+              <span className="text-white">MAWT is a</span> <SwissMark /> {dict.description}
+            </motion.p>
+            <motion.ul className="absolute right-[2.5%] top-[91.5%] flex items-center gap-[1.5625cqw] pointer-events-auto" aria-label="Social links" style={{ y: desktopContentY }}>
+              {socialLinks.map(({ href, label, icon: Icon }) => (
+                <li key={label}>
+                  <Link href={href} target="_blank" rel="noreferrer" aria-label={label} className="pointer-events-auto flex h-[1.5625cqw] w-[1.5625cqw] items-center justify-center text-white transition-colors hover:text-[#75DAB4]">
+                    <Icon className="h-[1.17cqw] w-[1.17cqw]" aria-hidden="true" />
+                  </Link>
+                </li>
+              ))}
+            </motion.ul>
+          </div>
+
+          {/* Landscape Mobile Text */}
+          <div className="absolute inset-0 px-8 py-5 hidden max-lg:landscape:block">
+            <div className="relative h-full w-full">
+              <motion.div className="absolute left-[2%] top-[56%]" style={{ y: compactContentY }}>
+                <GeometricSymbol className="h-7 w-[45px] text-white" />
+              </motion.div>
+              <motion.p className="absolute left-[2%] top-[65%] w-[48%] text-[clamp(1.2rem,3vw,1.55rem)] font-normal leading-[1.06] tracking-[-0.02em] text-white" style={{ y: compactContentY }}>
+                {dict.statement}
+              </motion.p>
+              <motion.div className="absolute left-[6.5%] top-[88%]" style={{ y: compactContentY }}>
+                <Link href={settings.ctaHref} className="pointer-events-auto inline-flex items-center text-[0.8125rem] font-normal leading-none text-white transition-colors hover:text-[#75DAB4]">
+                  <span aria-hidden="true" className="mr-1.5">→</span>
+                  {dict.cta}
+                </Link>
+              </motion.div>
+              <motion.p className="absolute left-[59%] top-[68%] w-[38%] text-[0.8125rem] font-normal leading-[1.32] tracking-[-0.01em] text-white/74" style={{ y: compactContentY }}>
+                <span className="text-white">MAWT is a</span> <SwissMark /> {dict.description}
+              </motion.p>
+              <motion.ul className="absolute right-[2%] top-[88%] flex items-center gap-4" aria-label="Social links" style={{ y: compactContentY }}>
+                {socialLinks.map(({ href, label, icon: Icon }) => (
+                  <li key={label}>
+                    <Link href={href} target="_blank" rel="noreferrer" aria-label={label} className="pointer-events-auto flex h-5 w-5 items-center justify-center text-white transition-colors hover:text-[#75DAB4]">
+                      <Icon className="h-4 w-4" aria-hidden="true" />
+                    </Link>
+                  </li>
+                ))}
+              </motion.ul>
+            </div>
+          </div>
+
+          {/* Portrait Mobile Text */}
+          <div className="absolute inset-0 flex-col justify-between px-5 py-6 sm:px-7 sm:py-8 md:px-9 md:py-10 hidden max-lg:portrait:flex">
+            <div className="w-full" />
+            <motion.div className="mt-auto flex flex-col gap-[clamp(1rem,3svh,2rem)] pt-5 sm:pt-8" style={{ y: compactContentY }}>
+              <div>
+                <GeometricSymbol className="h-[clamp(2rem,6vw,3.25rem)] w-[clamp(3.25rem,10vw,5.25rem)] text-white" />
+              </div>
+              <div className="grid gap-[clamp(1rem,3svh,1.75rem)] md:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.8fr)] md:items-end md:gap-10">
+                <div>
+                  <p className="text-[clamp(1.35rem,7vw,2.25rem)] font-normal leading-[1.14] tracking-[-0.02em] text-white md:text-[clamp(1.75rem,4vw,2.4rem)]">
+                    {dict.statement}
+                  </p>
+                  <div className="mt-[clamp(1rem,3svh,1.6rem)] inline-flex items-center">
+                    <Link href={settings.ctaHref} className="pointer-events-auto text-[0.875rem] font-normal leading-none text-white transition-colors hover:text-[#75DAB4] sm:text-[0.9375rem]">
+                      <span aria-hidden="true" className="mr-1.5">→</span>
+                      {dict.cta}
+                    </Link>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-[clamp(1rem,3svh,1.5rem)] md:items-start">
+                  <p className="max-w-[26rem] text-[0.8125rem] font-normal leading-[1.35] tracking-[-0.01em] text-white/74 sm:text-[0.9375rem] md:max-w-none">
+                    <span className="text-white">MAWT is a</span> <SwissMark /> {dict.description}
+                  </p>
+                  <ul className="flex items-center gap-4" aria-label="Social links">
+                    {socialLinks.map(({ href, label, icon: Icon }) => (
+                      <li key={label}>
+                        <Link href={href} target="_blank" rel="noreferrer" aria-label={label} className="pointer-events-auto flex h-5 w-5 items-center justify-center text-white transition-colors hover:text-[#75DAB4]">
+                          <Icon className="h-4 w-4" aria-hidden="true" />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Z-25: SCROLL INDICATOR DURING VIDEO HOLD */}
+        <motion.div 
+          className="absolute bottom-[8vh] left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none z-25 animate-bounce"
           style={{ opacity: scrollIndicatorOpacity }}
         >
           <span className="text-[10px] uppercase tracking-[0.2em] text-white/60">Scroll</span>
           <div className="w-[1px] h-10 bg-gradient-to-b from-white/40 to-transparent" />
         </motion.div>
 
-        {/* Transition Texts */}
-        <motion.div className="pointer-events-none absolute inset-x-0 top-0 z-40 hidden px-5 sm:px-7 md:px-9 lg:block lg:px-[2.5vw]">
-          <div className="mx-auto w-full max-w-[1760px] pt-[28vh]">
-            <HeroGradientStatement text={transitionDict.statement} progress={smoothProgress} />
-            <motion.div className="mt-12" style={{ opacity: transitionCtaOpacity }}>
-              <Link
-                href={localizedHref("a-propos", lang)}
-                className={`pointer-events-auto inline-flex h-10 items-center rounded-full border px-[22px] text-[13px] font-normal leading-none backdrop-blur-md transition-colors duration-300 ${transitionCtaClass}`}
-              >
-                {transitionDict.cta}
-              </Link>
-            </motion.div>
-          </div>
-        </motion.div>
+        {/* Z-30: GRADIENT TRANSITION TEXTS */}
+        <motion.div
+        className="pointer-events-none absolute inset-x-0 top-0 z-30 hidden px-5 sm:px-7 md:px-9 lg:block lg:px-[2.5vw]"
+      >
+        <div className="mx-auto w-full max-w-[1760px] pt-[28vh]">
+          <HeroGradientStatement text={transitionDict.statement} progress={smoothProgress} />
+          <motion.div
+            className="mt-12"
+            style={{ opacity: transitionCtaOpacity }}
+          >
+            <Link
+              href={localizedHref("a-propos", lang)}
+              className={`pointer-events-auto inline-flex h-10 items-center rounded-full border px-[22px] text-[13px] font-normal leading-none backdrop-blur-md transition-colors duration-300 ${transitionCtaClass}`}
+            >
+              {transitionDict.cta}
+            </Link>
+          </motion.div>
+        </div>
+      </motion.div>
 
-        <motion.div className="pointer-events-none absolute inset-x-0 top-0 z-40 px-5 sm:px-7 md:px-9 lg:hidden">
-          <div className="mx-auto w-full max-w-[48rem] pt-[28vh]">
-            <HeroGradientStatement
-              text={transitionDict.statement}
-              progress={smoothProgress}
-              className="text-[clamp(2rem,11vw,4rem)] leading-[1.03]"
-            />
-            <motion.div className="mt-8" style={{ opacity: transitionCtaOpacity }}>
-              <Link
-                href={localizedHref("a-propos", lang)}
-                className={`pointer-events-auto inline-flex h-10 items-center rounded-full border px-[22px] text-[13px] font-normal leading-none backdrop-blur-md transition-colors duration-300 ${transitionCtaClass}`}
-              >
-                {transitionDict.cta}
-              </Link>
-            </motion.div>
-          </div>
-        </motion.div>
+      <motion.div
+        className="pointer-events-none absolute inset-x-0 top-0 z-30 px-5 sm:px-7 md:px-9 lg:hidden"
+      >
+        <div className="mx-auto w-full max-w-[48rem] pt-[28vh]">
+          <HeroGradientStatement
+            text={transitionDict.statement}
+            progress={smoothProgress}
+            className="text-[clamp(2rem,11vw,4rem)] leading-[1.03]"
+          />
+          <motion.div
+            className="mt-8"
+            style={{ opacity: transitionCtaOpacity }}
+          >
+            <Link
+              href={localizedHref("a-propos", lang)}
+              className={`pointer-events-auto inline-flex h-10 items-center rounded-full border px-[22px] text-[13px] font-normal leading-none backdrop-blur-md transition-colors duration-300 ${transitionCtaClass}`}
+            >
+              {transitionDict.cta}
+            </Link>
+          </motion.div>
+        </div>
+      </motion.div>
 
         {/* Z-50: NAVIGATION */}
         <motion.nav
@@ -474,21 +598,21 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
             className="fixed inset-0 z-[49] bg-black/94 px-6 pb-10 pt-[calc(env(safe-area-inset-top)+6rem)] text-white md:hidden"
           >
             <div className="flex flex-col gap-7">
-              <nav className="flex flex-col">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.route}
-                    href={navHref(item.route)}
-                    onClick={() => setIsHeroMobileMenuOpen(false)}
-                    className="block border-b border-white/10 py-4 text-[1.5rem] font-normal tracking-[-0.02em] text-white/90 transition-colors hover:text-[#75DAB4]"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </nav>
+              {navItems.map((item) => (
+                <Link
+                  key={item.route}
+                  href={navHref(item.route)}
+                  onClick={() => setIsHeroMobileMenuOpen(false)}
+                  className="text-[clamp(2rem,10vw,3.35rem)] font-normal leading-none tracking-tight text-white"
+                >
+                  {item.label}
+                </Link>
+              ))}
             </div>
           </motion.div>
         )}
+
+
       </div>
     </section>
   );

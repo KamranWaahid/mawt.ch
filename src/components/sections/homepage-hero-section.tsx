@@ -262,24 +262,24 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   });
 
   const heroLogoTransformDesktop = useTransform(smoothProgress, [0, 0.15, 0.20, 0.35], [
-    "translate(0vw, 0px) scale(1)",
-    "translate(calc(47.5vw - 588px), calc(50vh - 159.25px)) scale(12)",
-    "translate(calc(47.5vw - 588px), calc(50vh - 159.25px)) scale(12)",
-    "translate(calc(47.5vw - 7350px), calc(50vh - 1711.75px)) scale(150)"
+    "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
+    "translate(calc(47.5vw - 588px), calc(40vh - 159.25px)) scale(12)",
+    "translate(calc(47.5vw - 588px), calc(40vh - 159.25px)) scale(12)",
+    "translate(calc(47.5vw - 7350px), calc(40vh - 1711.75px)) scale(150)"
   ]);
 
   const heroLogoTransformLandscape = useTransform(smoothProgress, [0, 0.15, 0.20, 0.35], [
-    "translate(0px, 0px) scale(1)",
-    "translate(calc(50vw - 326px), calc(50vh - 91.75px)) scale(6)",
-    "translate(calc(50vw - 326px), calc(50vh - 91.75px)) scale(6)",
-    "translate(calc(50vw - 7382px), calc(50vh - 1711.75px)) scale(150)"
+    "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
+    "translate(calc(50vw - 326px), calc(40vh - 91.75px)) scale(6)",
+    "translate(calc(50vw - 326px), calc(40vh - 91.75px)) scale(6)",
+    "translate(calc(50vw - 7382px), calc(40vh - 1711.75px)) scale(150)"
   ]);
 
   const heroLogoTransformPortrait = useTransform(smoothProgress, [0, 0.15, 0.20, 0.35], [
-    "translate(0px, 0px) scale(1)",
-    "translate(calc(50vw - 191.5px), calc(50vh - 63.625px)) scale(3.5)",
-    "translate(calc(50vw - 191.5px), calc(50vh - 63.625px)) scale(3.5)",
-    "translate(calc(50vw - 7370px), calc(50vh - 1711.75px)) scale(150)"
+    "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
+    "translate(calc(50vw - 191.5px), calc(40vh - 63.625px)) scale(3.5)",
+    "translate(calc(50vw - 191.5px), calc(40vh - 63.625px)) scale(3.5)",
+    "translate(calc(50vw - 7370px), calc(40vh - 1711.75px)) scale(150)"
   ]);
 
   const videoScale = useTransform(smoothProgress, [0.15, 0.35], [1, 1.1]);

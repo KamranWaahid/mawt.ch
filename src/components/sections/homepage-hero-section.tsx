@@ -484,7 +484,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
 
         {/* Z-25: SCROLL INDICATOR DURING VIDEO HOLD */}
         <motion.div 
-          className="absolute bottom-[8vh] left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none z-25"
+          className="absolute bottom-[8vh] left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none z-25 animate-bounce"
           style={{ opacity: scrollIndicatorOpacity }}
         >
           <span className="text-[10px] uppercase tracking-[0.2em] text-white/60">Scroll</span>

@@ -287,8 +287,8 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   // White filler makes the mask look like a solid white logo initially
   const whiteFillerOpacity = useTransform(smoothProgress, [0.15, 0.20], [1, 0]);
   
-  // Hero text stays visible until the end of the video hold
-  const heroContentOpacity = useTransform(smoothProgress, [0.60, 0.65], [1, 0]);
+  // Hero text fades out as the video reveals
+  const heroContentOpacity = useTransform(smoothProgress, [0.20, 0.25], [1, 0]);
   
   // Video and logo mask fade out
   const heroLogoOpacity = useTransform(smoothProgress, [0.60, 0.65], [1, 0]);
@@ -297,8 +297,8 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   // Scroll indicator is visible initially and fades out at the end
   const scrollIndicatorOpacity = useTransform(smoothProgress, [0.55, 0.60], [1, 0]);
   
-  // Navbar logo fades in as the mask leaves the top-left corner
-  const navLogoOpacity = useTransform(smoothProgress, [0.0, 0.15, 0.20], [0, 0, 1]);
+  // Navbar logo stays hidden while the hero mask is active, then fades in
+  const navLogoOpacity = useTransform(smoothProgress, [0.60, 0.65], [0, 1]);
   
   const isHomeNavLight = scrollProgress >= 0.88;
   const homeNavTextClass = isHomeNavLight ? "text-black/70" : "text-white/72";

@@ -153,6 +153,7 @@ function StatementWord({
     if (b <= 0.01) return "none";
     return `blur(${b}px)`;
   });
+  const visibility = useTransform(progress, (p) => p >= start ? "visible" : "hidden");
 
   return (
     <span className="inline">
@@ -162,6 +163,7 @@ function StatementWord({
           opacity,
           y,
           filter,
+          visibility,
         }}
       >
         {word}
@@ -493,7 +495,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           className="pointer-events-none absolute inset-x-0 top-0 z-30 hidden px-5 sm:px-7 md:px-9 lg:block lg:px-[2.5vw]"
         >
           <div className="mx-auto w-full max-w-[1760px] pt-[28vh]">
-            <HeroGradientStatement text={transitionDict.statement} progress={scrollYProgress} />
+            <HeroGradientStatement text={transitionDict.statement} progress={smoothProgress} />
             <motion.div
               className="mt-12"
               style={{ opacity: transitionCtaOpacity, visibility: transitionCtaVisibility }}
@@ -514,7 +516,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           <div className="mx-auto w-full max-w-[48rem] pt-[28vh]">
             <HeroGradientStatement
               text={transitionDict.statement}
-              progress={scrollYProgress}
+              progress={smoothProgress}
               className="text-[clamp(2rem,11vw,4rem)] leading-[1.03]"
             />
             <motion.div

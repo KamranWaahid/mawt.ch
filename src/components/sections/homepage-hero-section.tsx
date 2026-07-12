@@ -180,8 +180,8 @@ function StatementWord({
   total: number;
   progress: MotionValue<number>;
 }) {
-  const start = 0.72 + index * 0.005;
-  const end = Math.min(0.88, start + 0.05);
+  const start = 0.62 + index * 0.005;
+  const end = Math.min(0.80, start + 0.05);
   
   const opacity = useTransform(progress, [start, end], [0, 1]);
   const y = useTransform(progress, [start, end], [14, 0]);
@@ -215,7 +215,7 @@ function HeroGradientStatement({
   className?: string;
 }) {
   const words = text.split(" ");
-  const exitOpacity = useTransform(progress, [0.92, 0.98], [1, 0]);
+  const exitOpacity = useTransform(progress, [0.85, 0.95], [1, 0]);
 
   return (
     <motion.h2
@@ -261,51 +261,51 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     }
   });
 
-  const heroLogoTransformDesktop = useTransform(smoothProgress, [0, 0.15, 0.35], [
+  const heroLogoTransformDesktop = useTransform(smoothProgress, [0, 0.20, 0.40], [
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(47.5vw - 588px), calc(40vh - 159.25px)) scale(12)",
     "translate(calc(47.5vw - 21193px), calc(50vh - 7909px)) scale(700)"
   ]);
 
-  const heroLogoTransformLandscape = useTransform(smoothProgress, [0, 0.15, 0.35], [
+  const heroLogoTransformLandscape = useTransform(smoothProgress, [0, 0.20, 0.40], [
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(50vw - 318px), calc(40vh - 91.75px)) scale(6)",
     "translate(calc(50vw - 21217px), calc(50vh - 7909px)) scale(700)"
   ]);
 
-  const heroLogoTransformPortrait = useTransform(smoothProgress, [0, 0.15, 0.35], [
+  const heroLogoTransformPortrait = useTransform(smoothProgress, [0, 0.20, 0.40], [
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(50vw - 191.5px), calc(40vh - 63.675px)) scale(3.5)",
     "translate(calc(50vw - 21213px), calc(50vh - 7909px)) scale(700)"
   ]);
 
-  const videoScale = useTransform(smoothProgress, [0.15, 0.35], [1, 1]);
+  const videoScale = useTransform(smoothProgress, [0.20, 0.40], [1, 1]);
   
   // White filler makes the mask look like a solid white logo initially
-  const whiteFillerOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
+  const whiteFillerOpacity = useTransform(smoothProgress, [0.15, 0.20], [1, 0]);
   
   // Hero text fades out as the video reveals
-  const heroContentOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
+  const heroContentOpacity = useTransform(smoothProgress, [0.15, 0.20], [1, 0]);
   
   // Video and logo mask fade out
-  const heroLogoOpacity = useTransform(smoothProgress, [0.60, 0.65], [1, 0]);
-  const videoContainerOpacity = useTransform(smoothProgress, [0.60, 0.65], [1, 0]);
+  const heroLogoOpacity = useTransform(smoothProgress, [0.50, 0.55], [1, 0]);
+  const videoContainerOpacity = useTransform(smoothProgress, [0.50, 0.55], [1, 0]);
   
   // The solid white logo covers the mask initially so it looks normal, then fades out to reveal video
-  const maskCoverOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
+  const maskCoverOpacity = useTransform(smoothProgress, [0.15, 0.20], [1, 0]);
   
   // Scroll indicator is visible initially and fades out at the end
-  const scrollIndicatorOpacity = useTransform(smoothProgress, [0.55, 0.60], [1, 0]);
+  const scrollIndicatorOpacity = useTransform(smoothProgress, [0.45, 0.50], [1, 0]);
   
   // Navbar logo stays hidden while the hero mask is active, then fades in
-  const navLogoOpacity = useTransform(smoothProgress, [0.60, 0.65], [0, 1]);
+  const navLogoOpacity = useTransform(smoothProgress, [0.50, 0.55], [0, 1]);
   
-  const isHomeNavLight = scrollProgress >= 0.88;
+  const isHomeNavLight = scrollProgress >= 0.85;
   const homeNavTextClass = isHomeNavLight ? "text-black/70" : "text-white/72";
   const homeNavHoverClass = isHomeNavLight ? "hover:text-black" : "hover:text-white";
   const homeNavDividerClass = isHomeNavLight ? "text-black/25" : "text-white/25";
   const homeNavSlashClass = isHomeNavLight ? "text-black/45" : "text-white/45";
-  const isTransitionTextDark = scrollProgress >= 0.75;
+  const isTransitionTextDark = scrollProgress >= 0.70;
   const transitionCtaClass = isTransitionTextDark
     ? "border-black/12 bg-black/[0.04] text-black/92 hover:border-black/22 hover:bg-black/[0.08] hover:text-black"
     : "border-white/14 bg-white/[0.10] text-white/92 hover:border-white/24 hover:bg-white/[0.16] hover:text-white";
@@ -314,12 +314,12 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   
   // Gradient slides up from below the screen (100vh) to 0, then continues up
   const transitionGradientY = useTransform(
-    scrollYProgress,
-    [0.65, 0.80, 0.92, 1.0],
+    smoothProgress,
+    [0.55, 0.70, 0.85, 0.96],
     ["100vh", "0vh", "-120vh", "-250vh"]
   );
   
-  const transitionCtaOpacity = useTransform(scrollYProgress, [0.80, 0.85, 0.92, 0.98], [0, 1, 1, 0]);
+  const transitionCtaOpacity = useTransform(smoothProgress, [0.75, 0.80, 0.88, 0.95], [0, 1, 1, 0]);
 
   const navHref = (route: string) => {
     if (route === "news") return `/${lang}/news`;
@@ -327,7 +327,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   };
 
   return (
-    <section ref={sectionRef} className="relative z-50 h-[250svh] w-full bg-black text-white">
+    <section ref={sectionRef} className="relative z-50 h-[300svh] w-full bg-black text-white">
       <div className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden bg-black">
         <motion.div
           data-homepage-gradient
@@ -539,7 +539,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
         className="pointer-events-none absolute inset-x-0 top-0 z-30 hidden px-5 sm:px-7 md:px-9 lg:block lg:px-[2.5vw]"
       >
         <div className="mx-auto w-full max-w-[1760px] pt-[28vh]">
-          <HeroGradientStatement text={transitionDict.statement} progress={scrollYProgress} />
+          <HeroGradientStatement text={transitionDict.statement} progress={smoothProgress} />
           <motion.div
             className="mt-12"
             style={{ opacity: transitionCtaOpacity }}
@@ -560,7 +560,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
         <div className="mx-auto w-full max-w-[48rem] pt-[28vh]">
           <HeroGradientStatement
             text={transitionDict.statement}
-            progress={scrollYProgress}
+            progress={smoothProgress}
             className="text-[clamp(2rem,11vw,4rem)] leading-[1.03]"
           />
           <motion.div

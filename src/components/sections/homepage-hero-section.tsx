@@ -147,8 +147,7 @@ function StatementWord({
   
   const opacity = useTransform(progress, [start, end], [0, 1]);
   const y = useTransform(progress, [start, end], [14, 0]);
-  const blurValue = useTransform(progress, [start, end], [10, 0]);
-  const filter = useTransform(blurValue, (b) => `blur(${b}px)`);
+  const filter = useTransform(progress, [start, end], ["blur(10px)", "blur(0px)"]);
 
   return (
     <span className="inline">
@@ -295,7 +294,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   };
 
   return (
-    <section ref={sectionRef} className="relative z-50 h-[300svh] w-full bg-black text-white">
+    <section ref={sectionRef} className="relative z-50 h-[400svh] w-full bg-black text-white">
       <div className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden bg-black">
         <motion.div
           data-homepage-gradient
@@ -467,7 +466,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
 
         {/* Z-25: SCROLL INDICATOR */}
         <motion.div 
-          className="absolute bottom-[8vh] right-5 sm:right-7 md:right-9 lg:right-[2.5vw] flex flex-col items-center gap-3 pointer-events-none z-25 animate-bounce"
+          className="absolute bottom-[8vh] left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none z-25 animate-bounce"
           style={{ opacity: scrollIndicatorOpacity }}
         >
           <span className="text-[10px] uppercase tracking-[0.2em] text-white/60">Scroll</span>

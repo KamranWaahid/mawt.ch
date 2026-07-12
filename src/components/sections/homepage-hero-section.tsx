@@ -144,6 +144,7 @@ function StatementWord({
 }) {
   const start = 0.65 + index * 0.005;
   const end = Math.min(0.75, start + 0.05);
+  
   const opacity = useTransform(progress, [start, end], [0, 1]);
   const y = useTransform(progress, [start, end], [14, 0]);
   const blurValue = useTransform(progress, [start, end], [10, 0]);
@@ -180,7 +181,8 @@ function HeroGradientStatement({
   className?: string;
 }) {
   const words = text.split(" ");
-  const exitOpacity = useTransform(progress, [0.90, 0.96], [1, 0]);
+  // Text fades out right before the white section reaches it, staying fully visible on the teal background
+  const exitOpacity = useTransform(progress, [0.95, 0.98], [1, 0]);
 
   return (
     <motion.h2

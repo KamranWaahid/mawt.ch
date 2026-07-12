@@ -184,13 +184,14 @@ function HeroGradientStatement({
   className?: string;
 }) {
   const words = text.split(" ");
-  // Text fades out right before the white section reaches it, staying fully visible on the teal background
+  // Text transitions to dark when white background reaches it, then fades out
   const exitOpacity = useTransform(progress, [0.95, 0.98], [1, 0]);
+  const textColor = useTransform(progress, [0.91, 0.95], ["#F6F5F4", "#000000"]);
 
   return (
     <motion.h2
       className={`max-w-[1040px] select-text font-serif text-[clamp(2.1rem,4.05vw,3.7rem)] font-normal leading-[1.01] tracking-normal transition-colors duration-300 ${className}`}
-      style={{ opacity: exitOpacity, color: "#F6F5F4" }}
+      style={{ opacity: exitOpacity, color: textColor }}
     >
       {words.map((word, index) => (
         <StatementWord

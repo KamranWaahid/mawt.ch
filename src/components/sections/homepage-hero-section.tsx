@@ -314,12 +314,12 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   
   // Gradient slides up from below the screen (100vh) to 0, then continues up
   const transitionGradientY = useTransform(
-    smoothProgress,
+    scrollYProgress,
     [0.65, 0.80, 0.92, 1.0],
     ["100vh", "0vh", "-120vh", "-250vh"]
   );
   
-  const transitionCtaOpacity = useTransform(smoothProgress, [0.80, 0.85, 0.92, 0.98], [0, 1, 1, 0]);
+  const transitionCtaOpacity = useTransform(scrollYProgress, [0.80, 0.85, 0.92, 0.98], [0, 1, 1, 0]);
 
   const navHref = (route: string) => {
     if (route === "news") return `/${lang}/news`;
@@ -327,7 +327,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   };
 
   return (
-    <section ref={sectionRef} className="relative z-50 h-[400svh] w-full bg-black text-white">
+    <section ref={sectionRef} className="relative z-50 h-[250svh] w-full bg-black text-white">
       <div className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden bg-black">
         <motion.div
           data-homepage-gradient
@@ -539,7 +539,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
         className="pointer-events-none absolute inset-x-0 top-0 z-30 hidden px-5 sm:px-7 md:px-9 lg:block lg:px-[2.5vw]"
       >
         <div className="mx-auto w-full max-w-[1760px] pt-[28vh]">
-          <HeroGradientStatement text={transitionDict.statement} progress={smoothProgress} />
+          <HeroGradientStatement text={transitionDict.statement} progress={scrollYProgress} />
           <motion.div
             className="mt-12"
             style={{ opacity: transitionCtaOpacity }}
@@ -560,7 +560,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
         <div className="mx-auto w-full max-w-[48rem] pt-[28vh]">
           <HeroGradientStatement
             text={transitionDict.statement}
-            progress={smoothProgress}
+            progress={scrollYProgress}
             className="text-[clamp(2rem,11vw,4rem)] leading-[1.03]"
           />
           <motion.div

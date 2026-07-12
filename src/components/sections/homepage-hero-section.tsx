@@ -214,16 +214,6 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 80, damping: 25, restDelta: 0.0001 });
 
-  const [showGradientText, setShowGradientText] = useState(false);
-  
-  useMotionValueEvent(smoothProgress, "change", (latest) => {
-    if (latest >= 0.50 && !showGradientText) {
-      setShowGradientText(true);
-    } else if (latest < 0.50 && showGradientText) {
-      setShowGradientText(false);
-    }
-  });
-
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     setScrollProgress(latest);
     if (latest > 0.01 && videoRef.current && videoRef.current.paused) {
@@ -497,51 +487,47 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
         </motion.div>
 
         {/* Z-30: GRADIENT TRANSITION TEXTS */}
-        {showGradientText && (
-          <>
+        <motion.div
+          className="pointer-events-none absolute inset-x-0 top-0 z-30 hidden px-5 sm:px-7 md:px-9 lg:block lg:px-[2.5vw]"
+        >
+          <div className="mx-auto w-full max-w-[1760px] pt-[28vh]">
+            <HeroGradientStatement text={transitionDict.statement} progress={scrollYProgress} />
             <motion.div
-              className="pointer-events-none absolute inset-x-0 top-0 z-30 hidden px-5 sm:px-7 md:px-9 lg:block lg:px-[2.5vw]"
+              className="mt-12"
+              style={{ opacity: transitionCtaOpacity, visibility: transitionCtaVisibility }}
             >
-              <div className="mx-auto w-full max-w-[1760px] pt-[28vh]">
-                <HeroGradientStatement text={transitionDict.statement} progress={scrollYProgress} />
-                <motion.div
-                  className="mt-12"
-                  style={{ opacity: transitionCtaOpacity, visibility: transitionCtaVisibility }}
-                >
-                  <Link
-                    href={localizedHref("a-propos", lang)}
-                    className={`pointer-events-auto inline-flex h-10 items-center rounded-full border px-[22px] text-[13px] font-normal leading-none backdrop-blur-md transition-colors duration-300 ${transitionCtaClass}`}
-                  >
-                    {transitionDict.cta}
-                  </Link>
-                </motion.div>
-              </div>
+              <Link
+                href={localizedHref("a-propos", lang)}
+                className={`pointer-events-auto inline-flex h-10 items-center rounded-full border px-[22px] text-[13px] font-normal leading-none backdrop-blur-md transition-colors duration-300 ${transitionCtaClass}`}
+              >
+                {transitionDict.cta}
+              </Link>
             </motion.div>
+          </div>
+        </motion.div>
 
+        <motion.div
+          className="pointer-events-none absolute inset-x-0 top-0 z-30 px-5 sm:px-7 md:px-9 lg:hidden"
+        >
+          <div className="mx-auto w-full max-w-[48rem] pt-[28vh]">
+            <HeroGradientStatement
+              text={transitionDict.statement}
+              progress={scrollYProgress}
+              className="text-[clamp(2rem,11vw,4rem)] leading-[1.03]"
+            />
             <motion.div
-              className="pointer-events-none absolute inset-x-0 top-0 z-30 px-5 sm:px-7 md:px-9 lg:hidden"
+              className="mt-8"
+              style={{ opacity: transitionCtaOpacity, visibility: transitionCtaVisibility }}
             >
-              <div className="mx-auto w-full max-w-[48rem] pt-[28vh]">
-                <HeroGradientStatement
-                  text={transitionDict.statement}
-                  progress={scrollYProgress}
-                  className="text-[clamp(2rem,11vw,4rem)] leading-[1.03]"
-                />
-                <motion.div
-                  className="mt-8"
-                  style={{ opacity: transitionCtaOpacity, visibility: transitionCtaVisibility }}
-                >
-                  <Link
-                    href={localizedHref("a-propos", lang)}
-                    className={`pointer-events-auto inline-flex h-10 items-center rounded-full border px-[22px] text-[13px] font-normal leading-none backdrop-blur-md transition-colors duration-300 ${transitionCtaClass}`}
-                  >
-                    {transitionDict.cta}
-                  </Link>
-                </motion.div>
-              </div>
+              <Link
+                href={localizedHref("a-propos", lang)}
+                className={`pointer-events-auto inline-flex h-10 items-center rounded-full border px-[22px] text-[13px] font-normal leading-none backdrop-blur-md transition-colors duration-300 ${transitionCtaClass}`}
+              >
+                {transitionDict.cta}
+              </Link>
             </motion.div>
-          </>
-        )}
+          </div>
+        </motion.div>
 
         {/* Z-50: NAVIGATION */}
         <motion.nav

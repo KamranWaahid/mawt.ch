@@ -186,7 +186,7 @@ function HeroGradientStatement({
   const words = text.split(" ");
   // Text transitions to dark when white background reaches it, then fades out
   const exitOpacity = useTransform(progress, [0.95, 0.98], [1, 0]);
-  const textColor = useTransform(progress, [0.91, 0.95], ["#F6F5F4", "#000000"]);
+  const textColor = useTransform(progress, [0.88, 0.91], ["#F6F5F4", "#000000"]);
 
   return (
     <motion.h2

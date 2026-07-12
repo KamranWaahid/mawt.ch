@@ -270,8 +270,8 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   const heroLogoOpacity = useTransform(smoothProgress, [0.50, 0.60], [1, 0]);
   const videoContainerOpacity = useTransform(smoothProgress, [0.50, 0.60], [1, 0]);
   
-  // Removed solid white mask cover
-  const maskCoverOpacity = useTransform(smoothProgress, [0, 1], [0, 0]);
+  // The solid white logo covers the mask initially so it looks normal, then fades out to reveal video
+  const maskCoverOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
   
   // Scroll indicator is visible initially and fades out when video starts fading out
   const scrollIndicatorOpacity = useTransform(smoothProgress, [0.45, 0.50], [1, 0]);

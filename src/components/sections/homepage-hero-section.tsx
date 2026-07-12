@@ -142,13 +142,14 @@ function StatementWord({
   total: number;
   progress: MotionValue<number>;
 }) {
-  const start = 0.45 + index * 0.005;
-  const end = Math.min(0.55, start + 0.05);
+  const start = 0.55 + index * 0.005;
+  const end = Math.min(0.65, start + 0.05);
   
   const opacity = useTransform(progress, [start, end], [0, 1]);
   const y = useTransform(progress, [start, end], [14, 0]);
   const blurValue = useTransform(progress, [start, end], [10, 0]);
   const filter = useTransform(blurValue, (b) => b > 0.01 ? `blur(${b}px)` : "none");
+  const visibility = useTransform(progress, (p) => p >= start ? "visible" : "hidden");
 
   return (
     <span className="inline">
@@ -158,6 +159,7 @@ function StatementWord({
           opacity,
           y,
           filter,
+          visibility,
         }}
       >
         {word}
@@ -229,44 +231,47 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     }
   }, []);
 
-  const heroLogoTransformDesktop = useTransform(smoothProgress, [0, 0.20, 0.40], [
+  const heroLogoTransformDesktop = useTransform(smoothProgress, [0, 0.10, 0.25, 0.45], [
+    "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(47.5vw - 588px), calc(40vh - 159.25px)) scale(12)",
     "translate(calc(47.5vw - 21193px), calc(50vh - 7909px)) scale(700)"
   ]);
 
-  const heroLogoTransformLandscape = useTransform(smoothProgress, [0, 0.20, 0.40], [
+  const heroLogoTransformLandscape = useTransform(smoothProgress, [0, 0.10, 0.25, 0.45], [
+    "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(50vw - 318px), calc(40vh - 91.75px)) scale(6)",
     "translate(calc(50vw - 21217px), calc(50vh - 7909px)) scale(700)"
   ]);
 
-  const heroLogoTransformPortrait = useTransform(smoothProgress, [0, 0.20, 0.40], [
+  const heroLogoTransformPortrait = useTransform(smoothProgress, [0, 0.10, 0.25, 0.45], [
+    "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(50vw - 191.5px), calc(40vh - 63.675px)) scale(3.5)",
     "translate(calc(50vw - 21213px), calc(50vh - 7909px)) scale(700)"
   ]);
 
-  const videoScale = useTransform(smoothProgress, [0.20, 0.40], [1, 1]);
+  const videoScale = useTransform(smoothProgress, [0.25, 0.45], [1, 1]);
   
   // White filler makes the mask look like a solid white logo initially
-  const whiteFillerOpacity = useTransform(smoothProgress, [0.15, 0.20], [1, 0]);
+  const whiteFillerOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
   
   // Hero text fades out as the video reveals
-  const heroContentOpacity = useTransform(smoothProgress, [0.15, 0.20], [1, 0]);
+  const heroContentOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
   
   // Video and logo mask fade out
-  const heroLogoOpacity = useTransform(smoothProgress, [0.35, 0.45], [1, 0]);
-  const videoContainerOpacity = useTransform(smoothProgress, [0.35, 0.45], [1, 0]);
+  const heroLogoOpacity = useTransform(smoothProgress, [0.45, 0.55], [1, 0]);
+  const videoContainerOpacity = useTransform(smoothProgress, [0.45, 0.55], [1, 0]);
   
   // The solid white logo covers the mask initially so it looks normal, then fades out to reveal video
-  const maskCoverOpacity = useTransform(smoothProgress, [0.15, 0.20], [1, 0]);
+  const maskCoverOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
   
   // Scroll indicator is visible initially and fades out at the end
-  const scrollIndicatorOpacity = useTransform(smoothProgress, [0.35, 0.45], [1, 0]);
+  const scrollIndicatorOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
   
   // Navbar logo stays hidden while the hero mask is active, then fades in
-  const navLogoOpacity = useTransform(smoothProgress, [0.40, 0.45], [0, 1]);
+  const navLogoOpacity = useTransform(smoothProgress, [0.45, 0.50], [0, 1]);
   
   const isHomeNavLight = scrollProgress >= 0.90;
   const homeNavTextClass = isHomeNavLight ? "text-black/70" : "text-white/72";
@@ -283,11 +288,12 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   // Gradient slides up from below the screen (100vh) to 0, then continues up
   const transitionGradientY = useTransform(
     scrollYProgress,
-    [0.35, 0.50, 0.85, 0.98],
+    [0.45, 0.60, 0.85, 0.98],
     ["100vh", "0vh", "-120vh", "-250vh"]
   );
   
   const transitionCtaOpacity = useTransform(scrollYProgress, [0.65, 0.75, 0.88, 0.96], [0, 1, 1, 0]);
+  const transitionCtaVisibility = useTransform(scrollYProgress, (p) => p >= 0.65 && p <= 0.98 ? "visible" : "hidden");
 
   const navHref = (route: string) => {
     if (route === "news") return `/${lang}/news`;
@@ -482,7 +488,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           <HeroGradientStatement text={transitionDict.statement} progress={scrollYProgress} />
           <motion.div
             className="mt-12"
-            style={{ opacity: transitionCtaOpacity }}
+            style={{ opacity: transitionCtaOpacity, visibility: transitionCtaVisibility }}
           >
             <Link
               href={localizedHref("a-propos", lang)}
@@ -505,7 +511,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           />
           <motion.div
             className="mt-8"
-            style={{ opacity: transitionCtaOpacity }}
+            style={{ opacity: transitionCtaOpacity, visibility: transitionCtaVisibility }}
           >
             <Link
               href={localizedHref("a-propos", lang)}

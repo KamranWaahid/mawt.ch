@@ -144,11 +144,14 @@ function StatementWord({
 }) {
   const start = 0.65 + index * 0.005;
   const end = Math.min(0.75, start + 0.05);
-  
   const opacity = useTransform(progress, [start, end], [0, 1]);
   const y = useTransform(progress, [start, end], [14, 0]);
   const blurValue = useTransform(progress, [start, end], [10, 0]);
-  const filter = useTransform(blurValue, (b) => b > 0.01 ? `blur(${b}px)` : "none");
+  const filter = useTransform(blurValue, (b) => {
+    if (b >= 9.99) return "none";
+    if (b <= 0.01) return "none";
+    return `blur(${b}px)`;
+  });
 
   return (
     <span className="inline">
@@ -284,8 +287,8 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     ? "border-black/12 bg-black/[0.04] text-black/92 hover:border-black/22 hover:bg-black/[0.08] hover:text-black"
     : "border-white/14 bg-white/[0.10] text-white/92 hover:border-white/24 hover:bg-white/16 hover:text-white";
     
-  // The gradient statement text is completely invisible during the video phase to prevent Safari blur bugs
-  const statementWrapperOpacity = useTransform(smoothProgress, [0.55, 0.60], [0, 1]);
+  // Transition into content - wait longer before scaling
+  const transitionGradientY = useTransform(smoothProgress, [0.45, 0.96], ["0vh", "-300vh"]);
   
   const desktopContentY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
   const compactContentY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
@@ -488,7 +491,6 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
         {/* Z-30: GRADIENT TRANSITION TEXTS */}
         <motion.div
         className="pointer-events-none absolute inset-x-0 top-0 z-30 hidden px-5 sm:px-7 md:px-9 lg:block lg:px-[2.5vw]"
-        style={{ opacity: statementWrapperOpacity }}
       >
         <div className="mx-auto w-full max-w-[1760px] pt-[28vh]">
           <HeroGradientStatement text={transitionDict.statement} progress={scrollYProgress} />
@@ -508,7 +510,6 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
 
       <motion.div
         className="pointer-events-none absolute inset-x-0 top-0 z-30 px-5 sm:px-7 md:px-9 lg:hidden"
-        style={{ opacity: statementWrapperOpacity }}
       >
         <div className="mx-auto w-full max-w-[48rem] pt-[28vh]">
           <HeroGradientStatement

@@ -147,7 +147,8 @@ function StatementWord({
   
   const opacity = useTransform(progress, [start, end], [0, 1]);
   const y = useTransform(progress, [start, end], [14, 0]);
-  const filter = useTransform(progress, [start, end], ["blur(10px)", "blur(0px)"]);
+  const blurValue = useTransform(progress, [start, end], [10, 0]);
+  const filter = useTransform(blurValue, (b) => b > 0.01 ? `blur(${b}px)` : "none");
 
   return (
     <span className="inline">

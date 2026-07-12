@@ -260,8 +260,8 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
 
   const videoScale = useTransform(smoothProgress, [0.25, 0.50], [1, 1]);
   
-  // Removed white filler so the video plays inside the logo initially
-  const whiteFillerOpacity = useTransform(smoothProgress, [0, 1], [0, 0]);
+  // White filler makes the mask look like a solid white logo initially
+  const whiteFillerOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
   
   // Hero text fades out as the video reveals
   const heroContentOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);

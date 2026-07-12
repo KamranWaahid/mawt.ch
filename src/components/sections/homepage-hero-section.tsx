@@ -1,10 +1,9 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useId, useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion, useMotionValueEvent, useScroll, useTransform, useSpring, MotionValue } from "motion/react";
-import { FaFacebookF, FaInstagram, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
 import { Menu, X } from "lucide-react";
 import type { SiteSettings } from "@/lib/types";
 import { localizedHref } from "@/lib/routing/url-helpers";
@@ -26,13 +25,6 @@ type HomepageHeroSectionProps = {
   dict: HomepageHeroCopy;
   transitionDict: HomepageTransitionCopy;
 };
-
-const socialLinks = [
-  { href: "https://facebook.com/mawt.ch", label: "Facebook", icon: FaFacebookF },
-  { href: "https://x.com/mawt.ch", label: "X", icon: FaXTwitter },
-  { href: "https://instagram.com/mawt.ch", label: "Instagram", icon: FaInstagram },
-  { href: "https://linkedin.com/company/mawt.ch", label: "LinkedIn", icon: FaLinkedinIn },
-];
 
 const navItems = [
   { label: "Work", route: "projets" },
@@ -95,16 +87,10 @@ const mawatLogoPaths = [
 function MawatLogo({
   className,
   tone = "light",
-  videoFill = false,
 }: {
   className?: string;
   tone?: "light" | "dark";
-  videoFill?: boolean;
 }) {
-  const rawId = useId();
-  const logoId = rawId.replace(/:/g, "");
-  const clipPathId = `mawt-logo-shape-${logoId}`;
-
   return (
     <svg
       viewBox="0 0 696 160"
@@ -112,33 +98,9 @@ function MawatLogo({
       aria-hidden="true"
       className={className}
     >
-      <defs>
-        <clipPath id={clipPathId}>
-          {mawatLogoPaths.map((path) => (
-            <path key={`clip-${path}`} d={path} />
-          ))}
-        </clipPath>
-      </defs>
-
       {mawatLogoPaths.map((path) => (
         <path key={`base-${path}`} d={path} fill={tone === "dark" ? "#050505" : "white"} />
       ))}
-
-      {videoFill ? (
-        <g clipPath={`url(#${clipPathId})`}>
-          <foreignObject x="-18" y="-38" width="732" height="236">
-            <video
-              src="/MotionMAWT.mp4"
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              className="h-full w-full object-cover"
-            />
-          </foreignObject>
-        </g>
-      ) : null}
     </svg>
   );
 }
@@ -158,13 +120,13 @@ function MawatLogoMask({ className }: { className?: string }) {
     >
       <defs>
         <mask id={maskId}>
-          <rect x="-10000" y="-10000" width="20000" height="20000" fill="white" />
+          <rect x="-50000" y="-50000" width="100000" height="100000" fill="white" />
           {mawatLogoPaths.map((path) => (
             <path key={`hole-${path}`} d={path} fill="black" />
           ))}
         </mask>
       </defs>
-      <rect x="-10000" y="-10000" width="20000" height="20000" fill="black" mask={`url(#${maskId})`} />
+      <rect x="-50000" y="-50000" width="100000" height="100000" fill="black" mask={`url(#${maskId})`} />
     </svg>
   );
 }
@@ -180,8 +142,8 @@ function StatementWord({
   total: number;
   progress: MotionValue<number>;
 }) {
-  const start = 0.60 + index * 0.005;
-  const end = Math.min(0.70, start + 0.05);
+  const start = 0.45 + index * 0.005;
+  const end = Math.min(0.55, start + 0.05);
   
   const opacity = useTransform(progress, [start, end], [0, 1]);
   const y = useTransform(progress, [start, end], [14, 0]);
@@ -215,7 +177,7 @@ function HeroGradientStatement({
   className?: string;
 }) {
   const words = text.split(" ");
-  const exitOpacity = useTransform(progress, [0.88, 0.96], [1, 0]);
+  const exitOpacity = useTransform(progress, [0.90, 0.96], [1, 0]);
 
   return (
     <motion.h2
@@ -260,6 +222,12 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
       }
     }
   });
+
+  useEffect(() => {
+    if (videoRef.current && videoRef.current.paused) {
+      videoRef.current.play().catch(e => console.log("Autoplay prevented on mount:", e));
+    }
+  }, []);
 
   const heroLogoTransformDesktop = useTransform(smoothProgress, [0, 0.20, 0.40], [
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
@@ -353,7 +321,6 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
             muted
             loop
             autoPlay
-            preload="auto"
           />
         </motion.div>
 
@@ -437,24 +404,15 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
             <motion.p className="absolute left-[2.5%] top-[74%] w-[43%] text-[2.45cqw] font-normal leading-[1.16] tracking-[-0.02em] text-white" style={{ y: desktopContentY }}>
               {dict.statement}
             </motion.p>
-            <motion.div className="absolute left-[2.85%] top-[91.5%]" style={{ y: desktopContentY }}>
+            <motion.div className="absolute left-[2.85%] bottom-[6%]" style={{ y: desktopContentY }}>
               <Link href={settings.ctaHref} className="pointer-events-auto inline-flex items-center text-[1.17cqw] font-normal leading-none text-white transition-colors hover:text-[#75DAB4]">
                 <span aria-hidden="true" className="mr-[0.46875cqw]">→</span>
                 {dict.cta}
               </Link>
             </motion.div>
-            <motion.p className="absolute left-[65.5%] top-[74.4%] w-[30.5%] text-[1.17cqw] font-normal leading-[1.35] tracking-[-0.01em] text-white/74" style={{ y: desktopContentY }}>
+            <motion.p className="absolute left-[65.5%] bottom-[6%] w-[30.5%] text-[1.17cqw] font-normal leading-[1.35] tracking-[-0.01em] text-white/74" style={{ y: desktopContentY }}>
               <span className="text-white">MAWT is a</span> <SwissMark /> {dict.description}
             </motion.p>
-            <motion.ul className="absolute right-[2.5%] top-[91.5%] flex items-center gap-[1.5625cqw] pointer-events-auto" aria-label="Social links" style={{ y: desktopContentY }}>
-              {socialLinks.map(({ href, label, icon: Icon }) => (
-                <li key={label}>
-                  <Link href={href} target="_blank" rel="noreferrer" aria-label={label} className="pointer-events-auto flex h-[1.5625cqw] w-[1.5625cqw] items-center justify-center text-white transition-colors hover:text-[#75DAB4]">
-                    <Icon className="h-[1.17cqw] w-[1.17cqw]" aria-hidden="true" />
-                  </Link>
-                </li>
-              ))}
-            </motion.ul>
           </div>
 
           {/* Landscape Mobile Text */}
@@ -466,24 +424,15 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
               <motion.p className="absolute left-[2%] top-[65%] w-[48%] text-[clamp(1.2rem,3vw,1.55rem)] font-normal leading-[1.06] tracking-[-0.02em] text-white" style={{ y: compactContentY }}>
                 {dict.statement}
               </motion.p>
-              <motion.div className="absolute left-[6.5%] top-[88%]" style={{ y: compactContentY }}>
+              <motion.div className="absolute left-[6.5%] bottom-[10%]" style={{ y: compactContentY }}>
                 <Link href={settings.ctaHref} className="pointer-events-auto inline-flex items-center text-[0.8125rem] font-normal leading-none text-white transition-colors hover:text-[#75DAB4]">
                   <span aria-hidden="true" className="mr-1.5">→</span>
                   {dict.cta}
                 </Link>
               </motion.div>
-              <motion.p className="absolute left-[59%] top-[68%] w-[38%] text-[0.8125rem] font-normal leading-[1.32] tracking-[-0.01em] text-white/74" style={{ y: compactContentY }}>
+              <motion.p className="absolute left-[59%] bottom-[10%] w-[38%] text-[0.8125rem] font-normal leading-[1.32] tracking-[-0.01em] text-white/74" style={{ y: compactContentY }}>
                 <span className="text-white">MAWT is a</span> <SwissMark /> {dict.description}
               </motion.p>
-              <motion.ul className="absolute right-[2%] top-[88%] flex items-center gap-4" aria-label="Social links" style={{ y: compactContentY }}>
-                {socialLinks.map(({ href, label, icon: Icon }) => (
-                  <li key={label}>
-                    <Link href={href} target="_blank" rel="noreferrer" aria-label={label} className="pointer-events-auto flex h-5 w-5 items-center justify-center text-white transition-colors hover:text-[#75DAB4]">
-                      <Icon className="h-4 w-4" aria-hidden="true" />
-                    </Link>
-                  </li>
-                ))}
-              </motion.ul>
             </div>
           </div>
 
@@ -510,15 +459,6 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
                   <p className="max-w-[26rem] text-[0.8125rem] font-normal leading-[1.35] tracking-[-0.01em] text-white/74 sm:text-[0.9375rem] md:max-w-none">
                     <span className="text-white">MAWT is a</span> <SwissMark /> {dict.description}
                   </p>
-                  <ul className="flex items-center gap-4" aria-label="Social links">
-                    {socialLinks.map(({ href, label, icon: Icon }) => (
-                      <li key={label}>
-                        <Link href={href} target="_blank" rel="noreferrer" aria-label={label} className="pointer-events-auto flex h-5 w-5 items-center justify-center text-white transition-colors hover:text-[#75DAB4]">
-                          <Icon className="h-4 w-4" aria-hidden="true" />
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
                 </div>
               </div>
             </motion.div>

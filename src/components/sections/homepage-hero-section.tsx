@@ -190,7 +190,7 @@ function HeroGradientStatement({
 
   return (
     <motion.h2
-      className={`max-w-[1040px] select-text font-serif text-[clamp(2.1rem,4.05vw,3.7rem)] font-normal leading-[1.01] tracking-normal transition-colors duration-300 ${className}`}
+      className={`max-w-[1040px] select-text font-serif text-[clamp(2.1rem,4.05vw,3.7rem)] font-normal leading-[1.01] tracking-normal ${className}`}
       style={{ opacity: exitOpacity, color: textColor }}
     >
       {words.map((word, index) => (

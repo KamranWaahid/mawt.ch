@@ -158,6 +158,7 @@ function StatementWord({
   return (
     <span className="inline">
       <motion.span
+        initial={{ opacity: 0, visibility: "hidden" }}
         className="inline-block will-change-[transform,opacity,filter]"
         style={{
           opacity,
@@ -311,8 +312,8 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   };
 
   return (
-    <section ref={sectionRef} className="relative z-50 h-[400svh] w-full bg-black text-white">
-      <div className="sticky top-0 flex h-[100svh] w-full items-center justify-center overflow-hidden bg-black">
+    <section ref={sectionRef} className="relative z-50 h-[400vh] w-full bg-black text-white">
+      <div className="sticky top-0 flex h-[100vh] w-full items-center justify-center overflow-hidden bg-black">
         <motion.div
           data-homepage-gradient
           aria-hidden="true"
@@ -497,6 +498,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           <div className="mx-auto w-full max-w-[1760px] pt-[28vh]">
             <HeroGradientStatement text={transitionDict.statement} progress={smoothProgress} />
             <motion.div
+              initial={{ opacity: 0, visibility: "hidden" }}
               className="mt-12"
               style={{ opacity: transitionCtaOpacity, visibility: transitionCtaVisibility }}
             >
@@ -520,6 +522,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
               className="text-[clamp(2rem,11vw,4rem)] leading-[1.03]"
             />
             <motion.div
+              initial={{ opacity: 0, visibility: "hidden" }}
               className="mt-8"
               style={{ opacity: transitionCtaOpacity, visibility: transitionCtaVisibility }}
             >

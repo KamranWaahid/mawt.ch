@@ -287,9 +287,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     ? "border-black/12 bg-black/[0.04] text-black/92 hover:border-black/22 hover:bg-black/[0.08] hover:text-black"
     : "border-white/14 bg-white/[0.10] text-white/92 hover:border-white/24 hover:bg-white/16 hover:text-white";
     
-  // Transition into content - wait longer before scaling
-  const transitionGradientY = useTransform(smoothProgress, [0.45, 0.96], ["0vh", "-300vh"]);
-  
+
   const desktopContentY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
   const compactContentY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
   

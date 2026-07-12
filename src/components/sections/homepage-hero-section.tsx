@@ -180,8 +180,8 @@ function StatementWord({
   total: number;
   progress: MotionValue<number>;
 }) {
-  const start = 0.62 + index * 0.005;
-  const end = Math.min(0.80, start + 0.05);
+  const start = 0.60 + index * 0.005;
+  const end = Math.min(0.70, start + 0.05);
   
   const opacity = useTransform(progress, [start, end], [0, 1]);
   const y = useTransform(progress, [start, end], [14, 0]);
@@ -215,7 +215,7 @@ function HeroGradientStatement({
   className?: string;
 }) {
   const words = text.split(" ");
-  const exitOpacity = useTransform(progress, [0.85, 0.95], [1, 0]);
+  const exitOpacity = useTransform(progress, [0.88, 0.96], [1, 0]);
 
   return (
     <motion.h2
@@ -288,24 +288,24 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   const heroContentOpacity = useTransform(smoothProgress, [0.15, 0.20], [1, 0]);
   
   // Video and logo mask fade out
-  const heroLogoOpacity = useTransform(smoothProgress, [0.50, 0.55], [1, 0]);
-  const videoContainerOpacity = useTransform(smoothProgress, [0.50, 0.55], [1, 0]);
+  const heroLogoOpacity = useTransform(smoothProgress, [0.35, 0.45], [1, 0]);
+  const videoContainerOpacity = useTransform(smoothProgress, [0.35, 0.45], [1, 0]);
   
   // The solid white logo covers the mask initially so it looks normal, then fades out to reveal video
   const maskCoverOpacity = useTransform(smoothProgress, [0.15, 0.20], [1, 0]);
   
   // Scroll indicator is visible initially and fades out at the end
-  const scrollIndicatorOpacity = useTransform(smoothProgress, [0.45, 0.50], [1, 0]);
+  const scrollIndicatorOpacity = useTransform(smoothProgress, [0.35, 0.45], [1, 0]);
   
   // Navbar logo stays hidden while the hero mask is active, then fades in
-  const navLogoOpacity = useTransform(smoothProgress, [0.50, 0.55], [0, 1]);
+  const navLogoOpacity = useTransform(smoothProgress, [0.40, 0.45], [0, 1]);
   
-  const isHomeNavLight = scrollProgress >= 0.85;
+  const isHomeNavLight = scrollProgress >= 0.90;
   const homeNavTextClass = isHomeNavLight ? "text-black/70" : "text-white/72";
   const homeNavHoverClass = isHomeNavLight ? "hover:text-black" : "hover:text-white";
   const homeNavDividerClass = isHomeNavLight ? "text-black/25" : "text-white/25";
   const homeNavSlashClass = isHomeNavLight ? "text-black/45" : "text-white/45";
-  const isTransitionTextDark = scrollProgress >= 0.70;
+  const isTransitionTextDark = scrollProgress >= 0.90;
   const transitionCtaClass = isTransitionTextDark
     ? "border-black/12 bg-black/[0.04] text-black/92 hover:border-black/22 hover:bg-black/[0.08] hover:text-black"
     : "border-white/14 bg-white/[0.10] text-white/92 hover:border-white/24 hover:bg-white/[0.16] hover:text-white";
@@ -315,11 +315,11 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   // Gradient slides up from below the screen (100vh) to 0, then continues up
   const transitionGradientY = useTransform(
     smoothProgress,
-    [0.55, 0.70, 0.85, 0.96],
+    [0.35, 0.50, 0.85, 0.98],
     ["100vh", "0vh", "-120vh", "-250vh"]
   );
   
-  const transitionCtaOpacity = useTransform(smoothProgress, [0.75, 0.80, 0.88, 0.95], [0, 1, 1, 0]);
+  const transitionCtaOpacity = useTransform(smoothProgress, [0.65, 0.75, 0.88, 0.96], [0, 1, 1, 0]);
 
   const navHref = (route: string) => {
     if (route === "news") return `/${lang}/news`;

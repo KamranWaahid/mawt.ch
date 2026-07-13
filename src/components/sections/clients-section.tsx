@@ -67,7 +67,10 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
   const hasPartnerLogos = partnerLogos.length > 0;
 
   return (
-    <section className="relative overflow-hidden bg-[#F6F5F4] pt-10 pb-20 md:pt-12 md:pb-24 lg:pt-14 lg:pb-28">
+    <section
+      className="relative overflow-hidden bg-white pt-10 pb-20 md:pt-12 md:pb-24 lg:pt-14 lg:pb-28"
+      style={{ backgroundColor: "#FFFFFF" }}
+    >
       <div className="site-container relative z-10">
         <motion.h2
           initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}

@@ -4,7 +4,11 @@ export function DescriptionSection({ dict }: { dict: any }) {
   if (!dict?.paragraphs?.length) return null;
 
   return (
-    <section aria-label="Company description" className="pt-6 pb-12 md:pt-8 md:pb-18 lg:pt-10 lg:pb-22">
+    <section
+      aria-label="Company description"
+      className="bg-white pt-0 pb-12 md:pb-18 lg:pb-22"
+      style={{ backgroundColor: "#FFFFFF" }}
+    >
       <SectionReveal>
         <div className="site-container">
           <div className="space-y-8 md:pl-[10%] lg:pl-[20%]">

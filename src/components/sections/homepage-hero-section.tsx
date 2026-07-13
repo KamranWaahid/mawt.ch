@@ -1,7 +1,6 @@
 "use client";
 
-import { useCallback, useId, useRef, useState, useEffect } from "react";
-import type { PointerEvent } from "react";
+import { useId, useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform, useSpring, MotionValue } from "motion/react";
@@ -35,8 +34,6 @@ const navItems = [
   { label: "About", route: "a-propos" },
   { label: "Contact", route: "contact" },
 ];
-
-const VIDEO_PHASE_START_PROGRESS = 0.25;
 
 function GeometricSymbol({ className }: { className?: string }) {
   return (
@@ -212,12 +209,9 @@ function HeroGradientStatement({
 export function HomepageHeroSection({ settings, dict, transitionDict }: HomepageHeroSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const topVideoActiveRef = useRef(true);
-  const videoPhaseStartedRef = useRef(false);
+  const asciiVideoRef = useRef<HTMLVideoElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isHeroMobileMenuOpen, setIsHeroMobileMenuOpen] = useState(false);
-  const [topVideoCycle, setTopVideoCycle] = useState(0);
-  const [isAsciiHovered, setIsAsciiHovered] = useState(false);
   const shouldReduceMotion = useReducedMotion();
   const params = useParams();
   const lang = (params?.lang === "fr" ? "fr" : "en") as Locale;
@@ -231,56 +225,8 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   const [isScrollingUp, setIsScrollingUp] = useState(false);
   const lastProgress = useRef(0);
 
-  const resetVideoToFirstFrame = useCallback(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    video.pause();
-
-    try {
-      video.currentTime = 0;
-    } catch {
-      const handleLoadedMetadata = () => {
-        video.currentTime = 0;
-      };
-
-      video.addEventListener("loadedmetadata", handleLoadedMetadata, { once: true });
-    }
-  }, []);
-
-  const playVideoFromFirstFrame = useCallback(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    try {
-      video.currentTime = 0;
-    } catch {
-      // The mount effect also pins the frame after metadata is available.
-    }
-
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise.catch((e) => {
-        console.log("Autoplay prevented:", e);
-      });
-    }
-  }, []);
-
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     setScrollProgress(latest);
-
-    if (!shouldReduceMotion && typeof window !== "undefined") {
-      const scrollTop = window.scrollY;
-      const hasClearlyLeftTop = scrollTop > 18;
-      const hasClearlyReturnedTop = scrollTop <= 6;
-
-      if (hasClearlyLeftTop && topVideoActiveRef.current) {
-        topVideoActiveRef.current = false;
-      } else if (hasClearlyReturnedTop && !topVideoActiveRef.current) {
-        topVideoActiveRef.current = true;
-        setTopVideoCycle((cycle) => cycle + 1);
-      }
-    }
     
     // Detect scroll direction with a tiny threshold to avoid jitter
     if (latest < lastProgress.current - 0.002) {
@@ -290,37 +236,31 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     }
     lastProgress.current = latest;
 
-    if (latest >= VIDEO_PHASE_START_PROGRESS && !videoPhaseStartedRef.current) {
-      videoPhaseStartedRef.current = true;
-      playVideoFromFirstFrame();
-    } else if (latest < VIDEO_PHASE_START_PROGRESS - 0.02 && videoPhaseStartedRef.current) {
-      videoPhaseStartedRef.current = false;
-      resetVideoToFirstFrame();
+    if (latest > 0.01 && videoRef.current && videoRef.current.paused) {
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(e => {
+          console.log("Autoplay prevented:", e);
+        });
+      }
     }
   });
 
   useEffect(() => {
-    resetVideoToFirstFrame();
-
-    const video = videoRef.current;
-    if (!video) return;
-
-    if (video.readyState < HTMLMediaElement.HAVE_METADATA) {
-      video.addEventListener("loadedmetadata", resetVideoToFirstFrame, { once: true });
-      return () => {
-        video.removeEventListener("loadedmetadata", resetVideoToFirstFrame);
-      };
+    if (videoRef.current && videoRef.current.paused) {
+      videoRef.current.play().catch(e => console.log("Autoplay prevented on mount:", e));
     }
-  }, [resetVideoToFirstFrame]);
+  }, []);
 
   useEffect(() => {
-    if (window.scrollY <= 6) {
-      topVideoActiveRef.current = true;
-    } else {
-      topVideoActiveRef.current = false;
-    }
+    const video = asciiVideoRef.current;
+    if (!video || shouldReduceMotion) return;
 
-  }, []);
+    video.load();
+    if (video.paused) {
+      video.play().catch(e => console.log("ASCII autoplay prevented on mount:", e));
+    }
+  }, [shouldReduceMotion]);
 
   // Forward Transforms (Down)
   const heroLogoTransformDesktopDown = useTransform(smoothProgress, [0, 0.10, 0.18, 0.25, 0.50], [
@@ -386,19 +326,25 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   const navLogoOpacity = isScrollingUp ? navLogoOpacityUp : navLogoOpacityDown;
 
   const videoScale = useTransform(smoothProgress, [0.25, 0.50], [1, 1]);
-  const topVideoOpacity = useTransform(scrollYProgress, [0, 0.004, 0.015], shouldReduceMotion ? [0, 0, 0] : [1, 0.72, 0]);
+  const asciiLayerOpacity = shouldReduceMotion
+    ? 0
+    : scrollProgress <= 0.004
+      ? 1
+      : scrollProgress >= 0.012
+        ? 0
+        : 1 - (scrollProgress - 0.004) / 0.008;
+  const asciiLayerVisibility = !shouldReduceMotion && scrollProgress < 0.016 ? "visible" : "hidden";
   const heroContentOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
   const scrollIndicatorOpacity = useTransform(smoothProgress, [0.45, 0.50], [1, 0]);
   
   const isHomeNavLight = scrollProgress >= 0.90;
   const homeNavTextClass = isHomeNavLight ? "text-black/70" : "text-white/72";
-  const homeNavHoverClass = isHomeNavLight ? "hover:text-black" : "hover:text-white";
   const homeNavDividerClass = isHomeNavLight ? "text-black/25" : "text-white/25";
   const homeNavSlashClass = isHomeNavLight ? "text-black/45" : "text-white/45";
   const isTransitionTextDark = scrollProgress >= 0.90;
   const transitionCtaClass = isTransitionTextDark
-    ? "border-black/12 bg-black/[0.04] text-black/92 hover:border-black/22 hover:bg-black/[0.08] hover:text-black"
-    : "border-white/14 bg-white/[0.10] text-white/92 hover:border-white/24 hover:bg-white/16 hover:text-white";
+    ? "border-black/12 bg-black/[0.04] text-black/92"
+    : "border-white/14 bg-white/[0.10] text-white/92";
     
 
   const desktopContentY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
@@ -419,47 +365,12 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     return localizedHref(route, lang);
   };
 
-  const updateAsciiPointer = useCallback((event: PointerEvent<HTMLElement>) => {
-    if (shouldReduceMotion) return;
-
-    const x = Math.max(0, Math.min(100, (event.clientX / window.innerWidth) * 100));
-    const y = Math.max(0, Math.min(100, (event.clientY / window.innerHeight) * 100));
-    const shiftX = (x - 50) * 0.035;
-    const shiftY = (y - 50) * 0.025;
-    const videoShiftX = shiftX * -0.35;
-    const videoShiftY = shiftY * -0.35;
-
-    event.currentTarget.style.setProperty("--ascii-x", `${x.toFixed(2)}%`);
-    event.currentTarget.style.setProperty("--ascii-y", `${y.toFixed(2)}%`);
-    event.currentTarget.style.setProperty("--ascii-shift-x", `${shiftX.toFixed(2)}%`);
-    event.currentTarget.style.setProperty("--ascii-shift-y", `${shiftY.toFixed(2)}%`);
-    event.currentTarget.style.setProperty("--ascii-video-shift-x", `${videoShiftX.toFixed(2)}%`);
-    event.currentTarget.style.setProperty("--ascii-video-shift-y", `${videoShiftY.toFixed(2)}%`);
-  }, [shouldReduceMotion]);
-
   return (
     <section
       ref={sectionRef}
-      className={`home-hero-root relative z-50 h-[400vh] w-full bg-black text-white ${isAsciiHovered ? "is-ascii-hovered" : ""}`}
-      onPointerEnter={(event) => {
-        updateAsciiPointer(event);
-        setIsAsciiHovered(true);
-      }}
-      onPointerMove={updateAsciiPointer}
-      onPointerLeave={() => setIsAsciiHovered(false)}
+      className="home-hero-root relative z-50 h-[400vh] w-full bg-black text-white"
     >
       <div className="sticky top-0 flex h-[100vh] w-full items-center justify-center overflow-hidden bg-black">
-        <svg aria-hidden="true" className="pointer-events-none absolute h-0 w-0">
-          <filter id="homeHeroAsciiWave" x="-12%" y="-12%" width="124%" height="124%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.012 0.055" numOctaves="2" seed="8" result="noise">
-              <animate attributeName="baseFrequency" dur="1.6s" values="0.012 0.055;0.022 0.038;0.012 0.055" repeatCount="indefinite" />
-            </feTurbulence>
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="18" xChannelSelector="R" yChannelSelector="G">
-              <animate attributeName="scale" dur="1.35s" values="10;24;14;22;10" repeatCount="indefinite" />
-            </feDisplacementMap>
-          </filter>
-        </svg>
-
         <motion.div
           data-homepage-gradient
           aria-hidden="true"
@@ -467,7 +378,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           style={{
             y: transitionGradientY,
             background:
-              "linear-gradient(180deg, #000000 0%, #000000 10%, #001015 20%, #002B36 30%, #28725F 45%, #75DAB4 65%, #F6F5F4 85%, #F6F5F4 100%)",
+              "linear-gradient(180deg, #000000 0%, #000000 10%, #001015 20%, #002B36 30%, #28725F 45%, #75DAB4 58%, #D5FFEF 66%, #FFFFFF 75%, #FFFFFF 100%)",
           }}
         />
 
@@ -483,24 +394,26 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
             playsInline
             muted
             loop
-            preload="auto"
+            autoPlay
           />
         </motion.div>
 
-        {/* Top-only ASCII hover layer: hidden at rest, below the approved logo mask. */}
         <motion.div
           aria-hidden="true"
           className="home-hero-ascii-layer pointer-events-none absolute inset-0 z-[14] overflow-hidden"
-          style={{ opacity: topVideoOpacity }}
+          style={{ opacity: asciiLayerOpacity, visibility: asciiLayerVisibility }}
         >
-          <div key={topVideoCycle} className="home-hero-video-mask pointer-events-none absolute">
-            <img
-              src="/ascii-magic-2.jpg"
-              alt=""
-              aria-hidden="true"
+          <div className="home-hero-video-mask pointer-events-none absolute">
+            <video
+              ref={asciiVideoRef}
+              src="/ascii-animation (1).mp4"
               className="home-hero-top-video h-full w-full object-cover"
+              playsInline
+              muted
+              loop
+              autoPlay
+              preload="auto"
             />
-            <div className="home-hero-wave-sheen pointer-events-none absolute inset-0" />
           </div>
         </motion.div>
 
@@ -585,7 +498,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
               {dict.statement}
             </motion.p>
             <motion.div className="absolute left-[2.85%] bottom-[6%]" style={{ y: desktopContentY }}>
-              <Link href={settings.ctaHref} className="pointer-events-auto inline-flex items-center text-[1.17cqw] font-normal leading-none text-white transition-colors hover:text-[#75DAB4]">
+              <Link href={settings.ctaHref} className="pointer-events-auto inline-flex items-center text-[1.17cqw] font-normal leading-none text-white">
                 <span aria-hidden="true" className="mr-[0.46875cqw]">→</span>
                 {dict.cta}
               </Link>
@@ -605,7 +518,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
                 {dict.statement}
               </motion.p>
               <motion.div className="absolute left-[6.5%] bottom-[10%]" style={{ y: compactContentY }}>
-                <Link href={settings.ctaHref} className="pointer-events-auto inline-flex items-center text-[0.8125rem] font-normal leading-none text-white transition-colors hover:text-[#75DAB4]">
+                <Link href={settings.ctaHref} className="pointer-events-auto inline-flex items-center text-[0.8125rem] font-normal leading-none text-white">
                   <span aria-hidden="true" className="mr-1.5">→</span>
                   {dict.cta}
                 </Link>
@@ -629,7 +542,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
                     {dict.statement}
                   </p>
                   <div className="mt-[clamp(1rem,3svh,1.6rem)] inline-flex items-center">
-                    <Link href={settings.ctaHref} className="pointer-events-auto text-[0.875rem] font-normal leading-none text-white transition-colors hover:text-[#75DAB4] sm:text-[0.9375rem]">
+                    <Link href={settings.ctaHref} className="pointer-events-auto text-[0.875rem] font-normal leading-none text-white sm:text-[0.9375rem]">
                       <span aria-hidden="true" className="mr-1.5">→</span>
                       {dict.cta}
                     </Link>
@@ -715,16 +628,16 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
               className={`ml-auto hidden flex-wrap items-center justify-end gap-x-5 gap-y-3 text-[13px] font-normal leading-none transition-colors duration-300 md:flex lg:gap-x-8 lg:text-[14px] ${homeNavTextClass}`}
             >
               {navItems.map((item) => (
-                <Link key={item.route} href={navHref(item.route)} className={`transition-colors ${homeNavHoverClass}`}>
+                  <Link key={item.route} href={navHref(item.route)} className="transition-colors">
                   {item.label}
                 </Link>
               ))}
               <span className={homeNavDividerClass}>—</span>
-              <Link href="/fr" className={`transition-colors ${homeNavHoverClass} ${lang === "fr" ? (isHomeNavLight ? "text-black" : "text-white") : ""}`}>
+              <Link href="/fr" className={`transition-colors ${lang === "fr" ? (isHomeNavLight ? "text-black" : "text-white") : ""}`}>
                 FR
               </Link>
               <span className={homeNavSlashClass}>/</span>
-              <Link href="/en" className={`transition-colors ${homeNavHoverClass} ${lang === "en" ? (isHomeNavLight ? "text-black" : "text-white") : ""}`}>
+              <Link href="/en" className={`transition-colors ${lang === "en" ? (isHomeNavLight ? "text-black" : "text-white") : ""}`}>
                 EN
               </Link>
             </motion.div>
@@ -732,11 +645,11 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
             <motion.div
               className={`ml-auto flex items-center gap-3 text-[13px] font-normal leading-none transition-colors duration-300 md:hidden ${homeNavTextClass}`}
             >
-              <Link href="/fr" className={`transition-colors ${homeNavHoverClass} ${lang === "fr" ? (isHomeNavLight ? "text-black" : "text-white") : ""}`}>
+              <Link href="/fr" className={`transition-colors ${lang === "fr" ? (isHomeNavLight ? "text-black" : "text-white") : ""}`}>
                 FR
               </Link>
               <span className={homeNavSlashClass}>/</span>
-              <Link href="/en" className={`transition-colors ${homeNavHoverClass} ${lang === "en" ? (isHomeNavLight ? "text-black" : "text-white") : ""}`}>
+              <Link href="/en" className={`transition-colors ${lang === "en" ? (isHomeNavLight ? "text-black" : "text-white") : ""}`}>
                 EN
               </Link>
               <button

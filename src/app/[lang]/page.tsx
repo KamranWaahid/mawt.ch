@@ -18,6 +18,7 @@ import type { Metadata } from "next";
 // Preload the first frame image so the browser fetches it during HTML parse,
 // pulling LCP earlier.
 const FIRST_HERO_IMAGE = "/HeroImages/ezgif-frame-001.jpg";
+const ASCII_HERO_VIDEO = "/ascii-animation (1).mp4";
 
 type ServiceNavItem = string | { title: string; href: string };
 
@@ -62,6 +63,10 @@ export default async function HomePage({
   preload(FIRST_HERO_IMAGE, {
     as: "image",
     fetchPriority: "high",
+  });
+  preload(ASCII_HERO_VIDEO, {
+    as: "video",
+    type: "video/mp4",
   });
   const dictionary = await getDictionary(lang);
   const data = await getHomePageData(lang);
@@ -160,7 +165,7 @@ export default async function HomePage({
         dict={dictionary.hero}
         transitionDict={dictionary.heroTransition}
       />
-      <div className="homepage-flow">
+      <div className="homepage-flow" style={{ backgroundColor: "#FFFFFF" }}>
         <ClientsSection dict={dictionary.clients} partners={partners} />
         <DescriptionSection dict={dictionary.description} />
         <ProblemSection dict={dictionary.problem} />

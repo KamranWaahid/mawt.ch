@@ -36,6 +36,8 @@ const navItems = [
   { label: "Contact", route: "contact" },
 ];
 
+const VIDEO_PHASE_START_PROGRESS = 0.25;
+
 function GeometricSymbol({ className }: { className?: string }) {
   return (
     <svg
@@ -211,6 +213,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   const sectionRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const topVideoActiveRef = useRef(true);
+  const videoPhaseStartedRef = useRef(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isHeroMobileMenuOpen, setIsHeroMobileMenuOpen] = useState(false);
   const [topVideoCycle, setTopVideoCycle] = useState(0);
@@ -227,6 +230,41 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
 
   const [isScrollingUp, setIsScrollingUp] = useState(false);
   const lastProgress = useRef(0);
+
+  const resetVideoToFirstFrame = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.pause();
+
+    try {
+      video.currentTime = 0;
+    } catch {
+      const handleLoadedMetadata = () => {
+        video.currentTime = 0;
+      };
+
+      video.addEventListener("loadedmetadata", handleLoadedMetadata, { once: true });
+    }
+  }, []);
+
+  const playVideoFromFirstFrame = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    try {
+      video.currentTime = 0;
+    } catch {
+      // The mount effect also pins the frame after metadata is available.
+    }
+
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch((e) => {
+        console.log("Autoplay prevented:", e);
+      });
+    }
+  }, []);
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     setScrollProgress(latest);
@@ -252,21 +290,28 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     }
     lastProgress.current = latest;
 
-    if (latest > 0.01 && videoRef.current && videoRef.current.paused) {
-      const playPromise = videoRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(e => {
-          console.log("Autoplay prevented:", e);
-        });
-      }
+    if (latest >= VIDEO_PHASE_START_PROGRESS && !videoPhaseStartedRef.current) {
+      videoPhaseStartedRef.current = true;
+      playVideoFromFirstFrame();
+    } else if (latest < VIDEO_PHASE_START_PROGRESS - 0.02 && videoPhaseStartedRef.current) {
+      videoPhaseStartedRef.current = false;
+      resetVideoToFirstFrame();
     }
   });
 
   useEffect(() => {
-    if (videoRef.current && videoRef.current.paused) {
-      videoRef.current.play().catch(e => console.log("Autoplay prevented on mount:", e));
+    resetVideoToFirstFrame();
+
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (video.readyState < HTMLMediaElement.HAVE_METADATA) {
+      video.addEventListener("loadedmetadata", resetVideoToFirstFrame, { once: true });
+      return () => {
+        video.removeEventListener("loadedmetadata", resetVideoToFirstFrame);
+      };
     }
-  }, []);
+  }, [resetVideoToFirstFrame]);
 
   useEffect(() => {
     if (window.scrollY <= 6) {
@@ -438,7 +483,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
             playsInline
             muted
             loop
-            autoPlay
+            preload="auto"
           />
         </motion.div>
 

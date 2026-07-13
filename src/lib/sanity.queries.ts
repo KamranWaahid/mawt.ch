@@ -560,5 +560,23 @@ export async function getContactSettings(): Promise<ContactSettings> {
   const data = await sanityClient.fetch<ContactSettings>(contactQuery, {}, {
     next: { tags: ["contact"] }
   });
-  return data || defaultContact;
+  
+  const merged: ContactSettings = {
+    ...defaultContact,
+    ...data,
+    email: process.env.CONTACT_FALLBACK_EMAIL || data?.email || defaultContact.email,
+    phone: process.env.CONTACT_FALLBACK_PHONE || data?.phone || defaultContact.phone,
+    headline: process.env.CONTACT_FALLBACK_HEADLINE || data?.headline || defaultContact.headline,
+    offices: process.env.CONTACT_FALLBACK_CITY
+      ? [
+          {
+            city: process.env.CONTACT_FALLBACK_CITY,
+            address: process.env.CONTACT_FALLBACK_ADDRESS || "",
+            isMain: true,
+          },
+        ]
+      : (data?.offices || defaultContact.offices),
+  };
+
+  return merged;
 }

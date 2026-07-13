@@ -98,8 +98,8 @@ function MawatLogo({
       aria-hidden="true"
       className={className}
     >
-      {mawatLogoPaths.map((path) => (
-        <path key={`base-${path}`} d={path} fill={tone === "dark" ? "#050505" : "white"} />
+      {mawatLogoPaths.map((path, idx) => (
+        <path key={`base-${path}`} d={path} fill={idx === 0 ? "#75DAB4" : (tone === "dark" ? "#050505" : "white")} />
       ))}
     </svg>
   );

@@ -79,14 +79,15 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
   const normalizedPath = pathname.replace(/\/$/, "") || "/";
   const isHomePage = ["/", "/en", "/fr", ""].includes(normalizedPath);
   
-  const navTextClass = isMobileMenuOpen ? "text-black/70" : "text-white/80";
-  const navHoverClass = isMobileMenuOpen ? "hover:text-black" : "hover:text-white";
-  const navDividerClass = isMobileMenuOpen ? "text-black/25" : "text-white/30";
-  const navSlashClass = isMobileMenuOpen ? "text-black/45" : "text-white/50";
-
   const [isPastHero, setIsPastHero] = useState(!isHomePage);
-  const mixBlendClass = (!isMobileMenuOpen && (!isHomePage || isPastHero)) ? "mix-blend-difference" : "";
-  const useDarkLogo = isMobileMenuOpen || !isHomePage || isPastHero;
+  const isDark = isMobileMenuOpen || !isHomePage || isPastHero;
+
+  const navTextClass = isDark ? "text-black/72" : "text-white/80";
+  const navHoverClass = isDark ? "hover:text-black" : "hover:text-white";
+  const navDividerClass = isDark ? "text-black/25" : "text-white/30";
+  const navSlashClass = isDark ? "text-black/45" : "text-white/50";
+
+  const useDarkLogo = isDark;
   const { scrollY } = useScroll();
 
   useEffect(() => {
@@ -150,6 +151,11 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
         </Link>
       </motion.div>
 
+      {/* Smooth glass blur background (does not inherit mix-blend-difference to avoid color inversion) */}
+      <div
+        className={`navbar-blur-backdrop ${isPastHero ? "visible" : ""}`}
+      />
+
       <motion.header
         style={{ viewTransitionName: "site-header" }}
         initial={isHomePage ? "hidden" : "visible"}
@@ -159,9 +165,9 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
           hidden: { y: "-100%", opacity: 0 },
         }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className={`fixed left-0 right-0 top-0 z-[80] h-[71px] border-b border-transparent px-5 transition-colors duration-300 sm:px-7 md:px-9 lg:px-[2.5vw] bg-transparent ${
-          isPastHero ? "pointer-events-auto" : "pointer-events-none"
-        } ${(!isMobileMenuOpen && (!isHomePage || isPastHero)) ? "mix-blend-difference" : ""}`}
+        className={`fixed left-0 right-0 top-0 z-[80] h-[71px] border-b border-transparent px-5 transition-colors duration-300 sm:px-7 md:px-9 lg:px-[2.5vw] ${
+          isPastHero ? "pointer-events-auto bg-transparent" : "pointer-events-none bg-transparent"
+        }`}
       >
         <nav
           aria-label="Primary"
@@ -188,7 +194,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
                   type="button"
                   onClick={() => handleLanguageChange("fr")}
                   aria-label="Passer en français"
-                  className={`transition-colors ${navHoverClass} ${currentLang === "fr" ? (isMobileMenuOpen ? "text-black font-medium" : "text-white font-medium") : ""}`}
+                  className={`transition-colors ${navHoverClass} ${currentLang === "fr" ? (isDark ? "text-black font-medium" : "text-white font-medium") : ""}`}
                 >
                   FR
                 </button>
@@ -197,7 +203,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
                   onClick={() => handleLanguageChange("en")}
                   type="button"
                   aria-label="Change language"
-                  className={`transition-colors ${navHoverClass} ${currentLang === "en" ? (isMobileMenuOpen ? "text-black font-medium" : "text-white font-medium") : ""}`}
+                  className={`transition-colors ${navHoverClass} ${currentLang === "en" ? (isDark ? "text-black font-medium" : "text-white font-medium") : ""}`}
                 >
                   EN
                 </button>
@@ -213,7 +219,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
                   type="button"
                   onClick={() => handleLanguageChange("fr")}
                   aria-label="Passer en français"
-                  className={`transition-colors ${navHoverClass} ${currentLang === "fr" ? (isMobileMenuOpen ? "text-black font-medium" : "text-white font-medium") : ""}`}
+                  className={`transition-colors ${navHoverClass} ${currentLang === "fr" ? (isDark ? "text-black font-medium" : "text-white font-medium") : ""}`}
                 >
                   FR
                 </motion.button>
@@ -223,7 +229,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
                   onClick={() => handleLanguageChange("en")}
                   type="button"
                   aria-label="Change language"
-                  className={`transition-colors ${navHoverClass} ${currentLang === "en" ? (isMobileMenuOpen ? "text-black font-medium" : "text-white font-medium") : ""}`}
+                  className={`transition-colors ${navHoverClass} ${currentLang === "en" ? (isDark ? "text-black font-medium" : "text-white font-medium") : ""}`}
                 >
                   EN
                 </motion.button>

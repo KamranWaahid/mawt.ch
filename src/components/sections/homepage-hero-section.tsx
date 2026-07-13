@@ -210,9 +210,7 @@ function HeroGradientStatement({
 export function HomepageHeroSection({ settings, dict, transitionDict }: HomepageHeroSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const topVideoRef = useRef<HTMLVideoElement | null>(null);
   const topVideoActiveRef = useRef(true);
-  const topVideoPauseTimerRef = useRef<number | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isHeroMobileMenuOpen, setIsHeroMobileMenuOpen] = useState(false);
   const [topVideoCycle, setTopVideoCycle] = useState(0);
@@ -240,34 +238,8 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
 
       if (hasClearlyLeftTop && topVideoActiveRef.current) {
         topVideoActiveRef.current = false;
-
-        if (topVideoPauseTimerRef.current) {
-          window.clearTimeout(topVideoPauseTimerRef.current);
-        }
-
-        topVideoPauseTimerRef.current = window.setTimeout(() => {
-          topVideoRef.current?.pause();
-        }, 520);
       } else if (hasClearlyReturnedTop && !topVideoActiveRef.current) {
         topVideoActiveRef.current = true;
-
-        if (topVideoPauseTimerRef.current) {
-          window.clearTimeout(topVideoPauseTimerRef.current);
-          topVideoPauseTimerRef.current = null;
-        }
-
-        const topVideo = topVideoRef.current;
-        if (topVideo) {
-          topVideo.currentTime = 0;
-          if (isAsciiHovered) {
-            topVideo.play().catch((error) => {
-              console.log("Top hero video autoplay prevented:", error);
-            });
-          } else {
-            topVideo.pause();
-          }
-        }
-
         setTopVideoCycle((cycle) => cycle + 1);
       }
     }
@@ -297,43 +269,13 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   }, []);
 
   useEffect(() => {
-    const topVideo = topVideoRef.current;
-    if (!topVideo) return;
-
-    if (shouldReduceMotion) {
-      topVideo.pause();
-      return;
-    }
-
     if (window.scrollY <= 6) {
-      topVideo.currentTime = 0;
       topVideoActiveRef.current = true;
-      topVideo.pause();
     } else {
       topVideoActiveRef.current = false;
-      topVideo.pause();
     }
 
-    return () => {
-      if (topVideoPauseTimerRef.current) {
-        window.clearTimeout(topVideoPauseTimerRef.current);
-      }
-      topVideo.pause();
-    };
-  }, [shouldReduceMotion]);
-
-  useEffect(() => {
-    const topVideo = topVideoRef.current;
-    if (!topVideo || shouldReduceMotion || !topVideoActiveRef.current) return;
-
-    if (isAsciiHovered) {
-      topVideo.play().catch((error) => {
-        console.log("Top hero video autoplay prevented on hover:", error);
-      });
-    } else {
-      topVideo.pause();
-    }
-  }, [isAsciiHovered, shouldReduceMotion]);
+  }, []);
 
   // Forward Transforms (Down)
   const heroLogoTransformDesktopDown = useTransform(smoothProgress, [0, 0.10, 0.18, 0.25, 0.50], [
@@ -507,16 +449,11 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           style={{ opacity: topVideoOpacity }}
         >
           <div key={topVideoCycle} className="home-hero-video-mask pointer-events-none absolute">
-            <video
-              ref={topVideoRef}
-              src="/ascii-magic-4.mp4"
+            <img
+              src="/ascii-magic-2.jpg"
+              alt=""
+              aria-hidden="true"
               className="home-hero-top-video h-full w-full object-cover"
-              playsInline
-              muted
-              loop
-              autoPlay
-              preload="metadata"
-              controls={false}
             />
             <div className="home-hero-wave-sheen pointer-events-none absolute inset-0" />
           </div>

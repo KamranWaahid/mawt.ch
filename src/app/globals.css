@@ -414,24 +414,21 @@ body::after {
 }
 
 .home-hero-video-mask {
-  left: 50%;
-  top: 50%;
-  width: min(74vw, 920px);
-  height: min(46vw, 560px);
-  opacity: 0.1;
-  filter: saturate(0.76) contrast(0.92) brightness(0.52) blur(6px);
-  transform: translate3d(calc(-50% + var(--ascii-shift-x, 0%)), calc(-50% + var(--ascii-shift-y, 0%)), 0) rotate(-8deg) scale(0.82);
+  inset: -8%;
+  opacity: 0.22;
+  filter: saturate(0.95) contrast(1.04) brightness(0.72) blur(3px);
+  transform: translate3d(var(--ascii-shift-x, 0%), var(--ascii-shift-y, 0%), 0) rotate(-8deg) scale(1);
   transition: opacity 520ms cubic-bezier(0.16, 1, 0.3, 1), filter 520ms cubic-bezier(0.16, 1, 0.3, 1), transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
   will-change: filter, opacity, transform;
   animation: none;
   mask-image:
-    radial-gradient(ellipse 26rem 5rem at calc(var(--ascii-x, 58%) - 10%) calc(var(--ascii-y, 48%) - 10%), rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.38) 45%, transparent 78%),
-    radial-gradient(ellipse 32rem 6rem at var(--ascii-x, 58%) var(--ascii-y, 48%), black 0%, rgba(0, 0, 0, 0.56) 48%, transparent 82%),
-    radial-gradient(ellipse 24rem 4rem at calc(var(--ascii-x, 58%) + 12%) calc(var(--ascii-y, 48%) + 10%), rgba(0, 0, 0, 0.74) 0%, rgba(0, 0, 0, 0.32) 48%, transparent 80%);
+    radial-gradient(ellipse 28rem 6.3rem at calc(var(--ascii-x, 58%) - 10%) calc(var(--ascii-y, 48%) - 10%), black 0%, rgba(0, 0, 0, 0.58) 50%, transparent 84%),
+    radial-gradient(ellipse 39rem 8.4rem at var(--ascii-x, 58%) var(--ascii-y, 48%), black 0%, rgba(0, 0, 0, 0.72) 54%, transparent 86%),
+    radial-gradient(ellipse 25rem 5.6rem at calc(var(--ascii-x, 58%) + 12%) calc(var(--ascii-y, 48%) + 10%), rgba(0, 0, 0, 0.86) 0%, rgba(0, 0, 0, 0.48) 52%, transparent 84%);
   -webkit-mask-image:
-    radial-gradient(ellipse 26rem 5rem at calc(var(--ascii-x, 58%) - 10%) calc(var(--ascii-y, 48%) - 10%), rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.38) 45%, transparent 78%),
-    radial-gradient(ellipse 32rem 6rem at var(--ascii-x, 58%) var(--ascii-y, 48%), black 0%, rgba(0, 0, 0, 0.56) 48%, transparent 82%),
-    radial-gradient(ellipse 24rem 4rem at calc(var(--ascii-x, 58%) + 12%) calc(var(--ascii-y, 48%) + 10%), rgba(0, 0, 0, 0.74) 0%, rgba(0, 0, 0, 0.32) 48%, transparent 80%);
+    radial-gradient(ellipse 28rem 6.3rem at calc(var(--ascii-x, 58%) - 10%) calc(var(--ascii-y, 48%) - 10%), black 0%, rgba(0, 0, 0, 0.58) 50%, transparent 84%),
+    radial-gradient(ellipse 39rem 8.4rem at var(--ascii-x, 58%) var(--ascii-y, 48%), black 0%, rgba(0, 0, 0, 0.72) 54%, transparent 86%),
+    radial-gradient(ellipse 25rem 5.6rem at calc(var(--ascii-x, 58%) + 12%) calc(var(--ascii-y, 48%) + 10%), rgba(0, 0, 0, 0.86) 0%, rgba(0, 0, 0, 0.48) 52%, transparent 84%);
   mask-repeat: no-repeat;
   -webkit-mask-repeat: no-repeat;
   mask-size: 100% 100%;
@@ -439,9 +436,11 @@ body::after {
 }
 
 .home-hero-top-video {
-  opacity: 0.68;
+  opacity: 0.92;
+  width: 100%;
+  height: 100%;
   object-position: 50% 48%;
-  transform: translate3d(var(--ascii-video-shift-x, 0%), var(--ascii-video-shift-y, 0%), 0) rotate(8deg) scale(0.92);
+  transform: translate3d(var(--ascii-video-shift-x, 0%), var(--ascii-video-shift-y, 0%), 0) rotate(8deg) scale(0.86);
   transition: transform 720ms cubic-bezier(0.16, 1, 0.3, 1), filter 520ms cubic-bezier(0.16, 1, 0.3, 1), opacity 520ms cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, filter, opacity;
 }
@@ -449,9 +448,9 @@ body::after {
 .home-hero-wave-sheen {
   opacity: 0;
   background:
-    radial-gradient(ellipse 18rem 5rem at calc(var(--ascii-x, 58%) - 8%) calc(var(--ascii-y, 48%) - 5%), rgba(117, 218, 180, 0.14), transparent 70%),
-    radial-gradient(ellipse 22rem 6rem at calc(var(--ascii-x, 58%) + 8%) calc(var(--ascii-y, 48%) + 7%), rgba(130, 78, 255, 0.13), transparent 72%),
-    linear-gradient(102deg, transparent 0%, rgba(213, 255, 239, 0.18) 46%, transparent 68%);
+    radial-gradient(ellipse 24rem 7rem at calc(var(--ascii-x, 58%) - 8%) calc(var(--ascii-y, 48%) - 5%), rgba(117, 218, 180, 0.24), transparent 72%),
+    radial-gradient(ellipse 28rem 8rem at calc(var(--ascii-x, 58%) + 8%) calc(var(--ascii-y, 48%) + 7%), rgba(130, 78, 255, 0.2), transparent 74%),
+    linear-gradient(102deg, transparent 0%, rgba(213, 255, 239, 0.28) 46%, transparent 70%);
   mix-blend-mode: screen;
   transform: translate3d(0, 0, 0) rotate(8deg) scale(0.92);
   transition: opacity 520ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -465,39 +464,39 @@ body::after {
 
 .home-hero-root:hover .home-hero-video-mask,
 .home-hero-root.is-ascii-hovered .home-hero-video-mask {
-  opacity: 0.38;
-  filter: saturate(0.98) contrast(1.04) brightness(0.68) blur(1.25px);
+  opacity: 0.66;
+  filter: saturate(1.14) contrast(1.12) brightness(0.9) blur(0.25px);
   animation: homeHeroAsciiFieldHover 1.45s ease-in-out infinite alternate;
 }
 
 .home-hero-root:hover .home-hero-top-video,
 .home-hero-root.is-ascii-hovered .home-hero-top-video {
-  opacity: 0.78;
-  filter: url(#homeHeroAsciiWave) saturate(1.04) contrast(1.02);
+  opacity: 0.82;
+  filter: url(#homeHeroAsciiWave) saturate(1.1) contrast(1.08) brightness(0.94);
   animation: homeHeroAsciiTextureHover 1.15s ease-in-out infinite alternate;
 }
 
 .home-hero-root:hover .home-hero-wave-sheen,
 .home-hero-root.is-ascii-hovered .home-hero-wave-sheen {
-  opacity: 0.35;
+  opacity: 0.5;
   animation: homeHeroAsciiSheenHover 1.4s ease-in-out infinite alternate;
 }
 
 @keyframes homeHeroAsciiFieldHover {
   0% {
-    transform: translate3d(calc(-50% + var(--ascii-shift-x, 0%) - 0.3%), calc(-50% + var(--ascii-shift-y, 0%) - 0.2%), 0) rotate(-8deg) scale(0.82) skewY(-0.6deg) skewX(0.2deg);
+    transform: translate3d(calc(var(--ascii-shift-x, 0%) - 0.3%), calc(var(--ascii-shift-y, 0%) - 0.2%), 0) rotate(-8deg) scale(1) skewY(-0.6deg) skewX(0.2deg);
   }
   100% {
-    transform: translate3d(calc(-50% + var(--ascii-shift-x, 0%) + 0.45%), calc(-50% + var(--ascii-shift-y, 0%) + 0.3%), 0) rotate(-8deg) scale(0.88) skewY(1.2deg) skewX(-0.35deg);
+    transform: translate3d(calc(var(--ascii-shift-x, 0%) + 0.45%), calc(var(--ascii-shift-y, 0%) + 0.3%), 0) rotate(-8deg) scale(1.03) skewY(1.2deg) skewX(-0.35deg);
   }
 }
 
 @keyframes homeHeroAsciiTextureHover {
   0% {
-    transform: translate3d(var(--ascii-video-shift-x, 0%), var(--ascii-video-shift-y, 0%), 0) rotate(8deg) scale(0.92) skewY(0deg) skewX(0deg);
+    transform: translate3d(var(--ascii-video-shift-x, 0%), var(--ascii-video-shift-y, 0%), 0) rotate(8deg) scale(0.86) skewY(0deg) skewX(0deg);
   }
   100% {
-    transform: translate3d(calc(var(--ascii-video-shift-x, 0%) + 0.5%), calc(var(--ascii-video-shift-y, 0%) - 0.5%), 0) rotate(8deg) scale(0.98) skewY(-1.1deg) skewX(0.45deg);
+    transform: translate3d(calc(var(--ascii-video-shift-x, 0%) + 0.5%), calc(var(--ascii-video-shift-y, 0%) - 0.5%), 0) rotate(8deg) scale(0.92) skewY(-1.1deg) skewX(0.45deg);
   }
 }
 
@@ -512,10 +511,9 @@ body::after {
 
 @media (max-width: 767px) {
   .home-hero-video-mask {
-    width: min(92vw, 520px);
-    height: min(64vw, 360px);
+    inset: -10%;
     opacity: 0.1;
-    transform: translate3d(-50%, -50%, 0) rotate(-8deg) scale(0.88);
+    transform: translate3d(0, 0, 0) rotate(-8deg) scale(1);
     mask-image:
       radial-gradient(ellipse 17rem 4rem at var(--ascii-x, 55%) var(--ascii-y, 48%), black 0%, rgba(0, 0, 0, 0.54) 48%, transparent 80%),
       radial-gradient(ellipse 13rem 3rem at calc(var(--ascii-x, 55%) + 10%) calc(var(--ascii-y, 48%) + 9%), rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 78%);
@@ -525,7 +523,7 @@ body::after {
   }
 
   .home-hero-top-video {
-    transform: translateZ(0) rotate(8deg) scale(0.98);
+    transform: translateZ(0) rotate(8deg) scale(0.78);
   }
 
   .home-hero-wave-sheen {

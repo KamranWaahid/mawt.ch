@@ -85,6 +85,8 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
   const navSlashClass = isMobileMenuOpen ? "text-black/45" : "text-white/50";
 
   const [isPastHero, setIsPastHero] = useState(!isHomePage);
+  const mixBlendClass = (!isMobileMenuOpen && (!isHomePage || isPastHero)) ? "mix-blend-difference" : "";
+  const useDarkLogo = isMobileMenuOpen || !isHomePage || isPastHero;
   const { scrollY } = useScroll();
 
   useEffect(() => {
@@ -135,7 +137,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       className={`fixed left-0 right-0 top-0 z-[80] h-[71px] border-b border-transparent px-5 transition-colors duration-300 sm:px-7 md:px-9 lg:px-[2.5vw] bg-transparent ${
         isPastHero ? "pointer-events-auto" : "pointer-events-none"
-      } ${(!isMobileMenuOpen && (!isHomePage || isPastHero)) ? "mix-blend-difference" : ""}`}
+      }`}
     >
       <nav
         aria-label="Primary"
@@ -147,14 +149,14 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
           className="z-50 block w-[98px] shrink-0 transition-opacity hover:opacity-80"
         >
           <Image
-            src={isMobileMenuOpen ? LogoBlack : LogoWhite}
+            src={useDarkLogo ? LogoBlack : LogoWhite}
             alt="MAWT Logo"
             className="h-auto w-full"
           />
         </Link>
 
         <div className="ml-auto flex items-center">
-          <div className={`hidden flex-wrap items-center justify-end gap-x-5 gap-y-3 text-[13px] font-normal leading-none transition-colors duration-300 md:flex lg:gap-x-8 lg:text-[14px] ${navTextClass}`}>
+          <div className={`hidden flex-wrap items-center justify-end gap-x-5 gap-y-3 text-[13px] font-normal leading-none transition-colors duration-300 md:flex lg:gap-x-8 lg:text-[14px] ${navTextClass} ${mixBlendClass}`}>
             {activeNavItems.map((item) => (
               <Link
                 key={item.label}
@@ -189,7 +191,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
             )}
           </div>
 
-          <div className={`flex items-center gap-3 text-[13px] font-normal leading-none transition-colors duration-300 md:hidden ${navTextClass}`}>
+          <div className={`flex items-center gap-3 text-[13px] font-normal leading-none transition-colors duration-300 md:hidden ${navTextClass} ${mixBlendClass}`}>
             {!isContactPage && (
               <>
                 <motion.button

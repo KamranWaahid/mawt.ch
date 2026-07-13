@@ -89,7 +89,6 @@ export async function proxy(request: NextRequest) {
     "/MotionMAWT.mp4",
     "/ascii-animation (1).mp4",
     "/ascii-animation%20(1).mp4",
-    "/ascii-magic-2.jpg",
     "/MAWT Logo.svg",
     "/MAWT Branding/",
     "/PlanetBackground.png",

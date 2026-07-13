@@ -415,6 +415,7 @@ body::after {
   inset: 0;
   opacity: 1;
   filter: none;
+  background: #000000;
   transform: none;
   will-change: opacity;
 }

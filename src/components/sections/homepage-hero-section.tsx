@@ -212,6 +212,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   const asciiVideoRef = useRef<HTMLVideoElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isHeroMobileMenuOpen, setIsHeroMobileMenuOpen] = useState(false);
+  const [isAsciiVideoReady, setIsAsciiVideoReady] = useState(false);
   const shouldReduceMotion = useReducedMotion();
   const params = useParams();
   const lang = (params?.lang === "fr" ? "fr" : "en") as Locale;
@@ -256,10 +257,43 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     const video = asciiVideoRef.current;
     if (!video || shouldReduceMotion) return;
 
+    let isMounted = true;
+    let animationFrame = 0;
+    let videoFrameHandle = 0;
+    const markReady = () => {
+      if (!isMounted) return;
+
+      if ("requestVideoFrameCallback" in video) {
+        videoFrameHandle = video.requestVideoFrameCallback(() => {
+          if (isMounted) setIsAsciiVideoReady(true);
+        });
+        return;
+      }
+
+      animationFrame = window.requestAnimationFrame(() => {
+        if (isMounted) setIsAsciiVideoReady(true);
+      });
+    };
+
+    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+      markReady();
+    } else {
+      video.addEventListener("loadeddata", markReady, { once: true });
+    }
+
     video.load();
     if (video.paused) {
       video.play().catch(e => console.log("ASCII autoplay prevented on mount:", e));
     }
+
+    return () => {
+      isMounted = false;
+      video.removeEventListener("loadeddata", markReady);
+      window.cancelAnimationFrame(animationFrame);
+      if ("cancelVideoFrameCallback" in video && videoFrameHandle) {
+        video.cancelVideoFrameCallback(videoFrameHandle);
+      }
+    };
   }, [shouldReduceMotion]);
 
   // Forward Transforms (Down)
@@ -328,12 +362,14 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   const videoScale = useTransform(smoothProgress, [0.25, 0.50], [1, 1]);
   const asciiLayerOpacity = shouldReduceMotion
     ? 0
-    : scrollProgress <= 0.004
+    : !isAsciiVideoReady
+      ? 0
+      : scrollProgress <= 0.004
       ? 1
       : scrollProgress >= 0.012
         ? 0
         : 1 - (scrollProgress - 0.004) / 0.008;
-  const asciiLayerVisibility = !shouldReduceMotion && scrollProgress < 0.016 ? "visible" : "hidden";
+  const asciiLayerVisibility = !shouldReduceMotion && isAsciiVideoReady && scrollProgress < 0.016 ? "visible" : "hidden";
   const heroContentOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
   const scrollIndicatorOpacity = useTransform(smoothProgress, [0.45, 0.50], [1, 0]);
   
@@ -400,10 +436,12 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
 
         <motion.div
           aria-hidden="true"
-          className="home-hero-ascii-layer pointer-events-none absolute inset-0 z-[14] overflow-hidden"
+          className="home-hero-ascii-layer pointer-events-none absolute inset-0 z-[16] overflow-hidden"
           style={{ opacity: asciiLayerOpacity, visibility: asciiLayerVisibility }}
         >
-          <div className="home-hero-video-mask pointer-events-none absolute">
+          <div
+            className="home-hero-video-mask pointer-events-none absolute"
+          >
             <video
               ref={asciiVideoRef}
               src="/ascii-animation (1).mp4"
@@ -416,6 +454,57 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
             />
           </div>
         </motion.div>
+
+        {/* Visible logo mark above the pre-scroll ASCII layer. */}
+        <div className="pointer-events-none absolute inset-0 z-[18] overflow-hidden">
+          <div className="hidden lg:block absolute inset-0">
+            <motion.div
+              className="absolute left-5 top-[23px] sm:left-7 md:left-9 lg:left-[2.5vw] block"
+              style={{
+                width: "98px",
+                transform: heroLogoTransformDesktop,
+                transformOrigin: "top left",
+                opacity: heroLogoOpacity,
+              }}
+            >
+              <motion.div className="absolute inset-0" style={{ opacity: maskCoverOpacity }}>
+                <MawatLogo className="h-auto w-full" tone="light" />
+              </motion.div>
+            </motion.div>
+          </div>
+
+          <div className="absolute inset-0 hidden max-lg:landscape:block">
+            <motion.div
+              className="absolute left-5 top-[23px] sm:left-7 md:left-9 lg:left-[2.5vw] block"
+              style={{
+                width: "98px",
+                transform: heroLogoTransformLandscape,
+                transformOrigin: "top left",
+                opacity: heroLogoOpacity,
+              }}
+            >
+              <motion.div className="absolute inset-0" style={{ opacity: maskCoverOpacity }}>
+                <MawatLogo className="h-auto w-full" tone="light" />
+              </motion.div>
+            </motion.div>
+          </div>
+
+          <div className="absolute inset-0 hidden max-lg:portrait:block">
+            <motion.div
+              className="absolute left-5 top-[23px] sm:left-7 md:left-9 lg:left-[2.5vw] block"
+              style={{
+                width: "98px",
+                transform: heroLogoTransformPortrait,
+                transformOrigin: "top left",
+                opacity: heroLogoOpacity,
+              }}
+            >
+              <motion.div className="absolute inset-0" style={{ opacity: maskCoverOpacity }}>
+                <MawatLogo className="h-auto w-full" tone="light" />
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
 
         {/* Z-12: WHITE FILLER FOR LOGO */}
         <motion.div
@@ -440,7 +529,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
               }}
             >
               <MawatLogoMask className="h-auto w-full" />
-              <motion.div className="absolute inset-0" style={{ opacity: maskCoverOpacity }}>
+              <motion.div className="absolute inset-0 z-[20]" style={{ opacity: maskCoverOpacity }}>
                 <MawatLogo className="h-auto w-full" tone="light" />
               </motion.div>
             </motion.div>
@@ -458,7 +547,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
               }}
             >
               <MawatLogoMask className="h-auto w-full" />
-              <motion.div className="absolute inset-0" style={{ opacity: maskCoverOpacity }}>
+              <motion.div className="absolute inset-0 z-[20]" style={{ opacity: maskCoverOpacity }}>
                 <MawatLogo className="h-auto w-full" tone="light" />
               </motion.div>
             </motion.div>
@@ -476,7 +565,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
               }}
             >
               <MawatLogoMask className="h-auto w-full" />
-              <motion.div className="absolute inset-0" style={{ opacity: maskCoverOpacity }}>
+              <motion.div className="absolute inset-0 z-[20]" style={{ opacity: maskCoverOpacity }}>
                 <MawatLogo className="h-auto w-full" tone="light" />
               </motion.div>
             </motion.div>

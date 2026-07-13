@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -86,6 +86,18 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
 
   const [isPastHero, setIsPastHero] = useState(!isHomePage);
   const { scrollY } = useScroll();
+
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+    if (!isHomePage) {
+      setIsPastHero(true);
+    } else {
+      if (typeof window !== "undefined") {
+        const vh = window.innerHeight;
+        setIsPastHero(window.scrollY > 3.9 * vh);
+      }
+    }
+  }, [isHomePage, pathname]);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     if (isHomePage && typeof window !== "undefined") {

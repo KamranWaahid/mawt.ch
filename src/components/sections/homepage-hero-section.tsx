@@ -1,9 +1,10 @@
 "use client";
 
-import { useId, useRef, useState, useEffect } from "react";
+import { useCallback, useId, useRef, useState, useEffect } from "react";
+import type { PointerEvent } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { motion, useMotionValueEvent, useScroll, useTransform, useSpring, MotionValue } from "motion/react";
+import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform, useSpring, MotionValue } from "motion/react";
 import { Menu, X } from "lucide-react";
 import type { SiteSettings } from "@/lib/types";
 import { localizedHref } from "@/lib/routing/url-helpers";
@@ -209,8 +210,14 @@ function HeroGradientStatement({
 export function HomepageHeroSection({ settings, dict, transitionDict }: HomepageHeroSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const topVideoRef = useRef<HTMLVideoElement | null>(null);
+  const topVideoActiveRef = useRef(true);
+  const topVideoPauseTimerRef = useRef<number | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isHeroMobileMenuOpen, setIsHeroMobileMenuOpen] = useState(false);
+  const [topVideoCycle, setTopVideoCycle] = useState(0);
+  const [isAsciiHovered, setIsAsciiHovered] = useState(false);
+  const shouldReduceMotion = useReducedMotion();
   const params = useParams();
   const lang = (params?.lang === "fr" ? "fr" : "en") as Locale;
   const { scrollYProgress } = useScroll({
@@ -220,8 +227,59 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 80, damping: 25, restDelta: 0.0001 });
 
+  const [isScrollingUp, setIsScrollingUp] = useState(false);
+  const lastProgress = useRef(0);
+
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     setScrollProgress(latest);
+
+    if (!shouldReduceMotion && typeof window !== "undefined") {
+      const scrollTop = window.scrollY;
+      const hasClearlyLeftTop = scrollTop > 18;
+      const hasClearlyReturnedTop = scrollTop <= 6;
+
+      if (hasClearlyLeftTop && topVideoActiveRef.current) {
+        topVideoActiveRef.current = false;
+
+        if (topVideoPauseTimerRef.current) {
+          window.clearTimeout(topVideoPauseTimerRef.current);
+        }
+
+        topVideoPauseTimerRef.current = window.setTimeout(() => {
+          topVideoRef.current?.pause();
+        }, 520);
+      } else if (hasClearlyReturnedTop && !topVideoActiveRef.current) {
+        topVideoActiveRef.current = true;
+
+        if (topVideoPauseTimerRef.current) {
+          window.clearTimeout(topVideoPauseTimerRef.current);
+          topVideoPauseTimerRef.current = null;
+        }
+
+        const topVideo = topVideoRef.current;
+        if (topVideo) {
+          topVideo.currentTime = 0;
+          if (isAsciiHovered) {
+            topVideo.play().catch((error) => {
+              console.log("Top hero video autoplay prevented:", error);
+            });
+          } else {
+            topVideo.pause();
+          }
+        }
+
+        setTopVideoCycle((cycle) => cycle + 1);
+      }
+    }
+    
+    // Detect scroll direction with a tiny threshold to avoid jitter
+    if (latest < lastProgress.current - 0.002) {
+      if (!isScrollingUp) setIsScrollingUp(true);
+    } else if (latest > lastProgress.current + 0.002) {
+      if (isScrollingUp) setIsScrollingUp(false);
+    }
+    lastProgress.current = latest;
+
     if (latest > 0.01 && videoRef.current && videoRef.current.paused) {
       const playPromise = videoRef.current.play();
       if (playPromise !== undefined) {
@@ -238,7 +296,47 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     }
   }, []);
 
-  const heroLogoTransformDesktop = useTransform(smoothProgress, [0, 0.10, 0.18, 0.25, 0.50], [
+  useEffect(() => {
+    const topVideo = topVideoRef.current;
+    if (!topVideo) return;
+
+    if (shouldReduceMotion) {
+      topVideo.pause();
+      return;
+    }
+
+    if (window.scrollY <= 6) {
+      topVideo.currentTime = 0;
+      topVideoActiveRef.current = true;
+      topVideo.pause();
+    } else {
+      topVideoActiveRef.current = false;
+      topVideo.pause();
+    }
+
+    return () => {
+      if (topVideoPauseTimerRef.current) {
+        window.clearTimeout(topVideoPauseTimerRef.current);
+      }
+      topVideo.pause();
+    };
+  }, [shouldReduceMotion]);
+
+  useEffect(() => {
+    const topVideo = topVideoRef.current;
+    if (!topVideo || shouldReduceMotion || !topVideoActiveRef.current) return;
+
+    if (isAsciiHovered) {
+      topVideo.play().catch((error) => {
+        console.log("Top hero video autoplay prevented on hover:", error);
+      });
+    } else {
+      topVideo.pause();
+    }
+  }, [isAsciiHovered, shouldReduceMotion]);
+
+  // Forward Transforms (Down)
+  const heroLogoTransformDesktopDown = useTransform(smoothProgress, [0, 0.10, 0.18, 0.25, 0.50], [
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(47.5vw - 588px), calc(40vh - 159.25px)) scale(12)",
@@ -246,7 +344,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     "translate(calc(47.5vw - 21193px), calc(50vh - 7909px)) scale(700)"
   ]);
 
-  const heroLogoTransformLandscape = useTransform(smoothProgress, [0, 0.10, 0.18, 0.25, 0.50], [
+  const heroLogoTransformLandscapeDown = useTransform(smoothProgress, [0, 0.10, 0.18, 0.25, 0.50], [
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(50vw - 318px), calc(40vh - 91.75px)) scale(6)",
@@ -254,7 +352,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     "translate(calc(50vw - 21217px), calc(50vh - 7909px)) scale(700)"
   ]);
 
-  const heroLogoTransformPortrait = useTransform(smoothProgress, [0, 0.10, 0.18, 0.25, 0.50], [
+  const heroLogoTransformPortraitDown = useTransform(smoothProgress, [0, 0.10, 0.18, 0.25, 0.50], [
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(50vw - 191.5px), calc(40vh - 63.675px)) scale(3.5)",
@@ -262,26 +360,48 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     "translate(calc(50vw - 21213px), calc(50vh - 7909px)) scale(700)"
   ]);
 
+  const whiteFillerOpacityDown = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
+  const maskCoverOpacityDown = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
+  const heroLogoOpacityDown = useTransform(smoothProgress, [0.50, 0.60], [1, 0]);
+  const videoContainerOpacityDown = useTransform(smoothProgress, [0.50, 0.60], [1, 0]);
+  const navLogoOpacityDown = useTransform(smoothProgress, [0.50, 0.55], [0, 1]);
+
+  // Reverse Transforms (Up) - Keeps logo zoomed to 700 to hide it and fades video natively
+  const heroLogoTransformDesktopUp = useTransform(smoothProgress, [0, 1], [
+    "translate(calc(47.5vw - 21193px), calc(50vh - 7909px)) scale(700)",
+    "translate(calc(47.5vw - 21193px), calc(50vh - 7909px)) scale(700)"
+  ]);
+
+  const heroLogoTransformLandscapeUp = useTransform(smoothProgress, [0, 1], [
+    "translate(calc(50vw - 21217px), calc(50vh - 7909px)) scale(700)",
+    "translate(calc(50vw - 21217px), calc(50vh - 7909px)) scale(700)"
+  ]);
+
+  const heroLogoTransformPortraitUp = useTransform(smoothProgress, [0, 1], [
+    "translate(calc(50vw - 21213px), calc(50vh - 7909px)) scale(700)",
+    "translate(calc(50vw - 21213px), calc(50vh - 7909px)) scale(700)"
+  ]);
+
+  const whiteFillerOpacityUp = useTransform(smoothProgress, [0, 1], [0, 0]);
+  const maskCoverOpacityUp = useTransform(smoothProgress, [0, 1], [0, 0]);
+  const heroLogoOpacityUp = useTransform(smoothProgress, [0.50, 0.60], [1, 0]);
+  const videoContainerOpacityUp = useTransform(smoothProgress, [0.10, 0.25, 0.50, 0.60], [0, 1, 1, 0]);
+  const navLogoOpacityUp = useTransform(smoothProgress, [0, 1], [1, 1]);
+
+  // Dynamic bindings based on scroll direction
+  const heroLogoTransformDesktop = isScrollingUp ? heroLogoTransformDesktopUp : heroLogoTransformDesktopDown;
+  const heroLogoTransformLandscape = isScrollingUp ? heroLogoTransformLandscapeUp : heroLogoTransformLandscapeDown;
+  const heroLogoTransformPortrait = isScrollingUp ? heroLogoTransformPortraitUp : heroLogoTransformPortraitDown;
+  const whiteFillerOpacity = isScrollingUp ? whiteFillerOpacityUp : whiteFillerOpacityDown;
+  const maskCoverOpacity = isScrollingUp ? maskCoverOpacityUp : maskCoverOpacityDown;
+  const heroLogoOpacity = isScrollingUp ? heroLogoOpacityUp : heroLogoOpacityDown;
+  const videoContainerOpacity = isScrollingUp ? videoContainerOpacityUp : videoContainerOpacityDown;
+  const navLogoOpacity = isScrollingUp ? navLogoOpacityUp : navLogoOpacityDown;
+
   const videoScale = useTransform(smoothProgress, [0.25, 0.50], [1, 1]);
-  
-  // White filler makes the mask look like a solid white logo initially
-  const whiteFillerOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
-  
-  // Hero text fades out as the video reveals
+  const topVideoOpacity = useTransform(scrollYProgress, [0, 0.004, 0.015], shouldReduceMotion ? [0, 0, 0] : [1, 0.72, 0]);
   const heroContentOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
-  
-  // Video and logo mask fade out
-  const heroLogoOpacity = useTransform(smoothProgress, [0.50, 0.60], [1, 0]);
-  const videoContainerOpacity = useTransform(smoothProgress, [0.50, 0.60], [1, 0]);
-  
-  // The solid white logo covers the mask initially so it looks normal, then fades out to reveal video
-  const maskCoverOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
-  
-  // Scroll indicator is visible initially and fades out when video starts fading out
   const scrollIndicatorOpacity = useTransform(smoothProgress, [0.45, 0.50], [1, 0]);
-  
-  // Navbar logo stays hidden while the hero mask is active, then fades in
-  const navLogoOpacity = useTransform(smoothProgress, [0.50, 0.55], [0, 1]);
   
   const isHomeNavLight = scrollProgress >= 0.90;
   const homeNavTextClass = isHomeNavLight ? "text-black/70" : "text-white/72";
@@ -312,9 +432,47 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     return localizedHref(route, lang);
   };
 
+  const updateAsciiPointer = useCallback((event: PointerEvent<HTMLElement>) => {
+    if (shouldReduceMotion) return;
+
+    const x = Math.max(0, Math.min(100, (event.clientX / window.innerWidth) * 100));
+    const y = Math.max(0, Math.min(100, (event.clientY / window.innerHeight) * 100));
+    const shiftX = (x - 50) * 0.035;
+    const shiftY = (y - 50) * 0.025;
+    const videoShiftX = shiftX * -0.35;
+    const videoShiftY = shiftY * -0.35;
+
+    event.currentTarget.style.setProperty("--ascii-x", `${x.toFixed(2)}%`);
+    event.currentTarget.style.setProperty("--ascii-y", `${y.toFixed(2)}%`);
+    event.currentTarget.style.setProperty("--ascii-shift-x", `${shiftX.toFixed(2)}%`);
+    event.currentTarget.style.setProperty("--ascii-shift-y", `${shiftY.toFixed(2)}%`);
+    event.currentTarget.style.setProperty("--ascii-video-shift-x", `${videoShiftX.toFixed(2)}%`);
+    event.currentTarget.style.setProperty("--ascii-video-shift-y", `${videoShiftY.toFixed(2)}%`);
+  }, [shouldReduceMotion]);
+
   return (
-    <section ref={sectionRef} className="relative z-50 h-[400vh] w-full bg-black text-white">
+    <section
+      ref={sectionRef}
+      className={`home-hero-root relative z-50 h-[400vh] w-full bg-black text-white ${isAsciiHovered ? "is-ascii-hovered" : ""}`}
+      onPointerEnter={(event) => {
+        updateAsciiPointer(event);
+        setIsAsciiHovered(true);
+      }}
+      onPointerMove={updateAsciiPointer}
+      onPointerLeave={() => setIsAsciiHovered(false)}
+    >
       <div className="sticky top-0 flex h-[100vh] w-full items-center justify-center overflow-hidden bg-black">
+        <svg aria-hidden="true" className="pointer-events-none absolute h-0 w-0">
+          <filter id="homeHeroAsciiWave" x="-12%" y="-12%" width="124%" height="124%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.012 0.055" numOctaves="2" seed="8" result="noise">
+              <animate attributeName="baseFrequency" dur="1.6s" values="0.012 0.055;0.022 0.038;0.012 0.055" repeatCount="indefinite" />
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="18" xChannelSelector="R" yChannelSelector="G">
+              <animate attributeName="scale" dur="1.35s" values="10;24;14;22;10" repeatCount="indefinite" />
+            </feDisplacementMap>
+          </filter>
+        </svg>
+
         <motion.div
           data-homepage-gradient
           aria-hidden="true"
@@ -340,6 +498,28 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
             loop
             autoPlay
           />
+        </motion.div>
+
+        {/* Top-only ASCII hover layer: hidden at rest, below the approved logo mask. */}
+        <motion.div
+          aria-hidden="true"
+          className="home-hero-ascii-layer pointer-events-none absolute inset-0 z-[14] overflow-hidden"
+          style={{ opacity: topVideoOpacity }}
+        >
+          <div key={topVideoCycle} className="home-hero-video-mask pointer-events-none absolute">
+            <video
+              ref={topVideoRef}
+              src="/ascii-magic-4.mp4"
+              className="home-hero-top-video h-full w-full object-cover"
+              playsInline
+              muted
+              loop
+              autoPlay
+              preload="metadata"
+              controls={false}
+            />
+            <div className="home-hero-wave-sheen pointer-events-none absolute inset-0" />
+          </div>
         </motion.div>
 
         {/* Z-12: WHITE FILLER FOR LOGO */}

@@ -126,27 +126,21 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
   };
 
   return (
-    <motion.header
-      style={{ viewTransitionName: "site-header" }}
-      initial={isHomePage ? "hidden" : "visible"}
-      animate={isPastHero ? "visible" : "hidden"}
-      variants={{
-        visible: { y: "0%", opacity: 1 },
-        hidden: { y: "-100%", opacity: 0 },
-      }}
-      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-      className={`fixed left-0 right-0 top-0 z-[80] h-[71px] border-b border-transparent px-5 transition-colors duration-300 sm:px-7 md:px-9 lg:px-[2.5vw] bg-transparent ${
-        isPastHero ? "pointer-events-auto" : "pointer-events-none"
-      }`}
-    >
-      <nav
-        aria-label="Primary"
-        className="mx-auto flex h-full w-full max-w-[1760px] items-center justify-between gap-5 md:gap-8"
+    <>
+      <motion.div
+        initial={isHomePage ? "hidden" : "visible"}
+        animate={isPastHero ? "visible" : "hidden"}
+        variants={{
+          visible: { y: "0%", opacity: 1 },
+          hidden: { y: "-100%", opacity: 0 },
+        }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        className="fixed left-5 sm:left-7 md:left-9 lg:left-[2.5vw] top-0 z-[81] h-[71px] flex items-center pointer-events-none"
       >
         <Link
           href={`/${currentLang}`}
           aria-label={`${title} home`}
-          className="z-50 block w-[98px] shrink-0 transition-opacity hover:opacity-80"
+          className="pointer-events-auto block w-[98px] shrink-0 transition-opacity hover:opacity-80"
         >
           <Image
             src={useDarkLogo ? LogoBlack : LogoWhite}
@@ -154,9 +148,29 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
             className="h-auto w-full"
           />
         </Link>
+      </motion.div>
+
+      <motion.header
+        style={{ viewTransitionName: "site-header" }}
+        initial={isHomePage ? "hidden" : "visible"}
+        animate={isPastHero ? "visible" : "hidden"}
+        variants={{
+          visible: { y: "0%", opacity: 1 },
+          hidden: { y: "-100%", opacity: 0 },
+        }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        className={`fixed left-0 right-0 top-0 z-[80] h-[71px] border-b border-transparent px-5 transition-colors duration-300 sm:px-7 md:px-9 lg:px-[2.5vw] bg-transparent ${
+          isPastHero ? "pointer-events-auto" : "pointer-events-none"
+        } ${(!isMobileMenuOpen && (!isHomePage || isPastHero)) ? "mix-blend-difference" : ""}`}
+      >
+        <nav
+          aria-label="Primary"
+          className="mx-auto flex h-full w-full max-w-[1760px] items-center justify-between gap-5 md:gap-8"
+        >
+          <div className="w-[98px] shrink-0" />
 
         <div className="ml-auto flex items-center">
-          <div className={`hidden flex-wrap items-center justify-end gap-x-5 gap-y-3 text-[13px] font-normal leading-none transition-colors duration-300 md:flex lg:gap-x-8 lg:text-[14px] ${navTextClass} ${mixBlendClass}`}>
+          <div className={`hidden flex-wrap items-center justify-end gap-x-5 gap-y-3 text-[13px] font-normal leading-none transition-colors duration-300 md:flex lg:gap-x-8 lg:text-[14px] ${navTextClass}`}>
             {activeNavItems.map((item) => (
               <Link
                 key={item.label}
@@ -191,7 +205,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
             )}
           </div>
 
-          <div className={`flex items-center gap-3 text-[13px] font-normal leading-none transition-colors duration-300 md:hidden ${navTextClass} ${mixBlendClass}`}>
+          <div className={`flex items-center gap-3 text-[13px] font-normal leading-none transition-colors duration-300 md:hidden ${navTextClass}`}>
             {!isContactPage && (
               <>
                 <motion.button
@@ -306,5 +320,6 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
         )}
       </AnimatePresence>
     </motion.header>
+    </>
   );
 }

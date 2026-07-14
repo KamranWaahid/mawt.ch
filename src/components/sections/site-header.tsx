@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -102,11 +102,19 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
   const useDarkLogo = isDark;
   const { scrollY } = useScroll();
 
+  const lastPathnameRef = useRef(pathname);
+
+  // Close mobile menu only when the actual pathname changes
+  useEffect(() => {
+    if (lastPathnameRef.current !== pathname) {
+      setIsMobileMenuOpen(false);
+      lastPathnameRef.current = pathname;
+    }
+  }, [pathname]);
+
+  // Keep isPastHero state in sync with scroll position/page type changes
   useEffect(() => {
     const handleReset = () => {
-      if (isMobileMenuOpen) {
-        setIsMobileMenuOpen(false);
-      }
       if (!isHomePage) {
         if (!isPastHero) {
           setIsPastHero(true);
@@ -123,7 +131,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
     };
     const frameId = requestAnimationFrame(handleReset);
     return () => cancelAnimationFrame(frameId);
-  }, [isHomePage, pathname, isMobileMenuOpen, isPastHero]);
+  }, [isHomePage, isPastHero]);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     if (isHomePage && typeof window !== "undefined") {
@@ -252,7 +260,11 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
             </motion.button>
 
             <button
-              className={`z-50 ml-1 inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors md:hidden ${isMobileMenuOpen ? "bg-black/5 text-black hover:bg-black/10" : "bg-white/15 text-white hover:bg-white/25"}`}
+              className={`z-50 ml-1 inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors md:hidden ${
+                isMobileMenuOpen 
+                  ? "bg-black/5 text-black hover:bg-black/10" 
+                  : (isDark ? "bg-white/15 text-white hover:bg-white/25" : "bg-black/5 text-black hover:bg-black/10")
+              }`}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-expanded={isMobileMenuOpen}
               aria-label="Toggle menu"

@@ -426,7 +426,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           <video
             ref={videoRef}
             src="/MotionMAWT.mp4"
-            className="home-hero-top-video w-full h-full object-contain object-[center_18%] md:object-cover md:object-[50%_48%]"
+            className="home-hero-top-video w-full h-full object-cover object-center"
             playsInline
             muted
             loop

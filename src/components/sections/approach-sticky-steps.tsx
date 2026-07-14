@@ -161,12 +161,12 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     const isScrollingUp = lenis.direction === -1;
 
     // Reset completed flags when we scroll slightly away from the lock threshold
-    if (isScrollingDown && rect.top < -50) {
+    if (isScrollingDown && rect.top < -200) {
       if (isCompletedUpRef.current) {
         isCompletedUpRef.current = false;
         setIsCompletedUp(false);
       }
-    } else if (isScrollingUp && rect.top > 50) {
+    } else if (isScrollingUp && rect.top > 120) {
       if (isCompletedDownRef.current) {
         isCompletedDownRef.current = false;
         setIsCompletedDown(false);
@@ -354,10 +354,10 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
       const isScrollingDown = event.deltaY > 0;
       const isScrollingUp = event.deltaY < 0;
 
-      if (isScrollingDown && !isCompletedDownRef.current && rect.top <= 15 && rect.top >= -100) {
+      if (isScrollingDown && !isCompletedDownRef.current && rect.top <= 80 && rect.top >= -150) {
         if (event.cancelable) event.preventDefault();
         lockSection(0, 1);
-      } else if (isScrollingUp && !isCompletedUpRef.current && rect.top >= -15 && rect.top <= 100) {
+      } else if (isScrollingUp && !isCompletedUpRef.current && rect.top >= -80 && rect.top <= 150) {
         if (event.cancelable) event.preventDefault();
         const currentTotalStates = totalStepsRef.current + 1;
         lockSection(currentTotalStates - 1, -1);
@@ -400,10 +400,10 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
 
       if (Math.abs(deltaY) < 5) return;
 
-      if (isScrollingDown && !isCompletedDownRef.current && rect.top <= 15 && rect.top >= -100) {
+      if (isScrollingDown && !isCompletedDownRef.current && rect.top <= 80 && rect.top >= -150) {
         if (event.cancelable) event.preventDefault();
         lockSection(0, 1);
-      } else if (isScrollingUp && !isCompletedUpRef.current && rect.top >= -15 && rect.top <= 100) {
+      } else if (isScrollingUp && !isCompletedUpRef.current && rect.top >= -80 && rect.top <= 150) {
         if (event.cancelable) event.preventDefault();
         const currentTotalStates = totalStepsRef.current + 1;
         lockSection(currentTotalStates - 1, -1);

@@ -19,7 +19,8 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    viewTransition: true,
+    // Disabled viewTransition as it deadlocks Next.js page transitions when combined with Framer Motion AnimatePresence
+    viewTransition: false,
   },
   async redirects() {
     return [

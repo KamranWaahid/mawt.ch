@@ -7,6 +7,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AnimatedTitle } from "@/components/ui/animated-title";
 import { sectionTitleClass } from "@/components/ui/section-title-style";
+import { Handshake, Brain, Target, Zap } from "lucide-react";
+
+const principleIcons = [Handshake, Brain, Target, Zap];
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: Locale }> }): Promise<Metadata> {
   const { lang } = await params;
@@ -143,16 +146,23 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: Lo
             </div>
             
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-              {doc.principles.map((p: { emoji?: string; title?: string; description?: string }, index: number) => (
-                <article
-                  key={index}
-                  className="group relative flex min-h-[240px] flex-col justify-between overflow-hidden rounded-2xl border border-black/[0.02] bg-[#EDEDED]/50 px-5 py-7 transition-all duration-500 ease-out hover:bg-[#E3EAE6]/70 xs:px-8 sm:min-h-[280px] md:min-h-[300px] md:px-8 md:py-8"
-                >
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between text-sm font-normal leading-none text-black/35">
-                      <span>{String(index + 1).padStart(2, "0")}</span>
-                      {p.emoji && <span className="text-xl" aria-hidden="true">{p.emoji}</span>}
-                    </div>
+              {doc.principles.map((p: { emoji?: string; title?: string; description?: string }, index: number) => {
+                const IconComponent = principleIcons[index % principleIcons.length];
+                return (
+                  <article
+                    key={index}
+                    className="group relative flex min-h-[240px] flex-col justify-between overflow-hidden rounded-2xl border border-black/[0.02] bg-[#EDEDED]/50 px-5 py-7 transition-all duration-500 ease-out hover:bg-[#E3EAE6]/70 xs:px-8 sm:min-h-[280px] md:min-h-[300px] md:px-8 md:py-8"
+                  >
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between text-sm font-normal leading-none text-black/35">
+                        <span>{String(index + 1).padStart(2, "0")}</span>
+                        {IconComponent && (
+                          <IconComponent 
+                            size={18} 
+                            className="text-[#1D7A65]/70 transition-all duration-300 group-hover:scale-110 group-hover:text-[#1D7A65]" 
+                          />
+                        )}
+                      </div>
                     {p.title && (
                       <h3 className="max-w-[18ch] text-xl font-semibold leading-tight tracking-[-0.02em] text-neutral-900 transition-colors duration-300 group-hover:text-[#1D7A65]">
                         {p.title}
@@ -165,7 +175,7 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: Lo
                     </p>
                   )}
                 </article>
-              ))}
+              ); })}
             </div>
           </div>
         </section>

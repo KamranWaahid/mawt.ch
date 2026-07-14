@@ -73,7 +73,7 @@ export default async function OurProcessPage({ params }: ProcessPageProps) {
       />
       {doc.intro && (
         <section className="pt-8 pb-4 md:pt-10 md:pb-6">
-          <div className="max-w-3xl mx-auto">
+          <div className="site-container max-w-3xl mx-auto">
             <div className="mt-8"><RichText value={doc.intro} /></div>
           </div>
         </section>

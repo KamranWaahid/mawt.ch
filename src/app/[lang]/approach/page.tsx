@@ -90,7 +90,7 @@ export default async function OurProcessPage({ params }: ProcessPageProps) {
       )}
 
       {Array.isArray(doc.differentiators) && doc.differentiators.length > 0 && (
-        <section className="relative z-10 -mt-[1px] bg-[#F6F5F4] py-16 md:py-24 lg:py-32 border-t border-black/5">
+        <section className="relative z-10 -mt-[1px] bg-[#F6F5F4] py-16 md:py-24 lg:pt-14 lg:pb-32 border-t border-black/5">
           <div className="site-container max-w-3xl mx-auto">
             <RichText value={doc.differentiators} />
           </div>

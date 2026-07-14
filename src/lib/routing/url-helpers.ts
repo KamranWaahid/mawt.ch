@@ -18,7 +18,8 @@ const FOLDER_BY_FR_CANONICAL: Record<string, string> = {
   confidentialite: "legal",
   "mentions-legales": "legal-notice",
   "conditions-generales": "terms",
-  // blog, contact, faqs, cookies, services → folder === fr-canonical slug.
+  blog: "news",
+  // contact, faqs, cookies, services → folder === fr-canonical slug.
 };
 
 function getServicesBranch(): RouteMapping | undefined {

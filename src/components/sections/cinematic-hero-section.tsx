@@ -54,21 +54,6 @@ export function CinematicHeroSection({ settings, dict }: CinematicHeroSectionPro
   const progressValue = useMotionValue(0);
   const smoothProgress = useSpring(progressValue, { stiffness: 120, damping: 28, mass: 0.25, restDelta: 0.001 });
 
-  useLenis((lenisInstance) => {
-    lenisRef.current = lenisInstance;
-    if (heroState === 'videoPlaying') return;
-    updateScrollProgress(lenisInstance.scroll);
-  });
-
-  useEffect(() => {
-    const handleScrollFallback = () => {
-      if (heroState === 'videoPlaying') return;
-      updateScrollProgress(window.scrollY);
-    };
-    window.addEventListener("scroll", handleScrollFallback, { passive: true });
-    return () => window.removeEventListener("scroll", handleScrollFallback);
-  }, [heroState]);
-
   const updateScrollProgress = useCallback((scroll: number) => {
     if (typeof window === "undefined" || heroState === 'videoPlaying') return;
     
@@ -85,6 +70,21 @@ export function CinematicHeroSection({ settings, dict }: CinematicHeroSectionPro
     
     setShowTransitionStatement(p > 0.65);
   }, [progressValue, heroState]);
+
+  useLenis((lenisInstance) => {
+    lenisRef.current = lenisInstance;
+    if (heroState === 'videoPlaying') return;
+    updateScrollProgress(lenisInstance.scroll);
+  });
+
+  useEffect(() => {
+    const handleScrollFallback = () => {
+      if (heroState === 'videoPlaying') return;
+      updateScrollProgress(window.scrollY);
+    };
+    window.addEventListener("scroll", handleScrollFallback, { passive: true });
+    return () => window.removeEventListener("scroll", handleScrollFallback);
+  }, [heroState, updateScrollProgress]);
 
   useEffect(() => {
     if (heroState === 'videoPlaying') {

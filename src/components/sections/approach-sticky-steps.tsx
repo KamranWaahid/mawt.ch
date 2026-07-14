@@ -115,7 +115,11 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
 
   const safeSteps = steps.filter((step) => step.title && step.body);
   const totalSteps = safeSteps.length;
-  totalStepsRef.current = totalSteps;
+  
+  useEffect(() => {
+    totalStepsRef.current = totalSteps;
+  }, [totalSteps, totalStepsRef]);
+
   const totalStates = totalSteps + 1; // 5 actual steps + 1 exit state (index 5) (6 states total)
   
   // The current step content to display (safe indices are 0 to 4 in safeSteps)

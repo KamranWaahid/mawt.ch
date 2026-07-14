@@ -106,16 +106,27 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
   const { scrollY } = useScroll();
 
   useEffect(() => {
-    setIsMobileMenuOpen(false);
-    if (!isHomePage) {
-      setIsPastHero(true);
-    } else {
-      if (typeof window !== "undefined") {
-        const vh = window.innerHeight;
-        setIsPastHero(window.scrollY > 3.9 * vh);
+    const handleReset = () => {
+      if (isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
       }
-    }
-  }, [isHomePage, pathname]);
+      if (!isHomePage) {
+        if (!isPastHero) {
+          setIsPastHero(true);
+        }
+      } else {
+        if (typeof window !== "undefined") {
+          const vh = window.innerHeight;
+          const past = window.scrollY > 3.9 * vh;
+          if (isPastHero !== past) {
+            setIsPastHero(past);
+          }
+        }
+      }
+    };
+    const frameId = requestAnimationFrame(handleReset);
+    return () => cancelAnimationFrame(frameId);
+  }, [isHomePage, pathname, isMobileMenuOpen, isPastHero]);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     if (isHomePage && typeof window !== "undefined") {

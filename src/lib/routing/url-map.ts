@@ -95,7 +95,7 @@ export const URL_MAP: RouteMapping[] = [
   { fr: "projets", en: "projects" },
   {
     fr: "blog",
-    en: "blog",
+    en: "news",
     children: [
       { fr: "categorie", en: "category" },
       { fr: "tag", en: "tag" },

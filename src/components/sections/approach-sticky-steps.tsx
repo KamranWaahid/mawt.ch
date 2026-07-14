@@ -78,7 +78,7 @@ function getGradientOffset(index: number): string {
     case 2: return "-260vh"; // Step 3 (Design)
     case 3: return "-340vh"; // Step 4 (Build)
     case 4: return "-520vh"; // Step 5 (Launch)
-    case 5: return "-640vh"; // Exit Final (fully solid white)
+    case 5: return "-740vh"; // Exit Final (fully solid white)
     default: return "-100vh";
   }
 }
@@ -134,7 +134,7 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     totalStepsRef.current = totalSteps;
   }, [totalSteps, totalStepsRef]);
 
-  const totalStates = totalSteps + 1; // 5 actual steps + 1 exit state (index 5) (6 states total)
+  const totalStates = totalSteps; // 5 actual steps (indices 0 to 4)
   
   // The current step content to display (safe indices are 0 to 4 in safeSteps)
   const stepIndex = Math.min(activeIndex, totalSteps - 1);
@@ -194,26 +194,8 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
   const handleAnimationComplete = () => {
     if (lockStateRef.current !== "animating") return;
 
-    const currentTotalStates = totalStepsRef.current + 1;
-    
-    // Automatically release lock on final exit state (index 5)
-    if (activeIndexRef.current === currentTotalStates - 1) {
-      isLockedRef.current = false;
-      isCompletedDownRef.current = true;
-      setIsCompletedDown(true);
-      updateLockState("idle");
-      lenisRef.current?.start();
-      isAnimatingRef.current = false;
-      hasReleasedScrollRef.current = true;
-      
-      if (safetyTimeoutRef.current) {
-        clearTimeout(safetyTimeoutRef.current);
-        safetyTimeoutRef.current = null;
-      }
-      return;
-    }
-
-    const isBoundary = activeIndexRef.current === 0;
+    const currentTotalStates = totalStepsRef.current;
+    const isBoundary = activeIndexRef.current === 0 || activeIndexRef.current === currentTotalStates - 1;
     updateLockState(isBoundary ? "readyToRelease" : "ready");
     
     isAnimatingRef.current = false;
@@ -262,7 +244,7 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     if (isAnimatingRef.current) return;
 
     const nextIndex = activeIndexRef.current + direction;
-    const currentTotalStates = totalStepsRef.current + 1;
+    const currentTotalStates = totalStepsRef.current;
 
     if (direction === 1) {
       if (nextIndex < currentTotalStates) {
@@ -400,7 +382,7 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
         lockSection(0, 1);
       } else if (isScrollingUp && !isCompletedUpRef.current && rect.top >= -120) {
         if (event.cancelable) event.preventDefault();
-        const currentTotalStates = totalStepsRef.current + 1;
+        const currentTotalStates = totalStepsRef.current;
         lockSection(currentTotalStates - 1, -1);
       }
     };
@@ -446,7 +428,7 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
         lockSection(0, 1);
       } else if (isScrollingUp && !isCompletedUpRef.current && rect.top >= -120) {
         if (event.cancelable) event.preventDefault();
-        const currentTotalStates = totalStepsRef.current + 1;
+        const currentTotalStates = totalStepsRef.current;
         lockSection(currentTotalStates - 1, -1);
       }
     };
@@ -543,10 +525,10 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
           <div ref={panelRef} className="absolute inset-0 h-[100vh] overflow-hidden bg-[#F6F5F4]">
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute left-[-2vw] right-[-2vw] top-0 z-0 h-[740vh] w-[104vw]"
+              className="pointer-events-none absolute left-[-2vw] right-[-2vw] top-0 z-0 h-[840vh] w-[104vw]"
               style={{
                 background:
-                  "linear-gradient(180deg, #f6f5f4 0vh, #f6f5f4 120vh, #f0f3f2 160vh, #dce5e3 220vh, #baccca 280vh, #819fa0 340vh, #426a70 400vh, #002b36 460vh, #17645f 520vh, #17645f 560vh, #c8d8d5 600vh, #f6f5f4 640vh, #f6f5f4 740vh)",
+                  "linear-gradient(180deg, #f6f5f4 0vh, #f6f5f4 120vh, #f0f3f2 160vh, #dce5e3 220vh, #baccca 280vh, #819fa0 340vh, #426a70 400vh, #002b36 460vh, #17645f 520vh, #17645f 620vh, #c8d8d5 680vh, #f6f5f4 740vh, #f6f5f4 840vh)",
               }}
             />
             <div className="pointer-events-none absolute inset-0 z-30 flex flex-col justify-center px-5 sm:px-7 md:px-9 lg:px-[2.5vw]">
@@ -638,7 +620,7 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
         {/* Plateau Linear Gradient Background */}
         <motion.div
           aria-hidden="true"
-          className="pointer-events-none absolute left-[-2vw] right-[-2vw] top-0 z-0 h-[740vh] w-[104vw]"
+          className="pointer-events-none absolute left-[-2vw] right-[-2vw] top-0 z-0 h-[840vh] w-[104vw]"
           animate={{
             y: getGradientOffset(activeIndex),
           }}
@@ -648,7 +630,7 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
           }}
           style={{
             background:
-              "linear-gradient(180deg, #f6f5f4 0vh, #f6f5f4 120vh, #f0f3f2 160vh, #dce5e3 220vh, #baccca 280vh, #819fa0 340vh, #426a70 400vh, #002b36 460vh, #17645f 520vh, #17645f 560vh, #c8d8d5 600vh, #f6f5f4 640vh, #f6f5f4 740vh)",
+              "linear-gradient(180deg, #f6f5f4 0vh, #f6f5f4 120vh, #f0f3f2 160vh, #dce5e3 220vh, #baccca 280vh, #819fa0 340vh, #426a70 400vh, #002b36 460vh, #17645f 520vh, #17645f 620vh, #c8d8d5 680vh, #f6f5f4 740vh, #f6f5f4 840vh)",
           }}
         />
 

@@ -120,13 +120,13 @@ function MawatLogoMask({ className }: { className?: string }) {
     >
       <defs>
         <mask id={maskId}>
-          <rect x="-50000" y="-50000" width="100000" height="100000" fill="white" />
+          <rect x="-10000" y="-10000" width="20000" height="20000" fill="white" />
           {mawatLogoPaths.map((path) => (
             <path key={`hole-${path}`} d={path} fill="black" />
           ))}
         </mask>
       </defs>
-      <rect x="-50000" y="-50000" width="100000" height="100000" fill="black" mask={`url(#${maskId})`} />
+      <rect x="-10000" y="-10000" width="20000" height="20000" fill="black" mask={`url(#${maskId})`} />
     </svg>
   );
 }
@@ -248,9 +248,25 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   });
 
   useEffect(() => {
+    const playVideo = () => {
+      if (videoRef.current && videoRef.current.paused) {
+        videoRef.current.play().catch(e => console.log("Touch play prevented:", e));
+      }
+      if (asciiVideoRef.current && asciiVideoRef.current.paused) {
+        asciiVideoRef.current.play().catch(e => console.log("Touch ASCII play prevented:", e));
+      }
+    };
+    window.addEventListener("touchstart", playVideo, { once: true, passive: true });
+    window.addEventListener("click", playVideo, { once: true, passive: true });
+
     if (videoRef.current && videoRef.current.paused) {
       videoRef.current.play().catch(e => console.log("Autoplay prevented on mount:", e));
     }
+
+    return () => {
+      window.removeEventListener("touchstart", playVideo);
+      window.removeEventListener("click", playVideo);
+    };
   }, []);
 
   useEffect(() => {
@@ -431,6 +447,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
             muted
             loop
             autoPlay
+            preload="auto"
           />
         </motion.div>
 

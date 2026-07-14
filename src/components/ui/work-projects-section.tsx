@@ -2,9 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { LayoutGrid, Menu } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import type { Locale } from "@/i18n-config";
 import type { Project } from "@/lib/types";
 import { ProjectList } from "@/components/ui/project-list";
+import { urlForImage } from "@/lib/sanity.image";
 
 type WorkProjectsSectionProps = {
   projects: Partial<Project>[];
@@ -13,9 +16,11 @@ type WorkProjectsSectionProps = {
 
 const normalizeWorkType = (value?: string) => value?.trim() || "Other";
 const hasCoverImage = (project: Partial<Project>) => Boolean(project.coverImage?.asset?._ref);
+type WorkView = "grid" | "list";
 
 export function WorkProjectsSection({ projects, lang }: WorkProjectsSectionProps) {
   const [activeType, setActiveType] = useState("All");
+  const [activeView, setActiveView] = useState<WorkView>("grid");
   const imageBackedProjects = useMemo(() => projects.filter(hasCoverImage), [projects]);
 
   const workTypes = useMemo(() => {
@@ -61,14 +66,22 @@ export function WorkProjectsSection({ projects, lang }: WorkProjectsSectionProps
             <button
               type="button"
               aria-label="Grid view"
-              className="flex items-center justify-center p-1 text-black transition-opacity hover:opacity-70"
+              aria-pressed={activeView === "grid"}
+              onClick={() => setActiveView("grid")}
+              className={`flex items-center justify-center p-1 transition-colors hover:text-black ${
+                activeView === "grid" ? "text-black" : "text-neutral-300"
+              }`}
             >
               <LayoutGrid size={20} strokeWidth={1.5} />
             </button>
             <button
               type="button"
               aria-label="List view"
-              className="flex items-center justify-center p-1 text-neutral-300 transition-colors hover:text-black"
+              aria-pressed={activeView === "list"}
+              onClick={() => setActiveView("list")}
+              className={`flex items-center justify-center p-1 transition-colors hover:text-black ${
+                activeView === "list" ? "text-black" : "text-neutral-300"
+              }`}
             >
               <Menu size={20} strokeWidth={1.5} />
             </button>
@@ -77,7 +90,40 @@ export function WorkProjectsSection({ projects, lang }: WorkProjectsSectionProps
       </div>
 
       <section className="site-container-wide pb-16 pt-8 md:pb-24 lg:pb-32">
-        <ProjectList projects={filteredProjects} lang={lang} />
+        {activeView === "grid" ? (
+          <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredProjects.map((project, index) => {
+              const imageSrc = urlForImage(project.coverImage)?.width(1100).height(1380).fit("crop").url();
+
+              if (!imageSrc) return null;
+
+              return (
+                <Link
+                  key={project._id || project.slug || index}
+                  href={`/${lang}/${lang === "fr" ? "projets" : "work"}/${project.slug || ""}`}
+                  className="group block"
+                  data-cursor="view"
+                >
+                  <div className="relative aspect-[0.82] w-full overflow-hidden rounded-[8px] bg-neutral-100">
+                    <Image
+                      src={imageSrc}
+                      alt={project.coverImage?.alt || project.title || ""}
+                      fill
+                      sizes="(min-width: 1024px) 31vw, (min-width: 640px) 48vw, 100vw"
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.025]"
+                      priority={index < 3}
+                    />
+                  </div>
+                  <h2 className="mt-5 text-[clamp(1.15rem,1.8vw,1.65rem)] font-normal leading-tight tracking-normal text-black">
+                    {project.title || "—"}
+                  </h2>
+                </Link>
+              );
+            })}
+          </div>
+        ) : (
+          <ProjectList projects={filteredProjects} lang={lang} />
+        )}
       </section>
     </>
   );

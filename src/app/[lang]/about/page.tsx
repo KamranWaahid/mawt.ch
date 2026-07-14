@@ -6,6 +6,7 @@ import type { Locale } from "@/i18n-config";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AnimatedTitle } from "@/components/ui/animated-title";
+import { sectionTitleClass } from "@/components/ui/section-title-style";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: Locale }> }): Promise<Metadata> {
   const { lang } = await params;
@@ -60,7 +61,7 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: Lo
   const storyParas = [doc.storyP1, doc.storyP2, doc.storyP3].filter(Boolean);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
       <JsonLd data={[crumbLd, aboutLd]} />
       <SubpageHero
         eyebrow={badge}
@@ -70,22 +71,31 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: Lo
 
       {/* Story */}
       {(doc.storyH2 || storyParas.length > 0) && (
-        <section className="py-16 md:py-24 lg:py-32 border-t border-black/5">
-          <div className="site-container-wide grid md:grid-cols-12 gap-8 md:gap-16">
-            <div className="md:col-span-4">
-              {doc.storyH2 && (
-                <AnimatedTitle
-                  as="h2"
-                  text={doc.storyH2}
-                  className="text-3xl-fluid font-medium tracking-tighter text-black md:sticky md:top-32"
-                  splitBy="word"
-                />
-              )}
-            </div>
-            <div className="md:col-span-8 space-y-6">
-              {storyParas.map((p: string, i: number) => (
-                <p key={i} className="text-base-fluid text-neutral-500 font-normal leading-relaxed max-w-[55ch]">{p}</p>
-              ))}
+        <section className="relative py-12 md:py-18 lg:py-24">
+          <div className="site-container">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+              {/* Left Column */}
+              <div className="lg:col-span-5 self-start w-full">
+                <div className="mb-4 h-px w-full bg-black/10" />
+                {doc.storyH2 && (
+                  <AnimatedTitle
+                    as="h2"
+                    text={doc.storyH2}
+                    className={`${sectionTitleClass} text-balance`}
+                    splitBy="word"
+                  />
+                )}
+              </div>
+              {/* Right Column */}
+              <div className="lg:col-span-7 flex flex-col pt-2 lg:pt-0">
+                <div className="space-y-6">
+                  {storyParas.map((p: string, i: number) => (
+                    <p key={i} className="text-base font-normal leading-relaxed text-neutral-500 max-w-[55ch]">
+                      {p}
+                    </p>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -93,63 +103,131 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: Lo
 
       {/* Team */}
       {(doc.teamH2 || doc.teamBody) && (
-        <section className="bg-neutral-50 py-16 md:py-24 lg:py-32 border-t border-black/5">
-          <div className="max-w-3xl mx-auto text-center space-y-6">
-            {doc.teamH2 && (
-              <AnimatedTitle
-                as="h2"
-                text={doc.teamH2}
-                className="text-3xl-fluid font-medium tracking-tighter text-black"
-                splitBy="word"
-              />
-            )}
-            {doc.teamBody && <p className="text-base-fluid text-neutral-500 font-normal leading-relaxed max-w-[55ch] mx-auto">{doc.teamBody}</p>}
+        <section className="relative py-12 md:py-18 lg:py-24">
+          <div className="site-container">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+              {/* Left Column */}
+              <div className="lg:col-span-5 self-start w-full">
+                <div className="mb-4 h-px w-full bg-black/10" />
+                {doc.teamH2 && (
+                  <AnimatedTitle
+                    as="h2"
+                    text={doc.teamH2}
+                    className={`${sectionTitleClass} text-balance`}
+                    splitBy="word"
+                  />
+                )}
+              </div>
+              {/* Right Column */}
+              <div className="lg:col-span-7 flex flex-col pt-2 lg:pt-0">
+                {doc.teamBody && (
+                  <p className="text-base font-normal leading-relaxed text-neutral-500 max-w-[55ch]">
+                    {doc.teamBody}
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
         </section>
       )}
 
       {/* Principles */}
       {doc.principles?.length > 0 && (
-        <section className="py-16 md:py-24 lg:py-32 border-t border-black/5">
-          <div className="site-container-wide grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {doc.principles.map((p: { emoji?: string; title?: string; description?: string }, i: number) => (
-              <article key={i} className="flex flex-col gap-3 p-8 border border-black/5 hover:border-black/20 transition-colors">
-                {p.emoji && <span className="text-2xl" aria-hidden="true">{p.emoji}</span>}
-                {p.title && <h3 className="text-lg-fluid font-medium text-black">{p.title}</h3>}
-                {p.description && <p className="text-sm-fluid text-neutral-500 font-normal leading-relaxed max-w-[40ch]">{p.description}</p>}
-              </article>
-            ))}
+        <section className="relative py-12 md:py-18 lg:py-24">
+          <div className="site-container">
+            <div className="mb-10 sm:mb-14 w-full">
+              <div className="mb-4 h-px w-full bg-black/10 md:mb-10" />
+              <h2 className={`${sectionTitleClass} text-balance`}>
+                {lang === "fr" ? "Nos principes" : "Our principles"}
+              </h2>
+            </div>
+            
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+              {doc.principles.map((p: { emoji?: string; title?: string; description?: string }, index: number) => (
+                <article
+                  key={index}
+                  className="group relative flex min-h-[240px] flex-col justify-between overflow-hidden rounded-2xl border border-black/[0.02] bg-[#EDEDED]/50 px-5 py-7 transition-all duration-500 ease-out hover:bg-[#E3EAE6]/70 xs:px-8 sm:min-h-[280px] md:min-h-[300px] md:px-8 md:py-8"
+                >
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between text-sm font-normal leading-none text-black/35">
+                      <span>{String(index + 1).padStart(2, "0")}</span>
+                      {p.emoji && <span className="text-xl" aria-hidden="true">{p.emoji}</span>}
+                    </div>
+                    {p.title && (
+                      <h3 className="max-w-[18ch] text-xl font-semibold leading-tight tracking-[-0.02em] text-neutral-900 transition-colors duration-300 group-hover:text-[#1D7A65]">
+                        {p.title}
+                      </h3>
+                    )}
+                  </div>
+                  {p.description && (
+                    <p className="mt-8 max-w-[42ch] text-sm font-normal leading-[1.6] tracking-[-0.015em] text-black/50">
+                      {p.description}
+                    </p>
+                  )}
+                </article>
+              ))}
+            </div>
           </div>
         </section>
       )}
 
       {/* Track record */}
       {(doc.trackRecordH2 || doc.trackRecordBody) && (
-        <section className="py-16 md:py-24 lg:py-32 border-t border-black/5">
-          <div className="max-w-3xl mx-auto text-center space-y-4">
-            {doc.trackRecordH2 && (
-              <AnimatedTitle
-                as="h2"
-                text={doc.trackRecordH2}
-                className="text-3xl-fluid font-medium tracking-tighter text-black"
-                splitBy="word"
-              />
-            )}
-            {doc.trackRecordBody && <p className="text-base-fluid text-neutral-500 font-normal leading-relaxed max-w-[55ch] mx-auto">{doc.trackRecordBody}</p>}
+        <section className="relative py-12 md:py-18 lg:py-24">
+          <div className="site-container">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+              {/* Left Column */}
+              <div className="lg:col-span-5 self-start w-full">
+                <div className="mb-4 h-px w-full bg-black/10" />
+                {doc.trackRecordH2 && (
+                  <AnimatedTitle
+                    as="h2"
+                    text={doc.trackRecordH2}
+                    className={`${sectionTitleClass} text-balance`}
+                    splitBy="word"
+                  />
+                )}
+              </div>
+              {/* Right Column */}
+              <div className="lg:col-span-7 flex flex-col pt-2 lg:pt-0">
+                {doc.trackRecordBody && (
+                  <p className="text-base font-normal leading-relaxed text-neutral-500 max-w-[55ch]">
+                    {doc.trackRecordBody}
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
         </section>
       )}
 
       {/* Locations */}
       {doc.locations?.length > 0 && (
-        <section className="py-16 md:py-24 lg:py-32 border-t border-black/5">
-          <div className="site-container-wide grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {doc.locations.map((loc: { city?: string; description?: string }, i: number) => (
-              <div key={i} className="space-y-2">
-                {loc.city && <h3 className="text-lg-fluid font-medium text-black">{loc.city}</h3>}
-                {loc.description && <p className="text-sm-fluid text-neutral-500 font-normal leading-relaxed max-w-[40ch]">{loc.description}</p>}
-              </div>
-            ))}
+        <section className="relative py-12 md:py-18 lg:py-24">
+          <div className="site-container">
+            <div className="mb-10 sm:mb-14 w-full">
+              <div className="mb-4 h-px w-full bg-black/10 md:mb-10" />
+              <h2 className={`${sectionTitleClass} text-balance`}>
+                {lang === "fr" ? "Nos bureaux" : "Our locations"}
+              </h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+              {doc.locations.map((loc: { city?: string; description?: string }, i: number) => (
+                <div key={i} className="flex flex-col border-t border-black/10 pt-6">
+                  {loc.city && (
+                    <h3 className="text-lg font-semibold leading-tight tracking-tight text-neutral-900 mb-2">
+                      {loc.city}
+                    </h3>
+                  )}
+                  {loc.description && (
+                    <p className="text-sm font-normal leading-relaxed text-neutral-500 max-w-[32ch]">
+                      {loc.description}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       )}
@@ -157,17 +235,26 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: Lo
       {/* Bottom CTA */}
       {doc.bottomCtaH2 && (
         <section className="bg-black text-white py-20 md:py-28 lg:py-36 text-center">
-          <div className="max-w-3xl mx-auto space-y-6">
+          <div className="max-w-3xl mx-auto space-y-8 px-5 sm:px-8">
             <AnimatedTitle
               as="h2"
               text={doc.bottomCtaH2}
               className="text-4xl-fluid font-medium tracking-tighter text-white max-w-3xl mx-auto"
               splitBy="word"
             />
-            {doc.bottomCtaBody && <p className="text-base-fluid text-white/70 font-normal leading-relaxed max-w-[55ch] mx-auto">{doc.bottomCtaBody}</p>}
-            <Link href={`/${lang}/contact`} className="inline-flex items-center gap-2 mt-2 px-8 py-4 bg-[#75DAB4] text-black text-sm font-normal tracking-widest rounded-sm hover:bg-white transition-colors">
-              {lang === "fr" ? "Discutons" : "Let's talk"}
-            </Link>
+            {doc.bottomCtaBody && (
+              <p className="text-base-fluid text-neutral-400 leading-relaxed font-normal max-w-[55ch] mx-auto">
+                {doc.bottomCtaBody}
+              </p>
+            )}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-4">
+              <Link
+                href={`/${lang}/contact`}
+                className="px-8 py-4 bg-[#75DAB4] text-black hover:bg-white transition-colors duration-300 text-sm font-normal uppercase tracking-widest rounded-sm w-full sm:w-auto text-center"
+              >
+                {lang === "fr" ? "Discutons" : "Let's talk"}
+              </Link>
+            </div>
           </div>
         </section>
       )}

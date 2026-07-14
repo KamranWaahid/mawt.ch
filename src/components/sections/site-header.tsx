@@ -80,7 +80,22 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
   const isHomePage = ["/", "/en", "/fr", ""].includes(normalizedPath);
   
   const [isPastHero, setIsPastHero] = useState(!isHomePage);
-  const isDark = isMobileMenuOpen || !isHomePage || isPastHero;
+  const [headerThemeOverride, setHeaderThemeOverride] = useState<"light" | "dark" | null>(null);
+
+  useEffect(() => {
+    const handleThemeChange = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      setHeaderThemeOverride(customEvent.detail?.theme || null);
+    };
+    window.addEventListener("mawt-header-theme", handleThemeChange);
+    return () => {
+      window.removeEventListener("mawt-header-theme", handleThemeChange);
+    };
+  }, []);
+
+  const isDark = headerThemeOverride
+    ? headerThemeOverride === "dark"
+    : isMobileMenuOpen || !isHomePage || isPastHero;
 
   const navTextClass = isDark ? "text-black/72" : "text-white/80";
   const navHoverClass = isDark ? "hover:text-black" : "hover:text-white";

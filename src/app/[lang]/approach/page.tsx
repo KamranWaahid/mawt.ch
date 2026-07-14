@@ -1,5 +1,5 @@
 import { SubpageHero } from "@/components/sections/subpage-hero";
-import { ApproachFlowerSequence } from "@/components/sections/approach-flower-sequence";
+import { ApproachStickySteps } from "@/components/sections/approach-sticky-steps";
 import { RichText } from "@/components/ui/rich-text";
 import { getMethodPage } from "@/lib/sanity.queries";
 import { standaloneAlternates } from "@/lib/routing/url-helpers";
@@ -7,34 +7,26 @@ import type { Locale } from "@/i18n-config";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AnimatedTitle } from "@/components/ui/animated-title";
-import { readdirSync, statSync } from "fs";
-import path from "path";
 
 interface ProcessPageProps {
   params: Promise<{ lang: Locale }>;
 }
 
-const approachFrameFolder = "Approach Page";
+type PortableTextBlock = {
+  _type?: string;
+  children?: Array<{ text?: string }>;
+};
 
-function getApproachFrameUrls() {
-  const folderPath = path.join(process.cwd(), "public", approachFrameFolder);
+function portableTextToPlainText(value: unknown) {
+  if (!Array.isArray(value)) return "";
 
-  try {
-    return readdirSync(folderPath)
-      .filter((file) => file.toLowerCase().endsWith(".jpg"))
-      .map((file, index) => {
-        const stats = statSync(path.join(folderPath, file));
-        return {
-          file,
-          order: stats.birthtimeMs || stats.mtimeMs,
-          index,
-        };
-      })
-      .sort((a, b) => a.order - b.order || a.index - b.index)
-      .map(({ file }) => `/${encodeURIComponent(approachFrameFolder)}/${file}`);
-  } catch {
-    return [];
-  }
+  return value
+    .map((block: PortableTextBlock) => {
+      if (block?._type !== "block" || !Array.isArray(block.children)) return "";
+      return block.children.map((child) => child.text || "").join("");
+    })
+    .filter(Boolean)
+    .join(" ");
 }
 
 export async function generateMetadata({ params }: ProcessPageProps): Promise<Metadata> {
@@ -55,7 +47,6 @@ export default async function OurProcessPage({ params }: ProcessPageProps) {
   const { lang } = await params;
   const doc = await getMethodPage(lang);
   const badge = lang === "fr" ? "Notre méthode" : "Our process";
-  const approachFrames = getApproachFrameUrls();
 
   if (!doc?.heroH1) {
     return (
@@ -80,9 +71,6 @@ export default async function OurProcessPage({ params }: ProcessPageProps) {
         title={doc.heroH1}
         subtitle={doc.heroH2 || (lang === "fr" ? "Structuré, transparent, livrable." : "Structured, transparent, deliverable.")}
       />
-
-      <ApproachFlowerSequence frames={approachFrames} />
-
       {doc.intro && (
         <section className="pt-8 pb-4 md:pt-10 md:pb-6">
           <div className="max-w-3xl mx-auto">
@@ -92,42 +80,19 @@ export default async function OurProcessPage({ params }: ProcessPageProps) {
       )}
 
       {doc.steps?.length > 0 && (
-        <section className="pb-16 md:pb-24 lg:pb-32">
-          <div className="site-container-wide grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {doc.steps.map((step: { title: string; body: unknown }, i: number) => (
-              <article key={i} className="flex flex-col gap-4 p-10 border border-black/5 bg-white hover:border-black/20 transition-colors">
-                <span className="text-[13px] font-normal text-neutral-400 uppercase tracking-widest">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <h2 className="text-xl font-normal text-black">{step.title}</h2>
-                <div className="text-[15px]"><RichText value={step.body} /></div>
-              </article>
-            ))}
-          </div>
-        </section>
+        <ApproachStickySteps
+          steps={doc.steps.map((step: { title: string; body: unknown }, i: number) => ({
+            id: String(i + 1).padStart(2, "0"),
+            title: step.title,
+            body: portableTextToPlainText(step.body),
+          }))}
+        />
       )}
 
       {Array.isArray(doc.differentiators) && doc.differentiators.length > 0 && (
-        <section className="py-16 md:py-24 lg:py-32 border-t border-black/5">
-          <div className="max-w-3xl mx-auto"><RichText value={doc.differentiators} /></div>
-        </section>
-      )}
-
-      {doc.bottomCtaH2 && (
-        <section className="bg-black text-white py-20 md:py-28 lg:py-36 text-center">
-          <div className="max-w-3xl mx-auto space-y-6">
-            <AnimatedTitle
-              as="h2"
-              text={doc.bottomCtaH2}
-              className="text-3xl-fluid font-medium tracking-tighter leading-[1.1]"
-              splitBy="word"
-            />
-            {doc.bottomCtaBody && <p className="text-base-fluid text-white/70 font-normal leading-relaxed max-w-[52ch] mx-auto">{doc.bottomCtaBody}</p>}
-            {doc.bottomCtaLabel && (
-              <Link href={`/${lang}/contact`} className="inline-flex items-center gap-2 mt-2 px-8 py-4 bg-[#75DAB4] text-black text-sm font-normal tracking-widest rounded-sm hover:bg-white transition-colors">
-                {doc.bottomCtaLabel}
-              </Link>
-            )}
+        <section className="relative z-10 -mt-[1px] bg-[#F6F5F4] py-16 md:py-24 lg:py-32 border-t border-black/5">
+          <div className="site-container max-w-3xl mx-auto">
+            <RichText value={doc.differentiators} />
           </div>
         </section>
       )}

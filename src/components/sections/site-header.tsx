@@ -200,8 +200,8 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
           isPastHero 
             ? `pointer-events-auto ${
                 isDark 
-                  ? "bg-black/95 border-neutral-800 md:bg-transparent md:border-transparent" 
-                  : "bg-white/95 border-neutral-200 md:bg-transparent md:border-transparent"
+                  ? "bg-white/95 border-neutral-200 md:bg-transparent md:border-transparent" 
+                  : "bg-black/95 border-neutral-800 md:bg-transparent md:border-transparent"
               }` 
             : "pointer-events-none bg-transparent border-transparent"
         }`}
@@ -269,7 +269,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
               className={`z-50 ml-1 inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors md:hidden ${
                 isMobileMenuOpen 
                   ? "bg-black/5 text-black hover:bg-black/10" 
-                  : (isDark ? "bg-white/15 text-white hover:bg-white/25" : "bg-black/5 text-black hover:bg-black/10")
+                  : (isDark ? "bg-black/5 text-black hover:bg-black/10" : "bg-white/15 text-white hover:bg-white/25")
               }`}
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-expanded={isMobileMenuOpen}

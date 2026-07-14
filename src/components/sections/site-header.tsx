@@ -66,9 +66,6 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
   const pathname = usePathname();
   const router = useRouter();
   const currentLang = pathname.startsWith("/fr") ? "fr" : "en";
-  // Hide the FR/EN switch on the contact page only (requested). The global
-  // switcher stays everywhere else so language switching still works site-wide.
-  const isContactPage = pathname.endsWith("/contact");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const activeNavItems: NavItem[] = (mainNav && mainNav.length > 0 ? mainNav : navItems).map((item) => ({
@@ -205,62 +202,54 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
           <div className={`hidden flex-wrap items-center justify-end gap-x-5 gap-y-3 text-[13px] font-normal leading-none transition-colors duration-300 md:flex lg:gap-x-8 lg:text-[14px] ${navTextClass}`}>
             {activeNavItems.map((item) => (
               <Link
-                key={item.label}
+                key={item.href}
                 href={navHref(item.href, currentLang as Locale)}
                 aria-current={pathname === navHref(item.href, currentLang as Locale) ? "page" : undefined}
-                className={`transition-colors ${navHoverClass}`}
+                className={`transition-colors ${navHoverClass} ${pathname === navHref(item.href, currentLang as Locale) ? (isDark ? "text-black font-semibold" : "text-white font-semibold") : ""}`}
               >
                 {navLabel(item, currentLang)}
               </Link>
             ))}
-            {!isContactPage && (
-              <>
-                <span className={navDividerClass}>—</span>
-                <button
-                  type="button"
-                  onClick={() => handleLanguageChange("fr")}
-                  aria-label="Passer en français"
-                  className={`transition-colors ${navHoverClass} ${currentLang === "fr" ? (isDark ? "text-black font-medium" : "text-white font-medium") : ""}`}
-                >
-                  FR
-                </button>
-                <span className={navSlashClass}>/</span>
-                <button
-                  onClick={() => handleLanguageChange("en")}
-                  type="button"
-                  aria-label="Change language"
-                  className={`transition-colors ${navHoverClass} ${currentLang === "en" ? (isDark ? "text-black font-medium" : "text-white font-medium") : ""}`}
-                >
-                  EN
-                </button>
-              </>
-            )}
+            <span className={navDividerClass}>—</span>
+            <button
+              type="button"
+              onClick={() => handleLanguageChange("fr")}
+              aria-label="Passer en français"
+              className={`transition-colors ${navHoverClass} ${currentLang === "fr" ? (isDark ? "text-black font-medium" : "text-white font-medium") : ""}`}
+            >
+              FR
+            </button>
+            <span className={navSlashClass}>/</span>
+            <button
+              onClick={() => handleLanguageChange("en")}
+              type="button"
+              aria-label="Change language"
+              className={`transition-colors ${navHoverClass} ${currentLang === "en" ? (isDark ? "text-black font-medium" : "text-white font-medium") : ""}`}
+            >
+              EN
+            </button>
           </div>
 
           <div className={`flex items-center gap-3 text-[13px] font-normal leading-none transition-colors duration-300 md:hidden ${navTextClass}`}>
-            {!isContactPage && (
-              <>
-                <motion.button
-                  whileHover={{ y: -1 }}
-                  type="button"
-                  onClick={() => handleLanguageChange("fr")}
-                  aria-label="Passer en français"
-                  className={`transition-colors ${navHoverClass} ${currentLang === "fr" ? (isDark ? "text-black font-medium" : "text-white font-medium") : ""}`}
-                >
-                  FR
-                </motion.button>
-                <span className={navSlashClass}>/</span>
-                <motion.button
-                  whileHover={{ y: -1 }}
-                  onClick={() => handleLanguageChange("en")}
-                  type="button"
-                  aria-label="Change language"
-                  className={`transition-colors ${navHoverClass} ${currentLang === "en" ? (isDark ? "text-black font-medium" : "text-white font-medium") : ""}`}
-                >
-                  EN
-                </motion.button>
-              </>
-            )}
+            <motion.button
+              whileHover={{ y: -1 }}
+              type="button"
+              onClick={() => handleLanguageChange("fr")}
+              aria-label="Passer en français"
+              className={`transition-colors ${navHoverClass} ${currentLang === "fr" ? (isDark ? "text-black font-medium" : "text-white font-medium") : ""}`}
+            >
+              FR
+            </motion.button>
+            <span className={navSlashClass}>/</span>
+            <motion.button
+              whileHover={{ y: -1 }}
+              onClick={() => handleLanguageChange("en")}
+              type="button"
+              aria-label="Change language"
+              className={`transition-colors ${navHoverClass} ${currentLang === "en" ? (isDark ? "text-black font-medium" : "text-white font-medium") : ""}`}
+            >
+              EN
+            </motion.button>
 
             <button
               className={`z-50 ml-1 inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors md:hidden ${isMobileMenuOpen ? "bg-black/5 text-black hover:bg-black/10" : "bg-white/15 text-white hover:bg-white/25"}`}
@@ -325,8 +314,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
                 transition={{ delay: 0.6, duration: 0.5 }}
                 className="space-y-12"
               >
-                {/* Language Switcher (hidden on the contact page) */}
-                {!isContactPage && (
+                {/* Language Switcher */}
                 <div className="flex items-center gap-4 border-t border-black/10 pt-12">
                   <span className="text-lg text-neutral-300">—</span>
                   <button
@@ -345,7 +333,6 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
                     EN
                   </button>
                 </div>
-                )}
               </motion.div>
             </div>
           </motion.div>

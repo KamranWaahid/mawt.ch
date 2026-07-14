@@ -196,8 +196,14 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
           hidden: { y: "-100%", opacity: 0 },
         }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className={`fixed left-0 right-0 top-0 z-[80] h-[71px] border-b border-transparent px-5 transition-colors duration-300 sm:px-7 md:px-9 lg:px-[2.5vw] ${
-          isPastHero ? "pointer-events-auto bg-transparent" : "pointer-events-none bg-transparent"
+        className={`fixed left-0 right-0 top-0 z-[80] h-[71px] border-b px-5 transition-all duration-300 sm:px-7 md:px-9 lg:px-[2.5vw] ${
+          isPastHero 
+            ? `pointer-events-auto ${
+                isDark 
+                  ? "bg-black/95 border-neutral-800 md:bg-transparent md:border-transparent" 
+                  : "bg-white/95 border-neutral-200 md:bg-transparent md:border-transparent"
+              }` 
+            : "pointer-events-none bg-transparent border-transparent"
         }`}
       >
         <nav

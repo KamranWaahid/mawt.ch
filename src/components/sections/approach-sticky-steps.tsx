@@ -166,11 +166,30 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
 
   // Monitor positions via useLenis when scrolling naturally (idle state)
   useLenis((lenis) => {
-    if (!isMounted || isMobile) return;
+    if (!isMounted) return;
 
     lenisRef.current = lenis;
 
     if (!containerRef.current) return;
+
+    if (isMobile) {
+      const rect = containerRef.current.getBoundingClientRect();
+      const scrollableHeight = rect.height - window.innerHeight;
+      if (scrollableHeight <= 0) return;
+
+      const progress = Math.max(0, Math.min(1, -rect.top / scrollableHeight));
+      const nextIndex = Math.min(
+        Math.floor(progress * totalSteps),
+        totalSteps - 1
+      );
+      if (nextIndex !== activeIndexRef.current) {
+        setNavigationDirection(nextIndex > activeIndexRef.current ? 1 : -1);
+        activeIndexRef.current = nextIndex;
+        setActiveIndex(nextIndex);
+      }
+      return;
+    }
+
     if (isLockedRef.current) return;
 
     const rect = containerRef.current.getBoundingClientRect();
@@ -479,9 +498,14 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
 
   // Handle Dynamic Header Theme Overrides
   useEffect(() => {
-    if (!isMounted || isMobile) return;
+    if (!isMounted) return;
 
-    if (lockState === "idle" || totalSteps <= 1) {
+    if (!isMobile && lockState === "idle") {
+      window.dispatchEvent(new CustomEvent("mawt-header-theme", { detail: { theme: null } }));
+      return;
+    }
+
+    if (totalSteps <= 1) {
       window.dispatchEvent(new CustomEvent("mawt-header-theme", { detail: { theme: null } }));
       return;
     }
@@ -581,28 +605,65 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
 
   if (isMobile) {
     return (
-      <section 
-        className="relative z-10 block bg-[#F6F5F4] py-16 md:py-24 border-t border-black/5"
+      <section
+        ref={containerRef}
+        className="relative z-10 block w-full bg-[#F6F5F4]"
+        style={{ height: `${totalSteps * 100}vh` }}
         aria-label="Approach steps (mobile)"
       >
-        <div className="site-container max-w-3xl">
-          <div className="flex flex-col gap-12 sm:gap-16">
-            {safeSteps.map((step) => (
-              <div 
-                key={step.id} 
-                className="flex flex-col border-b border-black/5 pb-10 sm:pb-12 last:border-b-0 last:pb-0 last:mb-0"
+        <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#F6F5F4]">
+          {/* Plateau Linear Gradient Background */}
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none absolute left-[-2vw] right-[-2vw] top-0 z-0 h-[840vh] w-[104vw]"
+            animate={{
+              y: getGradientOffset(activeIndex),
+            }}
+            transition={{
+              duration: animDuration,
+              ease: animEase,
+            }}
+            style={{
+              background:
+                "linear-gradient(180deg, #f6f5f4 0vh, #f6f5f4 120vh, #f0f3f2 160vh, #dce5e3 220vh, #baccca 280vh, #819fa0 340vh, #426a70 400vh, #002b36 460vh, #17645f 520vh, #17645f 570vh, #baccca 600vh, #f6f5f4 620vh, #f6f5f4 840vh)",
+            }}
+          />
+
+          {/* Content overlay */}
+          <div className="pointer-events-none absolute inset-0 z-30 flex flex-col justify-center px-6 sm:px-8">
+            <div className="mx-auto w-full max-w-xl">
+              <motion.div
+                key={activeIndex}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.25 }}
+                className="w-full"
               >
-                <span className="text-[11px] sm:text-[12px] font-normal tracking-[0.2em] text-neutral-500 uppercase mb-3 block">
-                  {step.id} / {String(totalSteps).padStart(2, "0")}
-                </span>
-                <h3 className="font-serif text-2xl sm:text-3xl font-normal leading-tight text-[#002B36] text-balance">
-                  {step.title}
-                </h3>
-                <p className="mt-4 text-base sm:text-lg font-normal leading-relaxed text-neutral-600">
-                  {step.body}
+                <motion.span
+                  className="text-[11px] sm:text-[12px] font-normal tracking-[0.2em] uppercase mb-4 block"
+                  animate={{ color: badgeColor }}
+                  transition={{ duration: 0.4 }}
+                >
+                  {currentStep.id} / {String(totalSteps).padStart(2, "0")}
+                </motion.span>
+                <h2 className="select-text font-serif text-3xl sm:text-4xl font-normal leading-tight">
+                  <AnimatedWords
+                    text={currentStep.title}
+                    delay={0.02}
+                    isReversing={navigationDirection < 0}
+                    textColor={textColor}
+                  />
+                </h2>
+                <p className="mt-4 text-base sm:text-lg font-normal leading-relaxed opacity-80">
+                  <AnimatedWords
+                    text={currentStep.body}
+                    delay={0.16}
+                    isReversing={navigationDirection < 0}
+                    textColor={bodyColor}
+                  />
                 </p>
-              </div>
-            ))}
+              </motion.div>
+            </div>
           </div>
         </div>
       </section>

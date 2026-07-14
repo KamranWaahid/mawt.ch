@@ -528,7 +528,7 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
               className="pointer-events-none absolute left-[-2vw] right-[-2vw] top-0 z-0 h-[840vh] w-[104vw]"
               style={{
                 background:
-                  "linear-gradient(180deg, #f6f5f4 0vh, #f6f5f4 120vh, #f0f3f2 160vh, #dce5e3 220vh, #baccca 280vh, #819fa0 340vh, #426a70 400vh, #002b36 460vh, #17645f 520vh, #17645f 620vh, #c8d8d5 680vh, #f6f5f4 740vh, #f6f5f4 840vh)",
+                  "linear-gradient(180deg, #f6f5f4 0vh, #f6f5f4 120vh, #f0f3f2 160vh, #dce5e3 220vh, #baccca 280vh, #819fa0 340vh, #426a70 400vh, #002b36 460vh, #17645f 520vh, #17645f 570vh, #baccca 600vh, #f6f5f4 620vh, #f6f5f4 840vh)",
               }}
             />
             <div className="pointer-events-none absolute inset-0 z-30 flex flex-col justify-center px-5 sm:px-7 md:px-9 lg:px-[2.5vw]">
@@ -630,7 +630,7 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
           }}
           style={{
             background:
-              "linear-gradient(180deg, #f6f5f4 0vh, #f6f5f4 120vh, #f0f3f2 160vh, #dce5e3 220vh, #baccca 280vh, #819fa0 340vh, #426a70 400vh, #002b36 460vh, #17645f 520vh, #17645f 620vh, #c8d8d5 680vh, #f6f5f4 740vh, #f6f5f4 840vh)",
+              "linear-gradient(180deg, #f6f5f4 0vh, #f6f5f4 120vh, #f0f3f2 160vh, #dce5e3 220vh, #baccca 280vh, #819fa0 340vh, #426a70 400vh, #002b36 460vh, #17645f 520vh, #17645f 570vh, #baccca 600vh, #f6f5f4 620vh, #f6f5f4 840vh)",
           }}
         />
 

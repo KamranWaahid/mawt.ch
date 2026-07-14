@@ -354,10 +354,10 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
       const isScrollingDown = event.deltaY > 0;
       const isScrollingUp = event.deltaY < 0;
 
-      if (isScrollingDown && !isCompletedDownRef.current && rect.top <= 80 && rect.top >= -150) {
+      if (isScrollingDown && !isCompletedDownRef.current && rect.top <= 120) {
         if (event.cancelable) event.preventDefault();
         lockSection(0, 1);
-      } else if (isScrollingUp && !isCompletedUpRef.current && rect.top >= -80 && rect.top <= 150) {
+      } else if (isScrollingUp && !isCompletedUpRef.current && rect.top >= -120) {
         if (event.cancelable) event.preventDefault();
         const currentTotalStates = totalStepsRef.current + 1;
         lockSection(currentTotalStates - 1, -1);
@@ -400,10 +400,10 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
 
       if (Math.abs(deltaY) < 5) return;
 
-      if (isScrollingDown && !isCompletedDownRef.current && rect.top <= 80 && rect.top >= -150) {
+      if (isScrollingDown && !isCompletedDownRef.current && rect.top <= 120) {
         if (event.cancelable) event.preventDefault();
         lockSection(0, 1);
-      } else if (isScrollingUp && !isCompletedUpRef.current && rect.top >= -80 && rect.top <= 150) {
+      } else if (isScrollingUp && !isCompletedUpRef.current && rect.top >= -120) {
         if (event.cancelable) event.preventDefault();
         const currentTotalStates = totalStepsRef.current + 1;
         lockSection(currentTotalStates - 1, -1);

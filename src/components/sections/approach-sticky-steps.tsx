@@ -151,6 +151,10 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
 
   // Monitor positions via useLenis when scrolling naturally (idle state)
   useLenis((lenis) => {
+    if (typeof window !== "undefined" && !window.matchMedia("(min-width: 1024px)").matches) {
+      return;
+    }
+
     lenisRef.current = lenis;
 
     if (!containerRef.current) return;
@@ -280,6 +284,10 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
 
   // Manage body scroll overflow (CSS overflow is hidden while locked)
   useEffect(() => {
+    if (typeof window !== "undefined" && !window.matchMedia("(min-width: 1024px)").matches) {
+      return;
+    }
+
     if (lockState !== "idle") {
       document.body.style.overflow = "hidden";
       document.documentElement.style.overflow = "hidden";
@@ -296,6 +304,10 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
 
   // Continuously running requestAnimationFrame processor loop
   useEffect(() => {
+    if (typeof window !== "undefined" && !window.matchMedia("(min-width: 1024px)").matches) {
+      return;
+    }
+
     let rafId: number;
 
     const tick = () => {
@@ -320,6 +332,10 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
 
   // Intercept wheel, touch, and keyboard inputs persistently on window
   useEffect(() => {
+    if (typeof window !== "undefined" && !window.matchMedia("(min-width: 1024px)").matches) {
+      return;
+    }
+
     const handleWheel = (event: WheelEvent) => {
       // 1. If locked: prevent default and delegate to step transition
       if (lockStateRef.current !== "idle") {
@@ -456,6 +472,10 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
 
   // Handle Dynamic Header Theme Overrides
   useEffect(() => {
+    if (typeof window !== "undefined" && !window.matchMedia("(min-width: 1024px)").matches) {
+      return;
+    }
+
     if (lockState === "idle" || totalSteps <= 1) {
       window.dispatchEvent(new CustomEvent("mawt-header-theme", { detail: { theme: null } }));
       return;
@@ -489,116 +509,110 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
   const animEase = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
   return (
-    <section
-      ref={containerRef}
-      className="relative z-10 -mt-[1px] h-[100vh] w-full overflow-hidden bg-[#F6F5F4]"
-      aria-label="Approach steps"
-    >
-      <div ref={panelRef} className="absolute inset-0 h-[100vh] overflow-hidden bg-[#F6F5F4]">
-        {/* Plateau Linear Gradient Background */}
-        <motion.div
-          aria-hidden="true"
-          className="pointer-events-none absolute left-[-2vw] right-[-2vw] top-0 z-0 h-[840vh] w-[104vw]"
-          animate={{
-            y: getGradientOffset(activeIndex),
-          }}
-          transition={{
-            duration: animDuration,
-            ease: animEase,
-          }}
-          style={{
-            background:
-              "linear-gradient(180deg, #f6f5f4 0vh, #f6f5f4 120vh, #f0f3f2 160vh, #dce5e3 220vh, #baccca 280vh, #819fa0 340vh, #426a70 400vh, #002b36 460vh, #17645f 520vh, #17645f 620vh, #c8d8d5 680vh, #f6f5f4 740vh, #f6f5f4 840vh)",
-          }}
-        />
-
-        {/* Dummy animation to drive parent animation complete callback */}
-        {lockState === "animating" && (
+    <>
+      {/* Desktop Sticky Scroll Layout (lg:block only) */}
+      <section
+        ref={containerRef}
+        className="relative z-10 -mt-[1px] hidden lg:block h-[100vh] w-full overflow-hidden bg-[#F6F5F4]"
+        aria-label="Approach steps (desktop)"
+      >
+        <div ref={panelRef} className="absolute inset-0 h-[100vh] overflow-hidden bg-[#F6F5F4]">
+          {/* Plateau Linear Gradient Background */}
           <motion.div
-            key={`dummy-${activeIndex}`}
-            initial={{ scale: 0.999 }}
-            animate={{ scale: 1 }}
-            transition={{
-              duration: navigationDirection < 0 ? 0.35 : 0.85,
-              ease: "linear"
+            aria-hidden="true"
+            className="pointer-events-none absolute left-[-2vw] right-[-2vw] top-0 z-0 h-[840vh] w-[104vw]"
+            animate={{
+              y: getGradientOffset(activeIndex),
             }}
-            onAnimationComplete={handleAnimationComplete}
+            transition={{
+              duration: animDuration,
+              ease: animEase,
+            }}
+            style={{
+              background:
+                "linear-gradient(180deg, #f6f5f4 0vh, #f6f5f4 120vh, #f0f3f2 160vh, #dce5e3 220vh, #baccca 280vh, #819fa0 340vh, #426a70 400vh, #002b36 460vh, #17645f 520vh, #17645f 620vh, #c8d8d5 680vh, #f6f5f4 740vh, #f6f5f4 840vh)",
+            }}
           />
-        )}
 
-        {/* Desktop layout */}
-        <div className="pointer-events-none absolute inset-0 z-30 hidden lg:flex lg:flex-col lg:justify-center px-5 sm:px-7 md:px-9 lg:px-[2.5vw]">
-          <div className="mx-auto w-full max-w-[1760px] pt-[120px] pb-[80px]">
+          {/* Dummy animation to drive parent animation complete callback */}
+          {lockState === "animating" && (
             <motion.div
-              key={activeIndex}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: activeIndex >= 5 ? 0 : 1 }}
-              transition={{ duration: 0.25 }}
-              className="max-w-[1040px]"
-            >
-              <motion.span
-                className="text-[13px] font-normal tracking-[0.2em] uppercase mb-6 block"
-                animate={{ color: badgeColor }}
-                transition={{ duration: 0.4 }}
+              key={`dummy-${activeIndex}`}
+              initial={{ scale: 0.999 }}
+              animate={{ scale: 1 }}
+              transition={{
+                duration: navigationDirection < 0 ? 0.35 : 0.85,
+                ease: "linear"
+              }}
+              onAnimationComplete={handleAnimationComplete}
+            />
+          )}
+
+          {/* Desktop layout content */}
+          <div className="pointer-events-none absolute inset-0 z-30 flex flex-col justify-center px-5 sm:px-7 md:px-9 lg:px-[2.5vw]">
+            <div className="mx-auto w-full max-w-[1760px] pt-[120px] pb-[80px]">
+              <motion.div
+                key={activeIndex}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: activeIndex >= 5 ? 0 : 1 }}
+                transition={{ duration: 0.25 }}
+                className="max-w-[1040px]"
               >
-                {currentStep.id} / {String(totalSteps).padStart(2, "0")}
-              </motion.span>
-              <h2 className="select-text font-serif text-[clamp(2.1rem,4.05vw,3.7rem)] font-normal leading-[1.01] tracking-normal">
-                <AnimatedWords
-                  text={currentStep.title}
-                  delay={0.02}
-                  isReversing={navigationDirection < 0}
-                  textColor={textColor}
-                />
-              </h2>
-              <p className="mt-6 max-w-[760px] text-[clamp(1.1rem,1.8vw,1.5rem)] font-normal leading-[1.4] opacity-80">
-                <AnimatedWords
-                  text={currentStep.body}
-                  delay={0.16}
-                  isReversing={navigationDirection < 0}
-                  textColor={bodyColor}
-                />
-              </p>
-            </motion.div>
+                <motion.span
+                  className="text-[13px] font-normal tracking-[0.2em] uppercase mb-6 block"
+                  animate={{ color: badgeColor }}
+                  transition={{ duration: 0.4 }}
+                >
+                  {currentStep.id} / {String(totalSteps).padStart(2, "0")}
+                </motion.span>
+                <h2 className="select-text font-serif text-[clamp(2.1rem,4.05vw,3.7rem)] font-normal leading-[1.01] tracking-normal">
+                  <AnimatedWords
+                    text={currentStep.title}
+                    delay={0.02}
+                    isReversing={navigationDirection < 0}
+                    textColor={textColor}
+                  />
+                </h2>
+                <p className="mt-6 max-w-[760px] text-[clamp(1.1rem,1.8vw,1.5rem)] font-normal leading-[1.4] opacity-80">
+                  <AnimatedWords
+                    text={currentStep.body}
+                    delay={0.16}
+                    isReversing={navigationDirection < 0}
+                    textColor={bodyColor}
+                  />
+                </p>
+              </motion.div>
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* Mobile layout */}
-        <div className="pointer-events-none absolute inset-0 z-30 flex flex-col justify-center px-5 sm:px-7 md:px-9 lg:hidden">
-          <div className="mx-auto w-full max-w-[48rem] pt-[80px] pb-[80px]">
-            <motion.div
-              key={activeIndex}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: activeIndex >= 5 ? 0 : 1 }}
-              transition={{ duration: 0.25 }}
-            >
-              <motion.span
-                className="text-[12px] font-normal tracking-[0.2em] uppercase mb-4 block"
-                animate={{ color: badgeColor }}
-                transition={{ duration: 0.4 }}
+      {/* Mobile Responsive Vertical Steps List (lg:hidden only) */}
+      <section 
+        className="relative z-10 block lg:hidden bg-[#F6F5F4] py-16 md:py-24 border-t border-black/5"
+        aria-label="Approach steps (mobile)"
+      >
+        <div className="site-container max-w-3xl">
+          <div className="flex flex-col gap-12 sm:gap-16">
+            {safeSteps.map((step, idx) => (
+              <div 
+                key={step.id} 
+                className="flex flex-col border-b border-black/5 pb-10 sm:pb-12 last:border-b-0 last:pb-0 last:mb-0"
               >
-                {currentStep.id} / {String(totalSteps).padStart(2, "0")}
-              </motion.span>
-              <h2 className="select-text font-serif text-[clamp(1.75rem,6vw,2.75rem)] leading-[1.03] font-normal">
-                <AnimatedWords
-                  text={currentStep.title}
-                  delay={0.02}
-                  isReversing={navigationDirection < 0}
-                  textColor={textColor}
-                />
-              </h2>
-              <p className="mt-4 max-w-[48rem] text-[clamp(0.95rem,2.2vw,1.25rem)] font-normal leading-[1.4] opacity-80">
-                <AnimatedWords
-                  text={currentStep.body}
-                  delay={0.16}
-                  isReversing={navigationDirection < 0}
-                  textColor={bodyColor}
-                />
-              </p>
-            </motion.div>
+                <span className="text-[11px] sm:text-[12px] font-normal tracking-[0.2em] text-neutral-500 uppercase mb-3 block">
+                  {step.id} / {String(totalSteps).padStart(2, "0")}
+                </span>
+                <h3 className="font-serif text-2xl sm:text-3xl font-normal leading-tight text-[#002B36] text-balance">
+                  {step.title}
+                </h3>
+                <p className="mt-4 text-base sm:text-lg font-normal leading-relaxed text-neutral-600">
+                  {step.body}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

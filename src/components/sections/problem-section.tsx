@@ -45,14 +45,13 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
     setHasRevealed(revealed);
 
     const lenis = lenisRef.current;
-    if (typeof window === "undefined" || !lenis) return;
-
-    const viewportHeight = window.innerHeight;
-    const scrollAdjustment = 3 * viewportHeight;
+    if (typeof window === "undefined" || !lenis || !containerRef.current) return;
 
     if (revealed) {
-      // Transitioning 400vh -> 100vh: decrease scroll position by 300vh immediately to prevent jumps
-      const targetScroll = lenis.scroll - scrollAdjustment;
+      // Transitioning 400vh -> 100vh: align the scroll position perfectly with the top of the container.
+      // This matches the visual position of the sticky child container, preventing any jump upwards.
+      const rect = containerRef.current.getBoundingClientRect();
+      const targetScroll = lenis.scroll + rect.top;
       lenis.scrollTo(targetScroll, { immediate: true });
     }
   }, []);

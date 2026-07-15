@@ -22,6 +22,9 @@ type AsciiWaveProps = {
   active: boolean;
   /** Called once the first frame has been painted. */
   onReady?: () => void;
+  /** 'contain' shows the whole frame with its black margins (the reference
+   * composition); 'cover' crops in, using the focus point below. */
+  fit?: "contain" | "cover";
   /** Cover-crop focus point, as fractions of the image (0..1). */
   focusX?: number;
   focusY?: number;
@@ -62,7 +65,7 @@ function lumColor(lum: number): string {
 
 type Cell = { x: number; y: number; lum: number; tier: number; char: string; color: string };
 
-export function AsciiWave({ src, active, onReady, focusX = 0.5, focusY = 0.48, className }: AsciiWaveProps) {
+export function AsciiWave({ src, active, onReady, fit = "contain", focusX = 0.5, focusY = 0.48, className }: AsciiWaveProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const activeRef = useRef(active);
   const readyRef = useRef(false);
@@ -109,19 +112,29 @@ export function AsciiWave({ src, active, onReady, focusX = 0.5, focusY = 0.48, c
       const cols = Math.ceil(rect.width / CELL);
       const rows = Math.ceil(rect.height / CELL);
 
-      // Cover-crop the source image onto the grid, honouring the focus point.
-      const scale = Math.max((cols * CELL) / img.width, (rows * CELL) / img.height);
-      const cropW = (cols * CELL) / scale;
-      const cropH = (rows * CELL) / scale;
-      const cropX = Math.min(Math.max((img.width - cropW) * focusX, 0), img.width - cropW);
-      const cropY = Math.min(Math.max((img.height - cropH) * focusY, 0), img.height - cropH);
-
       const off = document.createElement("canvas");
       off.width = cols;
       off.height = rows;
       const octx = off.getContext("2d", { willReadFrequently: true });
       if (!octx) return;
-      octx.drawImage(img, cropX, cropY, cropW, cropH, 0, 0, cols, rows);
+
+      if (fit === "contain") {
+        // Show the WHOLE frame, black margins included — the reference is a
+        // composed square with breathing room around the wave, and cover-crop
+        // was blowing the wave up to fill the viewport.
+        const s = Math.min(cols / img.width, rows / img.height);
+        const dw = img.width * s;
+        const dh = img.height * s;
+        octx.drawImage(img, 0, 0, img.width, img.height, (cols - dw) / 2, (rows - dh) / 2, dw, dh);
+      } else {
+        // Cover-crop, honouring the focus point.
+        const scale = Math.max((cols * CELL) / img.width, (rows * CELL) / img.height);
+        const cropW = (cols * CELL) / scale;
+        const cropH = (rows * CELL) / scale;
+        const cropX = Math.min(Math.max((img.width - cropW) * focusX, 0), img.width - cropW);
+        const cropY = Math.min(Math.max((img.height - cropH) * focusY, 0), img.height - cropH);
+        octx.drawImage(img, cropX, cropY, cropW, cropH, 0, 0, cols, rows);
+      }
       const data = octx.getImageData(0, 0, cols, rows).data;
 
       // Dominant-channel intensity (HSV value) rather than Rec.709 luminance:
@@ -139,10 +152,20 @@ export function AsciiWave({ src, active, onReady, focusX = 0.5, focusY = 0.48, c
       // the hot end of the ramp (the brand greens) would never be reached.
       const scale2 = maxLum > 0.01 ? 1 / maxLum : 1;
 
+      // Side shadow, as in the reference frame: glyphs die out softly toward
+      // the left and right edges instead of stopping on a hard border.
+      const fadeCols = Math.max(4, cols * 0.14);
+      const edgeFade = (cIdx: number) => {
+        const d = Math.min(cIdx, cols - 1 - cIdx) / fadeCols;
+        const t = Math.min(1, Math.max(0, d));
+        return t * t * (3 - 2 * t); // smoothstep
+      };
+
       cells = [];
       for (let r = 0; r < rows; r++) {
         for (let cIdx = 0; cIdx < cols; cIdx++) {
-          const lum = Math.pow(Math.min(1, raw[r * cols + cIdx] * scale2), 0.8);
+          const lum =
+            Math.pow(Math.min(1, raw[r * cols + cIdx] * scale2), 0.8) * edgeFade(cIdx);
           if (lum < LUM_FLOOR) continue;
           const tier = Math.min(
             TIER_POOLS.length - 1,
@@ -197,7 +220,7 @@ export function AsciiWave({ src, active, onReady, focusX = 0.5, focusY = 0.48, c
       ro.disconnect();
       if (img) img.onload = null;
     };
-  }, [src, focusX, focusY]);
+  }, [src, fit, focusX, focusY]);
 
   return <canvas ref={canvasRef} className={className} aria-hidden="true" />;
 }

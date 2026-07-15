@@ -32,28 +32,41 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
   const containerRef = useRef<HTMLDivElement>(null);
   
   // We use a manual scroll calculation using getBoundingClientRect.
-  // Framer Motion's useScroll can sometimes fail to reach 1.0 or lose sync 
-  // on complex pages with Lenis, pinned sections, or dynamic heights.
   // Manual DOM measurement guarantees pixel-perfect scroll scrubbing.
   const progressValue = useMotionValue(0);
   const [hasRevealed, setHasRevealed] = useState(false);
-  const isScrollingBypass = useRef(false);
+  const hasRevealedRef = useRef(false);
+  const lenisRef = useRef<any>(null);
 
-  useMotionValueEvent(progressValue, "change", (latest) => {
-    if (latest >= 0.80) {
-      setHasRevealed(true);
-    } else if (latest <= 0.05) {
-      setHasRevealed(false);
+  const setRevealedState = useCallback((revealed: boolean) => {
+    if (revealed === hasRevealedRef.current) return;
+    
+    hasRevealedRef.current = revealed;
+    setHasRevealed(revealed);
+
+    const lenis = lenisRef.current;
+    if (typeof window === "undefined" || !lenis) return;
+
+    const viewportHeight = window.innerHeight;
+    const scrollAdjustment = 3 * viewportHeight;
+
+    if (revealed) {
+      // Transitioning 400vh -> 100vh: decrease scroll position by 300vh immediately to prevent jumps
+      const targetScroll = lenis.scroll - scrollAdjustment;
+      lenis.scrollTo(targetScroll, { immediate: true });
     }
-  });
+  }, []);
 
   const updateScrollProgress = useCallback(() => {
     if (!containerRef.current || typeof window === "undefined") return;
     
     const rect = containerRef.current.getBoundingClientRect();
     
-    // We want to scrub from when the top of the container hits the top of viewport (0)
-    // to when the bottom of the container hits the bottom of the viewport (1).
+    // If text was fully revealed, reset back to false if the user scrolls completely above it
+    if (hasRevealedRef.current && rect.top >= 0) {
+      setRevealedState(false);
+    }
+    
     const scrollDistance = rect.height - window.innerHeight;
     
     if (scrollDistance <= 0) {
@@ -65,37 +78,16 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
     const clampedProgress = Math.max(0, Math.min(1, rawProgress));
     
     progressValue.set(clampedProgress);
-  }, [progressValue]);
 
-  useLenis((lenis) => {
+    // Trigger reveal lock once scroll progress is at or past 80%
+    if (clampedProgress >= 0.80 && !hasRevealedRef.current) {
+      setRevealedState(true);
+    }
+  }, [progressValue, setRevealedState]);
+
+  useLenis((lenisInstance) => {
+    lenisRef.current = lenisInstance;
     updateScrollProgress();
-
-    const progress = progressValue.get();
-    
-    // Reset bypass tracking if the user manually scrolls down/forward
-    if (lenis.direction === 1 && isScrollingBypass.current) {
-      isScrollingBypass.current = false;
-    }
-
-    // If the text is fully revealed, and the user scrolls up, and we are inside the sticky range,
-    // initiate a smooth scroll to the top of the section (bypassing the 400vh lock)
-    if (
-      hasRevealed && 
-      lenis.direction === -1 && 
-      progress > 0.05 && 
-      progress < 0.95 && 
-      !isScrollingBypass.current
-    ) {
-      isScrollingBypass.current = true;
-      lenis.scrollTo(containerRef.current, {
-        offset: 0,
-        duration: 1.2,
-        easing: (t) => 1 - Math.pow(1 - t, 4), // smooth ease out
-        onComplete: () => {
-          isScrollingBypass.current = false;
-        }
-      });
-    }
   });
 
   useEffect(() => {
@@ -109,8 +101,11 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
   }, [updateScrollProgress]);
 
   // The entire text block fades out and moves up at the very end of the scroll (last 15%)
-  const blockOpacity = useTransform(progressValue, [0.85, 1], [1, 0]);
-  const blockY = useTransform(progressValue, [0.85, 1], [0, -40]);
+  const blockOpacityTransform = useTransform(progressValue, [0.85, 1], [1, 0]);
+  const blockYTransform = useTransform(progressValue, [0.85, 1], [0, -40]);
+
+  const blockOpacity = hasRevealed ? 1 : blockOpacityTransform;
+  const blockY = hasRevealed ? 0 : blockYTransform;
 
   if (!dict.story || !Array.isArray(dict.story)) {
     return null;
@@ -120,7 +115,11 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
   const words = text.split(" ");
 
   return (
-    <div ref={containerRef} style={{ height: "400vh" }} className="relative w-full">
+    <div 
+      ref={containerRef} 
+      style={{ height: hasRevealed ? "100vh" : "400vh" }} 
+      className="relative w-full"
+    >
       <section className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
         <motion.div 
           className="site-container relative z-10 w-full"

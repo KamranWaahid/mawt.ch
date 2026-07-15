@@ -142,9 +142,14 @@ export function AsciiWave({ src, active, onReady, fit = "contain", focusX = 0.5,
       // crushed the whole wave to the floor.
       const raw = new Float32Array(cols * rows);
       let maxLum = 0;
+      // Cut JPEG compression noise BEFORE normalisation: the reference is a
+      // WhatsApp JPEG whose black background carries faint speckle that the
+      // max-stretch below would otherwise amplify into stray glyphs.
+      const RAW_FLOOR = 0.035;
       for (let i = 0; i < cols * rows; i++) {
         const p = i * 4;
-        raw[i] = Math.max(data[p], data[p + 1], data[p + 2]) / 255;
+        const v = Math.max(data[p], data[p + 1], data[p + 2]) / 255;
+        raw[i] = v < RAW_FLOOR ? 0 : v;
         if (raw[i] > maxLum) maxLum = raw[i];
       }
       // Normalise to the sampled maximum: the source is thin glyphs on black,
@@ -152,20 +157,24 @@ export function AsciiWave({ src, active, onReady, fit = "contain", focusX = 0.5,
       // the hot end of the ramp (the brand greens) would never be reached.
       const scale2 = maxLum > 0.01 ? 1 / maxLum : 1;
 
-      // Side shadow, as in the reference frame: glyphs die out softly toward
-      // the left and right edges instead of stopping on a hard border.
-      const fadeCols = Math.max(4, cols * 0.14);
-      const edgeFade = (cIdx: number) => {
-        const d = Math.min(cIdx, cols - 1 - cIdx) / fadeCols;
-        const t = Math.min(1, Math.max(0, d));
-        return t * t * (3 - 2 * t); // smoothstep
+      // Shadowed edges, as in the reference frame: glyphs die out softly
+      // toward the sides (strong) and the top/bottom (gentle) instead of
+      // stopping on a hard border.
+      const smooth = (t: number) => {
+        const c = Math.min(1, Math.max(0, t));
+        return c * c * (3 - 2 * c);
       };
+      const fadeCols = Math.max(4, cols * 0.14);
+      const fadeRows = Math.max(3, rows * 0.12);
+      const edgeFade = (cIdx: number, r: number) =>
+        smooth(Math.min(cIdx, cols - 1 - cIdx) / fadeCols) *
+        smooth(Math.min(r, rows - 1 - r) / fadeRows);
 
       cells = [];
       for (let r = 0; r < rows; r++) {
         for (let cIdx = 0; cIdx < cols; cIdx++) {
           const lum =
-            Math.pow(Math.min(1, raw[r * cols + cIdx] * scale2), 0.8) * edgeFade(cIdx);
+            Math.pow(Math.min(1, raw[r * cols + cIdx] * scale2), 0.8) * edgeFade(cIdx, r);
           if (lum < LUM_FLOOR) continue;
           const tier = Math.min(
             TIER_POOLS.length - 1,

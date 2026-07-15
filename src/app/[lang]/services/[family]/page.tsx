@@ -194,6 +194,7 @@ export default async function FamilyPillarPage({ params }: Props) {
         cta={{ label: copy.ctaPrimary, href: `/${lang}/${copy.ctaPrimaryHref}` }}
         compact
         flushTop
+        noGradient
       />
 
       {/* Intro Narrative */}

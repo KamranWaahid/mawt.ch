@@ -423,16 +423,14 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           className="home-hero-ascii-layer pointer-events-none absolute inset-0 z-[16] overflow-hidden"
           style={{ opacity: asciiLayerOpacity, visibility: asciiLayerVisibility }}
         >
-          <div
-            className="home-hero-video-mask pointer-events-none absolute"
-          >
+          <div className="ascii-wave-viewport">
             <AsciiWave
               src="/hero-ascii-map.jpg"
               active={scrollProgress < 0.016}
               onReady={() => setIsAsciiVideoReady(true)}
               focusX={isMobile ? 0.35 : 0.5}
               focusY={isMobile ? 0.6 : 0.68}
-              className="h-full w-full"
+              className="ascii-wave-canvas"
             />
           </div>
         </motion.div>

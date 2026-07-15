@@ -31,61 +31,59 @@ const ScrubWord = ({
 export function ProblemSection({ dict }: { dict: ProblemCopy }) {
   const containerRef = useRef<HTMLDivElement>(null);
   
-  // We use a manual scroll calculation using getBoundingClientRect.
-  // Manual DOM measurement guarantees pixel-perfect scroll scrubbing.
   const progressValue = useMotionValue(0);
   const [hasRevealed, setHasRevealed] = useState(false);
   const hasRevealedRef = useRef(false);
   const lenisRef = useRef<any>(null);
 
-  const setRevealedState = useCallback((revealed: boolean) => {
-    if (revealed === hasRevealedRef.current) return;
-    
-    hasRevealedRef.current = revealed;
-    setHasRevealed(revealed);
-
-    const lenis = lenisRef.current;
-    if (typeof window === "undefined" || !lenis || !containerRef.current) return;
-
-    const viewportHeight = window.innerHeight;
-    const scrollAdjustment = 3 * viewportHeight;
-
-    if (revealed) {
-      // Transitioning 400vh -> 100vh when scrolled completely past it:
-      // Decrease the scroll position by 300vh to compensate for document height shrinkage.
-      // Since this happens when the section is completely off-screen, there is no visual jump or blink.
-      const targetScroll = lenis.scroll - scrollAdjustment;
-      lenis.scrollTo(targetScroll, { immediate: true });
-    }
-  }, []);
-
   const updateScrollProgress = useCallback(() => {
     if (!containerRef.current || typeof window === "undefined") return;
     
     const rect = containerRef.current.getBoundingClientRect();
+    const lenis = lenisRef.current;
     
     // If text was fully revealed, reset back to false only when it has completely passed the screen going upwards (rect.top >= window.innerHeight)
     if (hasRevealedRef.current && rect.top >= window.innerHeight) {
-      setRevealedState(false);
+      hasRevealedRef.current = false;
+      containerRef.current.style.height = "400vh"; // Sync DOM update
+      setHasRevealed(false);
     }
     
-    const scrollDistance = rect.height - window.innerHeight;
+    // Recalculate rect after potential height change
+    const currentRect = containerRef.current.getBoundingClientRect();
+    const scrollDistance = currentRect.height - window.innerHeight;
     
     if (scrollDistance <= 0) {
       progressValue.set(1);
       return;
     }
 
-    const rawProgress = (0 - rect.top) / scrollDistance;
+    const rawProgress = (0 - currentRect.top) / scrollDistance;
     const clampedProgress = Math.max(0, Math.min(1, rawProgress));
     
     progressValue.set(clampedProgress);
 
     // Trigger reveal lock only when progress reaches 99% (completely past and faded out)
     if (clampedProgress >= 0.99 && !hasRevealedRef.current) {
-      setRevealedState(true);
+      hasRevealedRef.current = true;
+      if (lenis) {
+        const scrollAdjustment = 3 * window.innerHeight;
+        const targetScroll = lenis.scroll - scrollAdjustment;
+        
+        // 1. Instantly change DOM height before browser paints
+        containerRef.current.style.height = "100vh";
+        
+        // 2. Instantly change native scroll to match
+        window.scrollTo({ top: targetScroll, behavior: "instant" });
+        
+        // 3. Sync Lenis to the new scroll position
+        lenis.scrollTo(targetScroll, { immediate: true });
+        
+        // 4. Update React state for subsequent renders
+        setHasRevealed(true);
+      }
     }
-  }, [progressValue, setRevealedState]);
+  }, [progressValue]);
 
   useLenis((lenisInstance) => {
     lenisRef.current = lenisInstance;

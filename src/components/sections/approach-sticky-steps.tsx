@@ -608,7 +608,7 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
       <section
         ref={containerRef}
         className="relative z-10 block w-full bg-[#F6F5F4]"
-        style={{ height: `${totalSteps * 100}vh` }}
+        style={{ height: `${totalSteps * 60}vh` }}
         aria-label="Approach steps (mobile)"
       >
         <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#F6F5F4]">

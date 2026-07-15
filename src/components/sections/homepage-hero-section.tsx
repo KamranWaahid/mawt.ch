@@ -543,6 +543,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
                 transform: heroLogoTransformDesktop,
                 transformOrigin: "top left",
                 opacity: heroLogoOpacity,
+                overflow: "visible",
               }}
             >
               <MawatLogoMask className="h-auto w-full" />
@@ -561,6 +562,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
                 transform: heroLogoTransformLandscape,
                 transformOrigin: "top left",
                 opacity: heroLogoOpacity,
+                overflow: "visible",
               }}
             >
               <MawatLogoMask className="h-auto w-full" />
@@ -579,6 +581,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
                 transform: heroLogoTransformPortrait,
                 transformOrigin: "top left",
                 opacity: heroLogoOpacity,
+                overflow: "visible",
               }}
             >
               <MawatLogoMask className="h-auto w-full" />

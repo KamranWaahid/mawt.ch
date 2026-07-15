@@ -213,6 +213,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isHeroMobileMenuOpen, setIsHeroMobileMenuOpen] = useState(false);
   const [isAsciiVideoReady, setIsAsciiVideoReady] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const shouldReduceMotion = useReducedMotion();
   const params = useParams();
   const lang = (params?.lang === "fr" ? "fr" : "en") as Locale;
@@ -248,6 +249,12 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   });
 
   useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize, { passive: true });
+
     const playVideo = () => {
       if (videoRef.current && videoRef.current.paused) {
         videoRef.current.play().catch(e => console.log("Touch play prevented:", e));
@@ -264,6 +271,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     }
 
     return () => {
+      window.removeEventListener("resize", handleResize);
       window.removeEventListener("touchstart", playVideo);
       window.removeEventListener("click", playVideo);
     };
@@ -372,7 +380,9 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   const whiteFillerOpacity = isScrollingUp ? whiteFillerOpacityUp : whiteFillerOpacityDown;
   const maskCoverOpacity = isScrollingUp ? maskCoverOpacityUp : maskCoverOpacityDown;
   const heroLogoOpacity = isScrollingUp ? heroLogoOpacityUp : heroLogoOpacityDown;
-  const videoContainerOpacity = isScrollingUp ? videoContainerOpacityUp : videoContainerOpacityDown;
+  const videoContainerOpacity = isMobile 
+    ? videoContainerOpacityDown 
+    : (isScrollingUp ? videoContainerOpacityUp : videoContainerOpacityDown);
   const navLogoOpacity = isScrollingUp ? navLogoOpacityUp : navLogoOpacityDown;
 
   const videoScale = useTransform(smoothProgress, [0.25, 0.50], [1, 1]);

@@ -120,13 +120,13 @@ function MawatLogoMask({ className }: { className?: string }) {
     >
       <defs>
         <mask id={maskId}>
-          <rect x="-10000" y="-10000" width="20000" height="20000" fill="white" />
+          <rect x="-30000" y="-30000" width="150000" height="80000" fill="white" />
           {mawatLogoPaths.map((path) => (
             <path key={`hole-${path}`} d={path} fill="black" />
           ))}
         </mask>
       </defs>
-      <rect x="-10000" y="-10000" width="20000" height="20000" fill="black" mask={`url(#${maskId})`} />
+      <rect x="-30000" y="-30000" width="150000" height="80000" fill="black" mask={`url(#${maskId})`} />
     </svg>
   );
 }

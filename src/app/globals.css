@@ -379,6 +379,20 @@ body::after {
   background: linear-gradient(to bottom, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0));
 }
 
+/* Fallback for browsers without backdrop-filter (old Firefox, dated Android
+   WebViews): no glass is possible, so strengthen the tint gradient enough to
+   keep the nav text readable over busy content. Declared AFTER the normal
+   tints so it wins at equal specificity inside unsupporting browsers. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .navbar-blur-backdrop.is-light-bg {
+    background: linear-gradient(to bottom, rgba(246, 245, 244, 0.92), rgba(246, 245, 244, 0.75) 47%, rgba(246, 245, 244, 0));
+  }
+
+  .navbar-blur-backdrop.is-dark-bg {
+    background: linear-gradient(to bottom, rgba(5, 6, 6, 0.85), rgba(5, 6, 6, 0.6) 47%, rgba(5, 6, 6, 0));
+  }
+}
+
 .navbar-blur-backdrop > div,
 .navbar-blur-backdrop::before,
 .navbar-blur-backdrop::after {
@@ -459,11 +473,8 @@ body::after {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .home-hero-video-mask {
-    opacity: 0;
-  }
-}
+/* Under prefers-reduced-motion the ASCII wave stays visible but static: the
+   canvas component stops its flicker ticker instead of hiding the layer. */
 
 /* Smooth top-to-bottom white/grey gradient for mobile sticky section headers */
 .mobile-sticky-header-bg {

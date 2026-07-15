@@ -8,6 +8,7 @@ import { Menu, X } from "lucide-react";
 import type { SiteSettings } from "@/lib/types";
 import { localizedHref } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/lib/routing/url-map";
+import { AsciiWave } from "@/components/ui/ascii-wave";
 
 type HomepageHeroCopy = {
   statement: string;
@@ -209,7 +210,6 @@ function HeroGradientStatement({
 export function HomepageHeroSection({ settings, dict, transitionDict }: HomepageHeroSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const asciiVideoRef = useRef<HTMLVideoElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isHeroMobileMenuOpen, setIsHeroMobileMenuOpen] = useState(false);
   const [isAsciiVideoReady, setIsAsciiVideoReady] = useState(false);
@@ -259,9 +259,6 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
       if (videoRef.current && videoRef.current.paused) {
         videoRef.current.play().catch(e => console.log("Touch play prevented:", e));
       }
-      if (asciiVideoRef.current && asciiVideoRef.current.paused) {
-        asciiVideoRef.current.play().catch(e => console.log("Touch ASCII play prevented:", e));
-      }
     };
     window.addEventListener("touchstart", playVideo, { once: true, passive: true });
     window.addEventListener("click", playVideo, { once: true, passive: true });
@@ -276,49 +273,6 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
       window.removeEventListener("click", playVideo);
     };
   }, []);
-
-  useEffect(() => {
-    const video = asciiVideoRef.current;
-    if (!video || shouldReduceMotion) return;
-
-    let isMounted = true;
-    let animationFrame = 0;
-    let videoFrameHandle = 0;
-    const markReady = () => {
-      if (!isMounted) return;
-
-      if ("requestVideoFrameCallback" in video) {
-        videoFrameHandle = video.requestVideoFrameCallback(() => {
-          if (isMounted) setIsAsciiVideoReady(true);
-        });
-        return;
-      }
-
-      animationFrame = window.requestAnimationFrame(() => {
-        if (isMounted) setIsAsciiVideoReady(true);
-      });
-    };
-
-    if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
-      markReady();
-    } else {
-      video.addEventListener("loadeddata", markReady, { once: true });
-    }
-
-    video.load();
-    if (video.paused) {
-      video.play().catch(e => console.log("ASCII autoplay prevented on mount:", e));
-    }
-
-    return () => {
-      isMounted = false;
-      video.removeEventListener("loadeddata", markReady);
-      window.cancelAnimationFrame(animationFrame);
-      if ("cancelVideoFrameCallback" in video && videoFrameHandle) {
-        video.cancelVideoFrameCallback(videoFrameHandle);
-      }
-    };
-  }, [shouldReduceMotion]);
 
   // Forward Transforms (Down)
   const heroLogoTransformDesktopDown = useTransform(smoothProgress, [0, 0.10, 0.18, 0.25, 0.50], [
@@ -386,16 +340,16 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   const navLogoOpacity = isScrollingUp ? navLogoOpacityUp : navLogoOpacityDown;
 
   const videoScale = useTransform(smoothProgress, [0.25, 0.50], [1, 1]);
-  const asciiLayerOpacity = shouldReduceMotion
+  // Reduced motion no longer hides the ASCII art: the canvas simply stops
+  // flickering (AsciiWave's `active` prop), so the wave shows as a still.
+  const asciiLayerOpacity = !isAsciiVideoReady
     ? 0
-    : !isAsciiVideoReady
-      ? 0
-      : scrollProgress <= 0.004
+    : scrollProgress <= 0.004
       ? 1
       : scrollProgress >= 0.012
         ? 0
         : 1 - (scrollProgress - 0.004) / 0.008;
-  const asciiLayerVisibility = !shouldReduceMotion && isAsciiVideoReady && scrollProgress < 0.016 ? "visible" : "hidden";
+  const asciiLayerVisibility = isAsciiVideoReady && scrollProgress < 0.016 ? "visible" : "hidden";
   const heroContentOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
   const scrollIndicatorOpacity = useTransform(smoothProgress, [0.45, 0.50], [1, 0]);
   
@@ -472,15 +426,13 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           <div
             className="home-hero-video-mask pointer-events-none absolute"
           >
-            <video
-              ref={asciiVideoRef}
-              src="/ascii-animation (1).mp4"
-              className="home-hero-top-video w-full h-full object-contain object-[center_18%] md:object-cover md:object-[50%_48%]"
-              playsInline
-              muted
-              loop
-              autoPlay
-              preload="auto"
+            <AsciiWave
+              src="/hero-ascii-map.jpg"
+              active={!shouldReduceMotion && scrollProgress < 0.016}
+              onReady={() => setIsAsciiVideoReady(true)}
+              focusX={isMobile ? 0.35 : 0.5}
+              focusY={isMobile ? 0.6 : 0.68}
+              className="h-full w-full"
             />
           </div>
         </motion.div>

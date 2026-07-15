@@ -436,13 +436,17 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
 
         {/* Z-10: THE VIDEO CONTAINER */}
         <motion.div 
-          className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center"
-          style={{ opacity: videoContainerOpacity, scale: videoScale }}
+          className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center bg-black/60 bg-cover bg-center bg-no-repeat"
+          style={{ 
+            opacity: videoContainerOpacity, 
+            scale: videoScale,
+            backgroundImage: "url('/HeroImage.png')"
+          }}
         >
           <video
             ref={videoRef}
             src="/MotionMAWT.mp4"
-            className="home-hero-top-video w-full h-full object-cover object-center"
+            className="home-hero-top-video w-[82vw] max-w-[820px] aspect-video object-cover rounded-[10px] shadow-2xl"
             playsInline
             muted
             loop

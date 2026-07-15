@@ -179,13 +179,16 @@ export function CinematicHeroSection({ settings, dict }: CinematicHeroSectionPro
 
         {/* Video Player (Phase 3) */}
         <motion.div 
-          className="absolute inset-0 z-10 bg-black flex items-center justify-center"
-          style={{ opacity: finalVideoOpacity }}
+          className="absolute inset-0 z-10 bg-black/60 bg-cover bg-center bg-no-repeat flex items-center justify-center"
+          style={{ 
+            opacity: finalVideoOpacity,
+            backgroundImage: "url('/HeroImage.png')"
+          }}
         >
           <video
             ref={videoRef}
             src="/MotionMAWT.mp4"
-            className="w-full h-full object-cover"
+            className="w-[82vw] max-w-[820px] aspect-video object-cover rounded-[10px] shadow-2xl"
             playsInline
             muted
             onEnded={handleVideoEnded}

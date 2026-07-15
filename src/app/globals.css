@@ -356,7 +356,9 @@ body::after {
   left: 0;
   right: 0;
   top: 0;
-  height: 110px; /* Taller than the 71px header so the dissolve reads below the nav */
+  height: 150px; /* Well past the 71px header: each mask band gets ~19px, so the
+     weak-blur tail dies out slowly instead of collapsing to sharp over ~30px,
+     which read as a bottom border. */
   z-index: 79;
   pointer-events: none;
   transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);

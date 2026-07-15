@@ -104,6 +104,7 @@ export function CinematicHeroSection({ settings, dict }: CinematicHeroSectionPro
     
     return () => {
       document.body.style.overflow = '';
+      if (lenisRef.current) lenisRef.current.start();
     };
   }, [heroState]);
 

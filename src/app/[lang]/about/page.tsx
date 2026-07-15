@@ -5,6 +5,7 @@ import { JsonLd, breadcrumbLd, ORG_ID, SITE_URL } from "@/components/seo/structu
 import type { Locale } from "@/i18n-config";
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { AnimatedTitle } from "@/components/ui/animated-title";
 import { sectionTitleClass } from "@/components/ui/section-title-style";
 import { Handshake, Brain, Target, Zap } from "lucide-react";
@@ -244,8 +245,18 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: Lo
 
       {/* Bottom CTA */}
       {doc.bottomCtaH2 && (
-        <section className="bg-black text-white py-20 md:py-28 lg:py-36 text-center">
-          <div className="max-w-3xl mx-auto space-y-8 px-5 sm:px-8">
+        <section className="relative overflow-hidden bg-black text-white py-20 md:py-28 lg:py-36 text-center">
+          <div className="absolute inset-0 pointer-events-none select-none opacity-20 z-0">
+            <Image
+              src="/about-us-leaf.png"
+              alt=""
+              fill
+              sizes="100vw"
+              className="object-cover"
+              priority
+            />
+          </div>
+          <div className="relative z-10 max-w-3xl mx-auto space-y-8 px-5 sm:px-8">
             <AnimatedTitle
               as="h2"
               text={doc.bottomCtaH2}

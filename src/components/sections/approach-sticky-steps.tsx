@@ -517,10 +517,13 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     };
   }, [isMounted, isMobile, lockState, activeIndex, totalSteps]);
 
-  // Clean up timers on unmount
+  // Clean up timers and restart Lenis on unmount to prevent stuck scroll on page change
   useEffect(() => {
     return () => {
       if (safetyTimeoutRef.current) clearTimeout(safetyTimeoutRef.current);
+      if (lenisRef.current) {
+        lenisRef.current.start();
+      }
     };
   }, []);
 

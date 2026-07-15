@@ -440,7 +440,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           style={{
             y: transitionGradientY,
             background:
-              "linear-gradient(180deg, #000000 0%, #000000 10%, #001015 20%, #002B36 30%, #28725F 45%, #75DAB4 58%, #D5FFEF 66%, #FFFFFF 75%, #FFFFFF 100%)",
+              "linear-gradient(180deg, #000000 0%, #000000 10%, #001015 20%, #002B36 30%, #28725F 45%, #75DAB4 58%, #D5FFEF 66%, #F6F5F4 75%, #F6F5F4 100%)",
           }}
         />
 

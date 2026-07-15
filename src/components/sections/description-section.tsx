@@ -6,8 +6,8 @@ export function DescriptionSection({ dict }: { dict: any }) {
   return (
     <section
       aria-label="Company description"
-      className="bg-white pt-0 pb-12 md:pb-18 lg:pb-22"
-      style={{ backgroundColor: "#FFFFFF" }}
+      className="bg-[#F6F5F4] pt-0 pb-12 md:pb-18 lg:pb-22"
+      style={{ backgroundColor: "#F6F5F4" }}
     >
       <SectionReveal>
         <div className="site-container">

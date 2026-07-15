@@ -24,7 +24,7 @@ export function VisionSection({ dict, services }: { dict: any; services?: any[] 
               the services scroll up cleanly BEHIND the pinned title instead of
               showing through it. `self-start` stops the grid item stretching
               (required for sticky to engage). */}
-          <div className="lg:col-span-5 sticky top-0 lg:top-32 self-start h-fit z-10 pt-[87px] lg:pt-0 pb-16 lg:pb-0 bg-gradient-to-b from-white from-[80px] to-transparent lg:bg-none w-full">
+          <div className="lg:col-span-5 sticky top-0 lg:top-32 self-start h-fit z-10 pt-[87px] lg:pt-0 pb-16 lg:pb-0 bg-gradient-to-b from-[#F6F5F4] from-[80px] to-transparent lg:bg-none w-full">
             {/* Horizontal Divider — now pinned together with the text */}
             <div className="mb-4 h-px w-full bg-black/10" />
             <AnimatedTitle

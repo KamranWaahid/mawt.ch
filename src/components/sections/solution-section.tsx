@@ -34,7 +34,7 @@ export function SolutionSection({ dict }: { dict: any }) {
       className="relative overflow-hidden py-12 sm:py-16 md:py-24 lg:py-32"
     >
       <div className="site-container-wide">
-        <div className="sticky top-[71px] z-10 bg-gradient-to-b from-white from-75% to-transparent pt-4 pb-16 md:relative md:top-auto md:z-auto md:bg-none md:pt-0 md:pb-0 mb-10 sm:mb-14 w-full">
+        <div className="sticky top-[71px] z-10 bg-gradient-to-b from-[#F6F5F4] from-75% to-transparent pt-4 pb-16 md:relative md:top-auto md:z-auto md:bg-none md:pt-0 md:pb-0 mb-10 sm:mb-14 w-full">
           <div className="mb-4 h-px w-full bg-black/10 md:mb-10" />
 
           <h2

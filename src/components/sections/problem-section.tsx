@@ -61,8 +61,9 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
     
     const rect = containerRef.current.getBoundingClientRect();
     
-    // If text was fully revealed, reset back to false if the user scrolls completely above it
-    if (hasRevealedRef.current && rect.top >= 0) {
+    // If text was fully revealed, reset back to false if the user scrolls completely above it (rect.top > 20).
+    // We use a positive threshold to prevent immediate reset feedback loops during height collapse adjustment.
+    if (hasRevealedRef.current && rect.top > 20) {
       setRevealedState(false);
     }
     

@@ -192,6 +192,8 @@ export default async function FamilyPillarPage({ params }: Props) {
         title={copy.h1}
         description={dynamicSubhead}
         cta={{ label: copy.ctaPrimary, href: `/${lang}/${copy.ctaPrimaryHref}` }}
+        compact
+        flushTop
       />
 
       {/* Intro Narrative */}

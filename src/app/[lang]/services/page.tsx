@@ -143,6 +143,7 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
         eyebrow={dict.services.badge}
         title={dict.services.headline}
         subtitle={lang === "fr" ? "Cinq piliers d'expertise." : "Five pillars of expertise."}
+        compact
       />
       <FlatGrid 
         items={dict.services.pillars.map((pillar: any) => ({

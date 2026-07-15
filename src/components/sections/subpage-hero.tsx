@@ -20,6 +20,13 @@ interface SubpageHeroProps {
   };
   /** Suppress the default gradient (e.g. when the parent provides its own background) */
   noGradient?: boolean;
+  /** Tighter vertical rhythm: no viewport-height minimum, reduced padding
+   * around the title, so the next section is visible without scrolling.
+   * Used on the services catalogue where pages chain many sections. */
+  compact?: boolean;
+  /** Drop the fixed-navbar clearance from the top padding — for pages where
+   * an element above the hero (e.g. a breadcrumb) already provides it. */
+  flushTop?: boolean;
   /** Legacy prop — maps to eyebrow for backward compat */
   badge?: string;
 }
@@ -111,6 +118,8 @@ export function SubpageHero({
   description,
   cta,
   noGradient = false,
+  compact = false,
+  flushTop = false,
   badge,
 }: SubpageHeroProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -123,7 +132,16 @@ export function SubpageHero({
   useMotionValueEvent(scrollYProgress, "change", setScrollProgress);
 
   return (
-    <section ref={sectionRef} className="relative isolate overflow-hidden pt-[132px] pb-14 sm:pt-[150px] md:min-h-[72vh] md:pt-[170px] lg:min-h-[76vh]">
+    <section
+      ref={sectionRef}
+      className={
+        compact
+          ? flushTop
+            ? "relative isolate overflow-hidden pt-6 pb-8 md:pt-10 md:pb-10"
+            : "relative isolate overflow-hidden pt-[112px] pb-8 sm:pt-[124px] md:pt-[136px] md:pb-10"
+          : "relative isolate overflow-hidden pt-[132px] pb-14 sm:pt-[150px] md:min-h-[72vh] md:pt-[170px] lg:min-h-[76vh]"
+      }
+    >
       {!noGradient && (
         <div
           className="pointer-events-none absolute inset-0 -z-10"
@@ -143,7 +161,13 @@ export function SubpageHero({
         />
       )}
 
-      <div className="site-container-wide relative z-10 flex min-h-[calc(72vh-220px)] flex-col justify-center md:justify-end md:pb-[12vh]">
+      <div
+        className={
+          compact
+            ? "site-container-wide relative z-10"
+            : "site-container-wide relative z-10 flex min-h-[calc(72vh-220px)] flex-col justify-center md:justify-end md:pb-[12vh]"
+        }
+      >
         <div className="max-w-[1240px]">
           {eyebrowLabel && <span className="sr-only">{eyebrowLabel}</span>}
 

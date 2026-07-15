@@ -333,6 +333,8 @@ export default async function ServiceDetailPage({ params }: Props) {
             eyebrow={getFamilyTitle(canonicalFamily, lang as Locale)}
             title={svc.heroH1 || svc.title}
             noGradient={true}
+            compact
+            flushTop
           />
         </div>
       </div>

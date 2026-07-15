@@ -170,7 +170,8 @@ export function AsciiWave({ src, active, onReady, fit = "contain", focusX = 0.5,
       canvas.style.pointerEvents = 'none';
 
       const offsetX = (rect.width - VIEWPORT_LOGICAL_WIDTH * renderScale) / 2;
-      const offsetY = (rect.height - VIEWPORT_LOGICAL_HEIGHT * renderScale) / 2;
+      const isMobile = rect.width < 768;
+      const offsetY = (rect.height - VIEWPORT_LOGICAL_HEIGHT * renderScale) / 2 - (isMobile ? rect.height * 0.2 : 0);
 
       ctx.setTransform(dpr * renderScale, 0, 0, dpr * renderScale, dpr * offsetX, dpr * offsetY);
       paint();

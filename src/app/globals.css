@@ -351,64 +351,57 @@ body::after {
   left: 0;
   right: 0;
   top: 0;
-  height: 132px;
+  height: 96px; /* Matches header with a gentle overflow gradient */
   z-index: 79;
   pointer-events: none;
-  transition: opacity 0.4s ease;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   opacity: 0;
   isolation: isolate;
-  background: rgba(255, 255, 255, 0.012);
-  backdrop-filter: blur(34px) saturate(1.18);
-  -webkit-backdrop-filter: blur(34px) saturate(1.18);
+
+  /* Apply mask gradient ONLY to parent element to keep backdrop-filter stable in Chrome/Safari */
   mask-image: linear-gradient(
     to bottom,
     black 0%,
-    black 24%,
-    rgba(0, 0, 0, 0.82) 50%,
-    rgba(0, 0, 0, 0.28) 78%,
+    black 40%,
+    rgba(0, 0, 0, 0.7) 65%,
+    rgba(0, 0, 0, 0.2) 85%,
     transparent 100%
   );
   -webkit-mask-image: linear-gradient(
     to bottom,
     black 0%,
-    black 24%,
-    rgba(0, 0, 0, 0.82) 50%,
-    rgba(0, 0, 0, 0.28) 78%,
+    black 40%,
+    rgba(0, 0, 0, 0.7) 65%,
+    rgba(0, 0, 0, 0.2) 85%,
     transparent 100%
   );
-  
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
 }
 
 .navbar-blur-backdrop.visible {
   opacity: 1;
 }
 
-.navbar-blur-backdrop::before,
-.navbar-blur-backdrop::after {
-  content: "";
+.navbar-blur-backdrop-inner {
   position: absolute;
   inset: 0;
-  pointer-events: none;
-  background: rgba(255, 255, 255, 0.01);
   transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  backdrop-filter: blur(28px) saturate(1.2);
+  -webkit-backdrop-filter: blur(28px) saturate(1.2);
 }
 
-.navbar-blur-backdrop::before {
-  backdrop-filter: blur(18px) saturate(1.08);
-  -webkit-backdrop-filter: blur(18px) saturate(1.08);
-  mask-image: linear-gradient(to bottom, black 0%, rgba(0, 0, 0, 0.72) 48%, transparent 82%);
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, rgba(0, 0, 0, 0.72) 48%, transparent 82%);
+/* Premium Light Mode Glass tint */
+.navbar-blur-backdrop.is-light-bg .navbar-blur-backdrop-inner {
+  background: rgba(246, 245, 244, 0.68);
+  border-bottom: 1.5px solid rgba(0, 0, 0, 0.035);
 }
 
-.navbar-blur-backdrop::after {
-  backdrop-filter: blur(52px) saturate(1.22);
-  -webkit-backdrop-filter: blur(52px) saturate(1.22);
-  mask-image: linear-gradient(to bottom, black 0%, rgba(0, 0, 0, 0.9) 28%, transparent 62%);
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, rgba(0, 0, 0, 0.9) 28%, transparent 62%);
+/* Premium Dark Mode Glass tint */
+.navbar-blur-backdrop.is-dark-bg .navbar-blur-backdrop-inner {
+  background: rgba(0, 0, 0, 0.38);
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.035);
 }
 
 .home-hero-video-mask {

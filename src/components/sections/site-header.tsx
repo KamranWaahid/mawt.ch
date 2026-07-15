@@ -184,8 +184,10 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
 
       {/* Smooth glass blur background (does not inherit mix-blend-difference to avoid color inversion) */}
       <div
-        className={`navbar-blur-backdrop ${isPastHero ? "visible" : ""}`}
-      />
+        className={`navbar-blur-backdrop ${isPastHero ? "visible" : ""} ${isDark ? "is-light-bg" : "is-dark-bg"}`}
+      >
+        <div className="navbar-blur-backdrop-inner" />
+      </div>
 
       <motion.header
         style={{ viewTransitionName: "site-header" }}

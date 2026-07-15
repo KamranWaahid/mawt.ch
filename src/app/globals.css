@@ -377,13 +377,11 @@ body::after {
 /* Premium Light Mode Glass tint */
 .navbar-blur-backdrop.is-light-bg .navbar-blur-backdrop-inner {
   background: transparent;
-  border-bottom: 1.5px solid rgba(0, 0, 0, 0.035);
 }
 
 /* Premium Dark Mode Glass tint */
 .navbar-blur-backdrop.is-dark-bg .navbar-blur-backdrop-inner {
   background: transparent;
-  border-bottom: 1.5px solid rgba(255, 255, 255, 0.035);
 }
 
 .home-hero-video-mask {

@@ -28,24 +28,25 @@ type AsciiWaveProps = {
   className?: string;
 };
 
-/** Glyph pools per brightness tier — dim cells swap among dim glyphs only, so
- * the flicker never makes a dark edge suddenly read as a bright core. */
-const TIER_POOLS = ["8X", "8X0", "0SX8", "S0#8", "#S@0", "@#S", "@#", "@@#"] as const;
+/** Glyph pools per brightness tier — the reference frame uses @ # S 0 only.
+ * Dim cells swap among dim glyphs, so the flicker never makes a dark edge
+ * suddenly read as a bright core. */
+const TIER_POOLS = ["0", "0S", "S0", "S0#", "#S0", "@#S", "@#", "@@#"] as const;
 
-/** MAWT green ramp, darkest visible cell → hottest core. The dark end stays
- * clearly readable on black, like the deep blues of the reference frame. */
+/** MAWT ramp, darkest visible cell → white-hot core, mirroring the reference
+ * where the heart of the wave burns out to white. */
 const COLOR_STOPS: [number, number, number][] = [
   [22, 66, 50],    // #164232
-  [31, 94, 71],    // #1F5E47
-  [45, 128, 96],   // #2D8060
-  [66, 160, 122],  // #42A07A
-  [92, 190, 150],  // #5CBE96
+  [35, 104, 79],   // #23684F
+  [56, 143, 108],  // #388F6C
+  [86, 180, 141],  // #56B48D
   [117, 218, 180], // #75DAB4 — brand
-  [168, 237, 210], // #A8EDD2
-  [213, 255, 239], // #D5FFEF
+  [176, 240, 214], // #B0F0D6
+  [225, 255, 243], // #E1FFF3
+  [255, 255, 255], // #FFFFFF — core
 ];
 
-const CELL = 13;          // grid cell in CSS px
+const CELL = 22;          // grid cell in CSS px — chunky glyphs, as in the reference
 const TICK_MS = 100;      // flicker cadence, mirrors the reference script
 const LUM_FLOOR = 0.05;   // below this a cell stays empty (pure background)
 
@@ -168,8 +169,8 @@ export function AsciiWave({ src, active, onReady, focusX = 0.5, focusY = 0.48, c
 
     const tick = () => {
       if (!activeRef.current || document.hidden || cells.length === 0) return;
-      // Mutate a random slice of lit cells, as the reference script does.
-      const mutations = 70 + Math.floor(Math.random() * 100);
+      // Mutate a random slice of lit cells (~5-9%), as the reference script does.
+      const mutations = Math.max(30, Math.floor(cells.length * (0.05 + Math.random() * 0.04)));
       for (let i = 0; i < mutations; i++) {
         const c = cells[Math.floor(Math.random() * cells.length)];
         const pool = TIER_POOLS[c.tier];

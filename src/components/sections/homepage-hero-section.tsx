@@ -428,7 +428,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           >
             <AsciiWave
               src="/hero-ascii-map.jpg"
-              active={!shouldReduceMotion && scrollProgress < 0.016}
+              active={scrollProgress < 0.016}
               onReady={() => setIsAsciiVideoReady(true)}
               focusX={isMobile ? 0.35 : 0.5}
               focusY={isMobile ? 0.6 : 0.68}

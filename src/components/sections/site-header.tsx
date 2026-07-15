@@ -182,11 +182,18 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
         </Link>
       </motion.div>
 
-      {/* Smooth glass blur background (does not inherit mix-blend-difference to avoid color inversion) */}
+      {/* Progressive glass blur (does not inherit mix-blend-difference to avoid color inversion).
+          Eight stacked backdrop-filter layers (::before + 6 divs + ::after), each masked to a
+          sliding band, so the blur is strongest at the top and fully dissolved at the bottom. */}
       <div
         className={`navbar-blur-backdrop ${isPastHero ? "visible" : ""} ${isDark ? "is-light-bg" : "is-dark-bg"}`}
       >
-        <div className="navbar-blur-backdrop-inner" />
+        <div />
+        <div />
+        <div />
+        <div />
+        <div />
+        <div />
       </div>
 
       <motion.header

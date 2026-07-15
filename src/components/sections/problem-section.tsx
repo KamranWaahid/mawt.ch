@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useEffect, useCallback } from "react";
-import { motion, useTransform, MotionValue, useMotionValue } from "motion/react";
+import { useRef, useEffect, useCallback, useState } from "react";
+import { motion, useTransform, MotionValue, useMotionValue, useMotionValueEvent } from "motion/react";
 import { useLenis } from "lenis/react";
 
 type ProblemCopy = {
@@ -11,13 +11,16 @@ type ProblemCopy = {
 const ScrubWord = ({ 
   children, 
   progress, 
-  range 
+  range,
+  hasRevealed
 }: { 
   children: React.ReactNode; 
   progress: MotionValue<number>; 
   range: [number, number];
+  hasRevealed: boolean;
 }) => {
-  const opacity = useTransform(progress, range, [0.15, 1]);
+  const opacityTransform = useTransform(progress, range, [0.15, 1]);
+  const opacity = hasRevealed ? 1 : opacityTransform;
   return (
     <motion.span style={{ opacity }} className="inline-block will-change-[opacity]">
       {children}
@@ -33,6 +36,15 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
   // on complex pages with Lenis, pinned sections, or dynamic heights.
   // Manual DOM measurement guarantees pixel-perfect scroll scrubbing.
   const progressValue = useMotionValue(0);
+  const [hasRevealed, setHasRevealed] = useState(false);
+
+  useMotionValueEvent(progressValue, "change", (latest) => {
+    if (latest >= 0.80) {
+      setHasRevealed(true);
+    } else if (latest <= 0.05) {
+      setHasRevealed(false);
+    }
+  });
 
   const updateScrollProgress = useCallback(() => {
     if (!containerRef.current || typeof window === "undefined") return;
@@ -94,7 +106,7 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
               
               return (
                 <span key={i} className="inline">
-                  <ScrubWord progress={progressValue} range={[start, end]}>
+                  <ScrubWord progress={progressValue} range={[start, end]} hasRevealed={hasRevealed}>
                     {word}
                   </ScrubWord>
                   {i < words.length - 1 ? " " : null}

@@ -47,11 +47,14 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
     const lenis = lenisRef.current;
     if (typeof window === "undefined" || !lenis || !containerRef.current) return;
 
+    const viewportHeight = window.innerHeight;
+    const scrollAdjustment = 3 * viewportHeight;
+
     if (revealed) {
-      // Transitioning 400vh -> 100vh: align the scroll position perfectly with the top of the container.
-      // This matches the visual position of the sticky child container, preventing any jump upwards.
-      const rect = containerRef.current.getBoundingClientRect();
-      const targetScroll = lenis.scroll + rect.top;
+      // Transitioning 400vh -> 100vh when scrolled completely past it:
+      // Decrease the scroll position by 300vh to compensate for document height shrinkage.
+      // Since this happens when the section is completely off-screen, there is no visual jump or blink.
+      const targetScroll = lenis.scroll - scrollAdjustment;
       lenis.scrollTo(targetScroll, { immediate: true });
     }
   }, []);
@@ -61,9 +64,8 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
     
     const rect = containerRef.current.getBoundingClientRect();
     
-    // If text was fully revealed, reset back to false if the user scrolls completely above it (rect.top > 20).
-    // We use a positive threshold to prevent immediate reset feedback loops during height collapse adjustment.
-    if (hasRevealedRef.current && rect.top > 20) {
+    // If text was fully revealed, reset back to false only when it has completely passed the screen going upwards (rect.top >= window.innerHeight)
+    if (hasRevealedRef.current && rect.top >= window.innerHeight) {
       setRevealedState(false);
     }
     
@@ -79,8 +81,8 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
     
     progressValue.set(clampedProgress);
 
-    // Trigger reveal lock once scroll progress is at or past 80%
-    if (clampedProgress >= 0.80 && !hasRevealedRef.current) {
+    // Trigger reveal lock only when progress reaches 99% (completely past and faded out)
+    if (clampedProgress >= 0.99 && !hasRevealedRef.current) {
       setRevealedState(true);
     }
   }, [progressValue, setRevealedState]);

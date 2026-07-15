@@ -37,6 +37,7 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
   // Manual DOM measurement guarantees pixel-perfect scroll scrubbing.
   const progressValue = useMotionValue(0);
   const [hasRevealed, setHasRevealed] = useState(false);
+  const isScrollingBypass = useRef(false);
 
   useMotionValueEvent(progressValue, "change", (latest) => {
     if (latest >= 0.80) {
@@ -66,8 +67,35 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
     progressValue.set(clampedProgress);
   }, [progressValue]);
 
-  useLenis(() => {
+  useLenis((lenis) => {
     updateScrollProgress();
+
+    const progress = progressValue.get();
+    
+    // Reset bypass tracking if the user manually scrolls down/forward
+    if (lenis.direction === 1 && isScrollingBypass.current) {
+      isScrollingBypass.current = false;
+    }
+
+    // If the text is fully revealed, and the user scrolls up, and we are inside the sticky range,
+    // initiate a smooth scroll to the top of the section (bypassing the 400vh lock)
+    if (
+      hasRevealed && 
+      lenis.direction === -1 && 
+      progress > 0.05 && 
+      progress < 0.95 && 
+      !isScrollingBypass.current
+    ) {
+      isScrollingBypass.current = true;
+      lenis.scrollTo(containerRef.current, {
+        offset: 0,
+        duration: 1.2,
+        easing: (t) => 1 - Math.pow(1 - t, 4), // smooth ease out
+        onComplete: () => {
+          isScrollingBypass.current = false;
+        }
+      });
+    }
   });
 
   useEffect(() => {

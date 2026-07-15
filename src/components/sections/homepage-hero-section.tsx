@@ -601,21 +601,20 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           style={{ opacity: heroContentOpacity }}
         >
           {/* Desktop Text */}
-          <div className="hidden lg:block relative h-full w-full max-w-[1760px] mx-auto">
-
-            <motion.div className="absolute left-[2.5%] top-[62%]" style={{ y: desktopContentY }}>
+          <div className="hidden lg:block relative h-full w-full">
+            <motion.div className="absolute left-[2.5vw] top-[62%]" style={{ y: desktopContentY }}>
               <GeometricSymbol className="h-[4.35cqw] w-[7.03cqw] max-h-[56px] max-w-[90px] text-white" />
             </motion.div>
-            <motion.p className="absolute left-[2.5%] top-[74%] w-[43%] text-[2.45cqw] font-normal leading-[1.16] tracking-[-0.02em] text-white" style={{ y: desktopContentY }}>
+            <motion.p className="absolute left-[2.5vw] top-[74%] w-[43%] text-[2.45cqw] font-normal leading-[1.16] tracking-[-0.02em] text-white" style={{ y: desktopContentY }}>
               {dict.statement}
             </motion.p>
-            <motion.div className="absolute left-[2.85%] bottom-[6%]" style={{ y: desktopContentY }}>
+            <motion.div className="absolute left-[2.5vw] bottom-[6%]" style={{ y: desktopContentY }}>
               <Link href={settings.ctaHref} className="pointer-events-auto inline-flex items-center text-[1.17cqw] font-normal leading-none text-white">
                 <span aria-hidden="true" className="mr-[0.46875cqw]">→</span>
                 {dict.cta}
               </Link>
             </motion.div>
-            <motion.p className="absolute left-[65.5%] bottom-[6%] w-[30.5%] text-[1.17cqw] font-normal leading-[1.35] tracking-[-0.01em] text-white/74" style={{ y: desktopContentY }}>
+            <motion.p className="absolute right-[2.5vw] bottom-[6%] w-[30.5%] text-[1.17cqw] font-normal leading-[1.35] tracking-[-0.01em] text-white/74" style={{ y: desktopContentY }}>
               <span className="text-white">MAWT is a</span> <SwissMark /> {dict.description}
             </motion.p>
           </div>

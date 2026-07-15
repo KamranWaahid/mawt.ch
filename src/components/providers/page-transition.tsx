@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion, type Variants } from "motion/react";
 import { ReactNode, useEffect, createContext, useContext } from "react";
+import { useLenis } from "lenis/react";
 
 /**
  * PAGE TRANSITION — scroll-safe redesign
@@ -69,6 +70,7 @@ const reducedVariants: Variants = {
 export function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const shouldReduceMotion = useReducedMotion();
+  const lenis = useLenis();
 
   useEffect(() => {
     isInitialLoad = false;
@@ -95,7 +97,9 @@ export function PageTransition({ children }: { children: ReactNode }) {
         className="w-full"
         onAnimationStart={() => {
           // Scroll to top on page change — no lock needed
-          if (typeof window !== "undefined") {
+          if (lenis) {
+            lenis.scrollTo(0, { immediate: true });
+          } else if (typeof window !== "undefined") {
             window.scrollTo({ top: 0 });
           }
         }}

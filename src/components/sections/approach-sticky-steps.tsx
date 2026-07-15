@@ -59,14 +59,13 @@ function AnimatedWords({
 function getStepAnimationDuration(step: ApproachStep, isReversing: boolean) {
   const wordsT = step.title.split(" ").filter(Boolean).length;
   const wordsB = step.body.split(" ").filter(Boolean).length;
-
+  const maxWords = Math.max(wordsT, wordsB);
   if (isReversing) {
-    const maxWords = Math.max(wordsT, wordsB);
-    return Math.min(500, (maxWords * 0.008 + 0.25) * 1000);
+    return Math.min(300, (maxWords * 0.008 + 0.15) * 1000);
   } else {
-    const durationT = 0.02 + wordsT * 0.025 + 0.65;
-    const durationB = 0.16 + wordsB * 0.025 + 0.65;
-    return Math.min(1200, Math.max(durationT, durationB) * 1000);
+    const durationT = 0.02 + wordsT * 0.015 + 0.35;
+    const durationB = 0.16 + wordsB * 0.015 + 0.35;
+    return Math.min(750, Math.max(durationT, durationB) * 1000);
   }
 }
 
@@ -608,7 +607,7 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
       <section
         ref={containerRef}
         className="relative z-10 block w-full bg-[#F6F5F4]"
-        style={{ height: `${totalSteps * 60}vh` }}
+        style={{ height: `${totalSteps * 40}vh` }}
         aria-label="Approach steps (mobile)"
       >
         <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#F6F5F4]">

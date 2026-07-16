@@ -200,7 +200,9 @@ function HeroGradientStatement({
 }) {
   const words = text.split(" ");
   // Text transitions to dark when white background reaches it, then fades out
-  const exitOpacity = useTransform(progress, [0.95, 0.98], [1, 0]);
+  // only at the very end of the pinned track: fading at 0.95-0.98 left ~2% of
+  // scroll on an empty beige background before the section unpinned.
+  const exitOpacity = useTransform(progress, [0.975, 0.998], [1, 0]);
   const textColor = useTransform(progress, [0.86, 0.95], ["#F6F5F4", "#000000"]);
 
   return (
@@ -419,8 +421,8 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     ["100vh", "0vh", "-150vh", "-300vh"]
   );
   
-  const transitionCtaOpacity = useTransform(scrollYProgress, [0.75, 0.82, 0.88, 0.96], [0, 1, 1, 0]);
-  const transitionCtaVisibility = useTransform(scrollYProgress, (p) => p >= 0.65 && p <= 0.98 ? "visible" : "hidden");
+  const transitionCtaOpacity = useTransform(scrollYProgress, [0.75, 0.82, 0.93, 0.99], [0, 1, 1, 0]);
+  const transitionCtaVisibility = useTransform(scrollYProgress, (p) => p >= 0.65 && p <= 0.995 ? "visible" : "hidden");
 
   const navHref = (route: string) => {
     if (route === "news") return `/${lang}/news`;

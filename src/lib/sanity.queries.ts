@@ -73,8 +73,11 @@ const homeQuery = groq`
 }
 `;
 
+// !(hidden == true): unfinished/hidden projects must not exist ANYWHERE on
+// the site — the listing already filters them, and without this guard the
+// detail URL kept rendering 200 (reachable, indexable) for hidden projects.
 const projectBySlugQuery = groq`
-*[_type == "project" && slug.current == $slug][0]{
+*[_type == "project" && slug.current == $slug && !(hidden == true)][0]{
   _id,
   _createdAt,
   _updatedAt,
@@ -383,14 +386,15 @@ export const serviceBySlugQuery = groq`
   icon,
   longDescription,
   features,
-  featuredProjects[]->{
+  "featuredProjects": featuredProjects[]->{
     _id,
     title,
     "slug": slug.current,
     coverImage,
     tags,
-    year
-  },
+    year,
+    hidden
+  }[!(hidden == true)],
   seo
 }
 `;

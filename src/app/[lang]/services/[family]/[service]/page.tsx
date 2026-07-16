@@ -54,15 +54,16 @@ const serviceDetailPageQuery = groq`
     comparisonTable{ title, columns, rows[]{ cells } },
     faq[]{ question, answer },
     cta,
-    featuredProjects[]->{
+    "featuredProjects": featuredProjects[]->{
       _id,
       title,
       "slug": slug.current,
       excerpt,
       coverImage,
       year,
-      tags
-    },
+      tags,
+      hidden
+    }[!(hidden == true)],
     relatedServices[]->{
       _id,
       title,

@@ -168,8 +168,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Project case studies exist per language but share slugs across locales;
   // use the LOCALIZED listing prefix (the /fr/work/<slug> form 308-redirects).
+  // !(hidden == true): hidden/unfinished projects must not leak into the
+  // sitemap while every other surface (listing, detail 404) excludes them.
   const projects = await client.fetch<{ slug: string; _updatedAt?: string }[]>(
-    groq`*[_type == "project" && !(_id in path("drafts.**")) && defined(slug.current)]{ "slug": slug.current, _updatedAt }`,
+    groq`*[_type == "project" && !(_id in path("drafts.**")) && defined(slug.current) && !(hidden == true)]{ "slug": slug.current, _updatedAt }`,
   );
   // Slugs are shared across locales: keep the most recent _updatedAt per slug.
   const projectModBySlug = new Map<string, string>();

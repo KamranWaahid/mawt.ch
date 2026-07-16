@@ -1,0 +1,149 @@
+- generic [active] [ref=f21e1]:
+  - generic [ref=f21e3]:
+    - link "Skip to content" [ref=f21e4] [cursor=pointer]:
+      - /url: "#main-content"
+    - link "MAWT - Marketing & Web Technologies home" [ref=f21e5] [cursor=pointer]:
+      - /url: /en
+      - img "MAWT Logo" [ref=f21e6]
+    - banner [ref=f21e7]:
+      - navigation "Primary" [ref=f21e8]:
+        - generic [ref=f21e10]:
+          - button "Passer en français" [ref=f21e11]: FR
+          - generic [ref=f21e12]: /
+          - button "Change language" [ref=f21e13]: EN
+          - button "Toggle menu" [ref=f21e14]
+    - main [ref=f21e16]:
+      - generic [ref=f21e19]:
+        - generic [ref=f21e22]:
+          - generic [ref=f21e23]: Contact Us
+          - heading "Let's talk about what AI and automation can change in your business. Get in touch with us with any question!" [level=1] [ref=f21e24]:
+            - generic [ref=f21e25]:
+              - generic [ref=f21e26]: Let's
+              - generic [ref=f21e28]: talk
+              - generic [ref=f21e30]: about
+              - generic [ref=f21e32]: what
+              - generic [ref=f21e34]: AI
+              - generic [ref=f21e36]: and
+              - generic [ref=f21e38]: automation
+              - generic [ref=f21e40]: can
+              - generic [ref=f21e42]: change
+              - generic [ref=f21e44]: in
+              - generic [ref=f21e46]: your
+              - generic [ref=f21e48]: business.
+            - generic [ref=f21e50]:
+              - generic [ref=f21e51]: Get
+              - generic [ref=f21e53]: in
+              - generic [ref=f21e55]: touch
+              - generic [ref=f21e57]: with
+              - generic [ref=f21e59]: us
+              - generic [ref=f21e61]: with
+              - generic [ref=f21e63]: any
+              - generic [ref=f21e65]: question!
+        - generic [ref=f21e68]:
+          - generic [ref=f21e69]:
+            - generic [ref=f21e70]:
+              - heading "Inquiries" [level=3] [ref=f21e71]
+              - generic [ref=f21e72]:
+                - link "info@mawt.ch" [ref=f21e73] [cursor=pointer]:
+                  - /url: mailto:info@mawt.ch
+                - link "+41 76 636 33 33" [ref=f21e77] [cursor=pointer]:
+                  - /url: tel:+41 76 636 33 33
+            - generic [ref=f21e80]:
+              - heading "Our presence" [level=3] [ref=f21e81]
+              - generic [ref=f21e83]:
+                - generic [ref=f21e84]:
+                  - generic [ref=f21e85]: Carouge — Genève
+                  - generic [ref=f21e86]: HQ
+                - paragraph [ref=f21e87]: Rue de la Fontenette 23, 1227 Carouge
+            - generic [ref=f21e88]:
+              - heading "Social" [level=3] [ref=f21e89]
+              - generic [ref=f21e90]:
+                - link "LinkedIn" [ref=f21e91] [cursor=pointer]:
+                  - /url: http://linkedin.com/in/mawt.ch
+                - link "Instagram" [ref=f21e92] [cursor=pointer]:
+                  - /url: http://instagram.com/mawt.ch
+          - generic [ref=f21e95]:
+            - progressbar [ref=f21e96]
+            - generic [ref=f21e101]:
+              - generic [ref=f21e102]:
+                - heading "Let's start with the basics" [level=2] [ref=f21e103]
+                - generic [ref=f21e104]:
+                  - generic [ref=f21e105]:
+                    - generic [ref=f21e106]: Name
+                    - textbox "Name" [ref=f21e107]:
+                      - /placeholder: Your name
+                  - generic [ref=f21e108]:
+                    - generic [ref=f21e109]: Email
+                    - textbox "Email" [ref=f21e110]:
+                      - /placeholder: hello@company.com
+              - button "Continue" [ref=f21e112]
+      - generic [ref=f21e116]:
+        - generic [ref=f21e117]:
+          - generic [ref=f21e118]:
+            - img "MAWT Logo" [ref=f21e120]
+            - generic [ref=f21e121]:
+              - link "LinkedIn" [ref=f21e122] [cursor=pointer]:
+                - /url: http://linkedin.com/in/mawt.ch
+              - link "Instagram" [ref=f21e125] [cursor=pointer]:
+                - /url: http://instagram.com/mawt.ch
+            - button "English ▼" [ref=f21e128]:
+              - generic [ref=f21e132]: English
+              - generic [ref=f21e133]: ▼
+          - generic [ref=f21e134]:
+            - heading "Company" [level=4] [ref=f21e135]
+            - list [ref=f21e136]:
+              - listitem [ref=f21e137]:
+                - link "About us" [ref=f21e138] [cursor=pointer]:
+                  - /url: /en/about
+              - listitem [ref=f21e139]:
+                - link "Contact" [ref=f21e140] [cursor=pointer]:
+                  - /url: /en/contact
+              - listitem [ref=f21e141]:
+                - link "Clients & partners" [ref=f21e142] [cursor=pointer]:
+                  - /url: /en/partners
+          - generic [ref=f21e143]:
+            - heading "Services" [level=4] [ref=f21e144]
+            - list [ref=f21e145]:
+              - listitem [ref=f21e146]:
+                - link "All services" [ref=f21e147] [cursor=pointer]:
+                  - /url: /en/services
+              - listitem [ref=f21e148]:
+                - link "Our process" [ref=f21e149] [cursor=pointer]:
+                  - /url: /en/approach
+              - listitem [ref=f21e150]:
+                - link "Projects" [ref=f21e151] [cursor=pointer]:
+                  - /url: /en/work
+          - generic [ref=f21e152]:
+            - heading "Resources" [level=4] [ref=f21e153]
+            - list [ref=f21e154]:
+              - listitem [ref=f21e155]:
+                - link "Blog" [ref=f21e156] [cursor=pointer]:
+                  - /url: /en/news
+              - listitem [ref=f21e157]:
+                - link "FAQs" [ref=f21e158] [cursor=pointer]:
+                  - /url: /en/faqs
+          - generic [ref=f21e159]:
+            - heading "Legal" [level=4] [ref=f21e160]
+            - list [ref=f21e161]:
+              - listitem [ref=f21e162]:
+                - link "Privacy" [ref=f21e163] [cursor=pointer]:
+                  - /url: /en/privacy
+              - listitem [ref=f21e164]:
+                - link "Terms of service" [ref=f21e165] [cursor=pointer]:
+                  - /url: /en/terms
+              - listitem [ref=f21e166]:
+                - link "Cookies" [ref=f21e167] [cursor=pointer]:
+                  - /url: /en/cookies
+              - listitem [ref=f21e168]:
+                - link "Security" [ref=f21e169] [cursor=pointer]:
+                  - /url: /en/security
+          - generic [ref=f21e170]:
+            - heading "Regions" [level=4] [ref=f21e171]
+            - list [ref=f21e172]:
+              - listitem [ref=f21e173]:
+                - link "Geneva" [ref=f21e174] [cursor=pointer]:
+                  - /url: /en/geneva
+        - generic [ref=f21e175]:
+          - button "Cookie Settings" [ref=f21e177]
+          - paragraph [ref=f21e178]: ©2026 MAWT. All Rights Reserved.
+  - button "Open Next.js Dev Tools" [ref=f21e184] [cursor=pointer]

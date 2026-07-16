@@ -64,9 +64,18 @@ export async function submitContactForm(
   prevState: ContactFormState,
   formData: FormData
 ): Promise<ContactFormState> {
-  // Rate Limit: 5 submissions per hour per IP (BUG-004: windowSeconds, not ms)
   const lang = formData.get("lang") === "fr" ? "fr" : "en";
   const messages = contactMessages[lang];
+
+  // Honeypot: the visible form carries an off-screen "company" field humans
+  // never fill. A value means a bot — pretend success, store nothing.
+  const honeypot = formData.get("company");
+  if (typeof honeypot === "string" && honeypot.trim() !== "") {
+    logger.warn("Contact honeypot triggered — submission dropped");
+    return { success: true };
+  }
+
+  // Rate Limit: 5 submissions per hour per IP (BUG-004: windowSeconds, not ms)
   const limiter = await rateLimit("contact", 5, 60 * 60);
   if (!limiter.success) {
     return { error: messages.rateLimit };

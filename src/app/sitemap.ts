@@ -5,6 +5,7 @@ import {
   SITE_URL,
   localizedHref,
   familySlugForLang,
+  FAMILY_ORDER,
 } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/lib/routing/url-map";
 
@@ -58,6 +59,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     out.push(
       ...entry(
         { fr: localizedHref(key, "fr"), en: localizedHref(key, "en") },
+        0.8,
+      ),
+    );
+  }
+
+  // Service family pillar pages (7 families × 2 locales).
+  for (const family of FAMILY_ORDER) {
+    out.push(
+      ...entry(
+        {
+          fr: `/fr/services/${familySlugForLang(family, "fr")}`,
+          en: `/en/services/${familySlugForLang(family, "en")}`,
+        },
         0.8,
       ),
     );

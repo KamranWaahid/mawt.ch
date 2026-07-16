@@ -85,14 +85,32 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const descParts = copy.metaDescription.split(". ");
   const descSuffix = descParts.length > 1 ? descParts.slice(1).join(". ") : copy.metaDescription;
-  const dynamicMetaDescription = servicesListString
-    ? `${servicesListString}. ${descSuffix}`
-    : copy.metaDescription;
+  // With the larger families the joined service list can blow past any sane
+  // meta-description length — fall back to the authored copy in that case.
+  const listDescription = `${servicesListString}. ${descSuffix}`;
+  const dynamicMetaDescription =
+    servicesListString && listDescription.length <= 170
+      ? listDescription
+      : copy.metaDescription;
+
+  // The pillar copy metaTitles end in "| MAWT" while the layout template
+  // appends the suffix too — mark them absolute to avoid "| MAWT | MAWT".
+  const title = /\|\s*MAWT\s*$/i.test(copy.metaTitle)
+    ? { absolute: copy.metaTitle }
+    : copy.metaTitle;
 
   return {
-    title: copy.metaTitle,
+    title,
     description: dynamicMetaDescription,
     alternates: hreflangAlternates(`/${lang}/services/${family}`, lang as Locale),
+    openGraph: {
+      title: copy.metaTitle.replace(/\s*\|\s*MAWT\s*$/i, ""),
+      description: copy.metaDescription,
+      url: `https://mawt.ch/${lang}/services/${family}`,
+      siteName: "MAWT",
+      type: "website",
+      locale: lang === "fr" ? "fr_CH" : "en_US",
+    },
   };
 }
 

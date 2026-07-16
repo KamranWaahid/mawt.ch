@@ -1,0 +1,519 @@
+- generic [active] [ref=f7e1]:
+  - generic [ref=f7e3]:
+    - link "Skip to content" [ref=f7e4] [cursor=pointer]:
+      - /url: "#main-content"
+    - banner:
+      - navigation "Primary":
+        - link "MAWT Solutions AG home":
+          - /url: /fr
+          - img "MAWT Logo"
+        - generic:
+          - generic:
+            - link "Projets":
+              - /url: /fr/projets
+            - link "Approche":
+              - /url: /fr/approach
+            - link "Services":
+              - /url: /fr/services
+            - link "Actualités":
+              - /url: /fr/news
+            - link "À propos":
+              - /url: /fr/a-propos
+            - link "Contact":
+              - /url: /fr/contact
+            - generic: —
+            - button "Passer en français": FR
+            - generic: /
+            - button "Change language": EN
+    - main [ref=f7e5]:
+      - generic [ref=f7e7]:
+        - generic [ref=f7e9]:
+          - generic:
+            - generic:
+              - generic:
+                - paragraph: Nous créons des expériences pour les penseurs les plus ambitieux du monde.
+                - link "Discutons" [ref=f7e10] [cursor=pointer]:
+                  - /url: /contact
+                  - generic [ref=f7e11]: →
+                  - text: Discutons
+                - paragraph:
+                  - text: MAWT is a
+                  - generic: Swiss
+                  - text: Agence IA et ingénierie basée à Genève, créant des systèmes d'automatisation sur mesure pour PME et entreprises en croissance en Suisse.
+          - generic: Scroll
+          - generic:
+            - generic:
+              - heading [level=2]
+          - navigation "Homepage transition navigation" [ref=f7e12]:
+            - generic [ref=f7e13]:
+              - link "MAWT home" [ref=f7e15] [cursor=pointer]:
+                - /url: /fr
+              - generic [ref=f7e24]:
+                - link "Work" [ref=f7e25] [cursor=pointer]:
+                  - /url: /fr/projets
+                - link "Approach" [ref=f7e26] [cursor=pointer]:
+                  - /url: /fr/notre-methode
+                - link "Services" [ref=f7e27] [cursor=pointer]:
+                  - /url: /fr/services
+                - link "News" [ref=f7e28] [cursor=pointer]:
+                  - /url: /fr/news
+                - link "About" [ref=f7e29] [cursor=pointer]:
+                  - /url: /fr/a-propos
+                - link "Contact" [ref=f7e30] [cursor=pointer]:
+                  - /url: /fr/contact
+                - generic [ref=f7e31]: —
+                - link "FR" [ref=f7e32] [cursor=pointer]:
+                  - /url: /fr
+                - generic [ref=f7e33]: /
+                - link "EN" [ref=f7e34] [cursor=pointer]:
+                  - /url: /en
+        - generic [ref=f7e35]:
+          - generic [ref=f7e37]:
+            - heading "Ils nous font confiance à Genève & en Suisse" [level=2] [ref=f7e38]
+            - list "Ils nous font confiance à Genève & en Suisse" [ref=f7e39]:
+              - listitem [ref=f7e40]:
+                - link "Mellender Real Estate" [ref=f7e41] [cursor=pointer]:
+                  - /url: https://www.mellender.ch/
+              - listitem [ref=f7e42]:
+                - generic "Sotheby's" [ref=f7e43]
+              - listitem [ref=f7e44]:
+                - generic "United Nations" [ref=f7e45]
+              - listitem [ref=f7e46]:
+                - generic "EMS" [ref=f7e47]
+              - listitem [ref=f7e48]:
+                - generic "Kouleta" [ref=f7e49]
+              - listitem [ref=f7e50]:
+                - generic "Ciro" [ref=f7e51]
+              - listitem [ref=f7e52]:
+                - generic "Légitimes Express" [ref=f7e53]
+              - listitem [ref=f7e54]:
+                - generic "SGP" [ref=f7e55]
+              - listitem [ref=f7e56]:
+                - generic "Buzz" [ref=f7e57]
+              - listitem [ref=f7e58]:
+                - generic "RS Detailing" [ref=f7e59]
+              - listitem [ref=f7e60]:
+                - generic "Sartivoon Crafts" [ref=f7e61]
+          - heading "Tout le monde vous dit que l'IA va tout changer. Mais pour la plupart des entreprises, la réalité se résume à des outils déconnectés et des processus manuels. Les audits s'accumulent, mais la capacité technique pour transformer ces idées en logiciels fait défaut. Car l'IA n'est qu'une promesse. Votre entreprise a besoin de systèmes. La vraie valeur n'est créée que lorsque la technologie est intégrée au cœur même de vos opérations." [level=2] [ref=f7e65]:
+            - generic [ref=f7e66]: Tout
+            - generic [ref=f7e68]: le
+            - generic [ref=f7e70]: monde
+            - generic [ref=f7e72]: vous
+            - generic [ref=f7e74]: dit
+            - generic [ref=f7e76]: que
+            - generic [ref=f7e78]: l'IA
+            - generic [ref=f7e80]: va
+            - generic [ref=f7e82]: tout
+            - generic [ref=f7e84]: changer.
+            - generic [ref=f7e86]: Mais
+            - generic [ref=f7e88]: pour
+            - generic [ref=f7e90]: la
+            - generic [ref=f7e92]: plupart
+            - generic [ref=f7e94]: des
+            - generic [ref=f7e96]: entreprises,
+            - generic [ref=f7e98]: la
+            - generic [ref=f7e100]: réalité
+            - generic [ref=f7e102]: se
+            - generic [ref=f7e104]: résume
+            - generic [ref=f7e106]: à
+            - generic [ref=f7e108]: des
+            - generic [ref=f7e110]: outils
+            - generic [ref=f7e112]: déconnectés
+            - generic [ref=f7e114]: et
+            - generic [ref=f7e116]: des
+            - generic [ref=f7e118]: processus
+            - generic [ref=f7e120]: manuels.
+            - generic [ref=f7e122]: Les
+            - generic [ref=f7e124]: audits
+            - generic [ref=f7e126]: s'accumulent,
+            - generic [ref=f7e128]: mais
+            - generic [ref=f7e130]: la
+            - generic [ref=f7e132]: capacité
+            - generic [ref=f7e134]: technique
+            - generic [ref=f7e136]: pour
+            - generic [ref=f7e138]: transformer
+            - generic [ref=f7e140]: ces
+            - generic [ref=f7e142]: idées
+            - generic [ref=f7e144]: en
+            - generic [ref=f7e146]: logiciels
+            - generic [ref=f7e148]: fait
+            - generic [ref=f7e150]: défaut.
+            - generic [ref=f7e152]: Car
+            - generic [ref=f7e154]: l'IA
+            - generic [ref=f7e156]: n'est
+            - generic [ref=f7e158]: qu'une
+            - generic [ref=f7e160]: promesse.
+            - generic [ref=f7e162]: Votre
+            - generic [ref=f7e164]: entreprise
+            - generic [ref=f7e166]: a
+            - generic [ref=f7e168]: besoin
+            - generic [ref=f7e170]: de
+            - generic [ref=f7e172]: systèmes.
+            - generic [ref=f7e174]: La
+            - generic [ref=f7e176]: vraie
+            - generic [ref=f7e178]: valeur
+            - generic [ref=f7e180]: n'est
+            - generic [ref=f7e182]: créée
+            - generic [ref=f7e184]: que
+            - generic [ref=f7e186]: lorsque
+            - generic [ref=f7e188]: la
+            - generic [ref=f7e190]: technologie
+            - generic [ref=f7e192]: est
+            - generic [ref=f7e194]: intégrée
+            - generic [ref=f7e196]: au
+            - generic [ref=f7e198]: cœur
+            - generic [ref=f7e200]: même
+            - generic [ref=f7e202]: de
+            - generic [ref=f7e204]: vos
+            - generic [ref=f7e206]: opérations.
+          - generic [ref=f7e210]:
+            - heading "Nous transformons les opérations dispersées en systèmes connectés, plus simples à piloter, mesurer et faire évoluer." [level=2] [ref=f7e213]:
+              - generic [ref=f7e214]:
+                - generic [ref=f7e215]: Nous
+                - generic [ref=f7e217]: transformons
+                - generic [ref=f7e219]: les
+                - generic [ref=f7e221]: opérations
+                - generic [ref=f7e223]: dispersées
+                - generic [ref=f7e225]: en
+                - generic [ref=f7e227]: systèmes
+                - generic [ref=f7e229]: connectés,
+                - generic [ref=f7e231]: plus
+                - generic [ref=f7e233]: simples
+                - generic [ref=f7e235]: à
+                - generic [ref=f7e237]: piloter,
+                - generic [ref=f7e239]: mesurer
+                - generic [ref=f7e241]: et
+                - generic [ref=f7e243]: faire
+                - generic [ref=f7e245]: évoluer.
+            - generic [ref=f7e247]:
+              - generic [ref=f7e250]:
+                - heading "Strategy" [level=3] [ref=f7e251]
+                - list [ref=f7e252]:
+                  - listitem [ref=f7e253]:
+                    - generic [ref=f7e254]: Cultural and Visual Positioning
+                    - generic [ref=f7e255]: •
+                  - listitem [ref=f7e256]:
+                    - generic [ref=f7e257]: Content Strategy
+                    - generic [ref=f7e258]: •
+                  - listitem [ref=f7e259]:
+                    - generic [ref=f7e260]: Naming (UX)
+                    - generic [ref=f7e261]: •
+                  - listitem [ref=f7e262]:
+                    - generic [ref=f7e263]: Brand Storytelling
+                    - generic [ref=f7e264]: •
+                  - listitem [ref=f7e265]:
+                    - generic [ref=f7e266]: Concept and Prototyping
+                    - generic [ref=f7e267]: •
+                  - listitem [ref=f7e268]:
+                    - generic [ref=f7e269]: Whitepaper Reports
+                    - generic [ref=f7e270]: •
+                  - listitem [ref=f7e271]:
+                    - generic [ref=f7e272]: Key Messaging
+                    - generic [ref=f7e273]: •
+                  - listitem [ref=f7e274]:
+                    - generic [ref=f7e275]: Market Deep Probing
+                    - generic [ref=f7e276]: •
+                  - listitem [ref=f7e277]:
+                    - generic [ref=f7e278]: Audience Mapping
+                    - generic [ref=f7e279]: •
+                  - listitem [ref=f7e280]:
+                    - generic [ref=f7e281]: Founder Positioning
+              - generic [ref=f7e285]:
+                - heading "Design Systems" [level=3] [ref=f7e286]
+                - list [ref=f7e287]:
+                  - listitem [ref=f7e288]:
+                    - generic [ref=f7e289]: Brand Identity
+                    - generic [ref=f7e290]: •
+                  - listitem [ref=f7e291]:
+                    - generic [ref=f7e292]: Typography and Color Systems
+                    - generic [ref=f7e293]: •
+                  - listitem [ref=f7e294]:
+                    - generic [ref=f7e295]: Logo Design
+                    - generic [ref=f7e296]: •
+                  - listitem [ref=f7e297]:
+                    - generic [ref=f7e298]: Brand Guidelines
+                    - generic [ref=f7e299]: •
+                  - listitem [ref=f7e300]:
+                    - generic [ref=f7e301]: Tone of Voice
+                    - generic [ref=f7e302]: •
+                  - listitem [ref=f7e303]:
+                    - generic [ref=f7e304]: Visual Asset Library
+              - generic [ref=f7e308]:
+                - heading "Website Design and Development" [level=3] [ref=f7e309]
+                - list [ref=f7e310]:
+                  - listitem [ref=f7e311]:
+                    - generic [ref=f7e312]: Creative Development
+                    - generic [ref=f7e313]: •
+                  - listitem [ref=f7e314]:
+                    - generic [ref=f7e315]: Website Design
+                    - generic [ref=f7e316]: •
+                  - listitem [ref=f7e317]:
+                    - generic [ref=f7e318]: Content Management (Webflow, Sanity and Payload)
+                    - generic [ref=f7e319]: •
+                  - listitem [ref=f7e320]:
+                    - generic [ref=f7e321]: Information Architecture
+                    - generic [ref=f7e322]: •
+                  - listitem [ref=f7e323]:
+                    - generic [ref=f7e324]: UX and UI
+                    - generic [ref=f7e325]: •
+                  - listitem [ref=f7e326]:
+                    - generic [ref=f7e327]: Motion Design
+                    - generic [ref=f7e328]: •
+                  - listitem [ref=f7e329]:
+                    - generic [ref=f7e330]: Wireframing and Prototyping
+                    - generic [ref=f7e331]: •
+                  - listitem [ref=f7e332]:
+                    - generic [ref=f7e333]: Responsive Design
+                    - generic [ref=f7e334]: •
+                  - listitem [ref=f7e335]:
+                    - generic [ref=f7e336]: Microsites
+                    - generic [ref=f7e337]: •
+                  - listitem [ref=f7e338]:
+                    - generic [ref=f7e339]: CRM Integrations
+                    - generic [ref=f7e340]: •
+                  - listitem [ref=f7e341]:
+                    - generic [ref=f7e342]: Performance and Analytics
+              - generic [ref=f7e346]:
+                - heading "3D application" [level=3] [ref=f7e347]
+                - list [ref=f7e348]:
+                  - listitem [ref=f7e349]:
+                    - generic [ref=f7e350]: 3D Asset Building and Texturing
+                    - generic [ref=f7e351]: •
+                  - listitem [ref=f7e352]:
+                    - generic [ref=f7e353]: 3D Animations
+                    - generic [ref=f7e354]: •
+                  - listitem [ref=f7e355]:
+                    - generic [ref=f7e356]: WebGL
+                    - generic [ref=f7e357]: •
+                  - listitem [ref=f7e358]:
+                    - generic [ref=f7e359]: Custom Cursors (Hover and Action)
+                    - generic [ref=f7e360]: •
+                  - listitem [ref=f7e361]:
+                    - generic [ref=f7e362]: Concept Development (Immersive Web)
+                    - generic [ref=f7e363]: •
+                  - listitem [ref=f7e364]:
+                    - generic [ref=f7e365]: Product Visualization
+                    - generic [ref=f7e366]: •
+                  - listitem [ref=f7e367]:
+                    - generic [ref=f7e368]: Technical Animations
+              - generic [ref=f7e372]:
+                - heading "Technical Consultation" [level=3] [ref=f7e373]
+                - list [ref=f7e374]:
+                  - listitem [ref=f7e375]:
+                    - generic [ref=f7e376]: System Architecture Review
+                    - generic [ref=f7e377]: •
+                  - listitem [ref=f7e378]:
+                    - generic [ref=f7e379]: Stack Choice
+                    - generic [ref=f7e380]: •
+                  - listitem [ref=f7e381]:
+                    - generic [ref=f7e382]: Technical App and Web Audit (UI/UX)
+                    - generic [ref=f7e383]: •
+                  - listitem [ref=f7e384]:
+                    - generic [ref=f7e385]: IT and Tech Initiatives
+                    - generic [ref=f7e386]: •
+                  - listitem [ref=f7e387]:
+                    - generic [ref=f7e388]: Monthly and Quarterly Boards
+                    - generic [ref=f7e389]: •
+                  - listitem [ref=f7e390]:
+                    - generic [ref=f7e391]: Tech and Data Visualization
+                    - generic [ref=f7e392]: •
+                  - listitem [ref=f7e393]:
+                    - generic [ref=f7e394]: Vendor Search
+                    - generic [ref=f7e395]: •
+                  - listitem [ref=f7e396]:
+                    - generic [ref=f7e397]: Due-Diligence and Tech Review
+                    - generic [ref=f7e398]: •
+                  - listitem [ref=f7e399]:
+                    - generic [ref=f7e400]: Data Rooms
+              - generic [ref=f7e404]:
+                - heading "Product Strategy" [level=3] [ref=f7e405]
+                - list [ref=f7e406]:
+                  - listitem [ref=f7e407]:
+                    - generic [ref=f7e408]: Product Strategy and Development
+                    - generic [ref=f7e409]: •
+                  - listitem [ref=f7e410]:
+                    - generic [ref=f7e411]: Concept Development
+                    - generic [ref=f7e412]: •
+                  - listitem [ref=f7e413]:
+                    - generic [ref=f7e414]: Design Language Development
+                    - generic [ref=f7e415]: •
+                  - listitem [ref=f7e416]:
+                    - generic [ref=f7e417]: User Journey Mapping
+                    - generic [ref=f7e418]: •
+                  - listitem [ref=f7e419]:
+                    - generic [ref=f7e420]: MVP Strategy (Go-to-Market, Pitch)
+                    - generic [ref=f7e421]: •
+                  - listitem [ref=f7e422]:
+                    - generic [ref=f7e423]: Product Visualization and Prototyping
+                    - generic [ref=f7e424]: •
+                  - listitem [ref=f7e425]:
+                    - generic [ref=f7e426]: Product Ecosystem Design
+                    - generic [ref=f7e427]: •
+                  - listitem [ref=f7e428]:
+                    - generic [ref=f7e429]: Hardware UX Consultation
+              - generic [ref=f7e433]:
+                - heading "UX/UI Consultation & Realisation" [level=3] [ref=f7e434]
+                - list [ref=f7e435]:
+                  - listitem [ref=f7e436]:
+                    - generic [ref=f7e437]: Spatial Experiences
+                    - generic [ref=f7e438]: •
+                  - listitem [ref=f7e439]:
+                    - generic [ref=f7e440]: 3D Product Walkthroughs
+                    - generic [ref=f7e441]: •
+                  - listitem [ref=f7e442]:
+                    - generic [ref=f7e443]: Out-of-Box Design
+                    - generic [ref=f7e444]: •
+                  - listitem [ref=f7e445]:
+                    - generic [ref=f7e446]: Interactive Product Demos
+                    - generic [ref=f7e447]: •
+                  - listitem [ref=f7e448]:
+                    - generic [ref=f7e449]: Interactive Showrooms
+                    - generic [ref=f7e450]: •
+                  - listitem [ref=f7e451]:
+                    - generic [ref=f7e452]: 3D Web Integration
+              - link "Voir tous les services ↗" [ref=f7e456] [cursor=pointer]:
+                - /url: /fr/services
+                - text: Voir tous les services
+                - generic [ref=f7e457]: ↗
+          - region [ref=f7e458]:
+            - generic [ref=f7e459]:
+              - heading "Nous développons des logiciels adaptés à vos opérations." [level=2] [ref=f7e462]:
+                - generic [ref=f7e464]:
+                  - generic [ref=f7e465]: Nous
+                  - generic [ref=f7e467]: développons
+                  - generic [ref=f7e469]: des
+                  - generic [ref=f7e471]: logiciels
+                - generic [ref=f7e474]:
+                  - generic [ref=f7e475]: adaptés
+                  - generic [ref=f7e477]: à
+                  - generic [ref=f7e479]: vos
+                  - generic [ref=f7e481]: opérations.
+              - generic [ref=f7e483]:
+                - article [ref=f7e484]:
+                  - generic [ref=f7e485]:
+                    - generic [ref=f7e486]: "01"
+                    - heading "Intégrations IA sur mesure" [level=3] [ref=f7e487]
+                  - paragraph [ref=f7e488]: Systèmes RAG, agents intelligents et recherche interne entraînés sur vos documents et bases de connaissances privées.
+                - article [ref=f7e489]:
+                  - generic [ref=f7e490]:
+                    - generic [ref=f7e491]: "02"
+                    - heading "Automatisation de flux" [level=3] [ref=f7e492]
+                  - paragraph [ref=f7e493]: Connexion de vos outils métier et flux automatisés, de la capture de leads au reporting automatique.
+                - article [ref=f7e494]:
+                  - generic [ref=f7e495]:
+                    - generic [ref=f7e496]: "03"
+                    - heading "Applications personnalisées" [level=3] [ref=f7e497]
+                  - paragraph [ref=f7e498]: Plateformes Next.js et portails web développés pour répondre aux cas d'usage où les SaaS standards échouent.
+                - article [ref=f7e499]:
+                  - generic [ref=f7e500]:
+                    - generic [ref=f7e501]: "04"
+                    - heading "Suivi en production" [level=3] [ref=f7e502]
+                  - paragraph [ref=f7e503]: Nous assurons le déploiement, les tests d'intégration et l'optimisation continue. Nous livrons et nous maintenons.
+          - generic [ref=f7e506]:
+            - heading "Notre processus, forgé par des décennies d'expérience partagée" [level=2] [ref=f7e509]:
+              - generic [ref=f7e510]:
+                - generic [ref=f7e511]: Notre
+                - generic [ref=f7e513]: processus,
+                - generic [ref=f7e515]: forgé
+                - generic [ref=f7e517]: par
+                - generic [ref=f7e519]: des
+                - generic [ref=f7e521]: décennies
+                - generic [ref=f7e523]: d'expérience
+                - generic [ref=f7e525]: partagée
+            - generic [ref=f7e529]:
+              - generic [ref=f7e530]:
+                - generic [ref=f7e531]:
+                  - heading "Penser" [level=3] [ref=f7e532]
+                  - paragraph [ref=f7e533]: Nous lisons le sol pour trouver où les idées prennent racine, révélant les opportunités, les directions et les missions.
+                - generic:
+                  - img "Penser"
+              - generic [ref=f7e534]:
+                - generic [ref=f7e535]:
+                  - heading "Créer" [level=3] [ref=f7e536]
+                  - paragraph [ref=f7e537]: Nous transformons l'invisible en inévitable, façonnant des identités et des systèmes pour soutenir votre croissance.
+                - generic:
+                  - img "Créer"
+              - generic [ref=f7e538]:
+                - generic [ref=f7e539]:
+                  - heading "Bâtir" [level=3] [ref=f7e540]
+                  - paragraph [ref=f7e541]: Nous concevons des produits et des expériences numériques évolutifs, prêts pour un impact concret.
+                - generic:
+                  - img "Bâtir"
+              - generic [ref=f7e542]:
+                - generic [ref=f7e543]:
+                  - heading "Développer" [level=3] [ref=f7e544]
+                  - paragraph [ref=f7e545]: Nous cultivons et greffons, faisant évoluer votre empreinte pour que vous puissiez porter vos fruits.
+                - generic:
+                  - img "Développer"
+      - generic [ref=f7e547]:
+        - generic [ref=f7e548]:
+          - generic [ref=f7e549]:
+            - img "MAWT Logo" [ref=f7e551]
+            - button "Français ▼" [ref=f7e552]:
+              - generic [ref=f7e556]: Français
+              - generic [ref=f7e557]: ▼
+          - generic [ref=f7e558]:
+            - heading "Entreprise" [level=4] [ref=f7e559]
+            - list [ref=f7e560]:
+              - listitem [ref=f7e561]:
+                - link "À propos" [ref=f7e562] [cursor=pointer]:
+                  - /url: /fr/a-propos
+              - listitem [ref=f7e563]:
+                - link "Contact" [ref=f7e564] [cursor=pointer]:
+                  - /url: /fr/contact
+              - listitem [ref=f7e565]:
+                - link "Clients & partenaires" [ref=f7e566] [cursor=pointer]:
+                  - /url: /fr/clients
+          - generic [ref=f7e567]:
+            - heading "Services" [level=4] [ref=f7e568]
+            - list [ref=f7e569]:
+              - listitem [ref=f7e570]:
+                - link "Tous nos services" [ref=f7e571] [cursor=pointer]:
+                  - /url: /fr/services
+              - listitem [ref=f7e572]:
+                - link "Notre méthode" [ref=f7e573] [cursor=pointer]:
+                  - /url: /fr/approach
+              - listitem [ref=f7e574]:
+                - link "Projets" [ref=f7e575] [cursor=pointer]:
+                  - /url: /fr/projets
+          - generic [ref=f7e576]:
+            - heading "Ressources" [level=4] [ref=f7e577]
+            - list [ref=f7e578]:
+              - listitem [ref=f7e579]:
+                - link "Blog" [ref=f7e580] [cursor=pointer]:
+                  - /url: /fr/news
+              - listitem [ref=f7e581]:
+                - link "FAQ" [ref=f7e582] [cursor=pointer]:
+                  - /url: /fr/faqs
+          - generic [ref=f7e583]:
+            - heading "Légal" [level=4] [ref=f7e584]
+            - list [ref=f7e585]:
+              - listitem [ref=f7e586]:
+                - link "Confidentialité" [ref=f7e587] [cursor=pointer]:
+                  - /url: /fr/confidentialite
+              - listitem [ref=f7e588]:
+                - link "Conditions d'utilisation" [ref=f7e589] [cursor=pointer]:
+                  - /url: /fr/conditions-generales
+              - listitem [ref=f7e590]:
+                - link "Cookies" [ref=f7e591] [cursor=pointer]:
+                  - /url: /fr/cookies
+              - listitem [ref=f7e592]:
+                - link "Sécurité" [ref=f7e593] [cursor=pointer]:
+                  - /url: /fr/securite
+          - generic [ref=f7e594]:
+            - heading "Régions" [level=4] [ref=f7e595]
+            - list [ref=f7e596]:
+              - listitem [ref=f7e597]:
+                - link "Genève" [ref=f7e598] [cursor=pointer]:
+                  - /url: /fr/geneve
+          - generic [ref=f7e600]:
+            - heading "Newsletter" [level=4] [ref=f7e601]
+            - paragraph [ref=f7e602]: Recevez nos retours de terrain sur l'IA en entreprise et l'automatisation. Du concret, pas de la théorie.
+            - generic [ref=f7e605]:
+              - generic [ref=f7e606]: Adresse e-mail
+              - textbox "Adresse e-mail" [ref=f7e607]
+              - button "Subscribe to newsletter" [ref=f7e608]
+        - generic [ref=f7e611]:
+          - button "Paramètres des cookies" [ref=f7e613]
+          - paragraph [ref=f7e614]: © 2026 MAWT. Tous droits réservés.
+  - button "Open Next.js Dev Tools" [ref=f7e620] [cursor=pointer]

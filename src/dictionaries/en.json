@@ -33,16 +33,16 @@
     "cta": "View all services",
     "items": [
       {
-        "title": "Web Design",
-        "description": "Building websites that are considered at every level, from structure and layout to copy and interactions. Primarily in Next.js, React, and modern CMS."
+        "title": "AI Solutions",
+        "description": "Smart CRMs, AI agents, RAG, generative AI and automation built into your daily tools."
       },
       {
-        "title": "Brand Identity",
-        "description": "Logos, typography, color systems, and the visual language that makes a brand recognizable and consistent across every touchpoint."
+        "title": "Software Development",
+        "description": "Web, mobile, desktop, APIs and databases — from MVP to mission-critical systems."
       },
       {
-        "title": "Digital Design",
-        "description": "UI design, landing pages, product visuals, and digital assets for brands that need to show up well online."
+        "title": "Consulting & Training",
+        "description": "AI strategy, audits, security and hands-on team training, by people who also build."
       }
     ]
   },
@@ -160,33 +160,69 @@
       {
         "title": "Company",
         "links": [
-          { "label": "About us", "href": "/about" },
-          { "label": "Contact", "href": "/contact" },
-          { "label": "Clients & partners", "href": "/partners" }
+          {
+            "label": "About us",
+            "href": "/about"
+          },
+          {
+            "label": "Contact",
+            "href": "/contact"
+          },
+          {
+            "label": "Clients & partners",
+            "href": "/partners"
+          }
         ]
       },
       {
         "title": "Services",
         "links": [
-          { "label": "All services", "href": "/services" },
-          { "label": "Our process", "href": "/approach" },
-          { "label": "Projects", "href": "/work" }
+          {
+            "label": "All services",
+            "href": "/services"
+          },
+          {
+            "label": "Our process",
+            "href": "/our-process"
+          },
+          {
+            "label": "Projects",
+            "href": "/work"
+          }
         ]
       },
       {
         "title": "Resources",
         "links": [
-          { "label": "Blog", "href": "/news" },
-          { "label": "FAQs", "href": "/faqs" }
+          {
+            "label": "Blog",
+            "href": "/news"
+          },
+          {
+            "label": "FAQs",
+            "href": "/faqs"
+          }
         ]
       },
       {
         "title": "Legal",
         "links": [
-          { "label": "Privacy", "href": "/privacy" },
-          { "label": "Terms of service", "href": "/terms" },
-          { "label": "Cookies", "href": "/cookies" },
-          { "label": "Security", "href": "/security" }
+          {
+            "label": "Privacy",
+            "href": "/privacy"
+          },
+          {
+            "label": "Terms of service",
+            "href": "/terms"
+          },
+          {
+            "label": "Cookies",
+            "href": "/cookies"
+          },
+          {
+            "label": "Security",
+            "href": "/security"
+          }
         ]
       }
     ],
@@ -222,27 +258,35 @@
   },
   "services": {
     "badge": "Capabilities",
-    "headline": "Engineering systems that connect, automate, and scale. Five pillars.",
+    "headline": "Engineering systems that connect, automate, and scale.",
     "pillars": [
       {
-        "title": "AI Systems",
-        "description": "Intelligent CRMs, custom agents, RAG, and database integrations tailored to your customer workflows."
+        "title": "AI Solutions",
+        "description": "Smart CRMs, AI agents, enterprise RAG, generative AI, automation and local AI — built into your tools."
       },
       {
-        "title": "Tech Consulting",
-        "description": "Operational audits, stack architecture reviews, and technical due diligence from engineers who build daily."
+        "title": "AI Consulting",
+        "description": "AI strategy, business audits and transformation, advised by people who also build."
       },
       {
-        "title": "AI Enablement",
-        "description": "Hands-on workshops, role-specific coaching, and tooling setup to make your internal teams autonomous."
+        "title": "Software Development",
+        "description": "From MVP to mission-critical: web, mobile, desktop, APIs, databases and modernization."
       },
       {
-        "title": "Digital Products",
-        "description": "Websites, user interfaces, and e-commerce platforms engineered in React and Next.js, optimized for search engines."
+        "title": "Security",
+        "description": "Pragmatic cybersecurity, compliance and penetration testing for SMEs."
+      },
+      {
+        "title": "Sites & Branding",
+        "description": "E-commerce, brand identity, UX/SEO audits, AI search optimization (GEO) and redesigns."
       },
       {
         "title": "Team Augmentation",
-        "description": "Senior developers, technical leads, and fractional CTOs embedded directly into your teams without junior rotations."
+        "description": "Senior developers, AI experts, fractional CTOs and tech leads embedded in your team."
+      },
+      {
+        "title": "AI Training",
+        "description": "ChatGPT for teams, AI workshops by business function and leadership coaching."
       }
     ],
     "technologies": {
@@ -251,15 +295,39 @@
       "groups": [
         {
           "title": "Languages & frameworks",
-          "items": [".NET", "Java", "Python", "PHP", "Golang", "C++", "Node.js", "JavaScript / TypeScript", "React Native"]
+          "items": [
+            ".NET",
+            "Java",
+            "Python",
+            "PHP",
+            "Golang",
+            "C++",
+            "Node.js",
+            "JavaScript / TypeScript",
+            "React Native"
+          ]
         },
         {
           "title": "Data & artificial intelligence",
-          "items": ["Artificial intelligence", "Generative AI", "Machine learning", "Data science", "Big data", "Image analysis"]
+          "items": [
+            "Artificial intelligence",
+            "Generative AI",
+            "Machine learning",
+            "Data science",
+            "Big data",
+            "Image analysis"
+          ]
         },
         {
           "title": "Platforms & environments",
-          "items": ["Cloud", "SaaS", "Mobile apps", "Internet of Things (IoT)", "Blockchain", "Virtual & augmented reality"]
+          "items": [
+            "Cloud",
+            "SaaS",
+            "Mobile apps",
+            "Internet of Things (IoT)",
+            "Blockchain",
+            "Virtual & augmented reality"
+          ]
         }
       ]
     }
@@ -288,15 +356,36 @@
       "service": "Service",
       "timeline": "Timeline",
       "serviceOptions": [
-        { "value": "Strategy", "label": "Strategy" },
-        { "value": "Development", "label": "Development" },
-        { "value": "Design", "label": "Design" },
-        { "value": "AI Automation", "label": "AI automation" }
+        {
+          "value": "Strategy",
+          "label": "Strategy"
+        },
+        {
+          "value": "Development",
+          "label": "Development"
+        },
+        {
+          "value": "Design",
+          "label": "Design"
+        },
+        {
+          "value": "AI Automation",
+          "label": "AI automation"
+        }
       ],
       "timelineOptions": [
-        { "value": "Under 3 months", "label": "Under 3 months" },
-        { "value": "3-6 months", "label": "3-6 months" },
-        { "value": "Ongoing", "label": "Ongoing" }
+        {
+          "value": "Under 3 months",
+          "label": "Under 3 months"
+        },
+        {
+          "value": "3-6 months",
+          "label": "3-6 months"
+        },
+        {
+          "value": "Ongoing",
+          "label": "Ongoing"
+        }
       ],
       "placeholders": {
         "name": "Your name",
@@ -325,10 +414,26 @@
     "badge": "Results",
     "headline": "Measurable impact on operational efficiency and scale.",
     "metrics": [
-      { "label": "Execution Speed", "value": "3x", "description": "Average increase in strategic project delivery speed." },
-      { "label": "Operational Efficiency", "value": "40%", "description": "Reduction in manual tasks through system automation." },
-      { "label": "Team Capacity", "value": "+250h", "description": "Hours saved per month for internal teams." },
-      { "label": "System Uptime", "value": "99.99%", "description": "Guaranteed availability for critical business infrastructure." }
+      {
+        "label": "Execution Speed",
+        "value": "3x",
+        "description": "Average increase in strategic project delivery speed."
+      },
+      {
+        "label": "Operational Efficiency",
+        "value": "40%",
+        "description": "Reduction in manual tasks through system automation."
+      },
+      {
+        "label": "Team Capacity",
+        "value": "+250h",
+        "description": "Hours saved per month for internal teams."
+      },
+      {
+        "label": "System Uptime",
+        "value": "99.99%",
+        "description": "Guaranteed availability for critical business infrastructure."
+      }
     ],
     "footerHeadline": "Proven success at scale.",
     "footerDesc": "Our results are not just numbers; they are the foundation of our long-term partnerships. We focus on clear, measurable outcomes."

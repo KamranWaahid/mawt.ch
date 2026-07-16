@@ -98,7 +98,8 @@ export function InsightsSection({ dict, posts }: { dict: InsightsDict; posts?: B
     date: formatPostDate(post.publishedAt, post.language || currentLang, recentLabel),
     readTime: getReadTime(post, readTimeUnit),
     excerpt: post.excerpt || dict?.fallbackExcerpt,
-    href: `/${post.language || currentLang}/news/${post.slug}`,
+    // FR public slug is /blog (rewritten to the news folder by the proxy).
+    href: `/${post.language || currentLang}/${(post.language || currentLang) === "fr" ? "blog" : "news"}/${post.slug}`,
   }));
 
   return (

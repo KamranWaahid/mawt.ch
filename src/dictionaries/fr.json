@@ -33,16 +33,16 @@
     "cta": "Voir tous les services",
     "items": [
       {
-        "title": "Design Web",
-        "description": "Construire des sites web pensés à tous les niveaux, de la structure et de la mise en page au contenu et aux interactions. Principalement avec Next.js et des CMS modernes."
+        "title": "Solutions IA",
+        "description": "CRM intelligent, agents IA, RAG, IA générative et automatisations intégrés à vos outils quotidiens."
       },
       {
-        "title": "Identité de Marque",
-        "description": "Logos, typographie, systèmes de couleurs et langage visuel qui rendent une marque reconnaissable et cohérente sur tous les points de contact."
+        "title": "Développement logiciel",
+        "description": "Web, mobile, desktop, APIs et bases de données — du MVP au système critique."
       },
       {
-        "title": "Design Numérique",
-        "description": "Design UI, pages d'atterrissage, visuels de produits et actifs numériques pour les marques qui ont besoin de briller en ligne."
+        "title": "Conseil & formation",
+        "description": "Stratégie IA, audits, sécurité et formation concrète des équipes, par des gens qui construisent aussi."
       }
     ]
   },
@@ -160,33 +160,69 @@
       {
         "title": "Entreprise",
         "links": [
-          { "label": "À propos", "href": "/about" },
-          { "label": "Contact", "href": "/contact" },
-          { "label": "Clients & partenaires", "href": "/partners" }
+          {
+            "label": "À propos",
+            "href": "/about"
+          },
+          {
+            "label": "Contact",
+            "href": "/contact"
+          },
+          {
+            "label": "Clients & partenaires",
+            "href": "/partners"
+          }
         ]
       },
       {
         "title": "Services",
         "links": [
-          { "label": "Tous nos services", "href": "/services" },
-          { "label": "Notre méthode", "href": "/approach" },
-          { "label": "Projets", "href": "/work" }
+          {
+            "label": "Tous nos services",
+            "href": "/services"
+          },
+          {
+            "label": "Notre méthode",
+            "href": "/our-process"
+          },
+          {
+            "label": "Projets",
+            "href": "/work"
+          }
         ]
       },
       {
         "title": "Ressources",
         "links": [
-          { "label": "Blog", "href": "/news" },
-          { "label": "FAQ", "href": "/faqs" }
+          {
+            "label": "Blog",
+            "href": "/news"
+          },
+          {
+            "label": "FAQ",
+            "href": "/faqs"
+          }
         ]
       },
       {
         "title": "Légal",
         "links": [
-          { "label": "Confidentialité", "href": "/privacy" },
-          { "label": "Conditions d'utilisation", "href": "/terms" },
-          { "label": "Cookies", "href": "/cookies" },
-          { "label": "Sécurité", "href": "/security" }
+          {
+            "label": "Confidentialité",
+            "href": "/privacy"
+          },
+          {
+            "label": "Conditions d'utilisation",
+            "href": "/terms"
+          },
+          {
+            "label": "Cookies",
+            "href": "/cookies"
+          },
+          {
+            "label": "Sécurité",
+            "href": "/security"
+          }
         ]
       }
     ],
@@ -222,27 +258,35 @@
   },
   "services": {
     "badge": "Expertises",
-    "headline": "Des systèmes conçus pour connecter, automatiser et durer. Cinq piliers.",
+    "headline": "Des systèmes conçus pour connecter, automatiser et durer.",
     "pillars": [
       {
-        "title": "Systèmes IA",
-        "description": "CRMs connectés, agents conversationnels métier, RAG et intégrations de données adaptés à vos flux clients."
+        "title": "Solutions IA",
+        "description": "CRM intelligent, agents IA, RAG d'entreprise, IA générative, automatisation et IA locale — intégrés à vos outils."
       },
       {
-        "title": "Conseil Technique",
-        "description": "Audits opérationnels, revues d'architecture et due diligence technologique menés par des ingénieurs actifs."
+        "title": "Conseil IA",
+        "description": "Stratégie IA, audits opérationnels et transformation, conseillés par des gens qui construisent aussi."
       },
       {
-        "title": "Accompagnement IA",
-        "description": "Ateliers pratiques, formation IA par métier et déploiement d'outils pour rendre vos équipes autonomes."
+        "title": "Développement logiciel",
+        "description": "Du MVP au système critique : web, mobile, desktop, APIs, bases de données et modernisation."
       },
       {
-        "title": "Produits Digitaux",
-        "description": "Sites internet, interfaces sur mesure et e-commerce développés en React et Next.js, optimisés pour les moteurs de recherche."
+        "title": "Sécurité",
+        "description": "Cybersécurité pragmatique, conformité nLPD et tests d'intrusion pour PME."
       },
       {
-        "title": "Renfort d'Équipe",
-        "description": "Développeurs seniors, tech leads et CTOs fractionnels intégrés directement dans vos équipes, sans rotation."
+        "title": "Sites & Branding",
+        "description": "E-commerce, identité de marque, audits UX/SEO, référencement IA (GEO) et refontes."
+      },
+      {
+        "title": "Renfort d'équipe",
+        "description": "Développeurs seniors, experts IA, CTO et tech leads à temps partiel intégrés à votre équipe."
+      },
+      {
+        "title": "Formation IA",
+        "description": "Formation ChatGPT, ateliers IA par métier et coaching des décideurs."
       }
     ],
     "technologies": {
@@ -251,15 +295,39 @@
       "groups": [
         {
           "title": "Langages & frameworks",
-          "items": [".NET", "Java", "Python", "PHP", "Golang", "C++", "Node.js", "JavaScript / TypeScript", "React Native"]
+          "items": [
+            ".NET",
+            "Java",
+            "Python",
+            "PHP",
+            "Golang",
+            "C++",
+            "Node.js",
+            "JavaScript / TypeScript",
+            "React Native"
+          ]
         },
         {
           "title": "Données & intelligence artificielle",
-          "items": ["Intelligence artificielle", "IA générative", "Machine learning", "Data science", "Big data", "Analyse d'images"]
+          "items": [
+            "Intelligence artificielle",
+            "IA générative",
+            "Machine learning",
+            "Data science",
+            "Big data",
+            "Analyse d'images"
+          ]
         },
         {
           "title": "Plateformes & environnements",
-          "items": ["Cloud", "SaaS", "Applications mobiles", "Internet des objets (IoT)", "Blockchain", "Réalité virtuelle & augmentée"]
+          "items": [
+            "Cloud",
+            "SaaS",
+            "Applications mobiles",
+            "Internet des objets (IoT)",
+            "Blockchain",
+            "Réalité virtuelle & augmentée"
+          ]
         }
       ]
     }
@@ -288,15 +356,36 @@
       "service": "Service",
       "timeline": "Calendrier",
       "serviceOptions": [
-        { "value": "Strategy", "label": "Stratégie" },
-        { "value": "Development", "label": "Développement" },
-        { "value": "Design", "label": "Design" },
-        { "value": "AI Automation", "label": "Automatisation IA" }
+        {
+          "value": "Strategy",
+          "label": "Stratégie"
+        },
+        {
+          "value": "Development",
+          "label": "Développement"
+        },
+        {
+          "value": "Design",
+          "label": "Design"
+        },
+        {
+          "value": "AI Automation",
+          "label": "Automatisation IA"
+        }
       ],
       "timelineOptions": [
-        { "value": "Under 3 months", "label": "Moins de 3 mois" },
-        { "value": "3-6 months", "label": "3 à 6 mois" },
-        { "value": "Ongoing", "label": "En continu" }
+        {
+          "value": "Under 3 months",
+          "label": "Moins de 3 mois"
+        },
+        {
+          "value": "3-6 months",
+          "label": "3 à 6 mois"
+        },
+        {
+          "value": "Ongoing",
+          "label": "En continu"
+        }
       ],
       "placeholders": {
         "name": "Votre nom",
@@ -325,10 +414,26 @@
     "badge": "Résultats",
     "headline": "Impact mesurable sur l'efficacité opérationnelle et l'échelle.",
     "metrics": [
-      { "label": "Vitesse d'Exécution", "value": "3x", "description": "Augmentation moyenne de la vitesse de livraison des projets stratégiques." },
-      { "label": "Efficacité Opérationnelle", "value": "40%", "description": "Réduction des tâches manuelles grâce à l'automatisation des systèmes." },
-      { "label": "Capacité de l'Équipe", "value": "+250h", "description": "Heures économisées par mois pour les équipes internes." },
-      { "label": "Disponibilité du Système", "value": "99.99%", "description": "Disponibilité garantie pour l'infrastructure commerciale critique." }
+      {
+        "label": "Vitesse d'Exécution",
+        "value": "3x",
+        "description": "Augmentation moyenne de la vitesse de livraison des projets stratégiques."
+      },
+      {
+        "label": "Efficacité Opérationnelle",
+        "value": "40%",
+        "description": "Réduction des tâches manuelles grâce à l'automatisation des systèmes."
+      },
+      {
+        "label": "Capacité de l'Équipe",
+        "value": "+250h",
+        "description": "Heures économisées par mois pour les équipes internes."
+      },
+      {
+        "label": "Disponibilité du Système",
+        "value": "99.99%",
+        "description": "Disponibilité garantie pour l'infrastructure commerciale critique."
+      }
     ],
     "footerHeadline": "Succès prouvé à grande échelle.",
     "footerDesc": "Nos résultats ne sont pas seulement des chiffres ; ils sont le fondement de nos partenariats à long terme."

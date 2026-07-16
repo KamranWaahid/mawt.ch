@@ -76,7 +76,7 @@ export function BlogFilter({ posts }: BlogFilterProps) {
                     className="group relative flex min-h-[320px] flex-col rounded-2xl border border-black/[0.02] bg-white/48 p-6 transition-all duration-300 hover:z-10 hover:bg-white/75 sm:p-8"
                   >
                     <Link 
-                      href={`/${currentLang}/news/${post.slug || '#'}`}
+                      href={`/${currentLang}/${currentLang === "fr" ? "blog" : "news"}/${post.slug || '#'}`}
                       className="flex h-full flex-col justify-between"
                     >
                       <div className="space-y-5 pb-8">

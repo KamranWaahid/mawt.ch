@@ -1,0 +1,216 @@
+- generic [ref=f66e1]:
+  - generic [ref=f66e3]:
+    - link "Skip to content" [ref=f66e4] [cursor=pointer]:
+      - /url: "#main-content"
+    - link "MAWT - Marketing & Web Technologies home" [ref=f66e5] [cursor=pointer]:
+      - /url: /en
+      - img "MAWT Logo" [ref=f66e6]
+    - banner [ref=f66e7]:
+      - navigation "Primary" [ref=f66e8]:
+        - generic [ref=f66e10]:
+          - button "Passer en français" [ref=f66e11]: FR
+          - generic [ref=f66e12]: /
+          - button "Change language" [ref=f66e13]: EN
+          - button "Toggle menu" [expanded] [ref=f66e14]
+      - generic [ref=f66e267]:
+        - generic [ref=f66e268]:
+          - link "Work" [ref=f66e270] [cursor=pointer]:
+            - /url: /en/work
+          - link "Approach" [ref=f66e272] [cursor=pointer]:
+            - /url: /en/approach
+          - generic [ref=f66e274]:
+            - button "Services" [expanded] [active] [ref=f66e275]
+            - generic [ref=f66e290]:
+              - link "All services" [ref=f66e291] [cursor=pointer]:
+                - /url: /en/services
+              - link "AI Solutions" [ref=f66e292] [cursor=pointer]:
+                - /url: /en/services/ai-solutions
+              - link "AI Consulting" [ref=f66e293] [cursor=pointer]:
+                - /url: /en/services/ai-consulting
+              - link "Digital" [ref=f66e294] [cursor=pointer]:
+                - /url: /en/services/digital
+              - link "Data & Analytics" [ref=f66e295] [cursor=pointer]:
+                - /url: /en/services/data-analytics
+              - link "Software Development" [ref=f66e296] [cursor=pointer]:
+                - /url: /en/services/software-development
+              - link "Security" [ref=f66e297] [cursor=pointer]:
+                - /url: /en/services/security
+              - link "Operations & SCM" [ref=f66e298] [cursor=pointer]:
+                - /url: /en/services/operations-scm
+              - link "Sites & Branding" [ref=f66e299] [cursor=pointer]:
+                - /url: /en/services/sites-and-branding
+              - link "Team Augmentation" [ref=f66e300] [cursor=pointer]:
+                - /url: /en/services/team-augmentation
+              - link "AI Training" [ref=f66e301] [cursor=pointer]:
+                - /url: /en/services/ai-training
+          - link "News" [ref=f66e279] [cursor=pointer]:
+            - /url: /en/news
+          - link "About" [ref=f66e281] [cursor=pointer]:
+            - /url: /en/about
+          - link "Contact" [ref=f66e283] [cursor=pointer]:
+            - /url: /en/contact
+        - generic [ref=f66e285]:
+          - generic [ref=f66e286]: —
+          - button "FR" [ref=f66e287]
+          - generic [ref=f66e288]: /
+          - button "EN" [ref=f66e289]
+    - main [ref=f66e16]:
+      - generic [ref=f66e19]:
+        - generic [ref=f66e22]:
+          - generic [ref=f66e23]: About MAWT
+          - heading "A senior human team, based in Geneva. MAWT builds AI-native systems, advises on AI adoption, and embeds dedicated experts into your organization. Not an agency. A studio." [level=1] [ref=f66e24]:
+            - generic [ref=f66e25]:
+              - generic [ref=f66e26]: A
+              - generic [ref=f66e28]: senior
+              - generic [ref=f66e30]: human
+              - generic [ref=f66e32]: team,
+              - generic [ref=f66e34]: based
+              - generic [ref=f66e36]: in
+              - generic [ref=f66e38]: Geneva.
+            - generic [ref=f66e40]:
+              - generic [ref=f66e41]: MAWT
+              - generic [ref=f66e43]: builds
+              - generic [ref=f66e45]: AI-native
+              - generic [ref=f66e47]: systems,
+              - generic [ref=f66e49]: advises
+              - generic [ref=f66e51]: "on"
+              - generic [ref=f66e53]: AI
+              - generic [ref=f66e55]: adoption,
+              - generic [ref=f66e57]: and
+              - generic [ref=f66e59]: embeds
+              - generic [ref=f66e61]: dedicated
+              - generic [ref=f66e63]: experts
+              - generic [ref=f66e65]: into
+              - generic [ref=f66e67]: your
+              - generic [ref=f66e69]: organization.
+              - generic [ref=f66e71]: Not
+              - generic [ref=f66e73]: an
+              - generic [ref=f66e75]: agency.
+              - generic [ref=f66e77]: A
+              - generic [ref=f66e79]: studio.
+        - generic [ref=f66e83]:
+          - heading "Why MAWT" [level=2] [ref=f66e86]:
+            - generic [ref=f66e87]:
+              - generic [ref=f66e88]: Why
+              - generic [ref=f66e90]: MAWT
+          - generic [ref=f66e93]:
+            - paragraph [ref=f66e94]: At MAWT, we always think further for you. Beyond the brief, beyond the deliverable. We look for what will actually move you forward.
+            - paragraph [ref=f66e95]: "We become an extension of your team. We propose, we find, we build. Including what wasn't in the initial brief. That's our signature : continuous partnership, not one-shot delivery."
+            - paragraph [ref=f66e96]: "Our conviction : there are no problems, only solutions. We hunt them with you, not next to you. And we build what actually solves, not what ticks boxes."
+        - generic [ref=f66e99]:
+          - heading "The team" [level=2] [ref=f66e102]:
+            - generic [ref=f66e103]:
+              - generic [ref=f66e104]: The
+              - generic [ref=f66e106]: team
+          - paragraph [ref=f66e109]: Several profiles, one shared vision. Each one expert in their domain, all passionate about what they do. That complementarity is what lets us combine consulting AND execution, marketing AND tech, strategy AND AI. Always in partnership with you.
+        - generic [ref=f66e111]:
+          - heading "Our principles" [level=2] [ref=f66e114]
+          - generic [ref=f66e115]:
+            - article [ref=f66e116]:
+              - generic [ref=f66e117]:
+                - generic [ref=f66e118]: "01"
+                - heading "An extension of your team" [level=3] [ref=f66e125]
+              - paragraph [ref=f66e126]: We team up with you. We think, we build, we stay by your side.
+            - article [ref=f66e127]:
+              - generic [ref=f66e128]:
+                - generic [ref=f66e129]: "02"
+                - heading "Problem solver" [level=3] [ref=f66e139]
+              - paragraph [ref=f66e140]: There are no problems, only solutions. And we build them with you.
+            - article [ref=f66e141]:
+              - generic [ref=f66e142]:
+                - generic [ref=f66e143]: "03"
+                - heading "Custom" [level=3] [ref=f66e149]
+              - paragraph [ref=f66e150]: Each mission is built specifically for your context and your goals.
+            - article [ref=f66e151]:
+              - generic [ref=f66e152]:
+                - generic [ref=f66e153]: "04"
+                - heading "AI-native" [level=3] [ref=f66e157]
+              - paragraph [ref=f66e158]: AI is woven into the solution from day one, to serve your business daily.
+        - generic [ref=f66e161]:
+          - heading "Since 2021" [level=2] [ref=f66e164]:
+            - generic [ref=f66e165]:
+              - generic [ref=f66e166]: Since
+              - generic [ref=f66e168]: "2021"
+          - paragraph [ref=f66e171]: Over 50 missions, picked with care.
+        - generic [ref=f66e173]:
+          - heading "Let's talk about your project" [level=2] [ref=f66e174]:
+            - generic [ref=f66e175]:
+              - generic [ref=f66e176]: Let's
+              - generic [ref=f66e178]: talk
+              - generic [ref=f66e180]: about
+              - generic [ref=f66e182]: your
+              - generic [ref=f66e184]: project
+          - paragraph [ref=f66e186]: 30 minutes together to get to know each other. If it clicks, we move forward. If not, we point you to those who can help.
+          - link "Let's talk" [ref=f66e188] [cursor=pointer]:
+            - /url: /en/contact
+      - generic [ref=f66e190]:
+        - generic [ref=f66e191]:
+          - generic [ref=f66e192]:
+            - img "MAWT Logo" [ref=f66e194]
+            - generic [ref=f66e195]:
+              - link "LinkedIn" [ref=f66e196] [cursor=pointer]:
+                - /url: http://linkedin.com/in/mawt.ch
+              - link "Instagram" [ref=f66e199] [cursor=pointer]:
+                - /url: http://instagram.com/mawt.ch
+            - button "English ▼" [ref=f66e202]:
+              - generic [ref=f66e206]: English
+              - generic [ref=f66e207]: ▼
+          - generic [ref=f66e208]:
+            - heading "Company" [level=4] [ref=f66e209]
+            - list [ref=f66e210]:
+              - listitem [ref=f66e211]:
+                - link "About us" [ref=f66e212] [cursor=pointer]:
+                  - /url: /en/about
+              - listitem [ref=f66e213]:
+                - link "Contact" [ref=f66e214] [cursor=pointer]:
+                  - /url: /en/contact
+              - listitem [ref=f66e215]:
+                - link "Clients & partners" [ref=f66e216] [cursor=pointer]:
+                  - /url: /en/partners
+          - generic [ref=f66e217]:
+            - heading "Services" [level=4] [ref=f66e218]
+            - list [ref=f66e219]:
+              - listitem [ref=f66e220]:
+                - link "All services" [ref=f66e221] [cursor=pointer]:
+                  - /url: /en/services
+              - listitem [ref=f66e222]:
+                - link "Our process" [ref=f66e223] [cursor=pointer]:
+                  - /url: /en/approach
+              - listitem [ref=f66e224]:
+                - link "Projects" [ref=f66e225] [cursor=pointer]:
+                  - /url: /en/work
+          - generic [ref=f66e226]:
+            - heading "Resources" [level=4] [ref=f66e227]
+            - list [ref=f66e228]:
+              - listitem [ref=f66e229]:
+                - link "Blog" [ref=f66e230] [cursor=pointer]:
+                  - /url: /en/news
+              - listitem [ref=f66e231]:
+                - link "FAQs" [ref=f66e232] [cursor=pointer]:
+                  - /url: /en/faqs
+          - generic [ref=f66e233]:
+            - heading "Legal" [level=4] [ref=f66e234]
+            - list [ref=f66e235]:
+              - listitem [ref=f66e236]:
+                - link "Privacy" [ref=f66e237] [cursor=pointer]:
+                  - /url: /en/privacy
+              - listitem [ref=f66e238]:
+                - link "Terms of service" [ref=f66e239] [cursor=pointer]:
+                  - /url: /en/terms
+              - listitem [ref=f66e240]:
+                - link "Cookies" [ref=f66e241] [cursor=pointer]:
+                  - /url: /en/cookies
+              - listitem [ref=f66e242]:
+                - link "Security" [ref=f66e243] [cursor=pointer]:
+                  - /url: /en/security
+          - generic [ref=f66e244]:
+            - heading "Regions" [level=4] [ref=f66e245]
+            - list [ref=f66e246]:
+              - listitem [ref=f66e247]:
+                - link "Geneva" [ref=f66e248] [cursor=pointer]:
+                  - /url: /en/geneva
+        - generic [ref=f66e249]:
+          - button "Cookie Settings" [ref=f66e251]
+          - paragraph [ref=f66e252]: ©2026 MAWT. All Rights Reserved.
+  - button "Open Next.js Dev Tools" [ref=f66e258] [cursor=pointer]
+  - alert [ref=f66e262]

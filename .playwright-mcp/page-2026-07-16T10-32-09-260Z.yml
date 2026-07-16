@@ -1,0 +1,404 @@
+- generic [active] [ref=f65e1]:
+  - generic [ref=f65e3]:
+    - link "Skip to content" [ref=f65e4] [cursor=pointer]:
+      - /url: "#main-content"
+    - link "MAWT - Marketing & Web Technologies home" [ref=f65e5] [cursor=pointer]:
+      - /url: /en
+      - img "MAWT Logo" [ref=f65e6]
+    - banner [ref=f65e7]:
+      - navigation "Primary" [ref=f65e8]:
+        - generic [ref=f65e10]:
+          - link "Work" [ref=f65e11] [cursor=pointer]:
+            - /url: /en/work
+          - link "Approach" [ref=f65e12] [cursor=pointer]:
+            - /url: /en/approach
+          - link "Services" [expanded] [ref=f65e13] [cursor=pointer]:
+            - /url: /en/services
+          - link "News" [ref=f65e16] [cursor=pointer]:
+            - /url: /en/news
+          - link "About" [ref=f65e17] [cursor=pointer]:
+            - /url: /en/about
+          - link "Contact" [ref=f65e18] [cursor=pointer]:
+            - /url: /en/contact
+          - generic [ref=f65e19]: —
+          - button "Passer en français" [ref=f65e20]: FR
+          - generic [ref=f65e21]: /
+          - button "Change language" [ref=f65e22]: EN
+      - generic [ref=f65e270]:
+        - generic [ref=f65e271]:
+          - link "AI Solutions" [ref=f65e272] [cursor=pointer]:
+            - /url: /en/services/ai-solutions
+          - list [ref=f65e273]:
+            - listitem [ref=f65e274]:
+              - link "Smart CRM" [ref=f65e275] [cursor=pointer]:
+                - /url: /en/services/ai-solutions/smart-crm
+            - listitem [ref=f65e276]:
+              - link "AI agent / assistant" [ref=f65e277] [cursor=pointer]:
+                - /url: /en/services/ai-solutions/ai-agent
+            - listitem [ref=f65e278]:
+              - link "Enterprise RAG" [ref=f65e279] [cursor=pointer]:
+                - /url: /en/services/ai-solutions/rag-enterprise
+            - listitem [ref=f65e280]:
+              - link "Chatbots" [ref=f65e281] [cursor=pointer]:
+                - /url: /en/services/ai-solutions/chatbots
+            - listitem [ref=f65e282]:
+              - link "AI automation" [ref=f65e283] [cursor=pointer]:
+                - /url: /en/services/ai-solutions/ai-automation
+            - listitem [ref=f65e284]:
+              - link "Local AI & custom models" [ref=f65e285] [cursor=pointer]:
+                - /url: /en/services/ai-solutions/local-ai
+            - listitem [ref=f65e286]:
+              - link "Client & business portal" [ref=f65e287] [cursor=pointer]:
+                - /url: /en/services/ai-solutions/client-business-portal
+        - generic [ref=f65e288]:
+          - link "AI Consulting" [ref=f65e289] [cursor=pointer]:
+            - /url: /en/services/ai-consulting
+          - list [ref=f65e290]:
+            - listitem [ref=f65e291]:
+              - link "AI strategy" [ref=f65e292] [cursor=pointer]:
+                - /url: /en/services/ai-consulting/ai-strategy
+            - listitem [ref=f65e293]:
+              - link "Business audit" [ref=f65e294] [cursor=pointer]:
+                - /url: /en/services/ai-consulting/business-audit
+            - listitem [ref=f65e295]:
+              - link "Organizational consulting" [ref=f65e296] [cursor=pointer]:
+                - /url: /en/services/ai-consulting/organizational-consulting
+            - listitem [ref=f65e297]:
+              - link "Digital transformation" [ref=f65e298] [cursor=pointer]:
+                - /url: /en/services/ai-consulting/digital-transformation
+            - listitem [ref=f65e299]:
+              - link "Change management" [ref=f65e300] [cursor=pointer]:
+                - /url: /en/services/ai-consulting/change-management
+            - listitem [ref=f65e301]:
+              - link "AI change management" [ref=f65e302] [cursor=pointer]:
+                - /url: /en/services/ai-consulting/ai-change-management
+        - generic [ref=f65e303]:
+          - link "Digital" [ref=f65e304] [cursor=pointer]:
+            - /url: /en/services/digital
+          - list [ref=f65e305]:
+            - listitem [ref=f65e306]:
+              - link "Digital Consulting & Strategy" [ref=f65e307] [cursor=pointer]:
+                - /url: /en/services/digital/digital-consulting-strategy
+            - listitem [ref=f65e308]:
+              - link "Digital Commerce" [ref=f65e309] [cursor=pointer]:
+                - /url: /en/services/digital/digital-commerce
+            - listitem [ref=f65e310]:
+              - link "Business Applications" [ref=f65e311] [cursor=pointer]:
+                - /url: /en/services/digital/business-applications
+        - generic [ref=f65e312]:
+          - link "Data & Analytics" [ref=f65e313] [cursor=pointer]:
+            - /url: /en/services/data-analytics
+          - list [ref=f65e314]:
+            - listitem [ref=f65e315]:
+              - link "Data Modernization" [ref=f65e316] [cursor=pointer]:
+                - /url: /en/services/data-analytics/data-modernization
+            - listitem [ref=f65e317]:
+              - link "Advanced Analytics" [ref=f65e318] [cursor=pointer]:
+                - /url: /en/services/data-analytics/advanced-analytics
+            - listitem [ref=f65e319]:
+              - link "Connected Intelligence" [ref=f65e320] [cursor=pointer]:
+                - /url: /en/services/data-analytics/connected-intelligence
+            - listitem [ref=f65e321]:
+              - link "Data Management" [ref=f65e322] [cursor=pointer]:
+                - /url: /en/services/data-analytics/data-management
+            - listitem [ref=f65e323]:
+              - link "Generative AI" [ref=f65e324] [cursor=pointer]:
+                - /url: /en/services/data-analytics/generative-ai
+        - generic [ref=f65e325]:
+          - link "Software Development" [ref=f65e326] [cursor=pointer]:
+            - /url: /en/services/software-development
+          - list [ref=f65e327]:
+            - listitem [ref=f65e328]:
+              - link "MVP Development" [ref=f65e329] [cursor=pointer]:
+                - /url: /en/services/software-development/mvp-development
+            - listitem [ref=f65e330]:
+              - link "AI Development" [ref=f65e331] [cursor=pointer]:
+                - /url: /en/services/software-development/ai-development
+            - listitem [ref=f65e332]:
+              - link "Web Development" [ref=f65e333] [cursor=pointer]:
+                - /url: /en/services/software-development/web-development
+            - listitem [ref=f65e334]:
+              - link "Mobile Development" [ref=f65e335] [cursor=pointer]:
+                - /url: /en/services/software-development/mobile-development
+            - listitem [ref=f65e336]:
+              - link "Desktop Development" [ref=f65e337] [cursor=pointer]:
+                - /url: /en/services/software-development/desktop-development
+            - listitem [ref=f65e338]:
+              - link "API Development" [ref=f65e339] [cursor=pointer]:
+                - /url: /en/services/software-development/api-development
+            - listitem [ref=f65e340]:
+              - link "Database Development" [ref=f65e341] [cursor=pointer]:
+                - /url: /en/services/software-development/database-development
+            - listitem [ref=f65e342]:
+              - link "Software Modernization" [ref=f65e343] [cursor=pointer]:
+                - /url: /en/services/software-development/software-modernization
+            - listitem [ref=f65e344]:
+              - link "IT Staff Augmentation" [ref=f65e345] [cursor=pointer]:
+                - /url: /en/services/software-development/it-staff-augmentation
+        - generic [ref=f65e346]:
+          - link "Security" [ref=f65e347] [cursor=pointer]:
+            - /url: /en/services/security
+          - list [ref=f65e348]:
+            - listitem [ref=f65e349]:
+              - link "Cybersecurity" [ref=f65e350] [cursor=pointer]:
+                - /url: /en/services/security/cybersecurity
+            - listitem [ref=f65e351]:
+              - link "Compliance Services" [ref=f65e352] [cursor=pointer]:
+                - /url: /en/services/security/compliance-services
+            - listitem [ref=f65e353]:
+              - link "Security Testing" [ref=f65e354] [cursor=pointer]:
+                - /url: /en/services/security/security-testing
+            - listitem [ref=f65e355]:
+              - link "Penetration Testing" [ref=f65e356] [cursor=pointer]:
+                - /url: /en/services/security/penetration-testing
+            - listitem [ref=f65e357]:
+              - link "SIEM Services" [ref=f65e358] [cursor=pointer]:
+                - /url: /en/services/security/siem-services
+        - generic [ref=f65e359]:
+          - link "Operations & SCM" [ref=f65e360] [cursor=pointer]:
+            - /url: /en/services/operations-scm
+          - list [ref=f65e361]:
+            - listitem [ref=f65e362]:
+              - link "ERP" [ref=f65e363] [cursor=pointer]:
+                - /url: /en/services/operations-scm/erp
+            - listitem [ref=f65e364]:
+              - link "Operations Management" [ref=f65e365] [cursor=pointer]:
+                - /url: /en/services/operations-scm/operations-management
+            - listitem [ref=f65e366]:
+              - link "Supply Chain Management" [ref=f65e367] [cursor=pointer]:
+                - /url: /en/services/operations-scm/supply-chain-management
+            - listitem [ref=f65e368]:
+              - link "Warehouse Management" [ref=f65e369] [cursor=pointer]:
+                - /url: /en/services/operations-scm/warehouse-management
+            - listitem [ref=f65e370]:
+              - link "Enterprise Asset Management" [ref=f65e371] [cursor=pointer]:
+                - /url: /en/services/operations-scm/enterprise-asset-management
+            - listitem [ref=f65e372]:
+              - link "Vendor Management" [ref=f65e373] [cursor=pointer]:
+                - /url: /en/services/operations-scm/vendor-management
+            - listitem [ref=f65e374]:
+              - link "Project Management" [ref=f65e375] [cursor=pointer]:
+                - /url: /en/services/operations-scm/project-management
+            - listitem [ref=f65e376]:
+              - link "Document Management" [ref=f65e377] [cursor=pointer]:
+                - /url: /en/services/operations-scm/document-management
+        - generic [ref=f65e378]:
+          - link "Sites & Branding" [ref=f65e379] [cursor=pointer]:
+            - /url: /en/services/sites-and-branding
+          - list [ref=f65e380]:
+            - listitem [ref=f65e381]:
+              - link "Branding & identity" [ref=f65e382] [cursor=pointer]:
+                - /url: /en/services/sites-and-branding/branding-identity
+            - listitem [ref=f65e383]:
+              - link "UX / SEO / performance audit" [ref=f65e384] [cursor=pointer]:
+                - /url: /en/services/sites-and-branding/ux-seo-performance-audit
+            - listitem [ref=f65e385]:
+              - link "Website redesign" [ref=f65e386] [cursor=pointer]:
+                - /url: /en/services/sites-and-branding/website-redesign
+        - generic [ref=f65e387]:
+          - link "Team Augmentation" [ref=f65e388] [cursor=pointer]:
+            - /url: /en/services/team-augmentation
+          - list [ref=f65e389]:
+            - listitem [ref=f65e390]:
+              - link "Dedicated developer" [ref=f65e391] [cursor=pointer]:
+                - /url: /en/services/team-augmentation/dedicated-developer
+            - listitem [ref=f65e392]:
+              - link "Dedicated AI expert" [ref=f65e393] [cursor=pointer]:
+                - /url: /en/services/team-augmentation/dedicated-ai-expert
+            - listitem [ref=f65e394]:
+              - link "Dedicated UX designer" [ref=f65e395] [cursor=pointer]:
+                - /url: /en/services/team-augmentation/dedicated-ux-designer
+            - listitem [ref=f65e396]:
+              - link "QA & testing" [ref=f65e397] [cursor=pointer]:
+                - /url: /en/services/team-augmentation/qa-testing
+            - listitem [ref=f65e398]:
+              - link "Design coaching" [ref=f65e399] [cursor=pointer]:
+                - /url: /en/services/team-augmentation/design-coaching
+            - listitem [ref=f65e400]:
+              - link "Application maintenance" [ref=f65e401] [cursor=pointer]:
+                - /url: /en/services/team-augmentation/application-maintenance
+            - listitem [ref=f65e402]:
+              - link "Fractional CTO" [ref=f65e403] [cursor=pointer]:
+                - /url: /en/services/team-augmentation/fractional-cto
+            - listitem [ref=f65e404]:
+              - link "Fractional Tech Lead" [ref=f65e405] [cursor=pointer]:
+                - /url: /en/services/team-augmentation/fractional-tech-lead
+            - listitem [ref=f65e406]:
+              - link "Engineering as a Service" [ref=f65e407] [cursor=pointer]:
+                - /url: /en/services/team-augmentation/engineering-as-a-service
+        - generic [ref=f65e408]:
+          - link "AI Training" [ref=f65e409] [cursor=pointer]:
+            - /url: /en/services/ai-training
+          - list [ref=f65e410]:
+            - listitem [ref=f65e411]:
+              - link "ChatGPT for teams" [ref=f65e412] [cursor=pointer]:
+                - /url: /en/services/ai-training/chatgpt-for-teams
+            - listitem [ref=f65e413]:
+              - link "AI workshop" [ref=f65e414] [cursor=pointer]:
+                - /url: /en/services/ai-training/ai-workshop
+            - listitem [ref=f65e415]:
+              - link "AI coaching for leaders" [ref=f65e416] [cursor=pointer]:
+                - /url: /en/services/ai-training/ai-coaching-for-leaders
+            - listitem [ref=f65e417]:
+              - link "AI implementation" [ref=f65e418] [cursor=pointer]:
+                - /url: /en/services/ai-training/ai-implementation
+    - main [ref=f65e23]:
+      - generic [ref=f65e420]:
+        - generic [ref=f65e423]:
+          - generic [ref=f65e424]: About MAWT
+          - heading "A senior human team, based in Geneva. MAWT builds AI-native systems, advises on AI adoption, and embeds dedicated experts into your organization. Not an agency. A studio." [level=1] [ref=f65e425]:
+            - generic [ref=f65e426]:
+              - generic [ref=f65e427]: A
+              - generic [ref=f65e429]: senior
+              - generic [ref=f65e431]: human
+              - generic [ref=f65e433]: team,
+              - generic [ref=f65e435]: based
+              - generic [ref=f65e437]: in
+              - generic [ref=f65e439]: Geneva.
+            - generic [ref=f65e441]:
+              - generic [ref=f65e442]: MAWT
+              - generic [ref=f65e444]: builds
+              - generic [ref=f65e446]: AI-native
+              - generic [ref=f65e448]: systems,
+              - generic [ref=f65e450]: advises
+              - generic [ref=f65e452]: "on"
+              - generic [ref=f65e454]: AI
+              - generic [ref=f65e456]: adoption,
+              - generic [ref=f65e458]: and
+              - generic [ref=f65e460]: embeds
+              - generic [ref=f65e462]: dedicated
+              - generic [ref=f65e464]: experts
+              - generic [ref=f65e466]: into
+              - generic [ref=f65e468]: your
+              - generic [ref=f65e470]: organization.
+              - generic [ref=f65e472]: Not
+              - generic [ref=f65e474]: an
+              - generic [ref=f65e476]: agency.
+              - generic [ref=f65e478]: A
+              - generic [ref=f65e480]: studio.
+        - generic [ref=f65e484]:
+          - heading "Why MAWT" [level=2] [ref=f65e487]:
+            - generic [ref=f65e488]:
+              - generic [ref=f65e489]: Why
+              - generic [ref=f65e491]: MAWT
+          - generic [ref=f65e494]:
+            - paragraph [ref=f65e495]: At MAWT, we always think further for you. Beyond the brief, beyond the deliverable. We look for what will actually move you forward.
+            - paragraph [ref=f65e496]: "We become an extension of your team. We propose, we find, we build. Including what wasn't in the initial brief. That's our signature : continuous partnership, not one-shot delivery."
+            - paragraph [ref=f65e497]: "Our conviction : there are no problems, only solutions. We hunt them with you, not next to you. And we build what actually solves, not what ticks boxes."
+        - generic [ref=f65e500]:
+          - heading "The team" [level=2] [ref=f65e503]:
+            - generic [ref=f65e504]:
+              - generic [ref=f65e505]: The
+              - generic [ref=f65e507]: team
+          - paragraph [ref=f65e510]: Several profiles, one shared vision. Each one expert in their domain, all passionate about what they do. That complementarity is what lets us combine consulting AND execution, marketing AND tech, strategy AND AI. Always in partnership with you.
+        - generic [ref=f65e512]:
+          - heading "Our principles" [level=2] [ref=f65e515]
+          - generic [ref=f65e516]:
+            - article [ref=f65e517]:
+              - generic [ref=f65e518]:
+                - generic [ref=f65e519]: "01"
+                - heading "An extension of your team" [level=3] [ref=f65e526]
+              - paragraph [ref=f65e527]: We team up with you. We think, we build, we stay by your side.
+            - article [ref=f65e528]:
+              - generic [ref=f65e529]:
+                - generic [ref=f65e530]: "02"
+                - heading "Problem solver" [level=3] [ref=f65e540]
+              - paragraph [ref=f65e541]: There are no problems, only solutions. And we build them with you.
+            - article [ref=f65e542]:
+              - generic [ref=f65e543]:
+                - generic [ref=f65e544]: "03"
+                - heading "Custom" [level=3] [ref=f65e550]
+              - paragraph [ref=f65e551]: Each mission is built specifically for your context and your goals.
+            - article [ref=f65e552]:
+              - generic [ref=f65e553]:
+                - generic [ref=f65e554]: "04"
+                - heading "AI-native" [level=3] [ref=f65e558]
+              - paragraph [ref=f65e559]: AI is woven into the solution from day one, to serve your business daily.
+        - generic [ref=f65e562]:
+          - heading "Since 2021" [level=2] [ref=f65e565]:
+            - generic [ref=f65e566]:
+              - generic [ref=f65e567]: Since
+              - generic [ref=f65e569]: "2021"
+          - paragraph [ref=f65e572]: Over 50 missions, picked with care.
+        - generic [ref=f65e574]:
+          - heading "Let's talk about your project" [level=2] [ref=f65e575]:
+            - generic [ref=f65e576]:
+              - generic [ref=f65e577]: Let's
+              - generic [ref=f65e579]: talk
+              - generic [ref=f65e581]: about
+              - generic [ref=f65e583]: your
+              - generic [ref=f65e585]: project
+          - paragraph [ref=f65e587]: 30 minutes together to get to know each other. If it clicks, we move forward. If not, we point you to those who can help.
+          - link "Let's talk" [ref=f65e589] [cursor=pointer]:
+            - /url: /en/contact
+      - generic [ref=f65e197]:
+        - generic [ref=f65e198]:
+          - generic [ref=f65e199]:
+            - img "MAWT Logo" [ref=f65e201]
+            - generic [ref=f65e202]:
+              - link "LinkedIn" [ref=f65e203] [cursor=pointer]:
+                - /url: http://linkedin.com/in/mawt.ch
+              - link "Instagram" [ref=f65e206] [cursor=pointer]:
+                - /url: http://instagram.com/mawt.ch
+            - button "English ▼" [ref=f65e209]:
+              - generic [ref=f65e213]: English
+              - generic [ref=f65e214]: ▼
+          - generic [ref=f65e215]:
+            - heading "Company" [level=4] [ref=f65e216]
+            - list [ref=f65e217]:
+              - listitem [ref=f65e218]:
+                - link "About us" [ref=f65e219] [cursor=pointer]:
+                  - /url: /en/about
+              - listitem [ref=f65e220]:
+                - link "Contact" [ref=f65e221] [cursor=pointer]:
+                  - /url: /en/contact
+              - listitem [ref=f65e222]:
+                - link "Clients & partners" [ref=f65e223] [cursor=pointer]:
+                  - /url: /en/partners
+          - generic [ref=f65e224]:
+            - heading "Services" [level=4] [ref=f65e225]
+            - list [ref=f65e226]:
+              - listitem [ref=f65e227]:
+                - link "All services" [ref=f65e228] [cursor=pointer]:
+                  - /url: /en/services
+              - listitem [ref=f65e229]:
+                - link "Our process" [ref=f65e230] [cursor=pointer]:
+                  - /url: /en/approach
+              - listitem [ref=f65e231]:
+                - link "Projects" [ref=f65e232] [cursor=pointer]:
+                  - /url: /en/work
+          - generic [ref=f65e233]:
+            - heading "Resources" [level=4] [ref=f65e234]
+            - list [ref=f65e235]:
+              - listitem [ref=f65e236]:
+                - link "Blog" [ref=f65e237] [cursor=pointer]:
+                  - /url: /en/news
+              - listitem [ref=f65e238]:
+                - link "FAQs" [ref=f65e239] [cursor=pointer]:
+                  - /url: /en/faqs
+          - generic [ref=f65e240]:
+            - heading "Legal" [level=4] [ref=f65e241]
+            - list [ref=f65e242]:
+              - listitem [ref=f65e243]:
+                - link "Privacy" [ref=f65e244] [cursor=pointer]:
+                  - /url: /en/privacy
+              - listitem [ref=f65e245]:
+                - link "Terms of service" [ref=f65e246] [cursor=pointer]:
+                  - /url: /en/terms
+              - listitem [ref=f65e247]:
+                - link "Cookies" [ref=f65e248] [cursor=pointer]:
+                  - /url: /en/cookies
+              - listitem [ref=f65e249]:
+                - link "Security" [ref=f65e250] [cursor=pointer]:
+                  - /url: /en/security
+          - generic [ref=f65e251]:
+            - heading "Regions" [level=4] [ref=f65e252]
+            - list [ref=f65e253]:
+              - listitem [ref=f65e254]:
+                - link "Geneva" [ref=f65e255] [cursor=pointer]:
+                  - /url: /en/geneva
+        - generic [ref=f65e256]:
+          - button "Cookie Settings" [ref=f65e258]
+          - paragraph [ref=f65e259]: ©2026 MAWT. All Rights Reserved.
+  - button "Open Next.js Dev Tools" [ref=f65e265] [cursor=pointer]
+  - alert [ref=f65e590]

@@ -43,7 +43,7 @@ type NavItem = {
 
 const navItems = [
   { href: "/work", label: "Work" },
-  { href: "/approach", label: "Approach" },
+  { href: "/our-process", label: "Approach" },
   { href: "/services", label: "Services" },
   { href: "/news", label: "News" },
   { href: "/about", label: "About" },
@@ -55,6 +55,7 @@ const navItems = [
 // translate the DISPLAY text here. Unknown hrefs fall back to the English label.
 const NAV_LABELS_FR: Record<string, string> = {
   "/work": "Projets",
+  "/our-process": "Approche",
   "/approach": "Approche",
   "/services": "Services",
   "/news": "Actualités",

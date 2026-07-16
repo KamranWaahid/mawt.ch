@@ -7,6 +7,7 @@ import { SectionReveal } from "@/components/ui/section-reveal";
 import { getProjectBySlug } from "@/lib/sanity.queries";
 import { AnimatedTitle } from "@/components/ui/animated-title";
 import { urlForImage } from "@/lib/sanity.image";
+import { hreflangAlternates } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/i18n-config";
 
 type ProjectPageProps = {
@@ -16,7 +17,7 @@ type ProjectPageProps = {
 export async function generateMetadata({
   params,
 }: ProjectPageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug, lang } = await params;
   const project = await getProjectBySlug(slug);
 
   if (!project) {
@@ -30,8 +31,15 @@ export async function generateMetadata({
     : null;
 
   return {
-    title: `${project.title} | MAWT Portfolio`,
+    // No "| MAWT" here: the layout title template appends the brand suffix.
+    title: `${project.title} — ${lang === "fr" ? "projet" : "case study"}`,
     description: project.excerpt,
+    // Canonical + hreflang: FR/EN twins share the slug, only the section
+    // segment differs (/fr/projets vs /en/work) — translatePath handles it.
+    alternates: hreflangAlternates(
+      `/${lang}/${lang === "fr" ? "projets" : "work"}/${slug}`,
+      lang,
+    ),
     openGraph: {
       title: project.title,
       description: project.excerpt,

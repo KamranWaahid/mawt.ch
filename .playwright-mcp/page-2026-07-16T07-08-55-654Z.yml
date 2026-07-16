@@ -1,0 +1,553 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - link "Skip to content" [ref=e4] [cursor=pointer]:
+      - /url: "#main-content"
+    - link "MAWT - Marketing & Web Technologies home" [ref=e5] [cursor=pointer]:
+      - /url: /en
+      - img "MAWT Logo" [ref=e6]
+    - banner:
+      - navigation "Primary":
+        - generic:
+          - generic:
+            - link "Work":
+              - /url: /en/work
+            - link "Approach":
+              - /url: /en/approach
+            - link "Services":
+              - /url: /en/services
+            - link "News":
+              - /url: /en/news
+            - link "About":
+              - /url: /en/about
+            - link "Contact":
+              - /url: /en/contact
+            - generic: —
+            - button "Passer en français": FR
+            - generic: /
+            - button "Change language": EN
+    - main [ref=e7]:
+      - generic [ref=e9]:
+        - generic [ref=e11]:
+          - link "MAWT home" [ref=e12] [cursor=pointer]:
+            - /url: /en
+          - generic:
+            - generic:
+              - paragraph: We create experiences for the world's most ambitious thinkers.
+              - link "Let's talk" [ref=e21] [cursor=pointer]:
+                - /url: /contact
+                - generic [ref=e22]: →
+                - text: Let's talk
+              - paragraph:
+                - text: MAWT is a
+                - generic: Swiss
+                - text: Geneva-based AI and engineering agency building custom automation systems for SMEs and growing companies in Switzerland.
+          - generic: Scroll
+          - generic:
+            - generic:
+              - heading [level=2]
+          - navigation "Homepage transition navigation" [ref=e23]:
+            - generic [ref=e24]:
+              - link "MAWT home" [ref=e26] [cursor=pointer]:
+                - /url: /en
+              - generic [ref=e35]:
+                - link "Work" [ref=e36] [cursor=pointer]:
+                  - /url: /en/work
+                - link "Approach" [ref=e37] [cursor=pointer]:
+                  - /url: /en/our-process
+                - link "Services" [ref=e38] [cursor=pointer]:
+                  - /url: /en/services
+                - link "News" [ref=e39] [cursor=pointer]:
+                  - /url: /en/news
+                - link "About" [ref=e40] [cursor=pointer]:
+                  - /url: /en/about
+                - link "Contact" [ref=e41] [cursor=pointer]:
+                  - /url: /en/contact
+                - generic [ref=e42]: —
+                - link "FR" [ref=e43] [cursor=pointer]:
+                  - /url: /fr
+                - generic [ref=e44]: /
+                - link "EN" [ref=e45] [cursor=pointer]:
+                  - /url: /en
+        - generic [ref=e46]:
+          - generic [ref=e48]:
+            - heading "Trusted by teams in Geneva & Switzerland" [level=2] [ref=e49]
+            - list "Trusted by teams in Geneva & Switzerland" [ref=e50]:
+              - listitem [ref=e51]:
+                - link "Mellender Real Estate" [ref=e52] [cursor=pointer]:
+                  - /url: http://mellender.ch/
+                  - img "Mellender Real Estate"
+              - listitem [ref=e53]:
+                - generic [ref=e54]:
+                  - img "Sotheby's"
+              - listitem [ref=e55]:
+                - generic [ref=e56]:
+                  - img "United Nations"
+              - listitem [ref=e57]:
+                - generic [ref=e58]:
+                  - img "EMS Medical System"
+              - listitem [ref=e59]:
+                - generic [ref=e60]:
+                  - img "Kouleta"
+              - listitem [ref=e61]:
+                - generic [ref=e62]:
+                  - img "CIRO Trattoria Gourmet"
+              - listitem [ref=e63]:
+                - generic [ref=e64]:
+                  - img "Legumes Express"
+              - listitem [ref=e65]:
+                - generic [ref=e66]:
+                  - img "Buzz Delivery"
+              - listitem [ref=e67]:
+                - generic [ref=e68]:
+                  - img "SGP Security"
+              - listitem [ref=e69]:
+                - generic [ref=e70]:
+                  - img "RS Detailing"
+              - listitem [ref=e71]:
+                - generic [ref=e72]:
+                  - img "Sartiyoon Crafts"
+          - heading "Everyone tells you AI will change everything. But for most businesses, the reality is a mess of disconnected tools and manual workflows. Slide decks pile up, but the execution layer to turn concepts into software is missing. Because AI is only a promise. Your business requires systems. Value is only created when technology is built deep into the core of how you operate." [level=2] [ref=e76]:
+            - generic [ref=e77]: Everyone
+            - generic [ref=e79]: tells
+            - generic [ref=e81]: you
+            - generic [ref=e83]: AI
+            - generic [ref=e85]: will
+            - generic [ref=e87]: change
+            - generic [ref=e89]: everything.
+            - generic [ref=e91]: But
+            - generic [ref=e93]: for
+            - generic [ref=e95]: most
+            - generic [ref=e97]: businesses,
+            - generic [ref=e99]: the
+            - generic [ref=e101]: reality
+            - generic [ref=e103]: is
+            - generic [ref=e105]: a
+            - generic [ref=e107]: mess
+            - generic [ref=e109]: of
+            - generic [ref=e111]: disconnected
+            - generic [ref=e113]: tools
+            - generic [ref=e115]: and
+            - generic [ref=e117]: manual
+            - generic [ref=e119]: workflows.
+            - generic [ref=e121]: Slide
+            - generic [ref=e123]: decks
+            - generic [ref=e125]: pile
+            - generic [ref=e127]: up,
+            - generic [ref=e129]: but
+            - generic [ref=e131]: the
+            - generic [ref=e133]: execution
+            - generic [ref=e135]: layer
+            - generic [ref=e137]: to
+            - generic [ref=e139]: turn
+            - generic [ref=e141]: concepts
+            - generic [ref=e143]: into
+            - generic [ref=e145]: software
+            - generic [ref=e147]: is
+            - generic [ref=e149]: missing.
+            - generic [ref=e151]: Because
+            - generic [ref=e153]: AI
+            - generic [ref=e155]: is
+            - generic [ref=e157]: only
+            - generic [ref=e159]: a
+            - generic [ref=e161]: promise.
+            - generic [ref=e163]: Your
+            - generic [ref=e165]: business
+            - generic [ref=e167]: requires
+            - generic [ref=e169]: systems.
+            - generic [ref=e171]: Value
+            - generic [ref=e173]: is
+            - generic [ref=e175]: only
+            - generic [ref=e177]: created
+            - generic [ref=e179]: when
+            - generic [ref=e181]: technology
+            - generic [ref=e183]: is
+            - generic [ref=e185]: built
+            - generic [ref=e187]: deep
+            - generic [ref=e189]: into
+            - generic [ref=e191]: the
+            - generic [ref=e193]: core
+            - generic [ref=e195]: of
+            - generic [ref=e197]: how
+            - generic [ref=e199]: you
+            - generic [ref=e201]: operate.
+          - generic [ref=e205]:
+            - heading "We turn scattered operations into connected systems that are easier to run, measure, and scale." [level=2] [ref=e208]:
+              - generic [ref=e209]:
+                - generic [ref=e210]: We
+                - generic [ref=e212]: turn
+                - generic [ref=e214]: scattered
+                - generic [ref=e216]: operations
+                - generic [ref=e218]: into
+                - generic [ref=e220]: connected
+                - generic [ref=e222]: systems
+                - generic [ref=e224]: that
+                - generic [ref=e226]: are
+                - generic [ref=e228]: easier
+                - generic [ref=e230]: to
+                - generic [ref=e232]: run,
+                - generic [ref=e234]: measure,
+                - generic [ref=e236]: and
+                - generic [ref=e238]: scale.
+            - generic [ref=e240]:
+              - generic [ref=e243]:
+                - heading "AI Solutions" [level=3] [ref=e244]
+                - list [ref=e245]:
+                  - listitem [ref=e246]:
+                    - link "Smart CRM" [ref=e247] [cursor=pointer]:
+                      - /url: /en/services/ai-solutions/smart-crm
+                    - generic [ref=e248]: •
+                  - listitem [ref=e249]:
+                    - link "AI agent / assistant" [ref=e250] [cursor=pointer]:
+                      - /url: /en/services/ai-solutions/ai-agent
+                    - generic [ref=e251]: •
+                  - listitem [ref=e252]:
+                    - link "Enterprise RAG" [ref=e253] [cursor=pointer]:
+                      - /url: /en/services/ai-solutions/rag-enterprise
+                    - generic [ref=e254]: •
+                  - listitem [ref=e255]:
+                    - link "Chatbots" [ref=e256] [cursor=pointer]:
+                      - /url: /en/services/ai-solutions/chatbots
+                    - generic [ref=e257]: •
+                  - listitem [ref=e258]:
+                    - link "Custom business application" [ref=e259] [cursor=pointer]:
+                      - /url: /en/services/ai-solutions/custom-business-application
+                    - generic [ref=e260]: •
+                  - listitem [ref=e261]:
+                    - link "AI automation" [ref=e262] [cursor=pointer]:
+                      - /url: /en/services/ai-solutions/ai-automation
+                    - generic [ref=e263]: •
+                  - listitem [ref=e264]:
+                    - link "Local AI & custom models" [ref=e265] [cursor=pointer]:
+                      - /url: /en/services/ai-solutions/local-ai
+                    - generic [ref=e266]: •
+                  - listitem [ref=e267]:
+                    - link "Integrations & APIs" [ref=e268] [cursor=pointer]:
+                      - /url: /en/services/ai-solutions/integrations-apis
+                    - generic [ref=e269]: •
+                  - listitem [ref=e270]:
+                    - link "Mobile app" [ref=e271] [cursor=pointer]:
+                      - /url: /en/services/ai-solutions/mobile-app
+                    - generic [ref=e272]: •
+                  - listitem [ref=e273]:
+                    - link "Client & business portal" [ref=e274] [cursor=pointer]:
+                      - /url: /en/services/ai-solutions/client-business-portal
+              - generic [ref=e278]:
+                - heading "AI Consulting" [level=3] [ref=e279]
+                - list [ref=e280]:
+                  - listitem [ref=e281]:
+                    - link "AI strategy" [ref=e282] [cursor=pointer]:
+                      - /url: /en/services/ai-consulting/ai-strategy
+                    - generic [ref=e283]: •
+                  - listitem [ref=e284]:
+                    - link "Business audit" [ref=e285] [cursor=pointer]:
+                      - /url: /en/services/ai-consulting/business-audit
+                    - generic [ref=e286]: •
+                  - listitem [ref=e287]:
+                    - link "Organizational consulting" [ref=e288] [cursor=pointer]:
+                      - /url: /en/services/ai-consulting/organizational-consulting
+                    - generic [ref=e289]: •
+                  - listitem [ref=e290]:
+                    - link "Digital transformation" [ref=e291] [cursor=pointer]:
+                      - /url: /en/services/ai-consulting/digital-transformation
+                    - generic [ref=e292]: •
+                  - listitem [ref=e293]:
+                    - link "Change management" [ref=e294] [cursor=pointer]:
+                      - /url: /en/services/ai-consulting/change-management
+                    - generic [ref=e295]: •
+                  - listitem [ref=e296]:
+                    - link "AI change management" [ref=e297] [cursor=pointer]:
+                      - /url: /en/services/ai-consulting/ai-change-management
+                    - generic [ref=e298]: •
+                  - listitem [ref=e299]:
+                    - link "Digital transformation consulting" [ref=e300] [cursor=pointer]:
+                      - /url: /en/services/ai-consulting/digital-transformation-consulting
+              - generic [ref=e304]:
+                - heading "AI Training" [level=3] [ref=e305]
+                - list [ref=e306]:
+                  - listitem [ref=e307]:
+                    - link "ChatGPT for teams" [ref=e308] [cursor=pointer]:
+                      - /url: /en/services/ai-training/chatgpt-for-teams
+                    - generic [ref=e309]: •
+                  - listitem [ref=e310]:
+                    - link "AI workshop" [ref=e311] [cursor=pointer]:
+                      - /url: /en/services/ai-training/ai-workshop
+                    - generic [ref=e312]: •
+                  - listitem [ref=e313]:
+                    - link "AI coaching for leaders" [ref=e314] [cursor=pointer]:
+                      - /url: /en/services/ai-training/ai-coaching-for-leaders
+                    - generic [ref=e315]: •
+                  - listitem [ref=e316]:
+                    - link "AI implementation" [ref=e317] [cursor=pointer]:
+                      - /url: /en/services/ai-training/ai-implementation
+              - generic [ref=e321]:
+                - heading "Sites & Branding" [level=3] [ref=e322]
+                - list [ref=e323]:
+                  - listitem [ref=e324]:
+                    - link "Website" [ref=e325] [cursor=pointer]:
+                      - /url: /en/services/sites-and-branding/website
+                    - generic [ref=e326]: •
+                  - listitem [ref=e327]:
+                    - link "E-commerce" [ref=e328] [cursor=pointer]:
+                      - /url: /en/services/sites-and-branding/e-commerce
+                    - generic [ref=e329]: •
+                  - listitem [ref=e330]:
+                    - link "Branding & identity" [ref=e331] [cursor=pointer]:
+                      - /url: /en/services/sites-and-branding/branding-identity
+                    - generic [ref=e332]: •
+                  - listitem [ref=e333]:
+                    - link "UX / SEO / performance audit" [ref=e334] [cursor=pointer]:
+                      - /url: /en/services/sites-and-branding/ux-seo-performance-audit
+                    - generic [ref=e335]: •
+                  - listitem [ref=e336]:
+                    - link "Website redesign" [ref=e337] [cursor=pointer]:
+                      - /url: /en/services/sites-and-branding/website-redesign
+              - generic [ref=e341]:
+                - heading "Team Augmentation" [level=3] [ref=e342]
+                - list [ref=e343]:
+                  - listitem [ref=e344]:
+                    - link "Dedicated developer" [ref=e345] [cursor=pointer]:
+                      - /url: /en/services/team-augmentation/dedicated-developer
+                    - generic [ref=e346]: •
+                  - listitem [ref=e347]:
+                    - link "Dedicated AI expert" [ref=e348] [cursor=pointer]:
+                      - /url: /en/services/team-augmentation/dedicated-ai-expert
+                    - generic [ref=e349]: •
+                  - listitem [ref=e350]:
+                    - link "Dedicated UX designer" [ref=e351] [cursor=pointer]:
+                      - /url: /en/services/team-augmentation/dedicated-ux-designer
+                    - generic [ref=e352]: •
+                  - listitem [ref=e353]:
+                    - link "QA & testing" [ref=e354] [cursor=pointer]:
+                      - /url: /en/services/team-augmentation/qa-testing
+                    - generic [ref=e355]: •
+                  - listitem [ref=e356]:
+                    - link "Project management" [ref=e357] [cursor=pointer]:
+                      - /url: /en/services/team-augmentation/project-management
+                    - generic [ref=e358]: •
+                  - listitem [ref=e359]:
+                    - link "Design coaching" [ref=e360] [cursor=pointer]:
+                      - /url: /en/services/team-augmentation/design-coaching
+                    - generic [ref=e361]: •
+                  - listitem [ref=e362]:
+                    - link "Application maintenance" [ref=e363] [cursor=pointer]:
+                      - /url: /en/services/team-augmentation/application-maintenance
+                    - generic [ref=e364]: •
+                  - listitem [ref=e365]:
+                    - link "Fractional CTO" [ref=e366] [cursor=pointer]:
+                      - /url: /en/services/team-augmentation/fractional-cto
+                    - generic [ref=e367]: •
+                  - listitem [ref=e368]:
+                    - link "Fractional Tech Lead" [ref=e369] [cursor=pointer]:
+                      - /url: /en/services/team-augmentation/fractional-tech-lead
+                    - generic [ref=e370]: •
+                  - listitem [ref=e371]:
+                    - link "Engineering as a Service" [ref=e372] [cursor=pointer]:
+                      - /url: /en/services/team-augmentation/engineering-as-a-service
+              - link "View all services ↗" [ref=e376] [cursor=pointer]:
+                - /url: /en/services
+                - text: View all services
+                - generic [ref=e377]: ↗
+          - region [ref=e378]:
+            - generic [ref=e379]:
+              - heading "We build operational software tailored to how you operate." [level=2] [ref=e382]:
+                - generic [ref=e384]:
+                  - generic [ref=e385]: We
+                  - generic [ref=e387]: build
+                  - generic [ref=e389]: operational
+                  - generic [ref=e391]: software
+                - generic [ref=e394]:
+                  - generic [ref=e395]: tailored
+                  - generic [ref=e397]: to
+                  - generic [ref=e399]: how
+                  - generic [ref=e401]: you
+                  - generic [ref=e403]: operate.
+              - generic [ref=e405]:
+                - article [ref=e406]:
+                  - generic [ref=e407]:
+                    - generic [ref=e408]: "01"
+                    - heading "Custom AI Integrations" [level=3] [ref=e409]
+                  - paragraph [ref=e410]: RAG systems, intelligent agents, and internal search tools trained on your document stores and proprietary data.
+                - article [ref=e411]:
+                  - generic [ref=e412]:
+                    - generic [ref=e413]: "02"
+                    - heading "Workflow Automation" [level=3] [ref=e414]
+                  - paragraph [ref=e415]: Connected database pipelines that handle entry, categorization, and reporting automatically.
+                - article [ref=e416]:
+                  - generic [ref=e417]:
+                    - generic [ref=e418]: "03"
+                    - heading "Custom Applications" [level=3] [ref=e419]
+                  - paragraph [ref=e420]: Next.js platforms and web portals built to solve complex operations where standard SaaS fall short.
+                - article [ref=e421]:
+                  - generic [ref=e422]:
+                    - generic [ref=e423]: "04"
+                    - heading "Production Continuity" [level=3] [ref=e424]
+                  - paragraph [ref=e425]: We stay through deployment, integration testing, and long-term optimization. We ship and maintain.
+          - generic [ref=e428]:
+            - heading "Our process, crafted through decades of shared experience" [level=2] [ref=e431]:
+              - generic [ref=e432]:
+                - generic [ref=e433]: Our
+                - generic [ref=e435]: process,
+                - generic [ref=e437]: crafted
+                - generic [ref=e439]: through
+                - generic [ref=e441]: decades
+                - generic [ref=e443]: of
+                - generic [ref=e445]: shared
+                - generic [ref=e447]: experience
+            - generic [ref=e451]:
+              - generic [ref=e452]:
+                - generic [ref=e453]:
+                  - heading "Think" [level=3] [ref=e454]
+                  - paragraph [ref=e455]: We read the soil to find where ideas take root, uncovering opportunities, directions, and missions.
+                - generic:
+                  - img "Think"
+              - generic [ref=e456]:
+                - generic [ref=e457]:
+                  - heading "Create" [level=3] [ref=e458]
+                  - paragraph [ref=e459]: We coax the invisible into the inevitable, crafting identities and systems to support your growth.
+                - generic:
+                  - img "Create"
+              - generic [ref=e460]:
+                - generic [ref=e461]:
+                  - heading "Build" [level=3] [ref=e462]
+                  - paragraph [ref=e463]: We engineer scalable digital products and experiences ready for real-world impact.
+                - generic:
+                  - img "Build"
+              - generic [ref=e464]:
+                - generic [ref=e465]:
+                  - heading "Scale" [level=3] [ref=e466]
+                  - paragraph [ref=e467]: We tend and graft, evolving your footprint so that you may bear fruit.
+                - generic:
+                  - img "Scale"
+          - generic [ref=e469]:
+            - generic [ref=e470]:
+              - heading "Our work, from petal to planet" [level=2] [ref=e471]:
+                - generic [ref=e472]:
+                  - generic [ref=e473]: Our
+                  - generic [ref=e475]: work,
+                  - generic [ref=e477]: from
+                  - generic [ref=e479]: petal
+                  - generic [ref=e481]: to
+                  - generic [ref=e483]: planet
+              - link "See all" [ref=e485] [cursor=pointer]:
+                - /url: /en/work
+            - generic [ref=e489]:
+              - article [ref=e490]:
+                - link [ref=e491] [cursor=pointer]:
+                  - /url: /en/work/swixit
+                  - generic [ref=e493]:
+                    - heading "Swixit" [level=3] [ref=e494]
+                    - paragraph
+                  - img "Swixit" [ref=e496]
+              - article [ref=e497]:
+                - link [ref=e498] [cursor=pointer]:
+                  - /url: /en/work/mellender
+                  - generic [ref=e500]:
+                    - heading "Mellender" [level=3] [ref=e501]
+                    - paragraph
+                  - img "Mellender" [ref=e503]
+          - generic [ref=e505]:
+            - heading "Latest from the team" [level=2] [ref=e507]:
+              - generic [ref=e508]:
+                - generic [ref=e509]: Latest
+                - generic [ref=e511]: from
+                - generic [ref=e513]: the
+                - generic [ref=e515]: team
+            - generic [ref=e517]:
+              - article [ref=e518]:
+                - link "Opinions The Hidden Cost of Poor Digital Infrastructure May 17, 2026 • 3 min read Advertising and salaries show up on the balance sheet. The hours your teams lose to disconnected systems do not, and that is often the larger bill. →" [ref=e519] [cursor=pointer]:
+                  - /url: /en/news/the-hidden-cost-of-poor-digital-infrastructure
+                  - generic [ref=e520]:
+                    - generic [ref=e521]: Opinions
+                    - heading "The Hidden Cost of Poor Digital Infrastructure" [level=3] [ref=e522]
+                    - generic [ref=e523]: May 17, 2026 • 3 min read
+                    - paragraph [ref=e524]: Advertising and salaries show up on the balance sheet. The hours your teams lose to disconnected systems do not, and that is often the larger bill.
+                  - generic [ref=e525]: →
+              - article [ref=e527]:
+                - 'link "Opinions Why Most Businesses Struggle With Digital Growth May 17, 2026 • 3 min read Most companies think their problem is attention. More often it is structure: disconnected tools, manual work, and processes that break as the business grows. →" [ref=e528] [cursor=pointer]':
+                  - /url: /en/news/why-most-businesses-struggle-with-digital-growth
+                  - generic [ref=e529]:
+                    - generic [ref=e530]: Opinions
+                    - heading "Why Most Businesses Struggle With Digital Growth" [level=3] [ref=e531]
+                    - generic [ref=e532]: May 17, 2026 • 3 min read
+                    - paragraph [ref=e533]: "Most companies think their problem is attention. More often it is structure: disconnected tools, manual work, and processes that break as the business grows."
+                  - generic [ref=e534]: →
+              - article [ref=e536]:
+                - 'link "Tendances Ia The Future of Business Is Built on Systems, Not Just Websites May 17, 2026 • 3 min read Visibility used to be enough. Growth now depends on what sits behind the website: connected workflows, automation, and infrastructure built to scale. →" [ref=e537] [cursor=pointer]':
+                  - /url: /en/news/the-future-of-business-is-built-on-systems-not-just-websites
+                  - generic [ref=e538]:
+                    - generic [ref=e539]: Tendances Ia
+                    - heading "The Future of Business Is Built on Systems, Not Just Websites" [level=3] [ref=e540]
+                    - generic [ref=e541]: May 17, 2026 • 3 min read
+                    - paragraph [ref=e542]: "Visibility used to be enough. Growth now depends on what sits behind the website: connected workflows, automation, and infrastructure built to scale."
+                  - generic [ref=e543]: →
+      - generic [ref=e546]:
+        - generic [ref=e547]:
+          - generic [ref=e548]:
+            - img "MAWT Logo" [ref=e550]
+            - generic [ref=e551]:
+              - link "LinkedIn" [ref=e552] [cursor=pointer]:
+                - /url: http://linkedin.com/in/mawt.ch
+              - link "Instagram" [ref=e555] [cursor=pointer]:
+                - /url: http://instagram.com/mawt.ch
+            - button "English ▼" [ref=e558]:
+              - generic [ref=e562]: English
+              - generic [ref=e563]: ▼
+          - generic [ref=e564]:
+            - heading "Company" [level=4] [ref=e565]
+            - list [ref=e566]:
+              - listitem [ref=e567]:
+                - link "About us" [ref=e568] [cursor=pointer]:
+                  - /url: /en/about
+              - listitem [ref=e569]:
+                - link "Contact" [ref=e570] [cursor=pointer]:
+                  - /url: /en/contact
+              - listitem [ref=e571]:
+                - link "Clients & partners" [ref=e572] [cursor=pointer]:
+                  - /url: /en/partners
+          - generic [ref=e573]:
+            - heading "Services" [level=4] [ref=e574]
+            - list [ref=e575]:
+              - listitem [ref=e576]:
+                - link "All services" [ref=e577] [cursor=pointer]:
+                  - /url: /en/services
+              - listitem [ref=e578]:
+                - link "Our process" [ref=e579] [cursor=pointer]:
+                  - /url: /en/approach
+              - listitem [ref=e580]:
+                - link "Projects" [ref=e581] [cursor=pointer]:
+                  - /url: /en/work
+          - generic [ref=e582]:
+            - heading "Resources" [level=4] [ref=e583]
+            - list [ref=e584]:
+              - listitem [ref=e585]:
+                - link "Blog" [ref=e586] [cursor=pointer]:
+                  - /url: /en/news
+              - listitem [ref=e587]:
+                - link "FAQs" [ref=e588] [cursor=pointer]:
+                  - /url: /en/faqs
+          - generic [ref=e589]:
+            - heading "Legal" [level=4] [ref=e590]
+            - list [ref=e591]:
+              - listitem [ref=e592]:
+                - link "Privacy" [ref=e593] [cursor=pointer]:
+                  - /url: /en/privacy
+              - listitem [ref=e594]:
+                - link "Terms of service" [ref=e595] [cursor=pointer]:
+                  - /url: /en/terms
+              - listitem [ref=e596]:
+                - link "Cookies" [ref=e597] [cursor=pointer]:
+                  - /url: /en/cookies
+              - listitem [ref=e598]:
+                - link "Security" [ref=e599] [cursor=pointer]:
+                  - /url: /en/security
+          - generic [ref=e600]:
+            - heading "Regions" [level=4] [ref=e601]
+            - list [ref=e602]:
+              - listitem [ref=e603]:
+                - link "Geneva" [ref=e604] [cursor=pointer]:
+                  - /url: /en/geneva
+        - generic [ref=e605]:
+          - button "Cookie Settings" [ref=e607]
+          - paragraph [ref=e608]: ©2026 MAWT. All Rights Reserved.
+  - button "Open Next.js Dev Tools" [ref=e614] [cursor=pointer]
+  - alert [ref=e618]

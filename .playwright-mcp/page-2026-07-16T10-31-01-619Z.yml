@@ -1,0 +1,619 @@
+- generic [active] [ref=f64e1]:
+  - generic [ref=f64e3]:
+    - link "Skip to content" [ref=f64e4] [cursor=pointer]:
+      - /url: "#main-content"
+    - link "MAWT - Marketing & Web Technologies home" [ref=f64e5] [cursor=pointer]:
+      - /url: /fr
+      - img "MAWT Logo" [ref=f64e6]
+    - banner [ref=f64e7]:
+      - navigation "Primary" [ref=f64e8]:
+        - generic [ref=f64e10]:
+          - link "Projets" [ref=f64e11] [cursor=pointer]:
+            - /url: /fr/projets
+          - link "Approche" [ref=f64e12] [cursor=pointer]:
+            - /url: /fr/approach
+          - link "Services" [expanded] [ref=f64e13] [cursor=pointer]:
+            - /url: /fr/services
+          - link "Actualités" [ref=f64e16] [cursor=pointer]:
+            - /url: /fr/blog
+          - link "À propos" [ref=f64e17] [cursor=pointer]:
+            - /url: /fr/a-propos
+          - link "Contact" [ref=f64e18] [cursor=pointer]:
+            - /url: /fr/contact
+          - generic [ref=f64e19]: —
+          - button "Passer en français" [ref=f64e20]: FR
+          - generic [ref=f64e21]: /
+          - button "Change language" [ref=f64e22]: EN
+      - generic [ref=f64e722]:
+        - generic [ref=f64e723]:
+          - link "Solutions IA" [ref=f64e724] [cursor=pointer]:
+            - /url: /fr/services/solutions-ia
+          - list [ref=f64e725]:
+            - listitem [ref=f64e726]:
+              - link "CRM intelligent" [ref=f64e727] [cursor=pointer]:
+                - /url: /fr/services/solutions-ia/crm-intelligent
+            - listitem [ref=f64e728]:
+              - link "Agent IA / Assistant IA" [ref=f64e729] [cursor=pointer]:
+                - /url: /fr/services/solutions-ia/agent-ia-assistant
+            - listitem [ref=f64e730]:
+              - link "RAG / Intelligence embarquée" [ref=f64e731] [cursor=pointer]:
+                - /url: /fr/services/solutions-ia/rag-intelligence-embarquee
+            - listitem [ref=f64e732]:
+              - link "Chatbots" [ref=f64e733] [cursor=pointer]:
+                - /url: /fr/services/solutions-ia/chatbots
+            - listitem [ref=f64e734]:
+              - link "Automatisations" [ref=f64e735] [cursor=pointer]:
+                - /url: /fr/services/solutions-ia/automatisations
+            - listitem [ref=f64e736]:
+              - link "IA locale & modèles sur mesure" [ref=f64e737] [cursor=pointer]:
+                - /url: /fr/services/solutions-ia/ia-locale
+            - listitem [ref=f64e738]:
+              - link "Portail client & entreprise" [ref=f64e739] [cursor=pointer]:
+                - /url: /fr/services/solutions-ia/portail-client-entreprise
+        - generic [ref=f64e740]:
+          - link "Conseil IA" [ref=f64e741] [cursor=pointer]:
+            - /url: /fr/services/conseil-ia
+          - list [ref=f64e742]:
+            - listitem [ref=f64e743]:
+              - link "Stratégie IA" [ref=f64e744] [cursor=pointer]:
+                - /url: /fr/services/conseil-ia/strategie-ia
+            - listitem [ref=f64e745]:
+              - link "Audit opérationnel" [ref=f64e746] [cursor=pointer]:
+                - /url: /fr/services/conseil-ia/audit-operationnel
+            - listitem [ref=f64e747]:
+              - link "Conseil organisationnel" [ref=f64e748] [cursor=pointer]:
+                - /url: /fr/services/conseil-ia/conseil-organisationnel
+            - listitem [ref=f64e749]:
+              - link "Transformation numérique" [ref=f64e750] [cursor=pointer]:
+                - /url: /fr/services/conseil-ia/transformation-numerique
+            - listitem [ref=f64e751]:
+              - link "Adoption des nouveaux outils" [ref=f64e752] [cursor=pointer]:
+                - /url: /fr/services/conseil-ia/change-management
+            - listitem [ref=f64e753]:
+              - link "Adoption de l'IA par vos équipes" [ref=f64e754] [cursor=pointer]:
+                - /url: /fr/services/conseil-ia/ai-change-management
+        - generic [ref=f64e755]:
+          - link "Digital" [ref=f64e756] [cursor=pointer]:
+            - /url: /fr/services/digital
+          - list [ref=f64e757]:
+            - listitem [ref=f64e758]:
+              - link "Conseil & stratégie digitale" [ref=f64e759] [cursor=pointer]:
+                - /url: /fr/services/digital/conseil-digitalisation
+            - listitem [ref=f64e760]:
+              - link "Commerce digital & e-commerce" [ref=f64e761] [cursor=pointer]:
+                - /url: /fr/services/digital/e-commerce-eshop
+            - listitem [ref=f64e762]:
+              - link "Application métier / Logiciel sur mesure" [ref=f64e763] [cursor=pointer]:
+                - /url: /fr/services/digital/application-metier-logiciel-sur-mesure
+        - generic [ref=f64e764]:
+          - link "Données & Analytics" [ref=f64e765] [cursor=pointer]:
+            - /url: /fr/services/donnees-analytics
+          - list [ref=f64e766]:
+            - listitem [ref=f64e767]:
+              - link "Modernisation des données" [ref=f64e768] [cursor=pointer]:
+                - /url: /fr/services/donnees-analytics/modernisation-donnees
+            - listitem [ref=f64e769]:
+              - link "Analytique avancée & tableaux de bord" [ref=f64e770] [cursor=pointer]:
+                - /url: /fr/services/donnees-analytics/donnees-tableaux-de-bord
+            - listitem [ref=f64e771]:
+              - link "Intelligence connectée" [ref=f64e772] [cursor=pointer]:
+                - /url: /fr/services/donnees-analytics/intelligence-connectee
+            - listitem [ref=f64e773]:
+              - link "Gestion des données" [ref=f64e774] [cursor=pointer]:
+                - /url: /fr/services/donnees-analytics/gestion-donnees
+            - listitem [ref=f64e775]:
+              - link "IA générative" [ref=f64e776] [cursor=pointer]:
+                - /url: /fr/services/donnees-analytics/ia-generative
+        - generic [ref=f64e777]:
+          - link "Développement logiciel" [ref=f64e778] [cursor=pointer]:
+            - /url: /fr/services/developpement-logiciel
+          - list [ref=f64e779]:
+            - listitem [ref=f64e780]:
+              - link "MVP & lancement produit" [ref=f64e781] [cursor=pointer]:
+                - /url: /fr/services/developpement-logiciel/mvp-lancement-produit
+            - listitem [ref=f64e782]:
+              - link "Développement IA" [ref=f64e783] [cursor=pointer]:
+                - /url: /fr/services/developpement-logiciel/developpement-ia
+            - listitem [ref=f64e784]:
+              - link "Développement web & site internet" [ref=f64e785] [cursor=pointer]:
+                - /url: /fr/services/developpement-logiciel/site-internet
+            - listitem [ref=f64e786]:
+              - link "Développement mobile & applications" [ref=f64e787] [cursor=pointer]:
+                - /url: /fr/services/developpement-logiciel/application-mobile
+            - listitem [ref=f64e788]:
+              - link "Développement desktop" [ref=f64e789] [cursor=pointer]:
+                - /url: /fr/services/developpement-logiciel/developpement-desktop
+            - listitem [ref=f64e790]:
+              - link "Développement d'API & intégrations" [ref=f64e791] [cursor=pointer]:
+                - /url: /fr/services/developpement-logiciel/integrations-apis
+            - listitem [ref=f64e792]:
+              - link "Développement de bases de données" [ref=f64e793] [cursor=pointer]:
+                - /url: /fr/services/developpement-logiciel/developpement-base-de-donnees
+            - listitem [ref=f64e794]:
+              - link "Modernisation de logiciel" [ref=f64e795] [cursor=pointer]:
+                - /url: /fr/services/developpement-logiciel/modernisation-logiciel
+            - listitem [ref=f64e796]:
+              - link "Renfort d'équipe IT" [ref=f64e797] [cursor=pointer]:
+                - /url: /fr/services/developpement-logiciel/renfort-equipe-it
+        - generic [ref=f64e798]:
+          - link "Sécurité" [ref=f64e799] [cursor=pointer]:
+            - /url: /fr/services/securite
+          - list [ref=f64e800]:
+            - listitem [ref=f64e801]:
+              - link "Cybersécurité" [ref=f64e802] [cursor=pointer]:
+                - /url: /fr/services/securite/cybersecurite
+            - listitem [ref=f64e803]:
+              - link "Conformité & compliance" [ref=f64e804] [cursor=pointer]:
+                - /url: /fr/services/securite/conformite-compliance
+            - listitem [ref=f64e805]:
+              - link "Tests de sécurité" [ref=f64e806] [cursor=pointer]:
+                - /url: /fr/services/securite/tests-securite
+            - listitem [ref=f64e807]:
+              - link "Tests d'intrusion" [ref=f64e808] [cursor=pointer]:
+                - /url: /fr/services/securite/tests-intrusion-pentest
+            - listitem [ref=f64e809]:
+              - link "Services SIEM" [ref=f64e810] [cursor=pointer]:
+                - /url: /fr/services/securite/services-siem
+        - generic [ref=f64e811]:
+          - link "Opérations & SCM" [ref=f64e812] [cursor=pointer]:
+            - /url: /fr/services/operations-scm
+          - list [ref=f64e813]:
+            - listitem [ref=f64e814]:
+              - link "ERP" [ref=f64e815] [cursor=pointer]:
+                - /url: /fr/services/operations-scm/erp
+            - listitem [ref=f64e816]:
+              - link "Gestion des opérations" [ref=f64e817] [cursor=pointer]:
+                - /url: /fr/services/operations-scm/gestion-operations
+            - listitem [ref=f64e818]:
+              - link "Gestion de la chaîne logistique" [ref=f64e819] [cursor=pointer]:
+                - /url: /fr/services/operations-scm/gestion-chaine-logistique
+            - listitem [ref=f64e820]:
+              - link "Gestion d'entrepôt" [ref=f64e821] [cursor=pointer]:
+                - /url: /fr/services/operations-scm/gestion-entrepot
+            - listitem [ref=f64e822]:
+              - link "Gestion des actifs d'entreprise" [ref=f64e823] [cursor=pointer]:
+                - /url: /fr/services/operations-scm/gestion-actifs-entreprise
+            - listitem [ref=f64e824]:
+              - link "Gestion des fournisseurs" [ref=f64e825] [cursor=pointer]:
+                - /url: /fr/services/operations-scm/gestion-fournisseurs
+            - listitem [ref=f64e826]:
+              - link "Pilotage & gestion de projet" [ref=f64e827] [cursor=pointer]:
+                - /url: /fr/services/operations-scm/pilotage-projet
+            - listitem [ref=f64e828]:
+              - link "Gestion documentaire (GED)" [ref=f64e829] [cursor=pointer]:
+                - /url: /fr/services/operations-scm/gestion-documentaire-ged
+        - generic [ref=f64e830]:
+          - link "Sites & Branding" [ref=f64e831] [cursor=pointer]:
+            - /url: /fr/services/sites-et-branding
+          - list [ref=f64e832]:
+            - listitem [ref=f64e833]:
+              - link "Branding & identité" [ref=f64e834] [cursor=pointer]:
+                - /url: /fr/services/sites-et-branding/branding-identite
+            - listitem [ref=f64e835]:
+              - link "Audit UX / SEO / performance" [ref=f64e836] [cursor=pointer]:
+                - /url: /fr/services/sites-et-branding/audit-ux-seo-performance
+            - listitem [ref=f64e837]:
+              - link "Refonte de site web" [ref=f64e838] [cursor=pointer]:
+                - /url: /fr/services/sites-et-branding/refonte-site-web
+        - generic [ref=f64e839]:
+          - link "Renfort & Équipe" [ref=f64e840] [cursor=pointer]:
+            - /url: /fr/services/renfort-equipe
+          - list [ref=f64e841]:
+            - listitem [ref=f64e842]:
+              - link "Développeur dédié" [ref=f64e843] [cursor=pointer]:
+                - /url: /fr/services/renfort-equipe/developpeur-dedie
+            - listitem [ref=f64e844]:
+              - link "Expert IA dédié" [ref=f64e845] [cursor=pointer]:
+                - /url: /fr/services/renfort-equipe/expert-ia-dedie
+            - listitem [ref=f64e846]:
+              - link "Designer UX dédié" [ref=f64e847] [cursor=pointer]:
+                - /url: /fr/services/renfort-equipe/designer-ux-dedie
+            - listitem [ref=f64e848]:
+              - link "QA & testing" [ref=f64e849] [cursor=pointer]:
+                - /url: /fr/services/renfort-equipe/qa-testing
+            - listitem [ref=f64e850]:
+              - link "Accompagnement design" [ref=f64e851] [cursor=pointer]:
+                - /url: /fr/services/renfort-equipe/accompagnement-design
+            - listitem [ref=f64e852]:
+              - link "Maintenance applicative" [ref=f64e853] [cursor=pointer]:
+                - /url: /fr/services/renfort-equipe/maintenance-applicative
+            - listitem [ref=f64e854]:
+              - link "CTO à temps partiel" [ref=f64e855] [cursor=pointer]:
+                - /url: /fr/services/renfort-equipe/cto-temps-partiel
+            - listitem [ref=f64e856]:
+              - link "Tech Lead à temps partiel" [ref=f64e857] [cursor=pointer]:
+                - /url: /fr/services/renfort-equipe/tech-lead-temps-partiel
+            - listitem [ref=f64e858]:
+              - link "Engineering as a Service" [ref=f64e859] [cursor=pointer]:
+                - /url: /fr/services/renfort-equipe/engineering-as-a-service
+        - generic [ref=f64e860]:
+          - link "Formation IA" [ref=f64e861] [cursor=pointer]:
+            - /url: /fr/services/formation-ia
+          - list [ref=f64e862]:
+            - listitem [ref=f64e863]:
+              - link "Formation ChatGPT en entreprise" [ref=f64e864] [cursor=pointer]:
+                - /url: /fr/services/formation-ia/formation-chatgpt-entreprise
+            - listitem [ref=f64e865]:
+              - link "Formation IA pour équipes" [ref=f64e866] [cursor=pointer]:
+                - /url: /fr/services/formation-ia/formation-ia-equipes
+            - listitem [ref=f64e867]:
+              - link "Coaching décideurs IA" [ref=f64e868] [cursor=pointer]:
+                - /url: /fr/services/formation-ia/coaching-decideurs-ia
+            - listitem [ref=f64e869]:
+              - link "Accompagnement adoption IA" [ref=f64e870] [cursor=pointer]:
+                - /url: /fr/services/formation-ia/accompagnement-adoption-ia
+    - main [ref=f64e23]:
+      - generic [ref=f64e401]:
+        - generic [ref=f64e404]:
+          - generic [ref=f64e405]: Expertises
+          - heading "Des systèmes conçus pour connecter, automatiser et durer. Cinq piliers. Nos domaines d'expertise." [level=1] [ref=f64e406]:
+            - generic [ref=f64e407]:
+              - generic [ref=f64e408]: Des
+              - generic [ref=f64e410]: systèmes
+              - generic [ref=f64e412]: conçus
+              - generic [ref=f64e414]: pour
+              - generic [ref=f64e416]: connecter,
+              - generic [ref=f64e418]: automatiser
+              - generic [ref=f64e420]: et
+              - generic [ref=f64e422]: durer.
+              - generic [ref=f64e424]: Cinq
+              - generic [ref=f64e426]: piliers.
+            - generic [ref=f64e428]:
+              - generic [ref=f64e429]: Nos
+              - generic [ref=f64e431]: domaines
+              - generic [ref=f64e433]: d'expertise.
+        - generic [ref=f64e437]:
+          - generic [ref=f64e439]:
+            - heading "Systèmes IA" [level=3] [ref=f64e440]
+            - paragraph [ref=f64e441]: CRMs connectés, agents conversationnels métier, RAG et intégrations de données adaptés à vos flux clients.
+          - generic [ref=f64e443]:
+            - heading "Conseil Technique" [level=3] [ref=f64e444]
+            - paragraph [ref=f64e445]: Audits opérationnels, revues d'architecture et due diligence technologique menés par des ingénieurs actifs.
+          - generic [ref=f64e447]:
+            - heading "Accompagnement IA" [level=3] [ref=f64e448]
+            - paragraph [ref=f64e449]: Ateliers pratiques, formation IA par métier et déploiement d'outils pour rendre vos équipes autonomes.
+          - generic [ref=f64e451]:
+            - heading "Produits Digitaux" [level=3] [ref=f64e452]
+            - paragraph [ref=f64e453]: Sites internet, interfaces sur mesure et e-commerce développés en React et Next.js, optimisés pour les moteurs de recherche.
+          - generic [ref=f64e455]:
+            - heading "Renfort d'Équipe" [level=3] [ref=f64e456]
+            - paragraph [ref=f64e457]: Développeurs seniors, tech leads et CTOs fractionnels intégrés directement dans vos équipes, sans rotation.
+        - generic [ref=f64e460]:
+          - heading "Nous ne construisons pas seulement des outils. Nous construisons les systèmes qui font tourner votre entreprise." [level=2] [ref=f64e461]:
+            - generic [ref=f64e462]:
+              - generic [ref=f64e463]: Nous
+              - generic [ref=f64e465]: ne
+              - generic [ref=f64e467]: construisons
+              - generic [ref=f64e469]: pas
+              - generic [ref=f64e471]: seulement
+              - generic [ref=f64e473]: des
+              - generic [ref=f64e475]: outils.
+              - generic [ref=f64e477]: Nous
+              - generic [ref=f64e479]: construisons
+              - generic [ref=f64e481]: les
+              - generic [ref=f64e483]: systèmes
+              - generic [ref=f64e485]: qui
+              - generic [ref=f64e487]: font
+              - generic [ref=f64e489]: tourner
+              - generic [ref=f64e491]: votre
+              - generic [ref=f64e493]: entreprise.
+          - generic [ref=f64e495]:
+            - paragraph [ref=f64e496]: Notre approche est holistique. Nous examinons l'ensemble de votre flux opérationnel pour identifier les goulots d'étranglement.
+            - link "Explorer notre méthodologie" [ref=f64e497] [cursor=pointer]:
+              - /url: /fr/notre-methode
+        - generic [ref=f64e502]:
+          - heading "Services" [level=2] [ref=f64e504]
+          - generic [ref=f64e505]:
+            - generic [ref=f64e506]:
+              - heading "Solutions IA" [level=3] [ref=f64e508]
+              - list [ref=f64e510]:
+                - listitem [ref=f64e511]:
+                  - link "CRM intelligent" [ref=f64e512] [cursor=pointer]:
+                    - /url: /fr/services/solutions-ia/crm-intelligent
+                - listitem [ref=f64e513]:
+                  - link "Agent IA / Assistant IA" [ref=f64e514] [cursor=pointer]:
+                    - /url: /fr/services/solutions-ia/agent-ia-assistant
+                - listitem [ref=f64e515]:
+                  - link "RAG / Intelligence embarquée" [ref=f64e516] [cursor=pointer]:
+                    - /url: /fr/services/solutions-ia/rag-intelligence-embarquee
+                - listitem [ref=f64e517]:
+                  - link "Chatbots" [ref=f64e518] [cursor=pointer]:
+                    - /url: /fr/services/solutions-ia/chatbots
+                - listitem [ref=f64e519]:
+                  - link "Automatisations" [ref=f64e520] [cursor=pointer]:
+                    - /url: /fr/services/solutions-ia/automatisations
+                - listitem [ref=f64e521]:
+                  - link "IA locale & modèles sur mesure" [ref=f64e522] [cursor=pointer]:
+                    - /url: /fr/services/solutions-ia/ia-locale
+                - listitem [ref=f64e523]:
+                  - link "Portail client & entreprise" [ref=f64e524] [cursor=pointer]:
+                    - /url: /fr/services/solutions-ia/portail-client-entreprise
+            - generic [ref=f64e525]:
+              - heading "Conseil IA" [level=3] [ref=f64e527]
+              - list [ref=f64e529]:
+                - listitem [ref=f64e530]:
+                  - link "Stratégie IA" [ref=f64e531] [cursor=pointer]:
+                    - /url: /fr/services/conseil-ia/strategie-ia
+                - listitem [ref=f64e532]:
+                  - link "Audit opérationnel" [ref=f64e533] [cursor=pointer]:
+                    - /url: /fr/services/conseil-ia/audit-operationnel
+                - listitem [ref=f64e534]:
+                  - link "Conseil organisationnel" [ref=f64e535] [cursor=pointer]:
+                    - /url: /fr/services/conseil-ia/conseil-organisationnel
+                - listitem [ref=f64e536]:
+                  - link "Transformation numérique" [ref=f64e537] [cursor=pointer]:
+                    - /url: /fr/services/conseil-ia/transformation-numerique
+                - listitem [ref=f64e538]:
+                  - link "Adoption des nouveaux outils" [ref=f64e539] [cursor=pointer]:
+                    - /url: /fr/services/conseil-ia/change-management
+                - listitem [ref=f64e540]:
+                  - link "Adoption de l'IA par vos équipes" [ref=f64e541] [cursor=pointer]:
+                    - /url: /fr/services/conseil-ia/ai-change-management
+            - generic [ref=f64e542]:
+              - heading "Digital" [level=3] [ref=f64e544]
+              - list [ref=f64e546]:
+                - listitem [ref=f64e547]:
+                  - link "Conseil & stratégie digitale" [ref=f64e548] [cursor=pointer]:
+                    - /url: /fr/services/digital/conseil-digitalisation
+                - listitem [ref=f64e549]:
+                  - link "Commerce digital & e-commerce" [ref=f64e550] [cursor=pointer]:
+                    - /url: /fr/services/digital/e-commerce-eshop
+                - listitem [ref=f64e551]:
+                  - link "Application métier / Logiciel sur mesure" [ref=f64e552] [cursor=pointer]:
+                    - /url: /fr/services/digital/application-metier-logiciel-sur-mesure
+            - generic [ref=f64e553]:
+              - heading "Données & Analytics" [level=3] [ref=f64e555]
+              - list [ref=f64e557]:
+                - listitem [ref=f64e558]:
+                  - link "Modernisation des données" [ref=f64e559] [cursor=pointer]:
+                    - /url: /fr/services/donnees-analytics/modernisation-donnees
+                - listitem [ref=f64e560]:
+                  - link "Analytique avancée & tableaux de bord" [ref=f64e561] [cursor=pointer]:
+                    - /url: /fr/services/donnees-analytics/donnees-tableaux-de-bord
+                - listitem [ref=f64e562]:
+                  - link "Intelligence connectée" [ref=f64e563] [cursor=pointer]:
+                    - /url: /fr/services/donnees-analytics/intelligence-connectee
+                - listitem [ref=f64e564]:
+                  - link "Gestion des données" [ref=f64e565] [cursor=pointer]:
+                    - /url: /fr/services/donnees-analytics/gestion-donnees
+                - listitem [ref=f64e566]:
+                  - link "IA générative" [ref=f64e567] [cursor=pointer]:
+                    - /url: /fr/services/donnees-analytics/ia-generative
+            - generic [ref=f64e568]:
+              - heading "Développement logiciel" [level=3] [ref=f64e570]
+              - list [ref=f64e572]:
+                - listitem [ref=f64e573]:
+                  - link "MVP & lancement produit" [ref=f64e574] [cursor=pointer]:
+                    - /url: /fr/services/developpement-logiciel/mvp-lancement-produit
+                - listitem [ref=f64e575]:
+                  - link "Développement IA" [ref=f64e576] [cursor=pointer]:
+                    - /url: /fr/services/developpement-logiciel/developpement-ia
+                - listitem [ref=f64e577]:
+                  - link "Développement web & site internet" [ref=f64e578] [cursor=pointer]:
+                    - /url: /fr/services/developpement-logiciel/site-internet
+                - listitem [ref=f64e579]:
+                  - link "Développement mobile & applications" [ref=f64e580] [cursor=pointer]:
+                    - /url: /fr/services/developpement-logiciel/application-mobile
+                - listitem [ref=f64e581]:
+                  - link "Développement desktop" [ref=f64e582] [cursor=pointer]:
+                    - /url: /fr/services/developpement-logiciel/developpement-desktop
+                - listitem [ref=f64e583]:
+                  - link "Développement d'API & intégrations" [ref=f64e584] [cursor=pointer]:
+                    - /url: /fr/services/developpement-logiciel/integrations-apis
+                - listitem [ref=f64e585]:
+                  - link "Développement de bases de données" [ref=f64e586] [cursor=pointer]:
+                    - /url: /fr/services/developpement-logiciel/developpement-base-de-donnees
+                - listitem [ref=f64e587]:
+                  - link "Modernisation de logiciel" [ref=f64e588] [cursor=pointer]:
+                    - /url: /fr/services/developpement-logiciel/modernisation-logiciel
+                - listitem [ref=f64e589]:
+                  - link "Renfort d'équipe IT" [ref=f64e590] [cursor=pointer]:
+                    - /url: /fr/services/developpement-logiciel/renfort-equipe-it
+            - generic [ref=f64e591]:
+              - heading "Sécurité" [level=3] [ref=f64e593]
+              - list [ref=f64e595]:
+                - listitem [ref=f64e596]:
+                  - link "Cybersécurité" [ref=f64e597] [cursor=pointer]:
+                    - /url: /fr/services/securite/cybersecurite
+                - listitem [ref=f64e598]:
+                  - link "Conformité & compliance" [ref=f64e599] [cursor=pointer]:
+                    - /url: /fr/services/securite/conformite-compliance
+                - listitem [ref=f64e600]:
+                  - link "Tests de sécurité" [ref=f64e601] [cursor=pointer]:
+                    - /url: /fr/services/securite/tests-securite
+                - listitem [ref=f64e602]:
+                  - link "Tests d'intrusion" [ref=f64e603] [cursor=pointer]:
+                    - /url: /fr/services/securite/tests-intrusion-pentest
+                - listitem [ref=f64e604]:
+                  - link "Services SIEM" [ref=f64e605] [cursor=pointer]:
+                    - /url: /fr/services/securite/services-siem
+            - generic [ref=f64e606]:
+              - heading "Opérations & SCM" [level=3] [ref=f64e608]
+              - list [ref=f64e610]:
+                - listitem [ref=f64e611]:
+                  - link "ERP" [ref=f64e612] [cursor=pointer]:
+                    - /url: /fr/services/operations-scm/erp
+                - listitem [ref=f64e613]:
+                  - link "Gestion des opérations" [ref=f64e614] [cursor=pointer]:
+                    - /url: /fr/services/operations-scm/gestion-operations
+                - listitem [ref=f64e615]:
+                  - link "Gestion de la chaîne logistique" [ref=f64e616] [cursor=pointer]:
+                    - /url: /fr/services/operations-scm/gestion-chaine-logistique
+                - listitem [ref=f64e617]:
+                  - link "Gestion d'entrepôt" [ref=f64e618] [cursor=pointer]:
+                    - /url: /fr/services/operations-scm/gestion-entrepot
+                - listitem [ref=f64e619]:
+                  - link "Gestion des actifs d'entreprise" [ref=f64e620] [cursor=pointer]:
+                    - /url: /fr/services/operations-scm/gestion-actifs-entreprise
+                - listitem [ref=f64e621]:
+                  - link "Gestion des fournisseurs" [ref=f64e622] [cursor=pointer]:
+                    - /url: /fr/services/operations-scm/gestion-fournisseurs
+                - listitem [ref=f64e623]:
+                  - link "Pilotage & gestion de projet" [ref=f64e624] [cursor=pointer]:
+                    - /url: /fr/services/operations-scm/pilotage-projet
+                - listitem [ref=f64e625]:
+                  - link "Gestion documentaire (GED)" [ref=f64e626] [cursor=pointer]:
+                    - /url: /fr/services/operations-scm/gestion-documentaire-ged
+            - generic [ref=f64e627]:
+              - heading "Sites & Branding" [level=3] [ref=f64e629]
+              - list [ref=f64e631]:
+                - listitem [ref=f64e632]:
+                  - link "Branding & identité" [ref=f64e633] [cursor=pointer]:
+                    - /url: /fr/services/sites-et-branding/branding-identite
+                - listitem [ref=f64e634]:
+                  - link "Audit UX / SEO / performance" [ref=f64e635] [cursor=pointer]:
+                    - /url: /fr/services/sites-et-branding/audit-ux-seo-performance
+                - listitem [ref=f64e636]:
+                  - link "Refonte de site web" [ref=f64e637] [cursor=pointer]:
+                    - /url: /fr/services/sites-et-branding/refonte-site-web
+            - generic [ref=f64e638]:
+              - heading "Renfort & Équipe" [level=3] [ref=f64e640]
+              - list [ref=f64e642]:
+                - listitem [ref=f64e643]:
+                  - link "Développeur dédié" [ref=f64e644] [cursor=pointer]:
+                    - /url: /fr/services/renfort-equipe/developpeur-dedie
+                - listitem [ref=f64e645]:
+                  - link "Expert IA dédié" [ref=f64e646] [cursor=pointer]:
+                    - /url: /fr/services/renfort-equipe/expert-ia-dedie
+                - listitem [ref=f64e647]:
+                  - link "Designer UX dédié" [ref=f64e648] [cursor=pointer]:
+                    - /url: /fr/services/renfort-equipe/designer-ux-dedie
+                - listitem [ref=f64e649]:
+                  - link "QA & testing" [ref=f64e650] [cursor=pointer]:
+                    - /url: /fr/services/renfort-equipe/qa-testing
+                - listitem [ref=f64e651]:
+                  - link "Accompagnement design" [ref=f64e652] [cursor=pointer]:
+                    - /url: /fr/services/renfort-equipe/accompagnement-design
+                - listitem [ref=f64e653]:
+                  - link "Maintenance applicative" [ref=f64e654] [cursor=pointer]:
+                    - /url: /fr/services/renfort-equipe/maintenance-applicative
+                - listitem [ref=f64e655]:
+                  - link "CTO à temps partiel" [ref=f64e656] [cursor=pointer]:
+                    - /url: /fr/services/renfort-equipe/cto-temps-partiel
+                - listitem [ref=f64e657]:
+                  - link "Tech Lead à temps partiel" [ref=f64e658] [cursor=pointer]:
+                    - /url: /fr/services/renfort-equipe/tech-lead-temps-partiel
+                - listitem [ref=f64e659]:
+                  - link "Engineering as a Service" [ref=f64e660] [cursor=pointer]:
+                    - /url: /fr/services/renfort-equipe/engineering-as-a-service
+            - generic [ref=f64e661]:
+              - heading "Formation IA" [level=3] [ref=f64e663]
+              - list [ref=f64e665]:
+                - listitem [ref=f64e666]:
+                  - link "Formation ChatGPT en entreprise" [ref=f64e667] [cursor=pointer]:
+                    - /url: /fr/services/formation-ia/formation-chatgpt-entreprise
+                - listitem [ref=f64e668]:
+                  - link "Formation IA pour équipes" [ref=f64e669] [cursor=pointer]:
+                    - /url: /fr/services/formation-ia/formation-ia-equipes
+                - listitem [ref=f64e670]:
+                  - link "Coaching décideurs IA" [ref=f64e671] [cursor=pointer]:
+                    - /url: /fr/services/formation-ia/coaching-decideurs-ia
+                - listitem [ref=f64e672]:
+                  - link "Accompagnement adoption IA" [ref=f64e673] [cursor=pointer]:
+                    - /url: /fr/services/formation-ia/accompagnement-adoption-ia
+        - generic [ref=f64e676]:
+          - generic [ref=f64e677]:
+            - heading "Technologies" [level=2] [ref=f64e678]
+            - paragraph [ref=f64e679]: Les langages, plateformes et domaines avec lesquels nous construisons.
+          - generic [ref=f64e680]:
+            - generic [ref=f64e681]:
+              - heading "Langages & frameworks" [level=3] [ref=f64e682]
+              - list [ref=f64e683]:
+                - listitem [ref=f64e684]: .NET
+                - listitem [ref=f64e685]: Java
+                - listitem [ref=f64e686]: Python
+                - listitem [ref=f64e687]: PHP
+                - listitem [ref=f64e688]: Golang
+                - listitem [ref=f64e689]: C++
+                - listitem [ref=f64e690]: Node.js
+                - listitem [ref=f64e691]: JavaScript / TypeScript
+                - listitem [ref=f64e692]: React Native
+            - generic [ref=f64e693]:
+              - heading "Données & intelligence artificielle" [level=3] [ref=f64e694]
+              - list [ref=f64e695]:
+                - listitem [ref=f64e696]: Intelligence artificielle
+                - listitem [ref=f64e697]: IA générative
+                - listitem [ref=f64e698]: Machine learning
+                - listitem [ref=f64e699]: Data science
+                - listitem [ref=f64e700]: Big data
+                - listitem [ref=f64e701]: Analyse d'images
+            - generic [ref=f64e702]:
+              - heading "Plateformes & environnements" [level=3] [ref=f64e703]
+              - list [ref=f64e704]:
+                - listitem [ref=f64e705]: Cloud
+                - listitem [ref=f64e706]: SaaS
+                - listitem [ref=f64e707]: Applications mobiles
+                - listitem [ref=f64e708]: Internet des objets (IoT)
+                - listitem [ref=f64e709]: Blockchain
+                - listitem [ref=f64e710]: Réalité virtuelle & augmentée
+      - generic [ref=f64e337]:
+        - generic [ref=f64e338]:
+          - generic [ref=f64e339]:
+            - img "MAWT Logo" [ref=f64e341]
+            - generic [ref=f64e342]:
+              - link "LinkedIn" [ref=f64e343] [cursor=pointer]:
+                - /url: http://linkedin.com/in/mawt.ch
+              - link "Instagram" [ref=f64e346] [cursor=pointer]:
+                - /url: http://instagram.com/mawt.ch
+            - button "Français ▼" [ref=f64e349]:
+              - generic [ref=f64e353]: Français
+              - generic [ref=f64e354]: ▼
+          - generic [ref=f64e355]:
+            - heading "Entreprise" [level=4] [ref=f64e356]
+            - list [ref=f64e357]:
+              - listitem [ref=f64e358]:
+                - link "À propos" [ref=f64e359] [cursor=pointer]:
+                  - /url: /fr/a-propos
+              - listitem [ref=f64e360]:
+                - link "Contact" [ref=f64e361] [cursor=pointer]:
+                  - /url: /fr/contact
+              - listitem [ref=f64e362]:
+                - link "Clients & partenaires" [ref=f64e363] [cursor=pointer]:
+                  - /url: /fr/clients
+          - generic [ref=f64e364]:
+            - heading "Services" [level=4] [ref=f64e365]
+            - list [ref=f64e366]:
+              - listitem [ref=f64e367]:
+                - link "Tous nos services" [ref=f64e368] [cursor=pointer]:
+                  - /url: /fr/services
+              - listitem [ref=f64e369]:
+                - link "Notre méthode" [ref=f64e370] [cursor=pointer]:
+                  - /url: /fr/approach
+              - listitem [ref=f64e371]:
+                - link "Projets" [ref=f64e372] [cursor=pointer]:
+                  - /url: /fr/projets
+          - generic [ref=f64e373]:
+            - heading "Ressources" [level=4] [ref=f64e374]
+            - list [ref=f64e375]:
+              - listitem [ref=f64e376]:
+                - link "Blog" [ref=f64e377] [cursor=pointer]:
+                  - /url: /fr/blog
+              - listitem [ref=f64e378]:
+                - link "FAQ" [ref=f64e379] [cursor=pointer]:
+                  - /url: /fr/faqs
+          - generic [ref=f64e380]:
+            - heading "Légal" [level=4] [ref=f64e381]
+            - list [ref=f64e382]:
+              - listitem [ref=f64e383]:
+                - link "Confidentialité" [ref=f64e384] [cursor=pointer]:
+                  - /url: /fr/confidentialite
+              - listitem [ref=f64e385]:
+                - link "Conditions d'utilisation" [ref=f64e386] [cursor=pointer]:
+                  - /url: /fr/conditions-generales
+              - listitem [ref=f64e387]:
+                - link "Cookies" [ref=f64e388] [cursor=pointer]:
+                  - /url: /fr/cookies
+              - listitem [ref=f64e389]:
+                - link "Sécurité" [ref=f64e390] [cursor=pointer]:
+                  - /url: /fr/securite
+          - generic [ref=f64e391]:
+            - heading "Régions" [level=4] [ref=f64e392]
+            - list [ref=f64e393]:
+              - listitem [ref=f64e394]:
+                - link "Genève" [ref=f64e395] [cursor=pointer]:
+                  - /url: /fr/geneve
+        - generic [ref=f64e396]:
+          - button "Paramètres des cookies" [ref=f64e398]
+          - paragraph [ref=f64e399]: © 2026 MAWT. Tous droits réservés.
+  - button "Open Next.js Dev Tools" [ref=f64e716] [cursor=pointer]
+  - alert [ref=f64e720]

@@ -113,7 +113,10 @@ export default async function BlogPostPage({
     notFound();
   }
 
-  const postUrl = `${SITE_URL}/${lang}/news/${slug}`;
+  // Public localized path: /fr/blog/... — the canonical, hreflang, JSON-LD
+  // and back-link must all use it (not the on-disk /news folder name).
+  const blogSegment = lang === "fr" ? "blog" : "news";
+  const postUrl = `${SITE_URL}/${lang}/${blogSegment}/${slug}`;
   const articleImage = post.mainImage
     ? urlForImage(post.mainImage)?.width(1200).height(630).url()
     : null;
@@ -138,7 +141,7 @@ export default async function BlogPostPage({
   });
   const crumbLd = breadcrumbLd([
     { name: "MAWT", url: `${SITE_URL}/${lang}` },
-    { name: "Blog", url: `${SITE_URL}/${lang}/news` },
+    { name: "Blog", url: `${SITE_URL}/${lang}/${blogSegment}` },
     { name: post.title, url: postUrl },
   ]);
 
@@ -148,8 +151,8 @@ export default async function BlogPostPage({
       <article className="px-6 pt-32 pb-16 md:pb-24 sm:px-8 md:px-10 lg:px-12">
         <div className="max-w-[800px] mx-auto">
           <div className="mb-8 md:mb-12">
-            <Link 
-              href={`/${lang}/news`}
+            <Link
+              href={`/${lang}/${blogSegment}`}
               className="flex items-center gap-2 text-sm font-normal text-neutral-400 hover:text-black transition-colors group"
             >
               <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />

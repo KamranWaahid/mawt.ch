@@ -115,8 +115,11 @@ export function ContactForm({ dict, lang = "en" }: ContactFormProps) {
   });
   // BUG-006: Client-side per-step errors
   const [clientErrors, setClientErrors] = useState<ClientErrors>({});
-  // BUG-015: Track success locally so we can reset without reload
-  const [submitted, setSubmitted] = useState(false);
+  // "Send another message": `state` keeps success=true forever, so submitted
+  // is DERIVED — success is shown until the user dismisses THIS state object.
+  // A new submission produces a new state object and shows success again.
+  const [dismissedState, setDismissedState] = useState<ContactFormState>(null);
+  const submitted = Boolean(state?.success) && dismissedState !== state;
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -167,7 +170,7 @@ export function ContactForm({ dict, lang = "en" }: ContactFormProps) {
   // BUG-015: Reset form without window.location.reload()
   const handleReset = useCallback(() => {
     setStep(1);
-    setSubmitted(false);
+    setDismissedState(state);
     setFormData({
       name: "",
       email: "",
@@ -176,7 +179,7 @@ export function ContactForm({ dict, lang = "en" }: ContactFormProps) {
       message: "",
     });
     setClientErrors({});
-  }, [labels.serviceOptions, labels.timelineOptions]);
+  }, [state, labels.serviceOptions, labels.timelineOptions]);
 
   const status = state?.success
     ? "success"
@@ -185,11 +188,6 @@ export function ContactForm({ dict, lang = "en" }: ContactFormProps) {
     : state?.error
     ? "error"
     : "idle";
-
-  // Track success from server state
-  if (status === "success" && !submitted) {
-    setSubmitted(true);
-  }
 
   const stepVariants = {
     initial: (direction: number) => ({
@@ -432,10 +430,33 @@ export function ContactForm({ dict, lang = "en" }: ContactFormProps) {
               </div>
             )}
 
-            {/* BUG-007: General server error (non-field) */}
-            {state?.error && !state.details && (
-              <p className="text-sm text-red-500 font-normal">{state.error}</p>
+            {/* Server errors: always show the summary, and list field-level
+                messages too — a name/email error returned while the user sits
+                on step 3 was otherwise invisible (the fields live on step 1). */}
+            {state?.error && !submitted && (
+              <div className="flex flex-col gap-1.5">
+                <p className="text-sm text-red-500 font-normal">{state.error}</p>
+                {state.details &&
+                  Object.values(state.details)
+                    .flat()
+                    .map((msg) => (
+                      <p key={msg} className="text-sm text-red-500 font-normal">
+                        {msg}
+                      </p>
+                    ))}
+              </div>
             )}
+
+            {/* Honeypot: invisible to humans, tempting for bots. The server
+                silently drops submissions that fill it. */}
+            <input
+              type="text"
+              name="company"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              className="absolute -left-[9999px] top-auto h-px w-px opacity-0"
+            />
 
             {/* Hidden fields for all steps: always include name/email/service/timeline so
                 the server receives them even though earlier steps are not re-rendered. */}

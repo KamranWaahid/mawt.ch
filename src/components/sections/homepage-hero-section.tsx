@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform, useSpring, MotionValue } from "motion/react";
 import { Menu, X, ChevronDown } from "lucide-react";
 import type { SiteSettings } from "@/lib/types";
-import { localizedHref } from "@/lib/routing/url-helpers";
+import { localizedHref, translatePath } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/lib/routing/url-map";
 import { AsciiWave } from "@/components/ui/ascii-wave";
 import {
@@ -432,12 +432,16 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   const transitionCtaVisibility = useTransform(scrollYProgress, (p) => p >= 0.65 && p <= 0.995 ? "visible" : "hidden");
 
   const navHref = (route: string) => {
-    if (route === "news") return `/${lang}/news`;
+    if (route === "news") return `/${lang}/${lang === "fr" ? "blog" : "news"}`;
     return localizedHref(route, lang);
   };
 
   const heroServiceGroups = groupServicesByFamily(services, lang);
   const heroHasMegaMenu = heroServiceGroups.length > 0;
+
+  // Sanity stores a raw path ("/contact"): localize it, otherwise every CTA
+  // click goes through the Accept-Language 307 and can land FR users on /en.
+  const ctaHref = translatePath(`/en${settings.ctaHref.startsWith("/") ? settings.ctaHref : `/${settings.ctaHref}`}`, "en", lang);
 
   return (
     <section
@@ -650,7 +654,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
               {dict.statement}
             </motion.p>
             <motion.div className="absolute left-[2.5vw] bottom-[6%]" style={{ y: desktopContentY }}>
-              <Link href={settings.ctaHref} className="pointer-events-auto inline-flex items-center text-[1.17cqw] font-normal leading-none text-white">
+              <Link href={ctaHref} className="pointer-events-auto inline-flex items-center text-[1.17cqw] font-normal leading-none text-white">
                 <span aria-hidden="true" className="mr-[0.46875cqw]">→</span>
                 {dict.cta}
               </Link>
@@ -670,7 +674,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 {dict.statement}
               </motion.p>
               <motion.div className="absolute left-[6.5%] bottom-[10%]" style={{ y: compactContentY }}>
-                <Link href={settings.ctaHref} className="pointer-events-auto inline-flex items-center text-[0.8125rem] font-normal leading-none text-white">
+                <Link href={ctaHref} className="pointer-events-auto inline-flex items-center text-[0.8125rem] font-normal leading-none text-white">
                   <span aria-hidden="true" className="mr-1.5">→</span>
                   {dict.cta}
                 </Link>
@@ -694,7 +698,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                     {dict.statement}
                   </p>
                   <div className="mt-[clamp(1rem,3svh,1.6rem)] inline-flex items-center">
-                    <Link href={settings.ctaHref} className="pointer-events-auto text-[0.875rem] font-normal leading-none text-white sm:text-[0.9375rem]">
+                    <Link href={ctaHref} className="pointer-events-auto text-[0.875rem] font-normal leading-none text-white sm:text-[0.9375rem]">
                       <span aria-hidden="true" className="mr-1.5">→</span>
                       {dict.cta}
                     </Link>

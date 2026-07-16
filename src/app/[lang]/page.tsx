@@ -162,6 +162,7 @@ export default async function HomePage({
         settings={data.settings}
         dict={dictionary.hero}
         transitionDict={dictionary.heroTransition}
+        services={data.services}
       />
       <div className="homepage-flow" style={{ backgroundColor: "#F6F5F4" }}>
         <ClientsSection dict={dictionary.clients} partners={partners} />

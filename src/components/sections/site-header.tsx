@@ -8,13 +8,13 @@ import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "motion/
 import Image from "next/image";
 import LogoBlack from "../../../public/logo-black.svg";
 import LogoWhite from "../../../public/logo-white.svg";
-import {
-  translatePath,
-  familySlugForLang,
-  familyOrderIndex,
-  getFamilyTitle,
-} from "@/lib/routing/url-helpers";
+import { translatePath } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/lib/routing/url-map";
+import {
+  ServicesMegaMenu,
+  groupServicesByFamily,
+  type HeaderService,
+} from "@/components/ui/services-mega-menu";
 
 /**
  * Localize a nav href (authored as an EN-canonical path like "/about") to the
@@ -26,21 +26,6 @@ function navHref(href: string, lang: Locale): string {
   const normalized = href.startsWith("/") ? href : `/${href}`;
   return translatePath(`/en${normalized}`, "en", lang);
 }
-
-type HeaderService = {
-  _id: string;
-  title?: string;
-  slug?: string;
-  family?: string;
-  tier?: number;
-};
-
-type ServiceMenuGroup = {
-  family: string;
-  title: string;
-  href: string;
-  items: { title: string; href: string }[];
-};
 
 type SiteHeaderProps = {
   title: string;
@@ -90,34 +75,7 @@ export function SiteHeader({ title, theme: themeProp, services, mainNav }: SiteH
   const [isServicesOpen, setIsServicesOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
 
-  // Group Sanity services by family (FAMILY_ORDER, then tier) for the mega menu.
-  const serviceGroups: ServiceMenuGroup[] = (() => {
-    const byFamily = new Map<string, ServiceMenuGroup>();
-    const sorted = (services ?? [])
-      .filter((s) => s.family && s.title && s.slug)
-      .slice()
-      .sort(
-        (a, b) =>
-          familyOrderIndex(a.family!) - familyOrderIndex(b.family!) ||
-          (a.tier ?? 50) - (b.tier ?? 50),
-      );
-    for (const s of sorted) {
-      const familySlug = familySlugForLang(s.family!, currentLang as Locale);
-      if (!byFamily.has(s.family!)) {
-        byFamily.set(s.family!, {
-          family: s.family!,
-          title: getFamilyTitle(s.family!, currentLang as Locale),
-          href: `/${currentLang}/services/${familySlug}`,
-          items: [],
-        });
-      }
-      byFamily.get(s.family!)!.items.push({
-        title: s.title!,
-        href: `/${currentLang}/services/${familySlug}/${s.slug}`,
-      });
-    }
-    return Array.from(byFamily.values());
-  })();
+  const serviceGroups = groupServicesByFamily(services, currentLang as Locale);
   const hasMegaMenu = serviceGroups.length > 0;
 
   const activeNavItems: NavItem[] = (mainNav && mainNav.length > 0 ? mainNav : navItems).map((item) => ({
@@ -350,44 +308,11 @@ export function SiteHeader({ title, theme: themeProp, services, mainNav }: SiteH
       </nav>
 
       {/* Desktop Mega Menu — Services families and individual offers from Sanity */}
-      <AnimatePresence>
-        {isServicesOpen && hasMegaMenu && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute left-0 right-0 top-full hidden max-h-[calc(100vh-71px)] overflow-y-auto border-b border-black/5 bg-white text-black shadow-[0_24px_48px_-24px_rgba(0,0,0,0.12)] md:block"
-          >
-            <div className="site-container-wide grid grid-cols-3 gap-x-10 gap-y-12 py-12 lg:grid-cols-5">
-              {serviceGroups.map((group) => (
-                <div key={group.family} className="flex flex-col gap-4">
-                  <Link
-                    href={group.href}
-                    onClick={() => setIsServicesOpen(false)}
-                    className="text-[15px] font-medium tracking-tight text-black transition-colors hover:text-[#3fae87]"
-                  >
-                    {group.title}
-                  </Link>
-                  <ul className="flex flex-col gap-2.5">
-                    {group.items.map((item) => (
-                      <li key={item.href}>
-                        <Link
-                          href={item.href}
-                          onClick={() => setIsServicesOpen(false)}
-                          className="block text-[13px] leading-snug text-neutral-500 transition-colors hover:text-black"
-                        >
-                          {item.title}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <ServicesMegaMenu
+        open={isServicesOpen && hasMegaMenu}
+        groups={serviceGroups}
+        onNavigate={() => setIsServicesOpen(false)}
+      />
 
       {/* Mobile Menu Overlay */}
       <AnimatePresence>

@@ -4,11 +4,16 @@ import { useId, useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform, useSpring, MotionValue } from "motion/react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import type { SiteSettings } from "@/lib/types";
 import { localizedHref } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/lib/routing/url-map";
 import { AsciiWave } from "@/components/ui/ascii-wave";
+import {
+  ServicesMegaMenu,
+  groupServicesByFamily,
+  type HeaderService,
+} from "@/components/ui/services-mega-menu";
 
 type HomepageHeroCopy = {
   statement: string;
@@ -25,6 +30,7 @@ type HomepageHeroSectionProps = {
   settings: SiteSettings;
   dict: HomepageHeroCopy;
   transitionDict: HomepageTransitionCopy;
+  services?: HeaderService[];
 };
 
 // Scroll-scrubbed video intro: below OPEN the film is paused and the scroll
@@ -223,11 +229,12 @@ function HeroGradientStatement({
   );
 }
 
-export function HomepageHeroSection({ settings, dict, transitionDict }: HomepageHeroSectionProps) {
+export function HomepageHeroSection({ settings, dict, transitionDict, services }: HomepageHeroSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isHeroMobileMenuOpen, setIsHeroMobileMenuOpen] = useState(false);
+  const [isHeroServicesOpen, setIsHeroServicesOpen] = useState(false);
   const [isAsciiVideoReady, setIsAsciiVideoReady] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const shouldReduceMotion = useReducedMotion();
@@ -428,6 +435,9 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     if (route === "news") return `/${lang}/news`;
     return localizedHref(route, lang);
   };
+
+  const heroServiceGroups = groupServicesByFamily(services, lang);
+  const heroHasMegaMenu = heroServiceGroups.length > 0;
 
   return (
     <section
@@ -758,6 +768,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
         <motion.nav
           aria-label="Homepage transition navigation"
           className="absolute left-0 right-0 top-0 z-50 h-[71px] border-b border-transparent bg-transparent px-5 sm:px-7 md:px-9 lg:px-[2.5vw]"
+          onMouseLeave={() => setIsHeroServicesOpen(false)}
         >
           <div className="mx-auto flex h-full w-full max-w-[1760px] items-center justify-between gap-5 md:gap-8">
             <motion.div style={{ opacity: navLogoOpacity }} className="shrink-0">
@@ -769,11 +780,26 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
             <motion.div
               className={`ml-auto hidden flex-wrap items-center justify-end gap-x-5 gap-y-3 text-[13px] font-normal leading-none transition-colors duration-300 md:flex lg:gap-x-8 lg:text-[14px] ${homeNavTextClass}`}
             >
-              {navItems.map((item) => (
-                  <Link key={item.route} href={navHref(item.route)} className="transition-colors">
-                  {navItemLabel(item, lang)}
-                </Link>
-              ))}
+              {navItems.map((item) => {
+                const hasDropdown = heroHasMegaMenu && item.route === "services";
+                return (
+                  <Link
+                    key={item.route}
+                    href={navHref(item.route)}
+                    aria-expanded={hasDropdown ? isHeroServicesOpen : undefined}
+                    onMouseEnter={() => setIsHeroServicesOpen(hasDropdown)}
+                    className="inline-flex items-center gap-1 transition-colors"
+                  >
+                    {navItemLabel(item, lang)}
+                    {hasDropdown && (
+                      <ChevronDown
+                        size={13}
+                        className={`transition-transform duration-300 ${isHeroServicesOpen ? "rotate-180 opacity-100" : "opacity-40"}`}
+                      />
+                    )}
+                  </Link>
+                );
+              })}
               <span className={homeNavDividerClass}>—</span>
               <Link href="/fr" className={`transition-colors ${lang === "fr" ? (isHomeNavLight ? "text-black" : "text-white") : ""}`}>
                 FR
@@ -805,6 +831,13 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
               </button>
             </motion.div>
           </div>
+
+          {/* Desktop services mega menu — same panel as the site header. */}
+          <ServicesMegaMenu
+            open={isHeroServicesOpen}
+            groups={heroServiceGroups}
+            onNavigate={() => setIsHeroServicesOpen(false)}
+          />
         </motion.nav>
 
         {isHeroMobileMenuOpen && (

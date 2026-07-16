@@ -3,18 +3,13 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "motion/react";
 import Image from "next/image";
 import LogoBlack from "../../../public/logo-black.svg";
 import LogoWhite from "../../../public/logo-white.svg";
 import { translatePath } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/lib/routing/url-map";
-import {
-  ServicesMegaMenu,
-  groupServicesByFamily,
-  type HeaderService,
-} from "@/components/ui/services-mega-menu";
 import { useCurtainTransition } from "@/components/providers/curtain-transition";
 
 /**
@@ -32,7 +27,7 @@ type SiteHeaderProps = {
   title: string;
   theme?: "light" | "dark";
   socialLinks?: { platform: string; url: string }[];
-  services?: HeaderService[];
+  services?: unknown[];
   mainNav?: { label: string; href: string; hasDropdown?: boolean }[];
 };
 
@@ -69,21 +64,18 @@ function navLabel(item: { href: string; label: string }, lang: string): string {
   return NAV_LABELS_FR[item.href] ?? item.label;
 }
 
-export function SiteHeader({ title, theme: themeProp, services, mainNav }: SiteHeaderProps) {
+export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
   const currentLang = pathname.startsWith("/fr") ? "fr" : "en";
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isServicesOpen, setIsServicesOpen] = useState(false);
-  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
-
-  const serviceGroups = groupServicesByFamily(services, currentLang as Locale);
-  const hasMegaMenu = serviceGroups.length > 0;
   const { navigateWithCurtain } = useCurtainTransition();
 
+  // "Services" navigates with the DHNN slide-up transition (no dropdown —
+  // the services page IS the menu).
   const activeNavItems: NavItem[] = (mainNav && mainNav.length > 0 ? mainNav : navItems).map((item) => ({
     ...item,
-    hasDropdown: hasMegaMenu && item.href === "/services",
+    hasDropdown: item.href === "/services",
   }));
 
   const normalizedPath = pathname.replace(/\/$/, "") || "/";
@@ -103,11 +95,9 @@ export function SiteHeader({ title, theme: themeProp, services, mainNav }: SiteH
     };
   }, []);
 
-  const isDark = isServicesOpen
-    ? true
-    : headerThemeOverride
-      ? headerThemeOverride === "dark"
-      : isMobileMenuOpen || !isHomePage || isPastHero;
+  const isDark = headerThemeOverride
+    ? headerThemeOverride === "dark"
+    : isMobileMenuOpen || !isHomePage || isPastHero;
 
   const navTextClass = isDark ? "text-black/72" : "text-white/80";
   const navHoverClass = isDark ? "hover:text-black" : "hover:text-white";
@@ -123,8 +113,6 @@ export function SiteHeader({ title, theme: themeProp, services, mainNav }: SiteH
   useEffect(() => {
     if (lastPathnameRef.current !== pathname) {
       setIsMobileMenuOpen(false);
-      setIsServicesOpen(false);
-      setMobileServicesOpen(false);
       lastPathnameRef.current = pathname;
     }
   }, [pathname]);
@@ -222,10 +210,9 @@ export function SiteHeader({ title, theme: themeProp, services, mainNav }: SiteH
           hidden: { y: "-100%", opacity: 0 },
         }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className={`fixed left-0 right-0 top-0 z-[80] h-[71px] border-b px-5 transition-colors duration-300 sm:px-7 md:px-9 lg:px-[2.5vw] ${
-          isServicesOpen ? "border-black/5 bg-white" : "border-transparent bg-transparent"
-        } ${isPastHero ? "pointer-events-auto" : "pointer-events-none"}`}
-        onMouseLeave={() => setIsServicesOpen(false)}
+        className={`fixed left-0 right-0 top-0 z-[80] h-[71px] border-b border-transparent bg-transparent px-5 transition-colors duration-300 sm:px-7 md:px-9 lg:px-[2.5vw] ${
+          isPastHero ? "pointer-events-auto" : "pointer-events-none"
+        }`}
       >
         <nav
           aria-label="Primary"
@@ -240,34 +227,17 @@ export function SiteHeader({ title, theme: themeProp, services, mainNav }: SiteH
                 key={item.href}
                 href={navHref(item.href, currentLang as Locale)}
                 aria-current={pathname === navHref(item.href, currentLang as Locale) ? "page" : undefined}
-                aria-expanded={item.hasDropdown ? isServicesOpen : undefined}
-                onMouseEnter={() =>
-                  // No hover-open while already ON /services: the catalogue is
-                  // the page itself, and the panel would cover the fresh
-                  // curtain reveal (the cursor lands on this link after it).
-                  setIsServicesOpen(
-                    Boolean(item.hasDropdown) &&
-                      pathname !== navHref(item.href, currentLang as Locale),
-                  )
-                }
                 onClick={
                   item.hasDropdown
                     ? (e) => {
                         e.preventDefault();
-                        setIsServicesOpen(false);
                         navigateWithCurtain(navHref(item.href, currentLang as Locale));
                       }
                     : undefined
                 }
-                className={`inline-flex items-center gap-1 transition-colors ${navHoverClass} ${pathname === navHref(item.href, currentLang as Locale) ? (isDark ? "text-black font-semibold" : "text-white font-semibold") : ""}`}
+                className={`transition-colors ${navHoverClass} ${pathname === navHref(item.href, currentLang as Locale) ? (isDark ? "text-black font-semibold" : "text-white font-semibold") : ""}`}
               >
                 {navLabel(item, currentLang)}
-                {item.hasDropdown && (
-                  <ChevronDown
-                    size={13}
-                    className={`transition-transform duration-300 ${isServicesOpen ? "rotate-180 opacity-100" : "opacity-40"}`}
-                  />
-                )}
               </Link>
             ))}
             <span className={navDividerClass}>—</span>
@@ -327,13 +297,6 @@ export function SiteHeader({ title, theme: themeProp, services, mainNav }: SiteH
         </div>
       </nav>
 
-      {/* Desktop Mega Menu — Services families and individual offers from Sanity */}
-      <ServicesMegaMenu
-        open={isServicesOpen && hasMegaMenu}
-        groups={serviceGroups}
-        onNavigate={() => setIsServicesOpen(false)}
-      />
-
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
@@ -368,61 +331,19 @@ export function SiteHeader({ title, theme: themeProp, services, mainNav }: SiteH
                     }}
                     transition={{ duration: 0.4, ease: "easeOut" }}
                   >
-                    {item.hasDropdown ? (
-                      <div className="flex flex-col">
-                        <button
-                          type="button"
-                          onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
-                          aria-expanded={mobileServicesOpen}
-                          className="flex w-full items-center justify-between text-left text-[clamp(2rem,10vw,3.35rem)] font-normal leading-none tracking-tight text-black"
-                        >
-                          {navLabel(item, currentLang)}
-                          <ChevronDown
-                            size={26}
-                            className={`transition-transform duration-300 ${mobileServicesOpen ? "rotate-180" : "opacity-25"}`}
-                          />
-                        </button>
-                        <AnimatePresence>
-                          {mobileServicesOpen && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: "auto", opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.3, ease: "easeOut" }}
-                              className="overflow-hidden"
-                            >
-                              <div className="flex flex-col gap-4 border-l border-black/10 py-5 pl-5">
-                                <Link
-                                  href={navHref(item.href, currentLang as Locale)}
-                                  onClick={() => setIsMobileMenuOpen(false)}
-                                  className="text-lg font-normal text-black underline decoration-[#75DAB4] decoration-2 underline-offset-4"
-                                >
-                                  {currentLang === "fr" ? "Tous les services" : "All services"}
-                                </Link>
-                                {serviceGroups.map((group) => (
-                                  <Link
-                                    key={group.family}
-                                    href={group.href}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="text-lg font-normal text-neutral-500 transition-colors hover:text-black"
-                                  >
-                                    {group.title}
-                                  </Link>
-                                ))}
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    ) : (
-                      <Link
-                        href={navHref(item.href, currentLang as Locale)}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="text-[clamp(2rem,10vw,3.35rem)] font-normal leading-none tracking-tight text-black"
-                      >
-                        {navLabel(item, currentLang)}
-                      </Link>
-                    )}
+                    <Link
+                      href={navHref(item.href, currentLang as Locale)}
+                      onClick={(e) => {
+                        setIsMobileMenuOpen(false);
+                        if (item.hasDropdown) {
+                          e.preventDefault();
+                          navigateWithCurtain(navHref(item.href, currentLang as Locale));
+                        }
+                      }}
+                      className="text-[clamp(2rem,10vw,3.35rem)] font-normal leading-none tracking-tight text-black"
+                    >
+                      {navLabel(item, currentLang)}
+                    </Link>
                   </motion.div>
                 ))}
               </motion.div>

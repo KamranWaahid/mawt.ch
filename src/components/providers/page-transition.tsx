@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion, type Variants } from "motion/react";
-import { ReactNode, useEffect, useRef, createContext, useContext } from "react";
+import { ReactNode, useEffect, useState, useRef, createContext, useContext } from "react";
 import { useLenis } from "lenis/react";
 import { useCurtainTransition } from "@/components/providers/curtain-transition";
 
@@ -15,15 +15,16 @@ import { useCurtainTransition } from "@/components/providers/curtain-transition"
  *
  * "slide" (opt-in via CurtainTransitionProvider — the Services nav links):
  * the provider froze a visual snapshot of the old page at z-[110] at click
- * time. The old page then exits with the NORMAL fade, invisibly, under that
- * opaque snapshot. The ENTERING page mounts fixed at z-[120] and rises from
- * the bottom (100vh → 0, rounded top corners + shadow) over the snapshot —
- * DHNN-style. On landing, scroll resets under the covering sheet, then the
- * provider releases (snapshot removed, page unfixed) — no visible jump.
+ * time. The old page exits with the NORMAL fade, invisibly, under that
+ * opaque snapshot. The ENTERING page mounts inside <SlideSheet>, fixed at
+ * z-[120], and rises from the bottom over the snapshot — DHNN-style.
  *
- * The fixed-during-enter styling is driven by provider STATE ARMED AT CLICK
- * TIME (isSlideArmed), never by render-phase state updates — App Router
- * navigations render inside a React transition where those are unreliable.
+ * The rise is a plain CSS transform transition, NOT a Framer animation:
+ * transform transitions run on the compositor thread, so the sheet glides
+ * smoothly even while the main thread is busy hydrating the heavy page
+ * inside it (Framer's JS-driven y dropped every frame during hydration and
+ * the rise appeared instant). On landing, scroll resets under the covering
+ * sheet, then the provider releases (snapshot removed, wrapper unfixed).
  */
 
 export const PageTransitionContext = createContext<{ isPageTransitionComplete: boolean }>({
@@ -38,22 +39,12 @@ let isInitialLoad = true;
 type Mode = "fade" | "slide";
 
 const pageVariants: Variants = {
-  hidden: (mode: Mode) =>
-    mode === "slide"
-      ? { y: "100vh", borderTopLeftRadius: 28, borderTopRightRadius: 28 }
-      : { opacity: 0, y: 8 },
+  // Slide mode: the wrapper does not animate through Framer at all — the
+  // SlideSheet inside owns the motion. Fade keeps the historic behavior.
+  hidden: (mode: Mode) => (mode === "slide" ? { opacity: 1 } : { opacity: 0, y: 8 }),
   visible: (mode: Mode) =>
     mode === "slide"
-      ? {
-          y: "0vh",
-          borderTopLeftRadius: 0,
-          borderTopRightRadius: 0,
-          transition: {
-            y: { duration: 0.75, ease: [0.76, 0, 0.24, 1] as [number, number, number, number] },
-            borderTopLeftRadius: { delay: 0.6, duration: 0.2 },
-            borderTopRightRadius: { delay: 0.6, duration: 0.2 },
-          },
-        }
+      ? { opacity: 1, transition: { duration: 0 } }
       : {
           opacity: 1,
           y: 0,
@@ -75,6 +66,78 @@ const reducedVariants: Variants = {
   visible: { opacity: 1, transition: { duration: 0.1 } },
   exit: { opacity: 0, transition: { duration: 0.1 } },
 };
+
+/**
+ * Compositor-driven rising sheet. Mounts translated a full viewport down,
+ * flips to translate-0 after two rAFs (guaranteeing the browser painted the
+ * initial position), and reports landing via transitionend. A local timer
+ * backs up transitionend; the provider's own failsafe backs up everything.
+ */
+function SlideSheet({ children, onLanded }: { children: ReactNode; onLanded: () => void }) {
+  const [risen, setRisen] = useState(false);
+  const landedRef = useRef(false);
+
+  const land = () => {
+    if (landedRef.current) return;
+    landedRef.current = true;
+    onLanded();
+  };
+
+  // The page hydrating INSIDE the sheet can block the main thread for a
+  // while (long in dev, brief in prod). If we flip to translate-0 before the
+  // browser ever painted the off-screen position, the transition has no
+  // visible start and the sheet just appears. So: wait for three consecutive
+  // frames under 50ms (paint pipeline flowing again) before starting the
+  // rise, with a hard cap so it always starts eventually.
+  useEffect(() => {
+    let raf = 0;
+    let last = performance.now();
+    let stable = 0;
+    const tick = () => {
+      const now = performance.now();
+      const delta = now - last;
+      last = now;
+      stable = delta < 50 ? stable + 1 : 0;
+      if (stable >= 3) {
+        setRisen(true);
+        return;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    const cap = setTimeout(() => setRisen(true), 2500);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(cap);
+    };
+  }, []);
+
+  // transitionend backup, armed only once the rise actually started.
+  useEffect(() => {
+    if (!risen) return;
+    const backup = setTimeout(land, 1100);
+    return () => clearTimeout(backup);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [risen]);
+
+  return (
+    <div
+      onTransitionEnd={(e) => {
+        if (e.propertyName === "transform" && e.target === e.currentTarget) land();
+      }}
+      style={{
+        transitionProperty: "transform",
+        transitionDuration: "750ms",
+        transitionTimingFunction: "cubic-bezier(0.76, 0, 0.24, 1)",
+      }}
+      className={`fixed inset-0 z-[120] h-screen w-full overflow-hidden bg-[#161616] shadow-[0_-24px_80px_rgba(0,0,0,0.45)] will-change-transform ${
+        risen ? "translate-y-0" : "translate-y-[100vh] rounded-t-[28px]"
+      }`}
+    >
+      {children}
+    </div>
+  );
+}
 
 export function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -124,11 +187,7 @@ export function PageTransition({ children }: { children: ReactNode }) {
         animate="visible"
         exit="exit"
         variants={variants}
-        className={
-          sliding
-            ? "fixed inset-0 z-[120] h-screen w-full overflow-hidden bg-white shadow-[0_-24px_80px_rgba(0,0,0,0.35)] will-change-transform"
-            : "w-full"
-        }
+        className="w-full"
         onAnimationStart={() => {
           // Fade swaps pages in place: reset scroll up front (historic
           // behavior). Slide keeps the snapshot still and resets scroll at
@@ -138,14 +197,9 @@ export function PageTransition({ children }: { children: ReactNode }) {
             else if (typeof window !== "undefined") window.scrollTo({ top: 0 });
           }
         }}
-        onAnimationComplete={(definition) => {
-          if (definition === "visible" && sliding) {
-            landSheet();
-          }
-        }}
       >
         <PageTransitionContext.Provider value={{ isPageTransitionComplete: true }}>
-          {children}
+          {sliding ? <SlideSheet onLanded={landSheet}>{children}</SlideSheet> : children}
         </PageTransitionContext.Provider>
       </motion.div>
     </AnimatePresence>

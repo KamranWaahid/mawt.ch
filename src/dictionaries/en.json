@@ -330,6 +330,12 @@
           ]
         }
       ]
+    },
+    "hero": {
+      "title": "services",
+      "crossLabel": "/work",
+      "tagline": "this is what we do best.",
+      "familyMore": "See more"
     }
   },
   "contact": {

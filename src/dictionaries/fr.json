@@ -330,6 +330,12 @@
           ]
         }
       ]
+    },
+    "hero": {
+      "title": "services",
+      "crossLabel": "/projets",
+      "tagline": "voilà ce qu'on fait de mieux.",
+      "familyMore": "Voir tout"
     }
   },
   "contact": {

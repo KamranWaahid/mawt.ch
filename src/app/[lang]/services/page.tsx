@@ -1,14 +1,19 @@
-import { SubpageHero } from "@/components/sections/subpage-hero";
-import { FlatGrid } from "@/components/ui/flat-grid";
 import { getDictionary } from "@/get-dictionary";
 import { getHomePageData } from "@/lib/sanity.queries";
 import type { Locale } from "@/i18n-config";
-import { getFamilyTitle, familySlugForLang, familyOrderIndex, standaloneAlternates, localizedHref } from "@/lib/routing/url-helpers";
+import {
+  getFamilyTitle,
+  familySlugForLang,
+  standaloneAlternates,
+  localizedHref,
+  FAMILY_ORDER,
+} from "@/lib/routing/url-helpers";
 import { JsonLd, breadcrumbLd, itemListLd, SITE_URL } from "@/components/seo/structured-data";
 import Link from "next/link";
 import type { Metadata } from "next";
 import {
   ArrowRight,
+  ArrowUpRight,
   Brain,
   Sparkles,
   Cpu,
@@ -24,6 +29,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { AnimatedTitle } from "@/components/ui/animated-title";
+import { HeaderTheme } from "@/components/ui/header-theme";
 import { STACK_LOGOS } from "@/content/stack-logos";
 
 // Discreet Lucide glyphs for the domain groups (no official logos exist for
@@ -58,6 +64,14 @@ export async function generateMetadata({ params }: ServicesPageProps): Promise<M
   };
 }
 
+type FamilyBlock = {
+  key: string;
+  title: string;
+  description?: string;
+  href: string;
+  services: { title: string; href: string }[];
+};
+
 export default async function ServicesPage({ params }: ServicesPageProps) {
   const { lang } = await params;
   const dict = await getDictionary(lang);
@@ -65,98 +79,34 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
   // service links were built with English slugs (/fr/services/.../website)
   // instead of the French ones (/site-internet) -> 404 across the FR catalog.
   const data = await getHomePageData(lang);
+  const hero = dict.services.hero;
 
-  const defaultServicesList = [
-    {
-      category: "Strategy",
-      services: [
-        "Cultural and Visual Positioning", "Content Strategy", "Naming (UX)", 
-        "Brand Storytelling", "Concept and Prototyping", "Whitepaper Reports", 
-        "Key Messaging", "Market Deep Probing", "Audience Mapping", "Founder Positioning"
-      ],
-    },
-    {
-      category: "Design Systems",
-      services: [
-        "Brand Identity", "Typography and Color Systems", "Logo Design", 
-        "Brand Guidelines", "Tone of Voice", "Visual Asset Library"
-      ],
-    },
-    {
-      category: "Website Design and Development",
-      services: [
-        "Creative Development", "Website Design", "Content Management (Webflow, Sanity and Payload)", 
-        "Information Architecture", "UX and UI", "Motion Design", "Wireframing and Prototyping", 
-        "Responsive Design", "Microsites", "CRM Integrations", "Performance and Analytics"
-      ],
-    },
-    {
-      category: "3D application",
-      services: [
-        "3D Asset Building and Texturing", "3D Animations", "WebGL", 
-        "Custom Cursors (Hover and Action)", "Concept Development (Immersive Web)", 
-        "Product Visualization", "Technical Animations"
-      ],
-    },
-    {
-      category: "Technical Consultation",
-      services: [
-        "System Architecture Review", "Stack Choice", "Technical App and Web Audit (UI/UX)", 
-        "IT and Tech Initiatives", "Monthly and Quarterly Boards", "Tech and Data Visualization", 
-        "Vendor Search", "Due-Diligence and Tech Review", "Data Rooms"
-      ],
-    },
-    {
-      category: "Product Strategy",
-      services: [
-        "Product Strategy and Development", "Concept Development", "Design Language Development", 
-        "User Journey Mapping", "MVP Strategy (Go-to-Market, Pitch)", "Product Visualization and Prototyping", 
-        "Product Ecosystem Design", "Hardware UX Consultation"
-      ],
-    },
-    {
-      category: "UX/UI Consultation & Realisation",
-      services: [
-        "Spatial Experiences", "3D Product Walkthroughs", "Out-of-Box Design", 
-        "Interactive Product Demos", "Interactive Showrooms", "3D Web Integration"
-      ],
-    }
-  ];
-
-  // Group the individual Service documents from Sanity by their family.
-  // Families are sorted AI-first (FAMILY_ORDER) so the "agence IA" offers lead.
-  const dynamicServicesGrouped = data.services
-    ?.slice()
-    .sort((a, b) => familyOrderIndex(a.family ?? "") - familyOrderIndex(b.family ?? ""))
-    .reduce((acc, service) => {
-    if (!service.family || !service.title) return acc;
-    const familyTitle = getFamilyTitle(service.family, lang);
-    if (!acc[familyTitle]) {
-      acc[familyTitle] = [];
-    }
-    const familySlug = familySlugForLang(service.family, lang);
-    acc[familyTitle].push({
-      title: service.title,
-      href: `/${lang}/services/${familySlug}/${service.slug}`,
+  // One block per family, in FAMILY_ORDER; descriptions come from the pillar
+  // copy in the dictionaries (same order as FAMILY_ORDER).
+  const byFamily = new Map<string, { title: string; href: string }[]>();
+  for (const s of (data.services || []).slice().sort((a, b) => (a.tier ?? 50) - (b.tier ?? 50))) {
+    if (!s.family || !s.title || !s.slug) continue;
+    if (!byFamily.has(s.family)) byFamily.set(s.family, []);
+    byFamily.get(s.family)!.push({
+      title: s.title,
+      href: `/${lang}/services/${familySlugForLang(s.family, lang)}/${s.slug}`,
     });
-    return acc;
-  }, {} as Record<string, { title: string; href: string }[]>);
-
-  // Convert the grouped object into the array format expected by the UI
-  let servicesList: any[] = defaultServicesList;
-  
-  if (dynamicServicesGrouped && Object.keys(dynamicServicesGrouped).length > 0) {
-    servicesList = Object.entries(dynamicServicesGrouped).map(([category, services]) => ({
-      category,
-      services,
-    }));
   }
-  
+  const familyBlocks: FamilyBlock[] = FAMILY_ORDER.filter((f) => byFamily.has(f)).map(
+    (family, i) => ({
+      key: family,
+      title: getFamilyTitle(family, lang),
+      description: dict.services.pillars?.[i]?.description,
+      href: `/${lang}/services/${familySlugForLang(family, lang)}`,
+      services: byFamily.get(family)!,
+    }),
+  );
+
   const catalogItems = (data.services || [])
-    .filter((s: any) => s?.family && s?.title && s?.slug)
-    .map((s: any) => ({
-      name: s.title,
-      url: `${SITE_URL}/${lang}/services/${familySlugForLang(s.family, lang)}/${s.slug}`,
+    .filter((s) => s?.family && s?.title && s?.slug)
+    .map((s) => ({
+      name: s.title as string,
+      url: `${SITE_URL}/${lang}/services/${familySlugForLang(s.family as string, lang)}/${s.slug}`,
     }));
   const crumbLd = breadcrumbLd([
     { name: "MAWT", url: `${SITE_URL}/${lang}` },
@@ -169,170 +119,163 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
   );
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#161616] text-white">
+      <HeaderTheme theme="light" />
       <JsonLd data={catalogItems.length ? [crumbLd, catalogLd] : [crumbLd]} />
-      <SubpageHero
-        eyebrow={dict.services.badge}
-        title={dict.services.headline}
-        subtitle={lang === "fr" ? "Nos domaines d'expertise." : "Our areas of expertise."}
-        compact
-      />
-      <FlatGrid 
-        items={dict.services.pillars.map((pillar: any) => ({
-          title: pillar.title,
-          description: pillar.description
-        }))} 
-        columns={3} 
-      />
-      
-      <section className="py-16 md:py-24 lg:py-32 border-t border-black/5">
+
+      {/* Hero — giant lowercase wordmark + tagline, with the greyed cross-link
+          to the sibling section, mirroring the services/industries pairing. */}
+      <section className="pb-[10vh] pt-[24vh]">
         <div className="site-container-wide">
-          <div className="grid md:grid-cols-2 gap-24 items-center">
+          <h1 className="text-[clamp(3.25rem,8vw,7rem)] font-semibold leading-[0.98] tracking-tight text-white">
+            <span className="block">
+              {hero.title}{" "}
+              <Link
+                href={localizedHref("projets", lang)}
+                className="text-white/15 transition-colors hover:text-white/40"
+              >
+                {hero.crossLabel}
+              </Link>
+            </span>
+            <span className="block">{hero.tagline}</span>
+          </h1>
+        </div>
+      </section>
+
+      {/* Family blocks — two-column masonry: big title, short pitch, one
+          hairline row per service, then a pill to the family page. */}
+      <section className="pb-[14vh]">
+        <div className="site-container-wide columns-1 gap-x-20 md:columns-2">
+          {familyBlocks.map((block) => (
+            <div key={block.key} className="mb-24 break-inside-avoid md:mb-28">
+              <h2 className="max-w-[14ch] text-[clamp(1.9rem,3.2vw,3rem)] font-semibold leading-[1.05] tracking-tight text-white">
+                {block.title}
+              </h2>
+              {block.description && (
+                <p className="mt-6 max-w-[46ch] text-[15px] font-normal leading-relaxed text-white/55">
+                  {block.description}
+                </p>
+              )}
+              <ul className="mt-10">
+                {block.services.map((service) => (
+                  <li key={service.href}>
+                    <Link
+                      href={service.href}
+                      className="group flex items-center justify-between gap-6 border-b border-white/10 py-[15px] text-[14px] font-normal text-white/75 transition-colors hover:text-white"
+                    >
+                      {service.title}
+                      <ArrowUpRight
+                        size={14}
+                        className="shrink-0 text-white/0 transition-all duration-300 group-hover:text-white/60"
+                      />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href={block.href}
+                className="mt-9 inline-flex items-center gap-3 rounded-full bg-white/[0.08] py-[13px] pl-6 pr-4 text-[13px] font-normal text-white/85 transition-colors hover:bg-white/[0.16] hover:text-white"
+              >
+                {hero.familyMore}
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10">
+                  <ArrowRight size={13} />
+                </span>
+              </Link>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Light band — big grey statement + methodology link, then the
+          technologies wall (lead-dev requirement, kept intact). */}
+      <div className="bg-[#F6F5F4] text-black">
+        <section className="py-20 md:py-28 lg:py-36">
+          <div className="site-container-wide">
             <AnimatedTitle
               as="h2"
-              text={lang === "en" 
+              text={lang === "en"
                 ? "We don't just build tools. We build the systems that run your business."
                 : "Nous ne construisons pas seulement des outils. Nous construisons les systèmes qui font tourner votre entreprise."}
-              className="text-3xl-fluid font-medium tracking-tighter text-black leading-tight max-w-[22ch]"
+              className="max-w-[24ch] text-[clamp(2rem,4vw,3.6rem)] font-medium leading-[1.12] tracking-tight text-neutral-400"
               splitBy="word"
             />
-            <div className="flex flex-col gap-8">
-              <p className="text-base-fluid text-neutral-500 font-normal leading-relaxed max-w-[55ch]">
-                {lang === "en"
-                  ? "Our approach is holistic. We look at your entire operational workflow to identify bottlenecks and opportunities for automation."
-                  : "Notre approche est holistique. Nous examinons l'ensemble de votre flux opérationnel pour identifier les goulots d'étranglement."}
-              </p>
-              {/* BUG-009: Replaced dead <button> with a working Next.js <Link> to the methodology page */}
+            <div className="mt-12">
               <Link
                 href={lang === "en" ? `/${lang}/our-process` : `/${lang}/notre-methode`}
-                className="w-fit flex items-center gap-2 px-8 py-4 border border-black text-black hover:bg-black hover:text-white transition-all duration-300 text-sm font-normal tracking-widest group"
+                className="group flex w-fit items-center gap-2 border border-black px-8 py-4 text-sm font-normal text-black transition-all duration-300 hover:bg-black hover:text-white"
               >
-                {lang === "en" ? "Explore our methodology" : "Explorer notre m\u00e9thodologie"}
+                {lang === "en" ? "Explore our methodology" : "Explorer notre méthodologie"}
                 <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Detailed Services List Section */}
-      <section className="py-16 md:py-24 lg:py-32 border-t border-black/5">
-        <div className="site-container-wide">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
-            
-            {/* Left Column: Heading */}
-            <div className="lg:col-span-4 lg:col-start-1">
-              <h2 className="text-2xl-fluid font-medium tracking-tight text-black sticky top-32">
-                Services
-              </h2>
-            </div>
-            
-            {/* Right Column: Categories & Services */}
-            <div className="lg:col-span-8 flex flex-col">
-              {servicesList.map((item, idx) => (
-                <div 
-                  key={item.category} 
-                  className={`grid grid-cols-1 md:grid-cols-2 gap-8 py-10 ${idx === 0 ? "border-t border-black/10 lg:pt-0 lg:border-t-0" : "border-t border-black/5"}`}
-                >
-                  <div className="col-span-1">
-                    <h3 className="text-lg-fluid font-medium text-black">{item.category}</h3>
-                  </div>
-                  <div className="col-span-1">
-                    <ul className="flex flex-col gap-2.5">
-                      {item.services?.map((service: any) => {
-                        const isObj = typeof service === "object";
-                        const serviceTitle = isObj ? service.title : service;
-                        const serviceHref = isObj ? service.href : null;
-
-                        return (
-                          <li key={serviceTitle} className="text-sm-fluid text-neutral-500 font-normal leading-relaxed">
-                            {serviceHref ? (
-                              <Link href={serviceHref} className="hover:text-black hover:underline transition-colors decoration-[#75DAB4] decoration-2 underline-offset-4">
-                                {serviceTitle}
-                              </Link>
-                            ) : (
-                              <span>{serviceTitle}</span>
-                            )}
-                          </li>
-                        );
-                      })}
+        {/* Technologies */}
+        {dict.services.technologies?.groups?.length ? (
+          <section className="border-t border-black/5 py-16 md:py-24 lg:py-28">
+            <div className="site-container-wide">
+              <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-16">
+                <div className="lg:col-span-4 lg:col-start-1">
+                  <h2 className="text-2xl-fluid font-medium tracking-tight text-black">
+                    {dict.services.technologies.title}
+                  </h2>
+                  <p className="mt-4 max-w-[38ch] text-sm-fluid font-normal leading-relaxed text-neutral-500">
+                    {dict.services.technologies.intro}
+                  </p>
+                </div>
+                <div className="space-y-14 lg:col-span-8">
+                  <div className="space-y-6">
+                    <h3 className="text-sm-fluid font-medium text-black/80">
+                      {dict.services.technologies.groups[0]?.title}
+                    </h3>
+                    <ul className="grid grid-cols-3 gap-x-6 gap-y-8 sm:grid-cols-4 md:grid-cols-5">
+                      {STACK_LOGOS.map((logo) => (
+                        <li
+                          key={logo.name}
+                          className="group flex flex-col items-center gap-2.5 text-center"
+                        >
+                          <svg
+                            viewBox="0 0 24 24"
+                            aria-hidden="true"
+                            className="h-8 w-8 fill-neutral-400 opacity-70 transition duration-300 group-hover:fill-black group-hover:opacity-100"
+                          >
+                            <path d={logo.path} />
+                          </svg>
+                          <span className="text-xs font-normal text-neutral-500 transition-colors duration-300 group-hover:text-black">
+                            {logo.name}
+                          </span>
+                        </li>
+                      ))}
                     </ul>
                   </div>
-                </div>
-              ))}
-            </div>
 
-          </div>
-        </div>
-      </section>
-
-      {/* Technologies */}
-      {dict.services.technologies?.groups?.length ? (
-        <section className="py-16 md:py-24 lg:py-32 border-t border-black/5">
-          <div className="site-container-wide">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
-              <div className="lg:col-span-4 lg:col-start-1">
-                <h2 className="text-2xl-fluid font-medium tracking-tight text-black">
-                  {dict.services.technologies.title}
-                </h2>
-                <p className="mt-4 max-w-[38ch] text-sm-fluid font-normal leading-relaxed text-neutral-500">
-                  {dict.services.technologies.intro}
-                </p>
-              </div>
-              <div className="lg:col-span-8 space-y-14">
-                {/* Stack logo wall — muted grey marks, colorless until hover,
-                    same treatment as the client logo wall. */}
-                <div className="space-y-6">
-                  <h3 className="text-sm-fluid font-medium text-black/80">
-                    {dict.services.technologies.groups[0]?.title}
-                  </h3>
-                  <ul className="grid grid-cols-3 gap-x-6 gap-y-8 sm:grid-cols-4 md:grid-cols-5">
-                    {STACK_LOGOS.map((logo) => (
-                      <li
-                        key={logo.name}
-                        className="group flex flex-col items-center gap-2.5 text-center"
-                      >
-                        <svg
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                          className="h-8 w-8 fill-neutral-400 opacity-70 transition duration-300 group-hover:fill-black group-hover:opacity-100"
-                        >
-                          <path d={logo.path} />
-                        </svg>
-                        <span className="text-xs font-normal text-neutral-500 transition-colors duration-300 group-hover:text-black">
-                          {logo.name}
-                        </span>
-                      </li>
+                  <div className="grid gap-10 border-t border-black/5 pt-12 sm:grid-cols-2">
+                    {dict.services.technologies.groups.slice(1).map((group: { title: string; items: string[] }, gIdx: number) => (
+                      <div key={group.title} className="space-y-5">
+                        <h3 className="text-sm-fluid font-medium text-black/80">{group.title}</h3>
+                        <ul className="space-y-3">
+                          {group.items.map((item, iIdx) => {
+                            const Icon = DOMAIN_ICONS[gIdx]?.[iIdx];
+                            return (
+                              <li key={item} className="flex items-center gap-3 text-sm-fluid font-normal leading-relaxed text-neutral-500">
+                                {Icon ? (
+                                  <Icon size={15} strokeWidth={1.5} className="shrink-0 text-neutral-400" aria-hidden="true" />
+                                ) : null}
+                                {item}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
                     ))}
-                  </ul>
-                </div>
-
-                {/* Domain groups — text capabilities with discreet glyphs. */}
-                <div className="grid gap-10 border-t border-black/5 pt-12 sm:grid-cols-2">
-                  {dict.services.technologies.groups.slice(1).map((group: { title: string; items: string[] }, gIdx: number) => (
-                    <div key={group.title} className="space-y-5">
-                      <h3 className="text-sm-fluid font-medium text-black/80">{group.title}</h3>
-                      <ul className="space-y-3">
-                        {group.items.map((item, iIdx) => {
-                          const Icon = DOMAIN_ICONS[gIdx]?.[iIdx];
-                          return (
-                            <li key={item} className="flex items-center gap-3 text-sm-fluid font-normal leading-relaxed text-neutral-500">
-                              {Icon ? (
-                                <Icon size={15} strokeWidth={1.5} className="shrink-0 text-neutral-400" aria-hidden="true" />
-                              ) : null}
-                              {item}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  ))}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
-      ) : null}
+          </section>
+        ) : null}
+      </div>
     </div>
   );
 }

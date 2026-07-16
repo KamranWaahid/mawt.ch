@@ -7,8 +7,32 @@ import { getFamilyTitle, familySlugForLang, familyOrderIndex, standaloneAlternat
 import { JsonLd, breadcrumbLd, itemListLd, SITE_URL } from "@/components/seo/structured-data";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowRight } from "lucide-react";
+import {
+  ArrowRight,
+  Brain,
+  Sparkles,
+  Cpu,
+  LineChart,
+  Database,
+  ScanSearch,
+  Cloud,
+  Boxes,
+  Smartphone,
+  Radio,
+  Blocks,
+  Glasses,
+  type LucideIcon,
+} from "lucide-react";
 import { AnimatedTitle } from "@/components/ui/animated-title";
+import { STACK_LOGOS } from "@/content/stack-logos";
+
+// Discreet Lucide glyphs for the domain groups (no official logos exist for
+// domains like AI or IoT — a text list with subtle icons stays honest and
+// premium). Indexed by [group-1][item]; item order matches both dictionaries.
+const DOMAIN_ICONS: LucideIcon[][] = [
+  [Brain, Sparkles, Cpu, LineChart, Database, ScanSearch],
+  [Cloud, Boxes, Smartphone, Radio, Blocks, Glasses],
+];
 
 interface ServicesPageProps {
   params: Promise<{ lang: Locale }>;
@@ -255,19 +279,55 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
                   {dict.services.technologies.intro}
                 </p>
               </div>
-              <div className="lg:col-span-8 grid gap-10 sm:grid-cols-2 md:grid-cols-3">
-                {dict.services.technologies.groups.map((group: { title: string; items: string[] }) => (
-                  <div key={group.title} className="space-y-5">
-                    <h3 className="text-sm-fluid font-medium text-black/80">{group.title}</h3>
-                    <ul className="space-y-2.5">
-                      {group.items.map((item) => (
-                        <li key={item} className="text-sm-fluid font-normal leading-relaxed text-neutral-500">
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+              <div className="lg:col-span-8 space-y-14">
+                {/* Stack logo wall — muted grey marks, colorless until hover,
+                    same treatment as the client logo wall. */}
+                <div className="space-y-6">
+                  <h3 className="text-sm-fluid font-medium text-black/80">
+                    {dict.services.technologies.groups[0]?.title}
+                  </h3>
+                  <ul className="grid grid-cols-3 gap-x-6 gap-y-8 sm:grid-cols-4 md:grid-cols-5">
+                    {STACK_LOGOS.map((logo) => (
+                      <li
+                        key={logo.name}
+                        className="group flex flex-col items-center gap-2.5 text-center"
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          className="h-8 w-8 fill-neutral-400 opacity-70 transition duration-300 group-hover:fill-black group-hover:opacity-100"
+                        >
+                          <path d={logo.path} />
+                        </svg>
+                        <span className="text-xs font-normal text-neutral-500 transition-colors duration-300 group-hover:text-black">
+                          {logo.name}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Domain groups — text capabilities with discreet glyphs. */}
+                <div className="grid gap-10 border-t border-black/5 pt-12 sm:grid-cols-2">
+                  {dict.services.technologies.groups.slice(1).map((group: { title: string; items: string[] }, gIdx: number) => (
+                    <div key={group.title} className="space-y-5">
+                      <h3 className="text-sm-fluid font-medium text-black/80">{group.title}</h3>
+                      <ul className="space-y-3">
+                        {group.items.map((item, iIdx) => {
+                          const Icon = DOMAIN_ICONS[gIdx]?.[iIdx];
+                          return (
+                            <li key={item} className="flex items-center gap-3 text-sm-fluid font-normal leading-relaxed text-neutral-500">
+                              {Icon ? (
+                                <Icon size={15} strokeWidth={1.5} className="shrink-0 text-neutral-400" aria-hidden="true" />
+                              ) : null}
+                              {item}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

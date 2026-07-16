@@ -294,6 +294,12 @@ export function AsciiWave({ src, active, fit = "contain", focusX = 0.5, focusY =
 
       if (!readyRef.current) {
         readyRef.current = true;
+        // Flag BEFORE the event: React runs child effects before parent
+        // effects, so with a cached source image this fires before the hero
+        // has subscribed — the event alone was lost and the ASCII layer
+        // stayed at opacity 0 (black hero on reload, seen on iOS Safari).
+        // Late subscribers read the flag; live ones get the event.
+        (window as unknown as { __asciiWaveReady?: boolean }).__asciiWaveReady = true;
         window.dispatchEvent(new CustomEvent('ascii-wave-ready'));
       }
     };

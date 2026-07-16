@@ -237,6 +237,7 @@ function HeroGradientStatement({
 export function HomepageHeroSection({ settings, dict, transitionDict, services }: HomepageHeroSectionProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const videoWarmedRef = useRef(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isHeroMobileMenuOpen, setIsHeroMobileMenuOpen] = useState(false);
   const [isAsciiVideoReady, setIsAsciiVideoReady] = useState(false);
@@ -259,6 +260,29 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
 
     const video = videoRef.current;
     if (video) {
+      // One-shot warm-up on the first scroll movement: with
+      // preload="metadata", iOS Safari decodes NO frame at all — the video
+      // rendered as a black box through the whole cinema phase. A muted
+      // playsInline play()+pause() (allowed without a gesture) forces the
+      // first frame to decode long before the reveal, while still avoiding
+      // the old eager 11 MB download at page load.
+      if (
+        !videoWarmedRef.current &&
+        video.readyState < 2 && // no frame decoded yet (iOS with preload=metadata)
+        latest > 0.005 &&
+        latest < VIDEO_OPEN_PROGRESS
+      ) {
+        videoWarmedRef.current = true;
+        const warm = video.play();
+        if (warm) {
+          warm
+            .then(() => {
+              video.pause();
+              video.currentTime = 0;
+            })
+            .catch(() => {});
+        }
+      }
       if (latest < VIDEO_OPEN_PROGRESS) {
         // Reveal underway: hold playback and scrub. This handler already runs
         // at most once per frame (Motion batches scroll reads on rAF), so a
@@ -280,6 +304,14 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   });
 
   useEffect(() => {
+    // AsciiWave may have signalled readiness BEFORE this effect subscribed
+    // (child effects run first; a cached image makes its init synchronous).
+    // Missing that one-shot event left the ASCII layer at opacity 0 — a
+    // fully black hero. The window flag covers the late-subscriber case.
+    if ((window as unknown as { __asciiWaveReady?: boolean }).__asciiWaveReady) {
+      setIsAsciiVideoReady(true);
+      return;
+    }
     const handleAsciiReady = () => setIsAsciiVideoReady(true);
     window.addEventListener('ascii-wave-ready', handleAsciiReady);
     return () => window.removeEventListener('ascii-wave-ready', handleAsciiReady);

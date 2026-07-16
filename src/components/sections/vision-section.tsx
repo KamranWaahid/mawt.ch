@@ -12,7 +12,7 @@ export function VisionSection({ dict, services }: { dict: any; services?: any[] 
   const displayItems = services && services.length > 0 ? services : dict.items;
 
   return (
-    <section className="relative py-12 md:py-18 lg:py-24">
+    <section className="relative pt-12 md:pt-18 lg:pt-24 pb-4 md:pb-6 lg:pb-8">
       <div className="site-container">
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">

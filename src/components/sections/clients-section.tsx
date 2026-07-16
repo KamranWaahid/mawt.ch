@@ -68,7 +68,7 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
 
   return (
     <section
-      className="relative overflow-hidden bg-[#F6F5F4] pt-10 pb-8 md:pt-12 md:pb-10 lg:pt-14 lg:pb-12"
+      className="relative overflow-hidden bg-[#F6F5F4] pt-10 pb-4 md:pt-12 md:pb-5 lg:pt-14 lg:pb-6"
       style={{ backgroundColor: "#F6F5F4" }}
     >
       <div className="site-container relative z-10">

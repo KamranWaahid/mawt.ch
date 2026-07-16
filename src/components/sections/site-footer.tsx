@@ -5,7 +5,6 @@ import { useParams, usePathname, useRouter } from "next/navigation";
 import { Globe } from "lucide-react";
 import { FaFacebookF, FaXTwitter, FaInstagram, FaLinkedinIn, FaGithub } from "react-icons/fa6";
 import Image from "next/image";
-import { NewsletterForm } from "@/components/ui/newsletter-form";
 import { translatePath } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/lib/routing/url-map";
 import LogoBlack from "../../../public/MAWT Branding/MAWT Logo - Black.svg";
@@ -67,7 +66,7 @@ export function SiteFooter({
 
       <footer className="pt-16 pb-12 md:pt-24 md:pb-16 lg:pt-32">
         <div className="site-container-wide">
-          <div className="grid gap-x-10 gap-y-16 md:gap-x-12 lg:gap-x-16 grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr_1fr]">
+          <div className="grid gap-x-10 gap-y-16 md:gap-x-12 lg:gap-x-16 grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.5fr_1fr_1fr_1fr_1fr_1fr]">
             {/* Logo and Socials Column */}
             <div className="col-span-2 md:col-span-3 lg:col-span-1 space-y-8">
               <div className="flex items-center gap-2">
@@ -149,10 +148,6 @@ export function SiteFooter({
               </ul>
             </div>
 
-            {/* Newsletter Column */}
-            <div className="col-span-2 md:col-span-3 lg:col-span-1">
-              <NewsletterForm dict={dict.newsletter} />
-            </div>
           </div>
 
           {/* Bottom Bar */}

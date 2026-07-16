@@ -270,6 +270,12 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
     }
   });
 
+  useEffect(() => {
+    const handleAsciiReady = () => setIsAsciiVideoReady(true);
+    window.addEventListener('ascii-wave-ready', handleAsciiReady);
+    return () => window.removeEventListener('ascii-wave-ready', handleAsciiReady);
+  }, []);
+
   // After a mid-page refresh the browser restores the scroll position, but
   // that measurement can fire before the spring is attached: every
   // smooth-driven layer then sits parked at 0 until the next real scroll
@@ -489,7 +495,6 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
             <AsciiWave
               src="/hero-ascii-map.jpg"
               active={scrollProgress < 0.63}
-              onReady={() => setIsAsciiVideoReady(true)}
               focusX={isMobile ? 0.35 : 0.5}
               focusY={isMobile ? 0.6 : 0.68}
               className="ascii-wave-canvas"

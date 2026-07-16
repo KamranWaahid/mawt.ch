@@ -9,7 +9,6 @@ import { useEffect, useRef } from "react";
 type AsciiWaveProps = {
   src: string;
   active: boolean;
-  onReady?: () => void;
   fit?: "contain" | "cover";
   focusX?: number;
   focusY?: number;
@@ -96,14 +95,12 @@ const smoothstep = (min: number, max: number, value: number) => {
 
 type Cell = { x: number; y: number; intensity: number; colorIntensity: number; opacity: number; char: string; color: string };
 
-export function AsciiWave({ src, active, onReady, fit = "contain", focusX = 0.5, focusY = 0.48, className }: AsciiWaveProps) {
+export function AsciiWave({ src, active, fit = "contain", focusX = 0.5, focusY = 0.48, className }: AsciiWaveProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const activeRef = useRef(active);
   const readyRef = useRef(false);
-  const onReadyRef = useRef(onReady);
 
   activeRef.current = active;
-  onReadyRef.current = onReady;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -297,7 +294,7 @@ export function AsciiWave({ src, active, onReady, fit = "contain", focusX = 0.5,
 
       if (!readyRef.current) {
         readyRef.current = true;
-        onReadyRef.current?.();
+        window.dispatchEvent(new CustomEvent('ascii-wave-ready'));
       }
     };
 

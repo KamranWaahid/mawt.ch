@@ -27,6 +27,17 @@ type HomepageHeroSectionProps = {
   transitionDict: HomepageTransitionCopy;
 };
 
+// Scroll-scrubbed video intro: below OPEN the film is paused and the scroll
+// position steps through its first SCRUB_SECONDS frame by frame (starting at
+// SCRUB_START, when the logo reveal begins); playback only starts once the
+// logo is fully "entered", so the opening of the film is never missed.
+const VIDEO_SCRUB_START = 0.08;
+// Playback starts the moment the video RECTANGLE is fully uncovered by the
+// zooming logo (~0.21), not when the hole covers the whole screen (0.25) —
+// a fully visible but frozen frame reads as a bug.
+const VIDEO_OPEN_PROGRESS = 0.21;
+const VIDEO_SCRUB_SECONDS = 3;
+
 const navItems = [
   { label: "Work", route: "projets" },
   { label: "Approach", route: "notre-methode" },
@@ -224,29 +235,65 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 80, damping: 25, restDelta: 0.0001 });
 
-  const [isScrollingUp, setIsScrollingUp] = useState(false);
-  const lastProgress = useRef(0);
-
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     setScrollProgress(latest);
-    
-    // Detect scroll direction with a tiny threshold to avoid jitter
-    if (latest < lastProgress.current - 0.002) {
-      if (!isScrollingUp) setIsScrollingUp(true);
-    } else if (latest > lastProgress.current + 0.002) {
-      if (isScrollingUp) setIsScrollingUp(false);
-    }
-    lastProgress.current = latest;
 
-    if (latest > 0.01 && videoRef.current && videoRef.current.paused) {
-      const playPromise = videoRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(e => {
-          console.log("Autoplay prevented:", e);
-        });
+    const video = videoRef.current;
+    if (video) {
+      if (latest < VIDEO_OPEN_PROGRESS) {
+        // Reveal underway: hold playback and scrub. This handler already runs
+        // at most once per frame (Motion batches scroll reads on rAF), so a
+        // direct seek gated by a small delta is enough — no extra batching.
+        if (!video.paused) video.pause();
+        const scrubT = Math.min(
+          1,
+          Math.max(0, (latest - VIDEO_SCRUB_START) / (VIDEO_OPEN_PROGRESS - VIDEO_SCRUB_START)),
+        );
+        const target = scrubT * VIDEO_SCRUB_SECONDS;
+        if (video.readyState >= 1 && Math.abs(video.currentTime - target) > 0.04) {
+          video.currentTime = target;
+        }
+      } else if (video.paused) {
+        // Fully entered the logo: let the film run from where the scrub left it.
+        video.play().catch(() => {});
       }
     }
   });
+
+  // After a mid-page refresh the browser restores the scroll position, but
+  // that measurement can fire before the spring is attached: every
+  // smooth-driven layer then sits parked at 0 until the next real scroll
+  // ("the logo arrives after I scroll"). Jump the spring to the first
+  // measured value; afterwards it tracks normally.
+  useEffect(() => {
+    const sync = (v: number) => {
+      smoothProgress.jump(v);
+      setScrollProgress(v);
+      // Refreshing straight into the cinema phase must also start the film.
+      const video = videoRef.current;
+      if (video && v >= VIDEO_OPEN_PROGRESS && video.paused) {
+        video.play().catch(() => {});
+      }
+    };
+    if (Math.abs(scrollYProgress.get() - smoothProgress.get()) > 0.001) {
+      sync(scrollYProgress.get());
+      return;
+    }
+    let unsub: VoidFunction | null = scrollYProgress.on("change", (v) => {
+      sync(v);
+      unsub?.();
+      unsub = null;
+    });
+    const timeout = window.setTimeout(() => {
+      unsub?.();
+      unsub = null;
+    }, 3000);
+    return () => {
+      window.clearTimeout(timeout);
+      unsub?.();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -255,101 +302,89 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     handleResize();
     window.addEventListener("resize", handleResize, { passive: true });
 
-    const playVideo = () => {
-      if (videoRef.current && videoRef.current.paused) {
-        videoRef.current.play().catch(e => console.log("Touch play prevented:", e));
-      }
-    };
-    window.addEventListener("touchstart", playVideo, { once: true, passive: true });
-    window.addEventListener("click", playVideo, { once: true, passive: true });
-
-    if (videoRef.current && videoRef.current.paused) {
-      videoRef.current.play().catch(e => console.log("Autoplay prevented on mount:", e));
-    }
-
     return () => {
       window.removeEventListener("resize", handleResize);
-      window.removeEventListener("touchstart", playVideo);
-      window.removeEventListener("click", playVideo);
     };
   }, []);
 
-  // Forward Transforms (Down)
-  const heroLogoTransformDesktopDown = useTransform(smoothProgress, [0, 0.10, 0.18, 0.25, 0.50], [
+  // Camera-dive keyframes: the scale grows GEOMETRICALLY (×~8-12 per step) so
+  // the perceived zoom speed stays constant — that's what reads as "flying
+  // through the logo" instead of "the logo gets closer". Translates keep the
+  // dive point (inside the letterforms) locked toward screen centre. One set
+  // of keyframes for both scroll directions: reversing simply plays the dive
+  // backwards (the old direction-switch snapped mid-transition).
+  const heroLogoTransformDesktop = useTransform(smoothProgress, [0, 0.10, 0.15, 0.20, 0.25, 0.50], [
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(47.5vw - 588px), calc(40vh - 159.25px)) scale(12)",
+    "translate(calc(47.5vw - 2574px), calc(46vh - 981px)) scale(85)",
     "translate(calc(47.5vw - 21193px), calc(50vh - 7909px)) scale(700)",
     "translate(calc(47.5vw - 21193px), calc(50vh - 7909px)) scale(700)"
   ]);
 
-  const heroLogoTransformLandscapeDown = useTransform(smoothProgress, [0, 0.10, 0.18, 0.25, 0.50], [
+  const heroLogoTransformLandscape = useTransform(smoothProgress, [0, 0.10, 0.15, 0.20, 0.25, 0.50], [
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(50vw - 318px), calc(40vh - 91.75px)) scale(6)",
+    "translate(calc(50vw - 1970px), calc(46vh - 733px)) scale(65)",
     "translate(calc(50vw - 21217px), calc(50vh - 7909px)) scale(700)",
     "translate(calc(50vw - 21217px), calc(50vh - 7909px)) scale(700)"
   ]);
 
-  const heroLogoTransformPortraitDown = useTransform(smoothProgress, [0, 0.10, 0.18, 0.25, 0.50], [
+  const heroLogoTransformPortrait = useTransform(smoothProgress, [0, 0.10, 0.15, 0.20, 0.25, 0.50], [
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(50vw - 191.5px), calc(40vh - 63.675px)) scale(3.5)",
+    "translate(calc(50vw - 1515px), calc(46vh - 564px)) scale(50)",
     "translate(calc(50vw - 21213px), calc(50vh - 7909px)) scale(700)",
     "translate(calc(50vw - 21213px), calc(50vh - 7909px)) scale(700)"
   ]);
 
-  const whiteFillerOpacityDown = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
+  // The hole-mask + video layers sit ABOVE the persistent ASCII field.
+  // The plate outside the logo hole stops at 80% opacity during the reveal —
+  // the ASCII field stays faintly visible around the logo instead of blacking
+  // out — and only goes fully opaque once the hole has almost swallowed the
+  // screen, so the video never ghosts through it at cruising speed. The video
+  // itself fades in later (0.13-0.18), once the hole is big enough that its
+  // faint pre-glow through the 80% plate reads as intentional.
   const maskCoverOpacityDown = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
+  const maskLayerOpacityDown = useTransform(
+    smoothProgress,
+    [0.05, 0.08, 0.18, 0.23, 0.50, 0.60],
+    [0, 0.8, 0.8, 1, 1, 0],
+  );
   const heroLogoOpacityDown = useTransform(smoothProgress, [0.50, 0.60], [1, 0]);
-  const videoContainerOpacityDown = useTransform(smoothProgress, [0.50, 0.60], [1, 0]);
-  const navLogoOpacityDown = useTransform(smoothProgress, [0.50, 0.55], [0, 1]);
+  const videoContainerOpacityDown = useTransform(smoothProgress, [0.13, 0.18, 0.50, 0.60], [0, 1, 1, 0]);
+  // The nav logo takes over as soon as the hero logo mark has faded (0.10-0.15),
+  // so logo + menu frame the video during the cinema-mode phase.
+  const navLogoOpacityDown = useTransform(smoothProgress, [0.16, 0.24], [0, 1]);
 
-  // Reverse Transforms (Up) - Keeps logo zoomed to 700 to hide it and fades video natively
-  const heroLogoTransformDesktopUp = useTransform(smoothProgress, [0, 1], [
-    "translate(calc(47.5vw - 21193px), calc(50vh - 7909px)) scale(700)",
-    "translate(calc(47.5vw - 21193px), calc(50vh - 7909px)) scale(700)"
-  ]);
+  // One curve per layer for both scroll directions: the old direction switch
+  // (logo locked at scale 700 on the way up) snapped hard when the user
+  // reversed mid-transition, and any semi-transparent frame over the ASCII
+  // field shows glyphs through the picture.
+  const maskCoverOpacity = maskCoverOpacityDown;
+  const heroLogoOpacity = heroLogoOpacityDown;
+  const videoContainerOpacity = videoContainerOpacityDown;
+  const maskLayerOpacity = maskLayerOpacityDown;
+  const navLogoOpacity = navLogoOpacityDown;
 
-  const heroLogoTransformLandscapeUp = useTransform(smoothProgress, [0, 1], [
-    "translate(calc(50vw - 21217px), calc(50vh - 7909px)) scale(700)",
-    "translate(calc(50vw - 21217px), calc(50vh - 7909px)) scale(700)"
-  ]);
-
-  const heroLogoTransformPortraitUp = useTransform(smoothProgress, [0, 1], [
-    "translate(calc(50vw - 21213px), calc(50vh - 7909px)) scale(700)",
-    "translate(calc(50vw - 21213px), calc(50vh - 7909px)) scale(700)"
-  ]);
-
-  const whiteFillerOpacityUp = useTransform(smoothProgress, [0, 1], [0, 0]);
-  const maskCoverOpacityUp = useTransform(smoothProgress, [0, 1], [0, 0]);
-  const heroLogoOpacityUp = useTransform(smoothProgress, [0.50, 0.60], [1, 0]);
-  const videoContainerOpacityUp = useTransform(smoothProgress, [0.10, 0.25, 0.50, 0.60], [0, 1, 1, 0]);
-  const navLogoOpacityUp = useTransform(smoothProgress, [0, 1], [1, 1]);
-
-  // Dynamic bindings based on scroll direction
-  const heroLogoTransformDesktop = isScrollingUp ? heroLogoTransformDesktopUp : heroLogoTransformDesktopDown;
-  const heroLogoTransformLandscape = isScrollingUp ? heroLogoTransformLandscapeUp : heroLogoTransformLandscapeDown;
-  const heroLogoTransformPortrait = isScrollingUp ? heroLogoTransformPortraitUp : heroLogoTransformPortraitDown;
-  const whiteFillerOpacity = isScrollingUp ? whiteFillerOpacityUp : whiteFillerOpacityDown;
-  const maskCoverOpacity = isScrollingUp ? maskCoverOpacityUp : maskCoverOpacityDown;
-  const heroLogoOpacity = isScrollingUp ? heroLogoOpacityUp : heroLogoOpacityDown;
-  const videoContainerOpacity = isMobile 
-    ? videoContainerOpacityDown 
-    : (isScrollingUp ? videoContainerOpacityUp : videoContainerOpacityDown);
-  const navLogoOpacity = isScrollingUp ? navLogoOpacityUp : navLogoOpacityDown;
-
-  const videoScale = useTransform(smoothProgress, [0.25, 0.50], [1, 1]);
+  // Depth parallax: while the letterforms blow past the camera, the scene
+  // behind grows from 86% to full size — the speed difference between the
+  // two planes is what sells "entering" over "approaching".
+  const videoScale = useTransform(smoothProgress, [0.13, 0.26], [0.86, 1]);
   // Reduced motion no longer hides the ASCII art: the canvas simply stops
   // flickering (AsciiWave's `active` prop), so the wave shows as a still.
+  // The field stays behind everything while scrolling and only fades once the
+  // gradient transition sweeps up to cover it (~0.55 on the scroll track).
   const asciiLayerOpacity = !isAsciiVideoReady
     ? 0
-    : scrollProgress <= 0.004
+    : scrollProgress <= 0.52
       ? 1
-      : scrollProgress >= 0.012
+      : scrollProgress >= 0.62
         ? 0
-        : 1 - (scrollProgress - 0.004) / 0.008;
-  const asciiLayerVisibility = isAsciiVideoReady && scrollProgress < 0.016 ? "visible" : "hidden";
+        : 1 - (scrollProgress - 0.52) / 0.1;
+  const asciiLayerVisibility = isAsciiVideoReady && scrollProgress < 0.63 ? "visible" : "hidden";
   const heroContentOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
   const scrollIndicatorOpacity = useTransform(smoothProgress, [0.45, 0.50], [1, 0]);
   
@@ -398,35 +433,41 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           }}
         />
 
-        {/* Z-10: THE VIDEO CONTAINER */}
-        <motion.div 
-          className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center bg-black/60"
-          style={{ 
-            opacity: videoContainerOpacity, 
-            scale: videoScale
-          }}
+        {/* Z-10: CINEMA MODE VIDEO CONTAINER — revealed through the zooming
+            logo hole (z-15 mask). The overlay sits BEHIND the video: it dims
+            the ASCII field around it while the video itself stays fully
+            opaque. Nav logo + menu (z-50) stay lit above everything. */}
+        <motion.div
+          className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center"
+          style={{ opacity: videoContainerOpacity }}
         >
-          <video
+          <div className="absolute inset-0 bg-black/80" />
+          {/* The parallax scale lives on the video itself, NOT the container:
+              scaling the container would shrink the full-screen dim overlay
+              and leave undimmed bands at the screen edges. */}
+          <motion.video
             ref={videoRef}
             src="/MotionMAWT.mp4"
-            className="home-hero-top-video w-[82vw] max-w-[820px] aspect-video object-cover shadow-2xl"
+            className="home-hero-top-video relative w-[82vw] max-w-[820px] aspect-video object-cover shadow-2xl"
+            style={{ scale: videoScale }}
             playsInline
             muted
             loop
-            autoPlay
             preload="auto"
           />
         </motion.div>
 
+        {/* Z-8: PERSISTENT ASCII FIELD — lives under the video/mask stack so
+            the cinema overlay dims it and the logo hole reveals it. */}
         <motion.div
           aria-hidden="true"
-          className="home-hero-ascii-layer pointer-events-none absolute inset-0 z-[16] overflow-hidden"
+          className="home-hero-ascii-layer pointer-events-none absolute inset-0 z-[8] overflow-hidden"
           style={{ opacity: asciiLayerOpacity, visibility: asciiLayerVisibility }}
         >
           <div className="ascii-wave-viewport">
             <AsciiWave
               src="/hero-ascii-map.jpg"
-              active={scrollProgress < 0.016}
+              active={scrollProgress < 0.63}
               onReady={() => setIsAsciiVideoReady(true)}
               focusX={isMobile ? 0.35 : 0.5}
               focusY={isMobile ? 0.6 : 0.68}
@@ -435,7 +476,9 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
           </div>
         </motion.div>
 
-        {/* Visible logo mark above the pre-scroll ASCII layer. */}
+        {/* Visible logo mark above the pre-scroll ASCII layer. A plain anchor
+            (full page load, the "click the logo to refresh" reflex) while the
+            hero is at rest; it stops being clickable once the zoom starts. */}
         <div className="pointer-events-none absolute inset-0 z-[18] overflow-hidden">
           <div className="hidden lg:block absolute inset-0">
             <motion.div
@@ -448,7 +491,14 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
               }}
             >
               <motion.div className="absolute inset-0" style={{ opacity: maskCoverOpacity }}>
-                <MawatLogo className="h-auto w-full" tone="light" />
+                <a
+                  href={`/${lang}`}
+                  aria-label="MAWT home"
+                  className="block"
+                  style={{ pointerEvents: scrollProgress < 0.05 ? "auto" : "none" }}
+                >
+                  <MawatLogo className="h-auto w-full" tone="light" />
+                </a>
               </motion.div>
             </motion.div>
           </div>
@@ -464,7 +514,14 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
               }}
             >
               <motion.div className="absolute inset-0" style={{ opacity: maskCoverOpacity }}>
-                <MawatLogo className="h-auto w-full" tone="light" />
+                <a
+                  href={`/${lang}`}
+                  aria-label="MAWT home"
+                  className="block"
+                  style={{ pointerEvents: scrollProgress < 0.05 ? "auto" : "none" }}
+                >
+                  <MawatLogo className="h-auto w-full" tone="light" />
+                </a>
               </motion.div>
             </motion.div>
           </div>
@@ -480,22 +537,23 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
               }}
             >
               <motion.div className="absolute inset-0" style={{ opacity: maskCoverOpacity }}>
-                <MawatLogo className="h-auto w-full" tone="light" />
+                <a
+                  href={`/${lang}`}
+                  aria-label="MAWT home"
+                  className="block"
+                  style={{ pointerEvents: scrollProgress < 0.05 ? "auto" : "none" }}
+                >
+                  <MawatLogo className="h-auto w-full" tone="light" />
+                </a>
               </motion.div>
             </motion.div>
           </div>
         </div>
 
-        {/* Z-12: WHITE FILLER FOR LOGO */}
-        <motion.div
-          className="absolute inset-0 z-[12] bg-white pointer-events-none"
-          style={{ opacity: whiteFillerOpacity }}
-        />
-
         {/* Z-15: THE SVG HOLE MASK */}
-        <motion.div 
+        <motion.div
           className="absolute inset-0 z-[15] pointer-events-none overflow-hidden"
-          style={{ opacity: videoContainerOpacity }}
+          style={{ opacity: maskLayerOpacity }}
         >
           {/* Desktop Mask */}
           <div className="hidden lg:block absolute inset-0">

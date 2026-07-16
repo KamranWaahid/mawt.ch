@@ -41,7 +41,9 @@ export async function POST(req: Request) {
     } else if (type === "career") {
       revalidateTag("careers", "default");
     } else if (type === "faq") {
-      revalidateTag("faqs", "default");
+      // getFAQs caches under "faq" + "faq:<lang>" — "faqs" matched nothing.
+      revalidateTag("faq", "default");
+      if (body.language) revalidateTag(`faq:${body.language}`, "default");
     } else if (type === "pricingPlan") {
       revalidateTag("pricing", "default");
     } else if (type === "author") {

@@ -15,6 +15,7 @@ import {
   groupServicesByFamily,
   type HeaderService,
 } from "@/components/ui/services-mega-menu";
+import { useCurtainTransition } from "@/components/providers/curtain-transition";
 
 /**
  * Localize a nav href (authored as an EN-canonical path like "/about") to the
@@ -78,6 +79,7 @@ export function SiteHeader({ title, theme: themeProp, services, mainNav }: SiteH
 
   const serviceGroups = groupServicesByFamily(services, currentLang as Locale);
   const hasMegaMenu = serviceGroups.length > 0;
+  const { navigateWithCurtain } = useCurtainTransition();
 
   const activeNavItems: NavItem[] = (mainNav && mainNav.length > 0 ? mainNav : navItems).map((item) => ({
     ...item,
@@ -239,7 +241,24 @@ export function SiteHeader({ title, theme: themeProp, services, mainNav }: SiteH
                 href={navHref(item.href, currentLang as Locale)}
                 aria-current={pathname === navHref(item.href, currentLang as Locale) ? "page" : undefined}
                 aria-expanded={item.hasDropdown ? isServicesOpen : undefined}
-                onMouseEnter={() => setIsServicesOpen(Boolean(item.hasDropdown))}
+                onMouseEnter={() =>
+                  // No hover-open while already ON /services: the catalogue is
+                  // the page itself, and the panel would cover the fresh
+                  // curtain reveal (the cursor lands on this link after it).
+                  setIsServicesOpen(
+                    Boolean(item.hasDropdown) &&
+                      pathname !== navHref(item.href, currentLang as Locale),
+                  )
+                }
+                onClick={
+                  item.hasDropdown
+                    ? (e) => {
+                        e.preventDefault();
+                        setIsServicesOpen(false);
+                        navigateWithCurtain(navHref(item.href, currentLang as Locale));
+                      }
+                    : undefined
+                }
                 className={`inline-flex items-center gap-1 transition-colors ${navHoverClass} ${pathname === navHref(item.href, currentLang as Locale) ? (isDark ? "text-black font-semibold" : "text-white font-semibold") : ""}`}
               >
                 {navLabel(item, currentLang)}

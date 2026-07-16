@@ -14,6 +14,7 @@ import {
   groupServicesByFamily,
   type HeaderService,
 } from "@/components/ui/services-mega-menu";
+import { useCurtainTransition } from "@/components/providers/curtain-transition";
 
 type HomepageHeroCopy = {
   statement: string;
@@ -438,6 +439,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
 
   const heroServiceGroups = groupServicesByFamily(services, lang);
   const heroHasMegaMenu = heroServiceGroups.length > 0;
+  const { navigateWithCurtain } = useCurtainTransition();
 
   // Sanity stores a raw path ("/contact"): localize it, otherwise every CTA
   // click goes through the Accept-Language 307 and can land FR users on /en.
@@ -792,6 +794,15 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                     href={navHref(item.route)}
                     aria-expanded={hasDropdown ? isHeroServicesOpen : undefined}
                     onMouseEnter={() => setIsHeroServicesOpen(hasDropdown)}
+                    onClick={
+                      hasDropdown
+                        ? (e) => {
+                            e.preventDefault();
+                            setIsHeroServicesOpen(false);
+                            navigateWithCurtain(navHref(item.route));
+                          }
+                        : undefined
+                    }
                     className="inline-flex items-center gap-1 transition-colors"
                   >
                     {navItemLabel(item, lang)}

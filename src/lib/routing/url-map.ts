@@ -24,6 +24,7 @@ export const URL_MAP: RouteMapping[] = [
           { fr: "automatisations", en: "ai-automation" },
           { fr: "ia-locale", en: "local-ai" },
           { fr: "donnees-tableaux-de-bord", en: "advanced-analytics" },
+          { fr: "modernisation-donnees", en: "data-modernization" },
           { fr: "portail-client-entreprise", en: "client-business-portal" },
         ],
       },
@@ -37,6 +38,7 @@ export const URL_MAP: RouteMapping[] = [
           { fr: "transformation-numerique", en: "digital-transformation" },
           { fr: "change-management", en: "change-management" },
           { fr: "ai-change-management", en: "ai-change-management" },
+          { fr: "conseil-digitalisation", en: "digital-consulting-strategy" },
         ],
       },
       {

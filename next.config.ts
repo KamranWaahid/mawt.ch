@@ -22,6 +22,23 @@ const nextConfig: NextConfig = {
     // Disabled viewTransition as it deadlocks Next.js page transitions when combined with Framer Motion AnimatePresence
     viewTransition: false,
   },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          // Baseline security headers (audit C3). HSTS is injected by the
+          // hosting platform (Vercel) in production — verify with
+          // `curl -sI https://mawt.ch/en` after deploy.
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          // frame-ancestors 'self' keeps Sanity Studio previews working while
+          // blocking third-party framing (clickjacking).
+          { key: "Content-Security-Policy", value: "frame-ancestors 'self'" },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       // Localized shortcut redirects.

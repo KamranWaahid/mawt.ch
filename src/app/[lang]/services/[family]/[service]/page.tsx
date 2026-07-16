@@ -8,7 +8,7 @@ import { PortableText } from "@portabletext/react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import * as Icons from "lucide-react";
-import { getFamilyTitle, familySlugForLang, canonicalizeFamilySlug, hreflangAlternates } from "@/lib/routing/url-helpers";
+import { getFamilyTitle, familySlugForLang, canonicalizeFamilySlug } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/lib/routing/url-map";
 import { areaServed } from "@/components/seo/structured-data";
 import { groq } from "next-sanity";
@@ -140,7 +140,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       languages: { fr: `${SITE}${frPath}`, en: `${SITE}${enPath}`, "x-default": `${SITE}${enPath}` },
     };
   } else {
-    alternates = hreflangAlternates(currentPath, lang as Locale);
+    // No sibling in the other language: emit the canonical ONLY. The old
+    // fallback (hreflangAlternates) piped the untranslated Sanity slug through
+    // translatePath and produced an hreflang pointing at a 404 — an invalid
+    // alternate voids the whole set for BOTH pages. No signal beats a false
+    // signal (same pattern as news/[slug]).
+    alternates = { canonical };
   }
 
   return {
@@ -153,6 +158,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: canonical,
       locale: lang === "fr" ? "fr_CH" : "en_US",
     },
+    twitter: { title: titleText, description },
   };
 }
 
@@ -248,7 +254,9 @@ export default async function ServiceDetailPage({ params }: Props) {
     description: svc.answerBox || svc.description || svc.heroH1 || svc.title,
     url: canonical,
     inLanguage: lang === "fr" ? "fr-CH" : "en",
-    provider: { "@type": "Organization", name: "MAWT", url: SITE_URL },
+    // @id reference, not an inline duplicate: the global @graph already
+    // defines #organization — inline copies fragment the entity graph.
+    provider: { "@id": `${SITE_URL}/#organization` },
     areaServed: areaServed(lang as Locale),
   };
   const breadcrumbLd = {
@@ -424,7 +432,10 @@ export default async function ServiceDetailPage({ params }: Props) {
 
               {svc.sections?.map((sec: any, i: number) => (
                 <div key={i} className="space-y-4">
-                  <h3 className="text-lg font-normal text-black">{sec.h2}</h3>
+                  {/* h2, not h3: the page's only h1 is the hero — main content
+                      sections must not skip a heading level (classes carry the
+                      style, so the promotion has zero visual impact). */}
+                  <h2 className="text-lg font-normal text-black">{sec.h2}</h2>
                   {sec.paragraphs?.map((p: string, j: number) => (
                     <p key={j} className="text-sm sm:text-base text-neutral-600 font-normal leading-relaxed">{p}</p>
                   ))}
@@ -487,7 +498,7 @@ export default async function ServiceDetailPage({ params }: Props) {
             </div>
             <div className="md:col-span-9 lg:col-span-8 space-y-4">
               {table.title && (
-                <h3 className="text-base font-normal text-black">{table.title}</h3>
+                <h2 className="text-base font-normal text-black">{table.title}</h2>
               )}
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse text-left">
@@ -614,7 +625,10 @@ export default async function ServiceDetailPage({ params }: Props) {
                 {faqItems.map((item, index: number) => (
                   <details key={index} className="group pt-4 first:pt-0">
                     <summary className="flex justify-between items-center font-normal text-base text-black cursor-pointer list-none select-none hover:text-neutral-500 transition-colors">
-                      <span>{item.question}</span>
+                      {/* Real heading in the SSR HTML: AI engines segment and
+                          extract passages by headings — a <span> question is
+                          invisible to that pass. */}
+                      <h3 className="font-normal text-base">{item.question}</h3>
                       <span className="transition-transform duration-200 group-open:rotate-45 text-neutral-400">
                         <Icons.Plus size={16} />
                       </span>
@@ -636,7 +650,7 @@ export default async function ServiceDetailPage({ params }: Props) {
           </div>
           <div className="md:col-span-9 lg:col-span-8 space-y-6">
             <AnimatedTitle
-              as="h3"
+              as="h2"
               text={svc.cta?.headline || labels.bottomCtaH2}
               className="text-xl sm:text-2xl font-normal text-black leading-snug text-balance"
               splitBy="word"

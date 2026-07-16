@@ -100,6 +100,25 @@ export function SiteFooter({
                     null}
               </div>
 
+              {/* NAP — visible on every page (local SEO: engines corroborate
+                  the entity from visible HTML, not only from the schema).
+                  tel: is RFC 3966 (no separators); the label stays formatted. */}
+              {dict.address && (
+                <address className="not-italic text-xs-fluid text-black/60 space-y-1">
+                  <p>MAWT — {dict.address}</p>
+                  {dict.phoneDisplay && (
+                    <p>
+                      <a
+                        href={`tel:${String(dict.phoneDisplay).replace(/[^+\d]/g, "")}`}
+                        className="hover:text-black transition-colors"
+                      >
+                        {dict.phoneDisplay}
+                      </a>
+                    </p>
+                  )}
+                </address>
+              )}
+
               {/* Language Switcher — BUG-013: type="button" to prevent form submit */}
               <button
                 type="button"
@@ -115,7 +134,9 @@ export function SiteFooter({
             {/* Navigation Columns */}
             {dict.columns.map((column: any) => (
               <div key={column.title} className="space-y-6">
-                <h4 className="text-xs-fluid font-medium text-black/80">{column.title}</h4>
+                {/* div, not h4: footer nav labels are not document structure —
+                    h4 created a h2→h4 level skip on every page. */}
+                <div className="text-xs-fluid font-medium text-black/80">{column.title}</div>
                 <ul className="space-y-4">
                   {column.links.map((link: any) => (
                     <li key={link.label}>
@@ -133,9 +154,9 @@ export function SiteFooter({
 
             {/* Régions / Regions Column */}
             <div className="space-y-6">
-              <h4 className="text-xs-fluid font-medium text-black/80">
+              <div className="text-xs-fluid font-medium text-black/80">
                 {currentLang === "fr" ? "Régions" : "Regions"}
-              </h4>
+              </div>
               <ul className="space-y-4">
                 <li>
                   <Link

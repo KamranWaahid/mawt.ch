@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { SubpageHero } from "@/components/sections/subpage-hero";
 import { AiMaturityCta } from "@/components/ui/ai-maturity-cta";
-import { JsonLd, breadcrumbLd, areaServed, SITE_URL, ORG_ID } from "@/components/seo/structured-data";
+import { JsonLd, breadcrumbLd, SITE_URL, LOCAL_BUSINESS_ID } from "@/components/seo/structured-data";
 import {
   standaloneAlternates,
   localizedHref,
@@ -78,10 +78,29 @@ const COPY = {
 export async function generateMetadata({ params }: { params: Promise<{ lang: Locale }> }): Promise<Metadata> {
   const { lang } = await params;
   const c = COPY[lang] ?? COPY.en;
+  // No "| MAWT" suffix here: the layout title template appends the brand —
+  // duplicating it produced "… | MAWT | MAWT" in the SERP.
+  const title =
+    lang === "fr"
+      ? "IA et transformation digitale à Genève"
+      : "AI and digital transformation in Geneva";
+  // Dedicated 120-160c description (c.intro is 220c+ and gets truncated).
+  const description =
+    lang === "fr"
+      ? "MAWT accompagne les entreprises genevoises : solutions IA, automatisation et logiciels sur mesure, avec conformité nLPD et hébergement suisse."
+      : "MAWT helps Geneva businesses adopt AI: custom solutions, process automation and tailored software, with Swiss hosting and nFADP compliance.";
+  const url = `${SITE_URL}${localizedHref("geneve", lang)}`;
   return {
-    title: lang === "fr" ? "IA et transformation digitale à Genève | MAWT" : "AI and digital transformation in Geneva | MAWT",
-    description: c.intro,
+    title,
+    description,
     alternates: standaloneAlternates("geneve", lang),
+    openGraph: {
+      title,
+      description,
+      url,
+      locale: lang === "fr" ? "fr_CH" : "en_US",
+    },
+    twitter: { title, description },
   };
 }
 
@@ -96,28 +115,11 @@ export default async function GenevaPage({ params }: { params: Promise<{ lang: L
     href: `/${lang}/services/${familySlugForLang(key, lang)}`,
   }));
 
-  // JSON-LD: LocalBusiness anchored to the Geneva HQ + breadcrumb + a
-  // CollectionPage listing the five service families (the wiki summary).
-  const localBusinessLd = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "@id": `${SITE_URL}/#localbusiness-geneva`,
-    name: "MAWT",
-    url: pageUrl,
-    description: c.intro,
-    image: `${SITE_URL}/logo-black.svg`,
-    priceRange: "$$$",
-    inLanguage: lang === "fr" ? "fr-CH" : "en",
-    parentOrganization: { "@id": ORG_ID },
-    areaServed: areaServed(lang),
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: lang === "fr" ? "Genève" : "Geneva",
-      addressRegion: lang === "fr" ? "Genève" : "Geneva",
-      addressCountry: "CH",
-    },
-    geo: { "@type": "GeoCoordinates", latitude: 46.2044, longitude: 6.1432 },
-  };
+  // JSON-LD: breadcrumb + a CollectionPage listing the service families.
+  // No page-level LocalBusiness node: the global @graph already carries THE
+  // LocalBusiness (Carouge HQ, full NAP + geo). A second node with a
+  // divergent address/geo on the same page fragmented the entity — the
+  // CollectionPage references the global node by @id instead.
   const crumbLd = breadcrumbLd([
     { name: "MAWT", url: `${SITE_URL}/${lang}` },
     { name: lang === "fr" ? "Genève" : "Geneva", url: pageUrl },
@@ -128,13 +130,13 @@ export default async function GenevaPage({ params }: { params: Promise<{ lang: L
     url: pageUrl,
     inLanguage: lang === "fr" ? "fr-CH" : "en",
     name: c.title,
-    about: { "@id": ORG_ID },
+    about: { "@id": LOCAL_BUSINESS_ID },
     hasPart: families.map((f) => ({ "@type": "WebPage", name: f.title, url: `${SITE_URL}${f.href}` })),
   };
 
   return (
     <div className="min-h-screen">
-      <JsonLd data={[localBusinessLd, crumbLd, collectionLd]} />
+      <JsonLd data={[crumbLd, collectionLd]} />
 
       <SubpageHero badge={c.badge} title={c.title} />
 

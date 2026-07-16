@@ -150,9 +150,41 @@ export function StructuredData({
     lang === "fr"
       ? "Des solutions qui tournent, pas des slides."
       : "Solutions that run, not slides.";
-  const cleanSameAs = (sameAs || []).filter(
-    (u): u is string => typeof u === "string" && /^https?:\/\//.test(u),
-  );
+  // Normalize to https on the way in: entity reconciliation dies on http://
+  // duplicates, and the CMS has shipped http URLs before.
+  const cleanSameAs = (sameAs || [])
+    .filter((u): u is string => typeof u === "string" && /^https?:\/\//.test(u))
+    .map((u) => u.replace(/^http:\/\//, "https://"));
+  // Machine-readable expertise (GEO: aligns the entity with the topical
+  // queries AI engines resolve). Mirrors the 7 real service families.
+  const knowsAbout =
+    lang === "fr"
+      ? [
+          "Conseil en intelligence artificielle",
+          "Stratégie IA",
+          "Agents et assistants IA",
+          "IA locale et déploiement de LLM on-premise",
+          "Automatisation des processus métier",
+          "Développement logiciel sur mesure",
+          "Développement web",
+          "Branding et design de sites",
+          "Optimisation pour la recherche IA (GEO)",
+          "Cybersécurité pour PME",
+          "Formation IA en entreprise",
+        ]
+      : [
+          "Artificial intelligence consulting",
+          "AI strategy",
+          "AI agents and assistants",
+          "Local AI and on-premise LLM deployment",
+          "Business process automation",
+          "Custom software development",
+          "Web development",
+          "Branding and web design",
+          "AI search optimization (GEO)",
+          "Cybersecurity for SMEs",
+          "Corporate AI training",
+        ];
   const contactPoint = {
     "@type": "ContactPoint",
     contactType: "sales",
@@ -182,6 +214,7 @@ export function StructuredData({
         foundingLocation,
         contactPoint,
         knowsLanguage: ["fr-CH", "en"],
+        knowsAbout,
         ...(cleanSameAs.length ? { sameAs: cleanSameAs } : {}),
       },
       {
@@ -215,20 +248,15 @@ export function StructuredData({
         ...(cleanSameAs.length ? { sameAs: cleanSameAs } : {}),
       },
       {
+        // No SearchAction: /services has no ?q= search — markup describing a
+        // feature that does not exist violates "only truthful, verifiable
+        // data". Re-add only if a real search/filter ships on /services.
         "@type": "WebSite",
         "@id": siteId,
         name: "MAWT",
         url: SITE_URL,
         inLanguage: inLanguage(lang),
         publisher: { "@id": orgId },
-        potentialAction: {
-          "@type": "SearchAction",
-          target: {
-            "@type": "EntryPoint",
-            urlTemplate: `${SITE_URL}/${lang}/services?q={search_term_string}`,
-          },
-          "query-input": "required name=search_term_string",
-        },
       },
     ],
   };

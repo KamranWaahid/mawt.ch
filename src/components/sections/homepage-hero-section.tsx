@@ -72,9 +72,18 @@ function GeometricSymbol({ className }: { className?: string }) {
   );
 }
 
-function SwissMark() {
+/**
+ * Swiss flag inline mark. `label` is what machines read in place of the flag:
+ * "Swiss" fits the EN sentence ("MAWT is a [Swiss] Geneva-based…"), but in FR
+ * the flag is purely decorative — injecting the English word produced
+ * "MAWT est une Swiss Agence IA…" for screen readers and text extractors.
+ */
+function SwissMark({ label }: { label?: string }) {
   return (
-    <span className="mx-[0.3em] inline-flex h-[1.08em] w-[1.55em] translate-y-[0.16em] items-center justify-center align-baseline">
+    <span
+      aria-hidden={label ? undefined : true}
+      className="mx-[0.3em] inline-flex h-[1.08em] w-[1.55em] translate-y-[0.16em] items-center justify-center align-baseline"
+    >
       <svg
         viewBox="0 0 28 20"
         fill="none"
@@ -86,7 +95,7 @@ function SwissMark() {
         <rect x="12" y="4" width="4" height="12" fill="white" />
         <rect x="8" y="8" width="12" height="4" fill="white" />
       </svg>
-      <span className="sr-only">Swiss</span>
+      {label ? <span className="sr-only">{label}</span> : null}
     </span>
   );
 }
@@ -480,7 +489,12 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
             playsInline
             muted
             loop
-            preload="auto"
+            // metadata, not auto: the full file is 11 MB and the video is only
+            // revealed on scroll — an eager download competed with JS/fonts during the
+            // LCP phase. Metadata alone (a few KB) is enough for the scroll
+            // scrub (readyState >= 1); the browser then streams the segments
+            // it needs the moment currentTime is first set.
+            preload="metadata"
           />
         </motion.div>
 
@@ -658,8 +672,12 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 {dict.cta}
               </Link>
             </motion.div>
-            <motion.p className="absolute right-[2.5vw] bottom-[6%] w-[30.5%] text-[1.17cqw] font-normal leading-[1.35] tracking-[-0.01em] text-white/74" style={{ y: desktopContentY }}>
-              <span className="text-white">{lang === "fr" ? "MAWT est une" : "MAWT is a"}</span> <SwissMark /> {dict.description}
+            {/* data-nosnippet: this paragraph exists 3× in the SSR HTML (one
+                per responsive hero variant) — only the portrait/mobile copy
+                (mobile-first indexing) stays extractable, so snippets and AI
+                answers read the SEO paragraph exactly once. */}
+            <motion.p data-nosnippet className="absolute right-[2.5vw] bottom-[6%] w-[30.5%] text-[1.17cqw] font-normal leading-[1.35] tracking-[-0.01em] text-white/74" style={{ y: desktopContentY }}>
+              <span className="text-white">{lang === "fr" ? "MAWT est une" : "MAWT is a"}</span> <SwissMark label={lang === "fr" ? undefined : "Swiss"} /> {dict.description}
             </motion.p>
           </div>
 
@@ -678,8 +696,8 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                   {dict.cta}
                 </Link>
               </motion.div>
-              <motion.p className="absolute left-[59%] bottom-[10%] w-[38%] text-[0.8125rem] font-normal leading-[1.32] tracking-[-0.01em] text-white/74" style={{ y: compactContentY }}>
-                <span className="text-white">{lang === "fr" ? "MAWT est une" : "MAWT is a"}</span> <SwissMark /> {dict.description}
+              <motion.p data-nosnippet className="absolute left-[59%] bottom-[10%] w-[38%] text-[0.8125rem] font-normal leading-[1.32] tracking-[-0.01em] text-white/74" style={{ y: compactContentY }}>
+                <span className="text-white">{lang === "fr" ? "MAWT est une" : "MAWT is a"}</span> <SwissMark label={lang === "fr" ? undefined : "Swiss"} /> {dict.description}
               </motion.p>
             </div>
           </div>
@@ -704,8 +722,10 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                   </div>
                 </div>
                 <div className="flex flex-col gap-[clamp(1rem,3svh,1.5rem)] md:items-start">
+                  {/* Canonical (extractable) instance of the SEO paragraph —
+                      the desktop/landscape twins carry data-nosnippet. */}
                   <p className="max-w-[26rem] text-[0.8125rem] font-normal leading-[1.35] tracking-[-0.01em] text-white/74 sm:text-[0.9375rem] md:max-w-none">
-                    <span className="text-white">{lang === "fr" ? "MAWT est une" : "MAWT is a"}</span> <SwissMark /> {dict.description}
+                    <span className="text-white">{lang === "fr" ? "MAWT est une" : "MAWT is a"}</span> <SwissMark label={lang === "fr" ? undefined : "Swiss"} /> {dict.description}
                   </p>
                 </div>
               </div>

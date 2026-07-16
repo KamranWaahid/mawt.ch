@@ -52,7 +52,12 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
     .filter((partner) => partner.featured !== false)
     .map((partner) => {
       const asset = partner.logo?.asset as (NonNullable<Partner["logo"]["asset"]> & { url?: string }) | undefined;
-      const logoSrc = asset?.url ?? urlForImage(partner.logo)?.width(360).fit("max").url() ?? null;
+      // Transformed CDN URL first: the raw asset.url serves the full-size
+      // upload (a 2560px PNG for a ~150px logo). Fall back to the raw URL
+      // with resize params appended (same Sanity CDN API).
+      const logoSrc =
+        urlForImage(partner.logo)?.width(360).fit("max").auto("format").url() ??
+        (asset?.url ? `${asset.url}?w=360&fit=max&auto=format` : null);
 
       if (!logoSrc) return null;
 
@@ -98,7 +103,11 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
                   alt={logo.name}
                   loading="lazy"
                   decoding="async"
-                  className="block max-h-10 w-full max-w-[150px] object-contain opacity-45 grayscale contrast-75 brightness-90 mix-blend-multiply transition duration-300 group-hover:opacity-70 group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-95"
+                  // Intrinsic-size hint (aspect ratio) for the CLS audit; the
+                  // CSS classes still control the rendered size.
+                  width={150}
+                  height={40}
+                  className="block h-auto max-h-10 w-full max-w-[150px] object-contain opacity-45 grayscale contrast-75 brightness-90 mix-blend-multiply transition duration-300 group-hover:opacity-70 group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-95"
                 />
               );
 

@@ -3,7 +3,7 @@
     "kicker": "Systèmes IA & Automatisation · Genève",
     "title_1": "On construit les systèmes IA",
     "title_2": "qui font tourner votre entreprise.",
-    "description": "Agence IA et ingénierie basée à Genève, créant des systèmes d'automatisation sur mesure pour PME et entreprises en croissance en Suisse.",
+    "description": "agence IA et ingénierie basée à Genève, créant des systèmes d'automatisation sur mesure pour PME et entreprises en croissance en Suisse.",
     "summary": "MAWT est une agence d'ingénierie et d'IA basée à Genève. Nous concevons et déployons des systèmes sur mesure qui automatisent les flux opérationnels des PME et entreprises en Suisse. Du code concret pour connecter vos données à l'IA.",
     "cta": "Discutons",
     "statement": "Nous créons des expériences pour les penseurs les plus ambitieux du monde."
@@ -156,6 +156,8 @@
   "footer": {
     "rights": "© 2026 MAWT. Tous droits réservés.",
     "cookieSettings": "Paramètres des cookies",
+    "address": "Rue de la Fontenette 23, 1227 Carouge (Genève)",
+    "phoneDisplay": "+41 76 636 33 33",
     "columns": [
       {
         "title": "Entreprise",

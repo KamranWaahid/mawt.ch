@@ -41,8 +41,10 @@ export async function generateMetadata({
       description: post.excerpt,
       url: canonical,
       type: "article",
+      locale: lang === "fr" ? "fr_CH" : "en_US",
       images: imageUrl ? [imageUrl] : [],
     },
+    twitter: { title: post.title, description: post.excerpt || post.title },
   };
 }
 

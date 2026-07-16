@@ -26,9 +26,12 @@ export function FAQAccordion({ items, noWrapper = false }: FAQAccordionProps) {
               onClick={() => setOpenIndex(openIndex === index ? null : index)}
               className="group flex w-full items-center justify-between px-5 py-6 text-left sm:px-8 sm:py-8"
             >
-              <span className="text-lg font-normal text-black group-hover:text-neutral-600 transition-colors">
+              {/* Real h3 in the SSR HTML (not a span): search and AI engines
+                  segment pages by headings — questions-as-headings make each
+                  Q&A extractable. Classes carry the style, zero visual change. */}
+              <h3 className="text-lg font-normal text-black group-hover:text-neutral-600 transition-colors">
                 {item.question}
-              </span>
+              </h3>
               <div className="shrink-0 ml-4">
                 {openIndex === index ? (
                   <Minus size={20} className="text-black" />

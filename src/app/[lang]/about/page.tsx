@@ -15,14 +15,34 @@ const principleIcons = [Handshake, Brain, Target, Zap];
 export async function generateMetadata({ params }: { params: Promise<{ lang: Locale }> }): Promise<Metadata> {
   const { lang } = await params;
   const doc = await getAboutContent(lang);
+  // Sanity metaTitle already contains the brand ("… | MAWT, …") — mark it
+  // absolute so the layout template does not append a second "| MAWT".
+  // Fallbacks carry no brand: the template adds it exactly once.
+  const title: Metadata["title"] = doc?.seo?.metaTitle
+    ? { absolute: doc.seo.metaTitle }
+    : lang === "fr"
+      ? "À propos"
+      : "About";
+  const description =
+    doc?.seo?.metaDescription ||
+    (lang === "fr"
+      ? "MAWT, agence IA à taille humaine basée à Genève. Intelligence artificielle, automatisation et outils sur mesure."
+      : "MAWT, a human scale AI agency based in Geneva. Artificial intelligence, automation and custom tools.");
+  const url = `${SITE_URL}${localizedHref("a-propos", lang)}`;
   return {
-    title: doc?.seo?.metaTitle || (lang === "fr" ? "À propos | MAWT" : "About | MAWT"),
-    description:
-      doc?.seo?.metaDescription ||
-      (lang === "fr"
-        ? "MAWT, agence IA à taille humaine basée à Genève. Intelligence artificielle, automatisation et outils sur mesure."
-        : "MAWT, a human scale AI agency based in Geneva. Artificial intelligence, automation and custom tools."),
+    title,
+    description,
     alternates: standaloneAlternates("a-propos", lang),
+    openGraph: {
+      title: doc?.seo?.metaTitle || (lang === "fr" ? "À propos de MAWT" : "About MAWT"),
+      description,
+      url,
+      locale: lang === "fr" ? "fr_CH" : "en_US",
+    },
+    twitter: {
+      title: doc?.seo?.metaTitle || (lang === "fr" ? "À propos de MAWT" : "About MAWT"),
+      description,
+    },
   };
 }
 

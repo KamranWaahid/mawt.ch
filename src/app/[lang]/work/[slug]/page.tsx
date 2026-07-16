@@ -8,6 +8,7 @@ import { getProjectBySlug } from "@/lib/sanity.queries";
 import { AnimatedTitle } from "@/components/ui/animated-title";
 import { urlForImage } from "@/lib/sanity.image";
 import { hreflangAlternates } from "@/lib/routing/url-helpers";
+import { JsonLd, breadcrumbLd, SITE_URL, ORG_ID } from "@/components/seo/structured-data";
 import type { Locale } from "@/i18n-config";
 
 type ProjectPageProps = {
@@ -86,8 +87,36 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           Boolean(item),
       ) ?? [];
 
+  // JSON-LD: case studies are the agency's #1 "Experience" (E-E-A-T) proof —
+  // Article + breadcrumb, cross-referenced to the global Organization.
+  const canonical = `${SITE_URL}/${lang}/${lang === "fr" ? "projets" : "work"}/${slug}`;
+  const listingUrl = `${SITE_URL}/${lang}/${lang === "fr" ? "projets" : "work"}`;
+  const ogImage = project.coverImage
+    ? urlForImage(project.coverImage)?.width(1200).height(630).url()
+    : null;
+  const crumbLd = breadcrumbLd([
+    { name: "MAWT", url: `${SITE_URL}/${lang}` },
+    { name: lang === "fr" ? "Études de cas" : "Case studies", url: listingUrl },
+    { name: project.title, url: canonical },
+  ]);
+  const articleLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
+    url: canonical,
+    headline: project.title,
+    ...(project.excerpt ? { description: project.excerpt } : {}),
+    ...(ogImage ? { image: ogImage } : {}),
+    inLanguage: lang === "fr" ? "fr-CH" : "en",
+    author: { "@id": ORG_ID },
+    publisher: { "@id": ORG_ID },
+    ...(project._createdAt ? { datePublished: project._createdAt } : {}),
+    ...(project._updatedAt ? { dateModified: project._updatedAt } : {}),
+  };
+
   return (
     <main className="w-full text-black min-h-screen">
+      <JsonLd data={[crumbLd, articleLd]} />
       {/* Top Navigation Bar */}
 
 

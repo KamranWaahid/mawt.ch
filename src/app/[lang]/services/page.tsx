@@ -46,21 +46,22 @@ interface ServicesPageProps {
 
 export async function generateMetadata({ params }: ServicesPageProps): Promise<Metadata> {
   const { lang } = await params;
+  const title = lang === "fr" ? "Services — agence IA à Genève" : "Services — AI agency in Geneva";
+  const description =
+    lang === "fr"
+      ? "Solutions IA, automatisation, sites, conseil, renfort d'équipe et formation. Ce que MAWT construit pour les PME de Suisse romande."
+      : "AI solutions, automation, websites, consulting, team augmentation and training. What MAWT builds for SMEs across French speaking Switzerland.";
   return {
-    title: lang === "fr" ? "Services — agence IA à Genève" : "Services — AI agency in Geneva",
-    description:
-      lang === "fr"
-        ? "Solutions IA, automatisation, sites, conseil, renfort d'équipe et formation. Ce que MAWT construit pour les PME de Suisse romande."
-        : "AI solutions, automation, websites, consulting, team augmentation and training. Everything MAWT builds for SMEs and growing companies across French speaking Switzerland.",
+    title,
+    description,
     alternates: standaloneAlternates("services", lang),
     openGraph: {
-      title: lang === "fr" ? "Services MAWT" : "MAWT Services",
-      description:
-        lang === "fr"
-          ? "Solutions IA, automatisation, sites, conseil, renfort et formation."
-          : "AI solutions, automation, websites, consulting, team augmentation and training.",
+      title,
+      description,
       url: `https://mawt.ch/${lang}/services`,
+      locale: lang === "fr" ? "fr_CH" : "en_US",
     },
+    twitter: { title, description },
   };
 }
 

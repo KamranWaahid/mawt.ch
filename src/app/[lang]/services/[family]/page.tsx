@@ -111,6 +111,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: "website",
       locale: lang === "fr" ? "fr_CH" : "en_US",
     },
+    twitter: {
+      title: copy.metaTitle.replace(/\s*\|\s*MAWT\s*$/i, ""),
+      description: copy.metaDescription,
+    },
   };
 }
 

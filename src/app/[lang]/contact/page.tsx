@@ -7,23 +7,26 @@ import { SectionReveal } from "@/components/ui/section-reveal";
 import { Mail, Phone, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { standaloneAlternates } from "@/lib/routing/url-helpers";
+import { JsonLd, breadcrumbLd, SITE_URL, ORG_ID } from "@/components/seo/structured-data";
 import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: Locale }> }): Promise<Metadata> {
   const { lang } = await params;
+  const title = lang === "en" ? "Contact — AI agency in Geneva" : "Contact — agence IA à Genève";
+  const description = lang === "en"
+    ? "Talk to MAWT, an AI agency in Geneva. AI integration, process automation and custom tools for SMEs across French-speaking Switzerland."
+    : "Contactez MAWT, agence IA à Genève. Intégration d'IA, automatisation des processus et outils sur mesure pour les PME de Suisse romande.";
   return {
-    title: lang === "en" ? "Contact — AI agency in Geneva" : "Contact — agence IA à Genève",
-    description: lang === "en"
-      ? "Talk to MAWT, an AI agency in Geneva. AI integration, process automation and custom tools for SMEs across French-speaking Switzerland."
-      : "Contactez MAWT, agence IA à Genève. Intégration d'IA, automatisation des processus et outils sur mesure pour les PME de Suisse romande.",
+    title,
+    description,
     alternates: standaloneAlternates("contact", lang),
     openGraph: {
-      title: lang === "en" ? "Contact MAWT" : "Contacter MAWT",
-      description: lang === "en"
-        ? "Let's talk about what AI and automation can change in your business."
-        : "Discutons de ce que l'IA et l'automatisation peuvent changer dans votre entreprise.",
-      url: `https://mawt.ch/${lang}/contact`,
+      title,
+      description,
+      url: `${SITE_URL}/${lang}/contact`,
+      locale: lang === "fr" ? "fr_CH" : "en_US",
     },
+    twitter: { title, description },
   };
 }
 
@@ -35,9 +38,26 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
     getHomePageData(lang)
   ]);
 
+  // JSON-LD: ContactPage referencing the global Organization + breadcrumb.
+  const pageUrl = `${SITE_URL}/${lang}/contact`;
+  const crumbLd = breadcrumbLd([
+    { name: "MAWT", url: `${SITE_URL}/${lang}` },
+    { name: "Contact", url: pageUrl },
+  ]);
+  const contactLd = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    url: pageUrl,
+    name: lang === "fr" ? "Contacter MAWT" : "Contact MAWT",
+    inLanguage: lang === "fr" ? "fr-CH" : "en",
+    about: { "@id": ORG_ID },
+    mainEntity: { "@id": ORG_ID },
+  };
+
   return (
     <div className="min-h-screen">
-      <SubpageHero 
+      <JsonLd data={[crumbLd, contactLd]} />
+      <SubpageHero
         eyebrow={dict.contact.badge}
         title={dict.contact.headline}
         subtitle={dict.contact.subtitle}
@@ -57,7 +77,9 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
                    </a>
                  )}
                  {contact?.phone && (
-                   <a href={`tel:${contact.phone}`} className="text-2xl font-normal text-black hover:text-brand-teal transition-colors flex items-center gap-3">
+                   /* RFC 3966: no visual separators in the tel: URI — keep the
+                      formatted number as the visible label only. */
+                   <a href={`tel:${contact.phone.replace(/[^+\d]/g, "")}`} className="text-2xl font-normal text-black hover:text-brand-teal transition-colors flex items-center gap-3">
                       <Phone size={20} strokeWidth={1.5} />
                       {contact.phone}
                    </a>

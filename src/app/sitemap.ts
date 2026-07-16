@@ -11,10 +11,17 @@ import type { Locale } from "@/lib/routing/url-map";
 
 const LOCALES: Locale[] = ["fr", "en"];
 
-/** Build a sitemap entry (one per locale) with reciprocal hreflang alternates. */
+/**
+ * Build a sitemap entry (one per locale) with reciprocal hreflang alternates.
+ *
+ * lastModified is only emitted when a REAL date is known (Sanity _updatedAt):
+ * a lastmod that equals "now" on every crawl is a lie Google learns to ignore
+ * and it degrades trust in the whole sitemap. Static pages omit it.
+ */
 function entry(
   pathByLocale: Record<Locale, string>,
   priority: number,
+  lastModified?: string,
 ): MetadataRoute.Sitemap {
   const languages = {
     fr: `${SITE_URL}${pathByLocale.fr}`,
@@ -23,7 +30,7 @@ function entry(
   };
   return LOCALES.map((lang) => ({
     url: `${SITE_URL}${pathByLocale[lang]}`,
-    lastModified: new Date(),
+    ...(lastModified ? { lastModified } : {}),
     changeFrequency: "weekly" as const,
     priority,
     alternates: { languages },
@@ -85,15 +92,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // translate Sanity per-document slugs (it would emit non-existent URLs, the
   // same bug that caused the language-switch 404).
   const services = await client.fetch<
-    { slug: string; family: string; tier: number; language: Locale }[]
+    { slug: string; family: string; tier: number; language: Locale; _updatedAt?: string }[]
   >(
-    groq`*[_type == "service" && !(_id in path("drafts.**")) && defined(slug.current) && defined(family) && defined(language)]{ "slug": slug.current, family, tier, language }`,
+    groq`*[_type == "service" && !(_id in path("drafts.**")) && defined(slug.current) && defined(family) && defined(language)]{ "slug": slug.current, family, tier, language, _updatedAt }`,
   );
+  // Real per-document modification dates for lastmod (see entry() note).
+  const updatedAtByPath = new Map<string, string>();
   const pathByKeyLang = new Map<string, Partial<Record<Locale, string>>>();
   const collided: string[] = [];
   for (const s of services) {
     const key = `${s.family}|${s.tier}`;
     const path = `/${s.language}/services/${familySlugForLang(s.family, s.language)}/${s.slug}`;
+    if (s._updatedAt) updatedAtByPath.set(path, s._updatedAt);
     const e = pathByKeyLang.get(key) || {};
     if (e[s.language]) {
       // Two docs share the same (family, tier, language): a collision would
@@ -110,9 +120,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     pathByKeyLang.set(key, e);
   }
   for (const path of collided) {
+    const mod = updatedAtByPath.get(path);
     out.push({
       url: `${SITE_URL}${path}`,
-      lastModified: new Date(),
+      ...(mod ? { lastModified: mod } : {}),
       changeFrequency: "monthly",
       priority: 0.7,
     });
@@ -128,9 +139,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       "x-default": `${SITE_URL}${en}`,
     };
     for (const path of [paths.fr, paths.en].filter(Boolean) as string[]) {
+      const mod = updatedAtByPath.get(path);
       out.push({
         url: `${SITE_URL}${path}`,
-        lastModified: new Date(),
+        ...(mod ? { lastModified: mod } : {}),
         changeFrequency: "monthly",
         priority: 0.7,
         alternates: { languages },
@@ -141,14 +153,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Blog posts ARE language-split (the article route filters by post language):
   // listing every post under both locales produced sitemap 404s. Emit each post
   // only under its own locale, at the localized public path (/fr/blog, /en/news).
-  const posts = await client.fetch<{ slug: string; language?: string }[]>(
-    groq`*[_type == "post" && !(_id in path("drafts.**")) && defined(slug.current)]{ "slug": slug.current, language }`,
+  const posts = await client.fetch<{ slug: string; language?: string; _updatedAt?: string }[]>(
+    groq`*[_type == "post" && !(_id in path("drafts.**")) && defined(slug.current)]{ "slug": slug.current, language, _updatedAt }`,
   );
   for (const p of posts) {
     const lang: Locale = p.language === "fr" ? "fr" : "en";
     out.push({
       url: `${SITE_URL}${localizedHref("blog", lang)}/${p.slug}`,
-      lastModified: new Date(),
+      ...(p._updatedAt ? { lastModified: p._updatedAt } : {}),
       changeFrequency: "monthly",
       priority: 0.6,
     });
@@ -156,9 +168,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Project case studies exist per language but share slugs across locales;
   // use the LOCALIZED listing prefix (the /fr/work/<slug> form 308-redirects).
-  const projects = await client.fetch<{ slug: string }[]>(
-    groq`*[_type == "project" && !(_id in path("drafts.**")) && defined(slug.current)]{ "slug": slug.current }`,
+  const projects = await client.fetch<{ slug: string; _updatedAt?: string }[]>(
+    groq`*[_type == "project" && !(_id in path("drafts.**")) && defined(slug.current)]{ "slug": slug.current, _updatedAt }`,
   );
+  // Slugs are shared across locales: keep the most recent _updatedAt per slug.
+  const projectModBySlug = new Map<string, string>();
+  for (const pr of projects) {
+    if (!pr._updatedAt) continue;
+    const prev = projectModBySlug.get(pr.slug);
+    if (!prev || pr._updatedAt > prev) projectModBySlug.set(pr.slug, pr._updatedAt);
+  }
   const uniqueProjectSlugs = [...new Set(projects.map((pr) => pr.slug))];
   for (const slug of uniqueProjectSlugs) {
     out.push(
@@ -168,6 +187,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           en: `${localizedHref("projets", "en")}/${slug}`,
         },
         0.6,
+        projectModBySlug.get(slug),
       ),
     );
   }

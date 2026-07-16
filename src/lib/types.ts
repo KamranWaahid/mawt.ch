@@ -26,6 +26,8 @@ export type ProjectPhase = {
 
 export type Project = {
   _id: string;
+  _createdAt?: string;
+  _updatedAt?: string;
   title: string;
   slug: string;
   excerpt: string;

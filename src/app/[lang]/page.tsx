@@ -28,12 +28,15 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lang } = await params;
   const isFr = lang === "fr";
-  // No " | MAWT" here: the layout title template appends it (it used to be
-  // hardcoded too, rendering "… | MAWT | MAWT").
+  // `absolute`: the "%s | MAWT" template lives in [lang]/layout.tsx and
+  // Next.js title templates only apply to CHILD segments — this page shares
+  // the layout's segment, so the brand suffix must be spelled out here.
   return {
-    title: isFr
-      ? "Systèmes IA & Automatisation de Flux à Genève"
-      : "AI Systems & Workflow Automation in Geneva",
+    title: {
+      absolute: isFr
+        ? "Systèmes IA & Automatisation de Flux à Genève | MAWT"
+        : "AI Systems & Workflow Automation in Geneva | MAWT",
+    },
     description: isFr
       ? "Agence IA à Genève. Nous concevons vos systèmes IA sur mesure, bases documentaires (RAG) et automatisations. Du code qui tourne, pas des slides."
       : "Geneva-based AI agency. We design and build custom integrations, RAG systems, and workflow automations that run in production. Get custom software, not slides.",
@@ -48,6 +51,14 @@ export async function generateMetadata({
       siteName: "MAWT",
       type: "website",
       locale: isFr ? "fr_CH" : "en_US",
+    },
+    twitter: {
+      title: isFr
+        ? "MAWT | Systèmes IA & Automatisation"
+        : "MAWT | AI Systems & Workflow Automation",
+      description: isFr
+        ? "Agence IA à Genève. Systèmes IA sur mesure, RAG et automatisations en production."
+        : "Geneva-based AI agency. Custom AI systems, RAG and workflow automations in production.",
     },
     alternates: hreflangAlternates(`/${lang}`, lang),
   };

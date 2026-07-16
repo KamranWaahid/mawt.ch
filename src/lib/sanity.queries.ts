@@ -76,6 +76,8 @@ const homeQuery = groq`
 const projectBySlugQuery = groq`
 *[_type == "project" && slug.current == $slug][0]{
   _id,
+  _createdAt,
+  _updatedAt,
   title,
   "slug": slug.current,
   excerpt,

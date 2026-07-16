@@ -14,19 +14,21 @@ interface FAQsPageProps {
 
 export async function generateMetadata({ params }: FAQsPageProps): Promise<Metadata> {
   const { lang } = await params;
+  const title = lang === "en" ? "FAQ — AI, automation and pricing" : "FAQ — IA, automatisation et tarifs";
+  const description = lang === "en"
+    ? "Answers to the questions companies ask before working with an AI agency: costs, timelines, data security, which AI tools, local AI and more."
+    : "Réponses aux questions que les entreprises se posent avant de travailler avec une agence IA : coûts, délais, sécurité des données, choix des outils, IA locale.";
   return {
-    title: lang === "en" ? "FAQ — AI, automation and pricing" : "FAQ — IA, automatisation et tarifs",
-    description: lang === "en"
-      ? "Answers to the questions companies ask before working with an AI agency: costs, timelines, data security, which AI tools, local AI and more."
-      : "Réponses aux questions que les entreprises se posent avant de travailler avec une agence IA : coûts, délais, sécurité des données, choix des outils, IA locale.",
+    title,
+    description,
     alternates: standaloneAlternates("faqs", lang),
     openGraph: {
-      title: "FAQ | MAWT",
-      description: lang === "en"
-        ? "Costs, timelines, data security, AI tooling — answered."
-        : "Coûts, délais, sécurité des données, outils IA — nos réponses.",
+      title,
+      description,
       url: `https://mawt.ch/${lang}/faqs`,
+      locale: lang === "fr" ? "fr_CH" : "en_US",
     },
+    twitter: { title, description },
   };
 }
 

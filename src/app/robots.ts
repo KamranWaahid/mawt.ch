@@ -15,6 +15,8 @@ const AI_BOTS = [
   "ClaudeBot", // Anthropic
   "Claude-Web",
   "anthropic-ai",
+  "Claude-User",
+  "Claude-SearchBot",
   "PerplexityBot", // Perplexity
   "Perplexity-User",
   "Google-Extended", // Gemini / Vertex grounding

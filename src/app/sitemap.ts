@@ -76,12 +76,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     groq`*[_type == "service" && !(_id in path("drafts.**")) && defined(slug.current) && defined(family) && defined(language)]{ "slug": slug.current, family, tier, language }`,
   );
   const pathByKeyLang = new Map<string, Partial<Record<Locale, string>>>();
+  const collided: string[] = [];
   for (const s of services) {
     const key = `${s.family}|${s.tier}`;
     const path = `/${s.language}/services/${familySlugForLang(s.family, s.language)}/${s.slug}`;
     const e = pathByKeyLang.get(key) || {};
+    if (e[s.language]) {
+      // Two docs share the same (family, tier, language): a collision would
+      // silently OVERWRITE the earlier doc and drop its page from the sitemap
+      // (this happened — 6 live pages vanished). Emit the extra doc as a
+      // standalone entry instead, and make the collision visible in logs.
+      console.warn(
+        `[sitemap] service pairing collision on ${key} (${s.language}): keeping ${e[s.language]}, emitting ${path} standalone — fix the tiers in Sanity`,
+      );
+      collided.push(path);
+      continue;
+    }
     e[s.language] = path;
     pathByKeyLang.set(key, e);
+  }
+  for (const path of collided) {
+    out.push({
+      url: `${SITE_URL}${path}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    });
   }
   for (const paths of pathByKeyLang.values()) {
     // Fall back to the existing-language path if a sibling is missing, so a URL
@@ -104,21 +124,37 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  // Blog posts and project case studies are not language-split (single doc per slug,
-  // rendered under either locale prefix). List both locales with reciprocal alternates.
-  const posts = await client.fetch<{ slug: string }[]>(
-    groq`*[_type == "post" && !(_id in path("drafts.**")) && defined(slug.current)]{ "slug": slug.current }`,
+  // Blog posts ARE language-split (the article route filters by post language):
+  // listing every post under both locales produced sitemap 404s. Emit each post
+  // only under its own locale, at the localized public path (/fr/blog, /en/news).
+  const posts = await client.fetch<{ slug: string; language?: string }[]>(
+    groq`*[_type == "post" && !(_id in path("drafts.**")) && defined(slug.current)]{ "slug": slug.current, language }`,
   );
   for (const p of posts) {
-    out.push(...entry({ fr: `/fr/news/${p.slug}`, en: `/en/news/${p.slug}` }, 0.6));
+    const lang: Locale = p.language === "fr" ? "fr" : "en";
+    out.push({
+      url: `${SITE_URL}${localizedHref("blog", lang)}/${p.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    });
   }
 
+  // Project case studies exist per language but share slugs across locales;
+  // use the LOCALIZED listing prefix (the /fr/work/<slug> form 308-redirects).
   const projects = await client.fetch<{ slug: string }[]>(
     groq`*[_type == "project" && !(_id in path("drafts.**")) && defined(slug.current)]{ "slug": slug.current }`,
   );
-  for (const pr of projects) {
+  const uniqueProjectSlugs = [...new Set(projects.map((pr) => pr.slug))];
+  for (const slug of uniqueProjectSlugs) {
     out.push(
-      ...entry({ fr: `/fr/work/${pr.slug}`, en: `/en/work/${pr.slug}` }, 0.6),
+      ...entry(
+        {
+          fr: `${localizedHref("projets", "fr")}/${slug}`,
+          en: `${localizedHref("projets", "en")}/${slug}`,
+        },
+        0.6,
+      ),
     );
   }
 

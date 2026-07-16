@@ -12,11 +12,18 @@ import type { Metadata } from "next";
 export async function generateMetadata({ params }: { params: Promise<{ lang: Locale }> }): Promise<Metadata> {
   const { lang } = await params;
   return {
-    title: lang === "en" ? "Contact | MAWT, AI agency in Geneva" : "Contact | MAWT, agence IA à Genève",
+    title: lang === "en" ? "Contact — AI agency in Geneva" : "Contact — agence IA à Genève",
     description: lang === "en"
-      ? "Talk to MAWT, an AI agency in Geneva. AI integration, process automation and custom tools for SMEs and growing companies across French speaking Switzerland."
-      : "Contactez MAWT, agence IA à Genève. Intégration d'IA, automatisation des processus et outils sur mesure pour les PME et entreprises en croissance de Suisse romande.",
+      ? "Talk to MAWT, an AI agency in Geneva. AI integration, process automation and custom tools for SMEs across French-speaking Switzerland."
+      : "Contactez MAWT, agence IA à Genève. Intégration d'IA, automatisation des processus et outils sur mesure pour les PME de Suisse romande.",
     alternates: standaloneAlternates("contact", lang),
+    openGraph: {
+      title: lang === "en" ? "Contact MAWT" : "Contacter MAWT",
+      description: lang === "en"
+        ? "Let's talk about what AI and automation can change in your business."
+        : "Discutons de ce que l'IA et l'automatisation peuvent changer dans votre entreprise.",
+      url: `https://mawt.ch/${lang}/contact`,
+    },
   };
 }
 

@@ -14,9 +14,16 @@ export async function generateMetadata({ params }: ProjectsPageProps): Promise<M
   return {
     title: lang === "en" ? "Case Studies" : "Études de cas",
     description: lang === "en"
-      ? "Proven systems built for high-performance teams."
-      : "Systèmes éprouvés conçus pour des équipes performantes.",
+      ? "AI, automation and custom software case studies from Geneva: real projects, measured results — hours saved, errors cut, teams unblocked."
+      : "Études de cas IA, automatisation et logiciels sur mesure à Genève : des projets réels, des résultats mesurés — heures récupérées, erreurs réduites.",
     alternates: standaloneAlternates("projets", lang),
+    openGraph: {
+      title: lang === "en" ? "Case Studies | MAWT" : "Études de cas | MAWT",
+      description: lang === "en"
+        ? "Real AI and automation projects with measured results."
+        : "Des projets IA et automatisation réels, aux résultats mesurés.",
+      url: `https://mawt.ch/${lang}/${lang === "fr" ? "projets" : "work"}`,
+    },
   };
 }
 

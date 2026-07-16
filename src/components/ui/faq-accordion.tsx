@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import { useState } from "react";
 import { Plus, Minus } from "lucide-react";
 
@@ -37,23 +37,26 @@ export function FAQAccordion({ items, noWrapper = false }: FAQAccordionProps) {
                 )}
               </div>
             </button>
-            <AnimatePresence>
-              {openIndex === index && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.2, ease: "easeOut" }}
-                  className="overflow-hidden"
-                >
-                  <div className="pb-8">
-                    <p className="text-[16px] leading-relaxed text-neutral-500 font-normal">
-                      {item.answer}
-                    </p>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Always mounted (animated open/closed) so the answers exist in
+                the server-rendered HTML: AI crawlers and Google's FAQ
+                rich-result checks read the raw page, and conditionally
+                mounted answers were invisible to them. Same visual behavior. */}
+            <motion.div
+              initial={false}
+              animate={{
+                height: openIndex === index ? "auto" : 0,
+                opacity: openIndex === index ? 1 : 0,
+              }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="overflow-hidden"
+              aria-hidden={openIndex !== index}
+            >
+              <div className="pb-8">
+                <p className="text-[16px] leading-relaxed text-neutral-500 font-normal">
+                  {item.answer}
+                </p>
+              </div>
+            </motion.div>
           </div>
         ))}
       </div>

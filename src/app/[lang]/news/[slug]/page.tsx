@@ -27,12 +27,20 @@ export async function generateMetadata({
     ? urlForImage(post.mainImage)?.width(1200).height(630).url()
     : null;
 
+  // Articles are single-language and reachable under two prefixes
+  // (/fr/blog and /fr/news both resolve): a self-canonical stops the
+  // duplicate-URL indexing.
+  const canonical = `https://mawt.ch/${lang}/${lang === "fr" ? "blog" : "news"}/${slug}`;
+
   return {
     title: post.title,
     description: post.excerpt || post.title,
+    alternates: { canonical },
     openGraph: {
       title: post.title,
       description: post.excerpt,
+      url: canonical,
+      type: "article",
       images: imageUrl ? [imageUrl] : [],
     },
   };

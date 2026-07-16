@@ -110,7 +110,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const currentPath = `/${lang}/services/${family}/${service}`;
   const canonical = `https://mawt.ch${currentPath}`;
-  const title = data.seo?.metaTitle || `${data.title} | MAWT`;
+  // Strip any trailing "| MAWT" (many Sanity metaTitles carry it): the layout
+  // title template appends the suffix, which rendered "… | MAWT | MAWT".
+  const title = (data.seo?.metaTitle || data.title).replace(/\s*\|\s*MAWT\s*$/i, "");
   const description = data.seo?.metaDescription || data.answerBox || data.description;
 
   // hreflang needs the SIBLING document's localized slug (translatePath cannot

@@ -11,14 +11,8 @@ import { getHomePageData, getPartners } from "@/lib/sanity.queries";
 import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
 import { getFamilyTitle, familySlugForLang, familyOrderIndex, hreflangAlternates } from "@/lib/routing/url-helpers";
-import { preload } from "react-dom";
+import { SITE_URL } from "@/components/seo/structured-data";
 import type { Metadata } from "next";
-
-// Hero is a JS-driven <canvas> frame sequence; its first frame is the LCP image.
-// Preload the first frame image so the browser fetches it during HTML parse,
-// pulling LCP earlier.
-const FIRST_HERO_IMAGE = "/HeroImages/ezgif-frame-001.jpg";
-const ASCII_HERO_VIDEO = "/ascii-animation (1).mp4";
 
 type ServiceNavItem = string | { title: string; href: string };
 
@@ -34,12 +28,14 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lang } = await params;
   const isFr = lang === "fr";
+  // No " | MAWT" here: the layout title template appends it (it used to be
+  // hardcoded too, rendering "… | MAWT | MAWT").
   return {
     title: isFr
-      ? "Systèmes IA & Automatisation de Flux à Genève | MAWT"
-      : "AI Systems & Workflow Automation in Geneva | MAWT",
+      ? "Systèmes IA & Automatisation de Flux à Genève"
+      : "AI Systems & Workflow Automation in Geneva",
     description: isFr
-      ? "Agence IA à Genève. Nous concevons et intégrons vos systèmes IA sur mesure, bases documentaires (RAG) et automatisations de flux. Du code qui tourne, pas des slides."
+      ? "Agence IA à Genève. Nous concevons vos systèmes IA sur mesure, bases documentaires (RAG) et automatisations. Du code qui tourne, pas des slides."
       : "Geneva-based AI agency. We design and build custom integrations, RAG systems, and workflow automations that run in production. Get custom software, not slides.",
     openGraph: {
       title: isFr
@@ -48,6 +44,10 @@ export async function generateMetadata({
       description: isFr
         ? "Nous construisons les intégrations et les automatisations métier qui font tourner votre entreprise en Suisse romande."
         : "We build the integrations and automations that run your business. Production-ready software tailored to SMEs in Switzerland.",
+      url: `${SITE_URL}/${lang}`,
+      siteName: "MAWT",
+      type: "website",
+      locale: isFr ? "fr_CH" : "en_US",
     },
     alternates: hreflangAlternates(`/${lang}`, lang),
   };
@@ -59,15 +59,6 @@ export default async function HomePage({
   params: Promise<{ lang: Locale }>;
 }) {
   const { lang } = await params;
-  // Preload the first frame image for all screen sizes
-  preload(FIRST_HERO_IMAGE, {
-    as: "image",
-    fetchPriority: "high",
-  });
-  preload(ASCII_HERO_VIDEO, {
-    as: "video",
-    type: "video/mp4",
-  });
   const dictionary = await getDictionary(lang);
   const data = await getHomePageData(lang);
   const partners = await getPartners();
@@ -160,6 +151,13 @@ export default async function HomePage({
 
   return (
     <>
+      {/* The visual hero has no heading element (approved design); expose the
+          primary keyword phrase to crawlers as a visually-hidden h1. */}
+      <h1 className="sr-only">
+        {lang === "fr"
+          ? "MAWT — agence IA à Genève : systèmes IA, automatisation et logiciels sur mesure pour PME"
+          : "MAWT — AI agency in Geneva: AI systems, workflow automation and custom software for SMEs"}
+      </h1>
       <HomepageHeroSection
         settings={data.settings}
         dict={dictionary.hero}

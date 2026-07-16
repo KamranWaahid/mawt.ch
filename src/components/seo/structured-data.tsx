@@ -158,6 +158,8 @@ export function StructuredData({
     contactType: "sales",
     areaServed: "CH",
     availableLanguage: ["French", "English"],
+    telephone: "+41766363333",
+    email: "info@mawt.ch",
   };
   const foundingLocation = {
     "@type": "Place",
@@ -194,11 +196,20 @@ export function StructuredData({
         inLanguage: inLanguage(lang),
         areaServed: areaServed(lang),
         contactPoint,
+        telephone: "+41766363333",
+        email: "info@mawt.ch",
         address: {
           "@type": "PostalAddress",
-          addressLocality: lang === "fr" ? "Genève" : "Geneva",
+          streetAddress: "Rue de la Fontenette 23",
+          postalCode: "1227",
+          addressLocality: "Carouge",
           addressRegion: lang === "fr" ? "Genève" : "Geneva",
           addressCountry: "CH",
+        },
+        geo: {
+          "@type": "GeoCoordinates",
+          latitude: 46.1839,
+          longitude: 6.1394,
         },
         parentOrganization: { "@id": orgId },
         ...(cleanSameAs.length ? { sameAs: cleanSameAs } : {}),

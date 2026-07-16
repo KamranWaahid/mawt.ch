@@ -97,10 +97,16 @@ export async function submitContactForm(
         ...validated.data,
         status: "new",
       });
+    } else if (process.env.NODE_ENV === "production") {
+      // Never pretend success in production: without the write token the
+      // lead would be console.logged into a serverless void and lost.
+      logger.error("Contact submission with no Sanity write client in production");
+      return { error: messages.submitFailed };
     } else {
       console.log("Mocking contact lead creation:", validated.data);
     }
 
+    await sendLeadNotification(validated.data);
     await trackConversion({ type: "lead", email: validated.data.email, metadata: { service: validated.data.service } });
     logger.info("New lead captured", { email: validated.data.email });
 
@@ -108,6 +114,60 @@ export async function submitContactForm(
   } catch (err) {
     logger.error("Contact submission error", err, { email: rawData.email });
     return { error: messages.submitFailed };
+  }
+}
+
+/**
+ * Email notification for new leads, sent via the Resend REST API.
+ * Activates when RESEND_API_KEY is set; without it the lead is still stored
+ * in Sanity and a warning is logged. A notification failure never breaks the
+ * submission — the lead is already persisted.
+ */
+async function sendLeadNotification(lead: {
+  name: string;
+  email: string;
+  service?: string;
+  timeline?: string;
+  message: string;
+}) {
+  const apiKey = process.env.RESEND_API_KEY;
+  const to = process.env.CONTACT_NOTIFY_TO || "info@mawt.ch";
+  const from = process.env.CONTACT_NOTIFY_FROM || "MAWT <notifications@mawt.ch>";
+  if (!apiKey) {
+    logger.warn("RESEND_API_KEY not set — lead stored in Sanity but no email notification sent");
+    return;
+  }
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from,
+        to: [to],
+        reply_to: lead.email,
+        subject: `Nouveau lead — ${lead.name}${lead.service ? ` (${lead.service})` : ""}`,
+        text: [
+          `Nom : ${lead.name}`,
+          `Email : ${lead.email}`,
+          lead.service ? `Service : ${lead.service}` : null,
+          lead.timeline ? `Délai : ${lead.timeline}` : null,
+          "",
+          lead.message,
+          "",
+          "— Formulaire de contact mawt.ch (lead aussi enregistré dans Sanity)",
+        ]
+          .filter((l): l is string => l !== null)
+          .join("\n"),
+      }),
+    });
+    if (!res.ok) {
+      logger.error("Lead notification email failed", await res.text());
+    }
+  } catch (err) {
+    logger.error("Lead notification email error", err);
   }
 }
 

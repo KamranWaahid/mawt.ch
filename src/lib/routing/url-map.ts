@@ -20,8 +20,10 @@ export const URL_MAP: RouteMapping[] = [
           { fr: "agent-ia-assistant", en: "ai-agent" },
           { fr: "rag-intelligence-embarquee", en: "rag-enterprise" },
           { fr: "chatbots", en: "chatbots" },
+          { fr: "ia-generative", en: "generative-ai" },
           { fr: "automatisations", en: "ai-automation" },
           { fr: "ia-locale", en: "local-ai" },
+          { fr: "donnees-tableaux-de-bord", en: "advanced-analytics" },
           { fr: "portail-client-entreprise", en: "client-business-portal" },
         ],
       },
@@ -38,29 +40,6 @@ export const URL_MAP: RouteMapping[] = [
         ],
       },
       {
-        fr: "digital",
-        en: "digital",
-        children: [
-          { fr: "conseil-digitalisation", en: "digital-consulting-strategy" },
-          { fr: "e-commerce-eshop", en: "digital-commerce" },
-          {
-            fr: "application-metier-logiciel-sur-mesure",
-            en: "business-applications",
-          },
-        ],
-      },
-      {
-        fr: "donnees-analytics",
-        en: "data-analytics",
-        children: [
-          { fr: "modernisation-donnees", en: "data-modernization" },
-          { fr: "donnees-tableaux-de-bord", en: "advanced-analytics" },
-          { fr: "intelligence-connectee", en: "connected-intelligence" },
-          { fr: "gestion-donnees", en: "data-management" },
-          { fr: "ia-generative", en: "generative-ai" },
-        ],
-      },
-      {
         fr: "developpement-logiciel",
         en: "software-development",
         children: [
@@ -73,6 +52,10 @@ export const URL_MAP: RouteMapping[] = [
           { fr: "developpement-base-de-donnees", en: "database-development" },
           { fr: "modernisation-logiciel", en: "software-modernization" },
           { fr: "renfort-equipe-it", en: "it-staff-augmentation" },
+          {
+            fr: "application-metier-logiciel-sur-mesure",
+            en: "business-applications",
+          },
         ],
       },
       {
@@ -81,34 +64,17 @@ export const URL_MAP: RouteMapping[] = [
         children: [
           { fr: "cybersecurite", en: "cybersecurity" },
           { fr: "conformite-compliance", en: "compliance-services" },
-          { fr: "tests-securite", en: "security-testing" },
           { fr: "tests-intrusion-pentest", en: "penetration-testing" },
-          { fr: "services-siem", en: "siem-services" },
-        ],
-      },
-      {
-        fr: "operations-scm",
-        en: "operations-scm",
-        children: [
-          { fr: "erp", en: "erp" },
-          { fr: "gestion-operations", en: "operations-management" },
-          { fr: "gestion-chaine-logistique", en: "supply-chain-management" },
-          { fr: "gestion-entrepot", en: "warehouse-management" },
-          {
-            fr: "gestion-actifs-entreprise",
-            en: "enterprise-asset-management",
-          },
-          { fr: "gestion-fournisseurs", en: "vendor-management" },
-          { fr: "pilotage-projet", en: "project-management" },
-          { fr: "gestion-documentaire-ged", en: "document-management" },
         ],
       },
       {
         fr: "sites-et-branding",
         en: "sites-and-branding",
         children: [
+          { fr: "e-commerce-eshop", en: "e-commerce" },
           { fr: "branding-identite", en: "branding-identity" },
           { fr: "audit-ux-seo-performance", en: "ux-seo-performance-audit" },
+          { fr: "referencement-ia-geo", en: "ai-search-optimization" },
           { fr: "refonte-site-web", en: "website-redesign" },
         ],
       },
@@ -120,6 +86,7 @@ export const URL_MAP: RouteMapping[] = [
           { fr: "expert-ia-dedie", en: "dedicated-ai-expert" },
           { fr: "designer-ux-dedie", en: "dedicated-ux-designer" },
           { fr: "qa-testing", en: "qa-testing" },
+          { fr: "pilotage-projet", en: "project-management" },
           { fr: "accompagnement-design", en: "design-coaching" },
           { fr: "maintenance-applicative", en: "application-maintenance" },
           { fr: "cto-temps-partiel", en: "fractional-cto" },

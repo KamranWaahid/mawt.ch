@@ -23,11 +23,8 @@ export type FamilyKey =
   | "conseil-ia"
   | "renfort-equipe"
   | "formation-ia"
-  | "digital"
-  | "donnees-analytics"
   | "developpement-logiciel"
-  | "securite"
-  | "operations-scm";
+  | "securite";
 
 export const PILLAR_COPY: Record<FamilyKey, { fr: PillarLangCopy; en: PillarLangCopy }> = {
   "sites-et-branding": {
@@ -293,98 +290,6 @@ export const PILLAR_COPY: Record<FamilyKey, { fr: PillarLangCopy; en: PillarLang
       bottomCtaLabel: "Start",
     },
   },
-  "digital": {
-    "fr": {
-      "metaTitle": "Stratégie et outils digitaux pour PME suisses | MAWT",
-      "metaDescription": "Conseil digital, e-commerce, applications métier. Une stratégie pragmatique et des outils qui font tourner votre activité. Équipe senior à Genève.",
-      "h1": "Le digital qui fait tourner votre activité.",
-      "subhead": "Stratégie digitale, commerce en ligne, applications métier. Des outils construits pour votre quotidien, pas pour la démo.",
-      "ctaPrimary": "Discutons",
-      "ctaSecondary": "Voir nos projets",
-      "ctaPrimaryHref": "contact",
-      "ctaSecondaryHref": "projets",
-      "introParagraphs": [
-        "Votre activité tourne, mais vos outils suivent mal. Un site qui vend peu, un back-office plein de ressaisies, des décisions prises sans vision claire. Vous sentez que le digital pourrait faire plus, sans savoir par où commencer.",
-        "Le piège classique : empiler des outils. Un e-shop par ici, un logiciel par là, un consultant qui livre un rapport et disparaît. Résultat : des systèmes qui ne se parlent pas et une équipe qui bricole entre les deux.",
-        "On prend le problème dans l'ordre. D'abord comprendre votre modèle et vos priorités. Ensuite construire ce qui manque : commerce digital qui convertit, applications métier qui remplacent les tableurs, stratégie qui tient sur une page et se met en œuvre. Un seul interlocuteur du diagnostic au déploiement."
-      ],
-      "servicesH2": "Ce qu'on construit dans cette famille",
-      "socialProof": "Cas concrets : Crown (transformation digitale complète), phaam.ch (e-commerce), Diagora (digitalisation des process), Mellender (application métier immobilière).",
-      "projectsH2": "Projets de la famille Digital",
-      "faqH2": "Questions fréquentes sur la stratégie et les outils digitaux",
-      "bottomCtaH2": "Discutons de votre projet digital",
-      "bottomCtaPitch": "30 minutes pour comprendre où vous en êtes et ce qui bloque. On dit franchement ce qui vaut la peine d'être construit, et ce qui peut attendre.",
-      "bottomCtaLabel": "Démarrer"
-    },
-    "en": {
-      "metaTitle": "Digital strategy, e-commerce and business apps | MAWT",
-      "metaDescription": "Digital consulting, e-commerce, business applications. Pragmatic strategy and tools that run your operations. Senior team based in Geneva.",
-      "h1": "Digital that runs your business, not just your website.",
-      "subhead": "Digital strategy, online commerce, business applications. Tools built for your daily operations, not for the demo.",
-      "ctaPrimary": "Get in touch",
-      "ctaSecondary": "See our work",
-      "ctaPrimaryHref": "contact",
-      "ctaSecondaryHref": "work",
-      "introParagraphs": [
-        "Your business runs, but your tools lag behind. A site that barely sells, a back office full of double entry, decisions made without a clear picture. You sense digital could do more, without knowing where to start.",
-        "The classic trap is stacking tools. An e-shop here, a software there, a consultant who ships a report and disappears. You end up with systems that don't talk to each other and a team improvising in between.",
-        "We take the problem in order. First understand your model and your priorities. Then build what's missing : digital commerce that converts, business applications that replace spreadsheets, a strategy that fits on one page and actually gets executed. One senior point of contact from diagnosis to rollout."
-      ],
-      "servicesH2": "What we build in this family",
-      "socialProof": "Real cases : Crown (full digital transformation), phaam.ch (e-commerce), Diagora (process digitalisation), Mellender (real estate business application).",
-      "projectsH2": "Featured Digital projects",
-      "faqH2": "Frequently asked questions about digital strategy and tools",
-      "bottomCtaH2": "Let's talk about your digital project",
-      "bottomCtaPitch": "30 minutes to understand where you are and what's blocking you. We tell you honestly what's worth building, and what can wait.",
-      "bottomCtaLabel": "Start"
-    }
-  },
-  "donnees-analytics": {
-    "fr": {
-      "metaTitle": "Données et analytics pour décider vite | MAWT",
-      "metaDescription": "Modernisation des données, tableaux de bord, IA générative. On transforme vos données éparpillées en décisions. Équipe senior à Genève.",
-      "h1": "Vos données savent déjà. Encore faut-il les entendre.",
-      "subhead": "Modernisation des données, tableaux de bord, intelligence connectée, IA générative. Des données éparpillées aux décisions claires.",
-      "ctaPrimary": "Discutons",
-      "ctaSecondary": "Voir nos projets",
-      "ctaPrimaryHref": "contact",
-      "ctaSecondaryHref": "projets",
-      "introParagraphs": [
-        "Vos chiffres existent. Dans l'ERP, dans le CRM, dans quinze exports Excel, dans la tête de deux personnes clés. Mais quand il faut décider, personne n'a la même version et tout le monde perd une journée à réconcilier.",
-        "Le problème n'est presque jamais le manque de données. C'est leur éparpillement. Des sources qui ne se parlent pas, des définitions qui divergent, des rapports refaits à la main chaque mois. Et pendant ce temps, les décisions se prennent au feeling.",
-        "On remet vos données en ordre de marche. Modernisation des flux, tableaux de bord qui répondent aux vraies questions, gestion des données propre, et IA générative branchée sur vos sources quand elle apporte quelque chose. Hébergement suisse ou européen, conformité nLPD comprise dès la conception."
-      ],
-      "servicesH2": "Ce qu'on construit dans cette famille",
-      "socialProof": "Cas concrets : Mellender (RAG sur base documentaire immobilière), Crown (données unifiées dans un CRM intelligent), Diagora (automatisation des flux de données métier).",
-      "projectsH2": "Projets de la famille Données et Analytics",
-      "faqH2": "Questions fréquentes sur les données et l'analytics",
-      "bottomCtaH2": "Discutons de vos données",
-      "bottomCtaPitch": "30 minutes pour comprendre où sont vos données et ce que vous voulez en tirer. On identifie le premier chantier utile, pas le plus vendeur.",
-      "bottomCtaLabel": "Démarrer"
-    },
-    "en": {
-      "metaTitle": "Data and analytics that drive decisions | MAWT",
-      "metaDescription": "Data modernisation, dashboards, generative AI. We turn scattered data into clear decisions. Senior team based in Geneva.",
-      "h1": "Your data already knows. Time to listen to it.",
-      "subhead": "Data modernisation, dashboards, connected intelligence, generative AI. From scattered data to clear decisions.",
-      "ctaPrimary": "Get in touch",
-      "ctaSecondary": "See our work",
-      "ctaPrimaryHref": "contact",
-      "ctaSecondaryHref": "work",
-      "introParagraphs": [
-        "Your numbers exist. In the ERP, in the CRM, in fifteen Excel exports, in the heads of two key people. But when a decision is due, nobody has the same version and everyone loses a day reconciling.",
-        "The problem is almost never a lack of data. It's fragmentation. Sources that don't talk to each other, definitions that drift, reports rebuilt by hand every month. Meanwhile, decisions get made on gut feel.",
-        "We put your data back to work. Modernised pipelines, dashboards that answer the questions you actually ask, clean data management, and generative AI plugged into your sources where it adds something. Swiss or European hosting, nLPD compliance built in from day one."
-      ],
-      "servicesH2": "What we build in this family",
-      "socialProof": "Real cases : Mellender (RAG on a real estate knowledge base), Crown (unified data inside a smart CRM), Diagora (automated business data flows).",
-      "projectsH2": "Featured Data and Analytics projects",
-      "faqH2": "Frequently asked questions about data and analytics",
-      "bottomCtaH2": "Let's talk about your data",
-      "bottomCtaPitch": "30 minutes to understand where your data lives and what you want from it. We identify the first useful project, not the flashiest one.",
-      "bottomCtaLabel": "Start"
-    }
-  },
   "developpement-logiciel": {
     "fr": {
       "metaTitle": "Développement logiciel sur mesure à Genève | MAWT",
@@ -474,52 +379,6 @@ export const PILLAR_COPY: Record<FamilyKey, { fr: PillarLangCopy; en: PillarLang
       "faqH2": "Frequently asked questions about cybersecurity and compliance",
       "bottomCtaH2": "Let's talk about your security",
       "bottomCtaPitch": "30 minutes to understand your real exposure. We tell you what's urgent, what can wait, and what you don't need at all.",
-      "bottomCtaLabel": "Start"
-    }
-  },
-  "operations-scm": {
-    "fr": {
-      "metaTitle": "ERP, opérations et chaîne logistique PME | MAWT",
-      "metaDescription": "ERP, gestion des opérations, logistique, entrepôt, fournisseurs, GED. Des opérations qui tournent sans ressaisies ni tableurs fragiles.",
-      "h1": "Des opérations qui tournent sans ressaisies.",
-      "subhead": "ERP, chaîne logistique, entrepôt, fournisseurs, GED. On remplace les tableurs fragiles par des systèmes qui tiennent.",
-      "ctaPrimary": "Discutons",
-      "ctaSecondary": "Voir nos projets",
-      "ctaPrimaryHref": "contact",
-      "ctaSecondaryHref": "projets",
-      "introParagraphs": [
-        "Vos opérations reposent sur des tableurs que deux personnes comprennent, des ressaisies entre trois systèmes, et beaucoup de mémoire humaine. Ça tient. Jusqu'au jour où quelqu'un part en vacances, où une commande double, où le stock affiché ne correspond plus au stock réel.",
-        "Les grands projets ERP font peur, à raison : dix-huit mois, budget doublé, équipes épuisées, pour finir avec un outil que personne n'utilise correctement. Mais l'alternative n'est pas de ne rien faire. C'est de prendre les chantiers dans le bon ordre, avec des outils dimensionnés pour votre réalité.",
-        "On structure vos opérations pièce par pièce : ERP adapté à votre taille, gestion d'entrepôt et de stock fiable, suivi fournisseurs, GED qui remplace les dossiers partagés chaotiques, automatisations entre vos systèmes. Chaque brique se connecte aux autres, et vos équipes arrêtent de ressaisir."
-      ],
-      "servicesH2": "Ce qu'on couvre dans cette famille",
-      "socialProof": "On combine notre équipe d'ingénierie avec un réseau d'experts opérations et supply chain seniors, activé selon votre secteur. Un seul interlocuteur, du diagnostic à la mise en production.",
-      "projectsH2": "Projets de la famille Opérations et SCM",
-      "faqH2": "Questions fréquentes sur les opérations et la chaîne logistique",
-      "bottomCtaH2": "Discutons de vos opérations",
-      "bottomCtaPitch": "30 minutes pour comprendre comment vos opérations tournent aujourd'hui. On identifie le point de friction qui coûte le plus, et on commence par là.",
-      "bottomCtaLabel": "Démarrer"
-    },
-    "en": {
-      "metaTitle": "ERP, operations and supply chain software | MAWT",
-      "metaDescription": "ERP, operations management, logistics, warehouse, suppliers, document management. Operations that run without double entry or fragile spreadsheets.",
-      "h1": "Operations that run without double entry.",
-      "subhead": "ERP, supply chain, warehouse, suppliers, document management. We replace fragile spreadsheets with systems that hold.",
-      "ctaPrimary": "Get in touch",
-      "ctaSecondary": "See our work",
-      "ctaPrimaryHref": "contact",
-      "ctaSecondaryHref": "work",
-      "introParagraphs": [
-        "Your operations run on spreadsheets two people understand, re-entry across three systems, and a lot of human memory. It holds. Until someone goes on holiday, an order gets duplicated, or the stock on screen no longer matches the stock on the shelf.",
-        "Big ERP projects are scary, and rightly so : eighteen months, doubled budget, exhausted teams, ending with a tool nobody uses properly. But the alternative isn't doing nothing. It's tackling the work in the right order, with tools sized for your reality.",
-        "We structure your operations piece by piece : an ERP that fits your size, reliable warehouse and stock management, supplier tracking, document management that replaces chaotic shared folders, automation between your systems. Each piece connects to the others, and your team stops re-entering data."
-      ],
-      "servicesH2": "What we cover in this family",
-      "socialProof": "We combine our engineering team with a network of senior operations and supply chain experts, engaged to match your industry. One point of contact, from diagnosis to go-live.",
-      "projectsH2": "Featured Operations and SCM projects",
-      "faqH2": "Frequently asked questions about operations and supply chain",
-      "bottomCtaH2": "Let's talk about your operations",
-      "bottomCtaPitch": "30 minutes to understand how your operations run today. We find the friction point that costs you most, and start there.",
       "bottomCtaLabel": "Start"
     }
   },

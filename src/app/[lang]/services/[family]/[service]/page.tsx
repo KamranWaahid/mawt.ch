@@ -28,11 +28,8 @@ const FAMILY_TAG_MAPPING: Record<string, string[]> = {
   "conseil-ia": ["conseil", "strategie", "audit", "transformation", "change"],
   "renfort-equipe": ["renfort", "developpeur", "fractional", "qa"],
   "formation-ia": ["formation", "chatgpt", "coaching"],
-  digital: ["transformation", "ecommerce", "strategie"],
-  "donnees-analytics": ["ia", "automatisation", "rag"],
   "developpement-logiciel": ["sites", "mobile", "developpeur", "ia"],
   securite: ["ia"],
-  "operations-scm": ["automatisation", "crm", "transformation"],
 };
 
 const serviceDetailPageQuery = groq`

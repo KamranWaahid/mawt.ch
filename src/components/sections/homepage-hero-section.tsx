@@ -39,13 +39,16 @@ const VIDEO_OPEN_PROGRESS = 0.18;
 const VIDEO_SCRUB_SECONDS = 3;
 
 const navItems = [
-  { label: "Work", route: "projets" },
-  { label: "Approach", route: "notre-methode" },
-  { label: "Services", route: "services" },
-  { label: "News", route: "news" },
-  { label: "About", route: "a-propos" },
-  { label: "Contact", route: "contact" },
+  { label: "Work", labelFr: "Projets", route: "projets" },
+  { label: "Approach", labelFr: "Approche", route: "notre-methode" },
+  { label: "Services", labelFr: "Services", route: "services" },
+  { label: "News", labelFr: "Actualités", route: "news" },
+  { label: "About", labelFr: "À propos", route: "a-propos" },
+  { label: "Contact", labelFr: "Contact", route: "contact" },
 ];
+
+const navItemLabel = (item: (typeof navItems)[number], lang: string) =>
+  lang === "fr" ? item.labelFr : item.label;
 
 function GeometricSymbol({ className }: { className?: string }) {
   return (
@@ -641,7 +644,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
               </Link>
             </motion.div>
             <motion.p className="absolute right-[2.5vw] bottom-[6%] w-[30.5%] text-[1.17cqw] font-normal leading-[1.35] tracking-[-0.01em] text-white/74" style={{ y: desktopContentY }}>
-              <span className="text-white">MAWT is a</span> <SwissMark /> {dict.description}
+              <span className="text-white">{lang === "fr" ? "MAWT est une" : "MAWT is a"}</span> <SwissMark /> {dict.description}
             </motion.p>
           </div>
 
@@ -661,13 +664,13 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
                 </Link>
               </motion.div>
               <motion.p className="absolute left-[59%] bottom-[10%] w-[38%] text-[0.8125rem] font-normal leading-[1.32] tracking-[-0.01em] text-white/74" style={{ y: compactContentY }}>
-                <span className="text-white">MAWT is a</span> <SwissMark /> {dict.description}
+                <span className="text-white">{lang === "fr" ? "MAWT est une" : "MAWT is a"}</span> <SwissMark /> {dict.description}
               </motion.p>
             </div>
           </div>
 
           {/* Portrait Mobile Text */}
-          <div className="absolute inset-0 flex-col justify-between px-5 pt-6 pb-[8vh] max-sm:pb-[5vh] sm:px-7 sm:pt-8 md:px-9 md:pt-10 hidden max-lg:portrait:flex">
+          <div className="absolute inset-0 flex-col justify-between px-5 pt-6 pb-[8vh] max-sm:pb-[8vh] sm:px-7 sm:pt-8 md:px-9 md:pt-10 hidden max-lg:portrait:flex">
             <div className="w-full" />
             <motion.div className="mt-auto flex flex-col gap-[clamp(1rem,3svh,2rem)] pt-5 sm:pt-8" style={{ y: compactContentY }}>
               <div>
@@ -687,7 +690,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
                 </div>
                 <div className="flex flex-col gap-[clamp(1rem,3svh,1.5rem)] md:items-start">
                   <p className="max-w-[26rem] text-[0.8125rem] font-normal leading-[1.35] tracking-[-0.01em] text-white/74 sm:text-[0.9375rem] md:max-w-none">
-                    <span className="text-white">MAWT is a</span> <SwissMark /> {dict.description}
+                    <span className="text-white">{lang === "fr" ? "MAWT est une" : "MAWT is a"}</span> <SwissMark /> {dict.description}
                   </p>
                 </div>
               </div>
@@ -766,7 +769,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
             >
               {navItems.map((item) => (
                   <Link key={item.route} href={navHref(item.route)} className="transition-colors">
-                  {item.label}
+                  {navItemLabel(item, lang)}
                 </Link>
               ))}
               <span className={homeNavDividerClass}>—</span>
@@ -817,7 +820,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
                   onClick={() => setIsHeroMobileMenuOpen(false)}
                   className="text-[clamp(2rem,10vw,3.35rem)] font-normal leading-none tracking-tight text-white"
                 >
-                  {item.label}
+                  {navItemLabel(item, lang)}
                 </Link>
               ))}
             </div>

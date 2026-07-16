@@ -85,6 +85,22 @@ function createSnapshot() {
   });
 
   holder.appendChild(clone);
+
+  // Dim scrim over the frozen page: both the homepage and the facade are
+  // near-black, so the rising sheet was invisible dark-on-dark. Fading the
+  // snapshot's CONTENT down (white text, ASCII field) makes the full-
+  // luminance sheet read clearly — the DHNN pattern. Opacity-only, so the
+  // fade runs on the compositor alongside the sheet's transform.
+  const dim = document.createElement("div");
+  dim.style.cssText =
+    "position:absolute;inset:0;background:#000;opacity:0;transition:opacity 750ms cubic-bezier(0.76,0,0.24,1);pointer-events:none;";
+  holder.appendChild(dim);
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => {
+      dim.style.opacity = "0.55";
+    }),
+  );
+
   document.body.appendChild(holder);
 }
 
@@ -248,7 +264,7 @@ export function CurtainTransitionProvider({
             transitionDuration: `${RISE_MS}ms, ${REVEAL_MS}ms`,
             transitionTimingFunction: "cubic-bezier(0.76, 0, 0.24, 1), ease-out",
           }}
-          className={`fixed inset-x-0 bottom-0 z-[120] overflow-hidden rounded-t-[28px] bg-[#161616] shadow-[0_-32px_90px_rgba(0,0,0,0.45)] will-change-transform ${
+          className={`fixed inset-x-0 bottom-0 z-[120] overflow-hidden rounded-t-[28px] border-t border-white/10 bg-[#161616] shadow-[0_-32px_90px_rgba(0,0,0,0.45)] will-change-transform ${
             phase === "revealing" ? "pointer-events-none opacity-0" : "opacity-100"
           }`}
         >

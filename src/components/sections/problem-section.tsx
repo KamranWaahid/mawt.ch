@@ -42,32 +42,32 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
   // 100vh section: no re-scrolling three screens of already-black text.
   const [collapsed, setCollapsed] = useState(false);
   const collapsedRef = useRef(false);
-  const lenisRef = useRef<{ scrollTo: (t: number, o?: object) => void } | null>(null);
+  const reverseIntentRef = useRef(false);
+  const idleSinceRef = useRef(0);
+  const lenisRef = useRef<{ scrollTo: (t: number, o?: object) => void; velocity?: number } | null>(null);
 
-  const collapse = useCallback(() => {
+  const collapse = useCallback((adjustScroll: "shift" | "snap" | "none") => {
     const container = containerRef.current;
     if (collapsedRef.current || !container) return;
     collapsedRef.current = true;
 
     const rect = container.getBoundingClientRect();
     const removed = rect.height - window.innerHeight;
-    // Passed below the section → shift scroll up by the removed height so
-    // nothing on screen moves. Still inside the pinned view → snap to the
-    // section top: the sticky screen renders identically, so the swap from
-    // "pinned at progress p" to "normal section" is invisible.
-    const target =
-      rect.bottom <= 0
-        ? window.scrollY - removed
-        : rect.top + window.scrollY;
-
     container.style.height = "100vh";
-    window.scrollTo({ top: target, behavior: "instant" as ScrollBehavior });
-    lenisRef.current?.scrollTo(target, { immediate: true, force: true });
+    if (adjustScroll !== "none") {
+      // "shift": section fully above the viewport — keep what's on screen
+      // still by absorbing the removed height. "snap": pinned view — the
+      // sticky screen renders identically at the section top.
+      const target =
+        adjustScroll === "shift" ? window.scrollY - removed : rect.top + window.scrollY;
+      window.scrollTo({ top: target, behavior: "instant" as ScrollBehavior });
+      lenisRef.current?.scrollTo(target, { immediate: true, force: true });
+    }
     wordProgress.set(1);
     setCollapsed(true);
   }, [wordProgress]);
 
-  const updateScrollProgress = useCallback(() => {
+  const updateScrollProgress = useCallback((velocity?: number) => {
     const container = containerRef.current;
     if (!container || collapsedRef.current || typeof window === "undefined") return;
 
@@ -88,28 +88,53 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
 
     if (wordProgress.get() >= SCRUB_DONE) {
       if (rect.bottom <= 0) {
-        // Fully scrolled past: collapse while nothing of it is on screen.
-        collapse();
-      } else if (clamped < previousRaw - 0.001) {
-        // Scrolling back up after the reveal: switch to a normal section
-        // right away instead of replaying the pinned track in reverse.
-        collapse();
+        // Fully scrolled past (section above the viewport): collapse while
+        // nothing of it is on screen.
+        collapse("shift");
+      } else if (rect.top >= window.innerHeight) {
+        // Section entirely below the viewport (exited upwards): collapsing
+        // only moves content that is below the fold — no adjustment needed.
+        collapse("none");
+      } else {
+        // Scrolling back up after the reveal: collapse to a normal section,
+        // but only after 120ms of TRUE stillness — snapping mid-inertia (or
+        // between two wheel notches, where Lenis velocity dips) killed the
+        // momentum and felt like a hitch. At rest the swap is pixel-identical,
+        // so the user never sees it. The raw < 0.84 guard keeps the
+        // end-of-track fade from popping back to full opacity.
+        if (clamped < previousRaw - 0.0005) reverseIntentRef.current = true;
+        if (reverseIntentRef.current && clamped < 0.84) {
+          if (velocity !== undefined && Math.abs(velocity) < 0.05) {
+            const now = performance.now();
+            if (idleSinceRef.current === 0) {
+              idleSinceRef.current = now;
+            } else if (now - idleSinceRef.current > 120) {
+              collapse("snap");
+            }
+            // Lenis stops emitting once settled, which could leave the idle
+            // window unfinished — re-check shortly after the last event.
+            window.setTimeout(() => updateScrollProgress(lenisRef.current?.velocity ?? 0), 150);
+          } else {
+            idleSinceRef.current = 0;
+          }
+        }
       }
     }
   }, [rawProgress, wordProgress, collapse]);
 
   useLenis((lenis) => {
     lenisRef.current = lenis;
-    updateScrollProgress();
+    updateScrollProgress(lenis?.velocity);
   });
 
   useEffect(() => {
-    updateScrollProgress();
-    window.addEventListener("scroll", updateScrollProgress, { passive: true });
-    window.addEventListener("resize", updateScrollProgress, { passive: true });
+    const onScrollOrResize = () => updateScrollProgress();
+    onScrollOrResize();
+    window.addEventListener("scroll", onScrollOrResize, { passive: true });
+    window.addEventListener("resize", onScrollOrResize, { passive: true });
     return () => {
-      window.removeEventListener("scroll", updateScrollProgress);
-      window.removeEventListener("resize", updateScrollProgress);
+      window.removeEventListener("scroll", onScrollOrResize);
+      window.removeEventListener("resize", onScrollOrResize);
     };
   }, [updateScrollProgress]);
 

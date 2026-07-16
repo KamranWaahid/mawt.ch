@@ -244,7 +244,25 @@
         "title": "Team Augmentation",
         "description": "Senior developers, technical leads, and fractional CTOs embedded directly into your teams without junior rotations."
       }
-    ]
+    ],
+    "technologies": {
+      "title": "Technologies",
+      "intro": "The languages, platforms and domains we build with.",
+      "groups": [
+        {
+          "title": "Languages & frameworks",
+          "items": [".NET", "Java", "Python", "PHP", "Golang", "C++", "Node.js", "JavaScript / TypeScript", "React Native"]
+        },
+        {
+          "title": "Data & artificial intelligence",
+          "items": ["Artificial intelligence", "Generative AI", "Machine learning", "Data science", "Big data", "Image analysis"]
+        },
+        {
+          "title": "Platforms & environments",
+          "items": ["Cloud", "SaaS", "Mobile apps", "Internet of Things (IoT)", "Blockchain", "Virtual & augmented reality"]
+        }
+      ]
+    }
   },
   "contact": {
     "badge": "Contact Us",

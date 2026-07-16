@@ -233,6 +233,38 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
           </div>
         </div>
       </section>
+
+      {/* Technologies */}
+      {dict.services.technologies?.groups?.length ? (
+        <section className="py-16 md:py-24 lg:py-32 border-t border-black/5">
+          <div className="site-container-wide">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
+              <div className="lg:col-span-4 lg:col-start-1">
+                <h2 className="text-2xl-fluid font-medium tracking-tight text-black">
+                  {dict.services.technologies.title}
+                </h2>
+                <p className="mt-4 max-w-[38ch] text-sm-fluid font-normal leading-relaxed text-neutral-500">
+                  {dict.services.technologies.intro}
+                </p>
+              </div>
+              <div className="lg:col-span-8 grid gap-10 sm:grid-cols-2 md:grid-cols-3">
+                {dict.services.technologies.groups.map((group: { title: string; items: string[] }) => (
+                  <div key={group.title} className="space-y-5">
+                    <h3 className="text-sm-fluid font-medium text-black/80">{group.title}</h3>
+                    <ul className="space-y-2.5">
+                      {group.items.map((item) => (
+                        <li key={item} className="text-sm-fluid font-normal leading-relaxed text-neutral-500">
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }

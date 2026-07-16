@@ -244,7 +244,25 @@
         "title": "Renfort d'Équipe",
         "description": "Développeurs seniors, tech leads et CTOs fractionnels intégrés directement dans vos équipes, sans rotation."
       }
-    ]
+    ],
+    "technologies": {
+      "title": "Technologies",
+      "intro": "Les langages, plateformes et domaines avec lesquels nous construisons.",
+      "groups": [
+        {
+          "title": "Langages & frameworks",
+          "items": [".NET", "Java", "Python", "PHP", "Golang", "C++", "Node.js", "JavaScript / TypeScript", "React Native"]
+        },
+        {
+          "title": "Données & intelligence artificielle",
+          "items": ["Intelligence artificielle", "IA générative", "Machine learning", "Data science", "Big data", "Analyse d'images"]
+        },
+        {
+          "title": "Plateformes & environnements",
+          "items": ["Cloud", "SaaS", "Applications mobiles", "Internet des objets (IoT)", "Blockchain", "Réalité virtuelle & augmentée"]
+        }
+      ]
+    }
   },
   "contact": {
     "badge": "Contactez-nous",

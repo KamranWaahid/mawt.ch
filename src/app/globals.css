@@ -77,6 +77,10 @@ body {
   /* `clip` (not `hidden`) prevents horizontal overflow WITHOUT turning body
      into a scroll container — which would break `position: sticky` site-wide. */
   overflow-x: clip;
+  /* Lenis + the problem-section track collapse manage scroll compensation
+     themselves. Chrome scroll anchoring compensated the 400vh->100vh collapse
+     A SECOND time, teleporting the page ~6 screens up mid-scroll. */
+  overflow-anchor: none;
 }
 
 .site-container,

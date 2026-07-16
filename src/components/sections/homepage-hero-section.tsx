@@ -448,13 +448,13 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   return (
     <section
       ref={sectionRef}
-      className="home-hero-root relative z-50 h-[400vh] w-full bg-black text-white"
+      className="home-hero-root relative z-50 h-[400dvh] w-full bg-black text-white"
     >
-      <div className="sticky top-0 flex h-[100vh] w-full items-center justify-center overflow-hidden bg-black">
+      <div className="sticky top-0 flex h-[100dvh] w-full items-center justify-center overflow-hidden bg-black">
         <motion.div
           data-homepage-gradient
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[400vh]"
+          className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[400dvh]"
           style={{
             y: transitionGradientY,
             background:

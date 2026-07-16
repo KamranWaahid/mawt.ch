@@ -151,8 +151,11 @@ export function AsciiWave({ src, active, onReady, fit = "contain", focusX = 0.5,
       if (rect.width === 0 || rect.height === 0) return;
 
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const isMobile = rect.width < 768;
 
-      const scaleX = rect.width / VIEWPORT_LOGICAL_WIDTH;
+      // Force a smaller scale on mobile so the wide mathematical masks fit on screen
+      const effectiveLogicalWidth = isMobile ? 850 : VIEWPORT_LOGICAL_WIDTH;
+      const scaleX = rect.width / effectiveLogicalWidth;
       const scaleY = rect.height / VIEWPORT_LOGICAL_HEIGHT;
       const renderScale = Math.min(scaleX, scaleY);
 

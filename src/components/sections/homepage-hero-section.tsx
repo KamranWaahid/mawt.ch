@@ -31,11 +31,11 @@ type HomepageHeroSectionProps = {
 // position steps through its first SCRUB_SECONDS frame by frame (starting at
 // SCRUB_START, when the logo reveal begins); playback only starts once the
 // logo is fully "entered", so the opening of the film is never missed.
-const VIDEO_SCRUB_START = 0.08;
+const VIDEO_SCRUB_START = 0.04;
 // Playback starts the moment the video RECTANGLE is fully uncovered by the
-// zooming logo (~0.21), not when the hole covers the whole screen (0.25) —
+// zooming logo (~0.18), not when the hole covers the whole screen (0.22) —
 // a fully visible but frozen frame reads as a bug.
-const VIDEO_OPEN_PROGRESS = 0.21;
+const VIDEO_OPEN_PROGRESS = 0.18;
 const VIDEO_SCRUB_SECONDS = 3;
 
 const navItems = [
@@ -316,7 +316,9 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   // dive point (inside the letterforms) locked toward screen centre. One set
   // of keyframes for both scroll directions: reversing simply plays the dive
   // backwards (the old direction-switch snapped mid-transition).
-  const heroLogoTransformDesktop = useTransform(smoothProgress, [0, 0.10, 0.15, 0.20, 0.25, 0.50], [
+  // The dive begins at 4% of the track (it used to wait until 10%, which
+  // felt like having to scroll too far before the logo reacted).
+  const heroLogoTransformDesktop = useTransform(smoothProgress, [0, 0.04, 0.10, 0.16, 0.22, 0.50], [
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(47.5vw - 588px), calc(40vh - 159.25px)) scale(12)",
@@ -325,7 +327,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     "translate(calc(47.5vw - 21193px), calc(50vh - 7909px)) scale(700)"
   ]);
 
-  const heroLogoTransformLandscape = useTransform(smoothProgress, [0, 0.10, 0.15, 0.20, 0.25, 0.50], [
+  const heroLogoTransformLandscape = useTransform(smoothProgress, [0, 0.04, 0.10, 0.16, 0.22, 0.50], [
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(50vw - 318px), calc(40vh - 91.75px)) scale(6)",
@@ -334,7 +336,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     "translate(calc(50vw - 21217px), calc(50vh - 7909px)) scale(700)"
   ]);
 
-  const heroLogoTransformPortrait = useTransform(smoothProgress, [0, 0.10, 0.15, 0.20, 0.25, 0.50], [
+  const heroLogoTransformPortrait = useTransform(smoothProgress, [0, 0.04, 0.10, 0.16, 0.22, 0.50], [
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(0vw - 0px), calc(0vh - 0px)) scale(1)",
     "translate(calc(50vw - 191.5px), calc(40vh - 63.675px)) scale(3.5)",
@@ -350,20 +352,20 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   // screen, so the video never ghosts through it at cruising speed. The video
   // itself fades in later (0.13-0.18), once the hole is big enough that its
   // faint pre-glow through the 80% plate reads as intentional.
-  const maskCoverOpacityDown = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
+  const maskCoverOpacityDown = useTransform(smoothProgress, [0.04, 0.10], [1, 0]);
   // The dim starts almost immediately (1.5% of the track) so the very first
   // wheel tick produces visible feedback — the old 5% threshold left a dead
   // zone where scrolling did nothing, which read as input lag.
   const maskLayerOpacityDown = useTransform(
     smoothProgress,
-    [0.015, 0.06, 0.18, 0.23, 0.50, 0.60],
+    [0.015, 0.05, 0.14, 0.19, 0.50, 0.60],
     [0, 0.8, 0.8, 1, 1, 0],
   );
   const heroLogoOpacityDown = useTransform(smoothProgress, [0.50, 0.60], [1, 0]);
-  const videoContainerOpacityDown = useTransform(smoothProgress, [0.13, 0.18, 0.50, 0.60], [0, 1, 1, 0]);
-  // The nav logo takes over as soon as the hero logo mark has faded (0.10-0.15),
+  const videoContainerOpacityDown = useTransform(smoothProgress, [0.08, 0.13, 0.50, 0.60], [0, 1, 1, 0]);
+  // The nav logo takes over as soon as the hero logo mark has faded,
   // so logo + menu frame the video during the cinema-mode phase.
-  const navLogoOpacityDown = useTransform(smoothProgress, [0.16, 0.24], [0, 1]);
+  const navLogoOpacityDown = useTransform(smoothProgress, [0.12, 0.20], [0, 1]);
 
   // One curve per layer for both scroll directions: the old direction switch
   // (logo locked at scale 700 on the way up) snapped hard when the user
@@ -378,7 +380,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   // Depth parallax: while the letterforms blow past the camera, the scene
   // behind grows from 86% to full size — the speed difference between the
   // two planes is what sells "entering" over "approaching".
-  const videoScale = useTransform(smoothProgress, [0.13, 0.26], [0.86, 1]);
+  const videoScale = useTransform(smoothProgress, [0.08, 0.23], [0.86, 1]);
   // Reduced motion no longer hides the ASCII art: the canvas simply stops
   // flickering (AsciiWave's `active` prop), so the wave shows as a still.
   // The field stays behind everything while scrolling and only fades once the
@@ -391,7 +393,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
         ? 0
         : 1 - (scrollProgress - 0.52) / 0.1;
   const asciiLayerVisibility = isAsciiVideoReady && scrollProgress < 0.63 ? "visible" : "hidden";
-  const heroContentOpacity = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
+  const heroContentOpacity = useTransform(smoothProgress, [0.04, 0.10], [1, 0]);
   const scrollIndicatorOpacity = useTransform(smoothProgress, [0.45, 0.50], [1, 0]);
   
   const isHomeNavLight = scrollProgress >= 0.90;
@@ -501,7 +503,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
                   href={`/${lang}`}
                   aria-label="MAWT home"
                   className="block"
-                  style={{ pointerEvents: scrollProgress < 0.05 ? "auto" : "none" }}
+                  style={{ pointerEvents: scrollProgress < 0.03 ? "auto" : "none" }}
                 >
                   <MawatLogo className="h-auto w-full" tone="light" />
                 </a>
@@ -524,7 +526,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
                   href={`/${lang}`}
                   aria-label="MAWT home"
                   className="block"
-                  style={{ pointerEvents: scrollProgress < 0.05 ? "auto" : "none" }}
+                  style={{ pointerEvents: scrollProgress < 0.03 ? "auto" : "none" }}
                 >
                   <MawatLogo className="h-auto w-full" tone="light" />
                 </a>
@@ -547,7 +549,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
                   href={`/${lang}`}
                   aria-label="MAWT home"
                   className="block"
-                  style={{ pointerEvents: scrollProgress < 0.05 ? "auto" : "none" }}
+                  style={{ pointerEvents: scrollProgress < 0.03 ? "auto" : "none" }}
                 >
                   <MawatLogo className="h-auto w-full" tone="light" />
                 </a>

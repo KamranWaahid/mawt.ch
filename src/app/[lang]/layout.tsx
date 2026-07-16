@@ -69,7 +69,13 @@ export default async function LangLayout({
   const data = await getHomePageData(lang);
 
   return (
-    <CurtainTransitionProvider>
+    <CurtainTransitionProvider
+      servicesPreview={{
+        title: dictionary.services.hero.title,
+        crossLabel: dictionary.services.hero.crossLabel,
+        tagline: dictionary.services.hero.tagline,
+      }}
+    >
     <div className="relative bg-white min-h-screen" lang={lang}>
       {/* Global JSON-LD (Organization + LocalBusiness + WebSite) — SSR */}
       <StructuredData

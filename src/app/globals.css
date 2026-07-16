@@ -12,6 +12,7 @@
   --spacing-section: clamp(3rem, 2rem + 6vw, 7.5rem);
   --container-max: 1280px;
   --container-wide: 1280px;
+  --container-xwide: 1600px;
   --page-gutter: 1.5rem;
 
   /* Fluid Typography - Premium System Scale */
@@ -91,6 +92,14 @@ body {
 
 .site-container-wide {
   width: min(100% - calc(var(--page-gutter) * 2), var(--container-wide));
+}
+
+/* Extra-wide container (DHNN-style pages): anchors content further left on
+   large screens — at 2560px the content starts ~480px from the edge instead
+   of ~640px. Below the max it behaves exactly like the other containers. */
+.site-container-xwide {
+  width: min(100% - calc(var(--page-gutter) * 2), var(--container-xwide));
+  margin-inline: auto;
 }
 
 @media (min-width: 640px) {

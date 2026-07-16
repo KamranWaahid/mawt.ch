@@ -28,7 +28,7 @@ import {
   Glasses,
   type LucideIcon,
 } from "lucide-react";
-import { AnimatedTitle } from "@/components/ui/animated-title";
+import { ScrubTitle } from "@/components/ui/scrub-title";
 import { HeaderTheme } from "@/components/ui/header-theme";
 import { STACK_LOGOS } from "@/content/stack-logos";
 
@@ -126,8 +126,8 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
       {/* Hero — giant lowercase wordmark + tagline, with the greyed cross-link
           to the sibling section, mirroring the services/industries pairing. */}
       <section className="pb-[10vh] pt-[24vh]">
-        <div className="site-container-wide">
-          <h1 className="text-[clamp(3.25rem,8vw,7rem)] font-semibold leading-[0.98] tracking-tight text-white">
+        <div className="site-container-xwide">
+          <h1 className="text-[clamp(3rem,5.5vw,5rem)] font-medium leading-[0.98] tracking-tight text-white">
             <span className="block">
               {hero.title}{" "}
               <Link
@@ -145,7 +145,7 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
       {/* Family blocks — two-column masonry: big title, short pitch, one
           hairline row per service, then a pill to the family page. */}
       <section className="pb-[14vh]">
-        <div className="site-container-wide columns-1 gap-x-20 md:columns-2">
+        <div className="site-container-xwide columns-1 gap-x-20 md:columns-2">
           {familyBlocks.map((block) => (
             <div key={block.key} className="mb-24 break-inside-avoid md:mb-28">
               <h2 className="max-w-[14ch] text-[clamp(1.9rem,3.2vw,3rem)] font-semibold leading-[1.05] tracking-tight text-white">
@@ -186,18 +186,16 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
         </div>
       </section>
 
-      {/* Light band — big grey statement + methodology link, then the
-          technologies wall (lead-dev requirement, kept intact). */}
+      {/* Light band — the statement scrubs from grey to black as you scroll
+          (site-wide ScrubWord effect), then a methodology link. */}
       <div className="bg-[#F6F5F4] text-black">
         <section className="py-20 md:py-28 lg:py-36">
-          <div className="site-container-wide">
-            <AnimatedTitle
-              as="h2"
+          <div className="site-container-xwide">
+            <ScrubTitle
               text={lang === "en"
                 ? "We don't just build tools. We build the systems that run your business."
                 : "Nous ne construisons pas seulement des outils. Nous construisons les systèmes qui font tourner votre entreprise."}
-              className="max-w-[24ch] text-[clamp(2rem,4vw,3.6rem)] font-medium leading-[1.12] tracking-tight text-neutral-400"
-              splitBy="word"
+              className="max-w-[24ch] text-[clamp(2rem,4vw,3.6rem)] font-medium leading-[1.12] tracking-tight text-neutral-900"
             />
             <div className="mt-12">
               <Link
@@ -210,23 +208,26 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
             </div>
           </div>
         </section>
+      </div>
 
-        {/* Technologies */}
-        {dict.services.technologies?.groups?.length ? (
-          <section className="border-t border-black/5 py-16 md:py-24 lg:py-28">
-            <div className="site-container-wide">
+      {/* Technologies — back to the dark ground, content inverted
+          (lead-dev requirement, list kept intact). */}
+      {dict.services.technologies?.groups?.length ? (
+        <div className="bg-[#161616] text-white">
+          <section className="py-16 md:py-24 lg:py-28">
+            <div className="site-container-xwide">
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-16">
                 <div className="lg:col-span-4 lg:col-start-1">
-                  <h2 className="text-2xl-fluid font-medium tracking-tight text-black">
+                  <h2 className="text-2xl-fluid font-medium tracking-tight text-white">
                     {dict.services.technologies.title}
                   </h2>
-                  <p className="mt-4 max-w-[38ch] text-sm-fluid font-normal leading-relaxed text-neutral-500">
+                  <p className="mt-4 max-w-[38ch] text-sm-fluid font-normal leading-relaxed text-white/55">
                     {dict.services.technologies.intro}
                   </p>
                 </div>
                 <div className="space-y-14 lg:col-span-8">
                   <div className="space-y-6">
-                    <h3 className="text-sm-fluid font-medium text-black/80">
+                    <h3 className="text-sm-fluid font-medium text-white/80">
                       {dict.services.technologies.groups[0]?.title}
                     </h3>
                     <ul className="grid grid-cols-3 gap-x-6 gap-y-8 sm:grid-cols-4 md:grid-cols-5">
@@ -238,11 +239,11 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
                           <svg
                             viewBox="0 0 24 24"
                             aria-hidden="true"
-                            className="h-8 w-8 fill-neutral-400 opacity-70 transition duration-300 group-hover:fill-black group-hover:opacity-100"
+                            className="h-8 w-8 fill-white/40 opacity-70 transition duration-300 group-hover:fill-white group-hover:opacity-100"
                           >
                             <path d={logo.path} />
                           </svg>
-                          <span className="text-xs font-normal text-neutral-500 transition-colors duration-300 group-hover:text-black">
+                          <span className="text-xs font-normal text-white/50 transition-colors duration-300 group-hover:text-white">
                             {logo.name}
                           </span>
                         </li>
@@ -250,17 +251,17 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
                     </ul>
                   </div>
 
-                  <div className="grid gap-10 border-t border-black/5 pt-12 sm:grid-cols-2">
+                  <div className="grid gap-10 border-t border-white/10 pt-12 sm:grid-cols-2">
                     {dict.services.technologies.groups.slice(1).map((group: { title: string; items: string[] }, gIdx: number) => (
                       <div key={group.title} className="space-y-5">
-                        <h3 className="text-sm-fluid font-medium text-black/80">{group.title}</h3>
+                        <h3 className="text-sm-fluid font-medium text-white/80">{group.title}</h3>
                         <ul className="space-y-3">
                           {group.items.map((item, iIdx) => {
                             const Icon = DOMAIN_ICONS[gIdx]?.[iIdx];
                             return (
-                              <li key={item} className="flex items-center gap-3 text-sm-fluid font-normal leading-relaxed text-neutral-500">
+                              <li key={item} className="flex items-center gap-3 text-sm-fluid font-normal leading-relaxed text-white/55">
                                 {Icon ? (
-                                  <Icon size={15} strokeWidth={1.5} className="shrink-0 text-neutral-400" aria-hidden="true" />
+                                  <Icon size={15} strokeWidth={1.5} className="shrink-0 text-white/40" aria-hidden="true" />
                                 ) : null}
                                 {item}
                               </li>
@@ -274,8 +275,8 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
               </div>
             </div>
           </section>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
     </div>
   );
 }

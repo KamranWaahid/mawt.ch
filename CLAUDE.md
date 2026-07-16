@@ -449,3 +449,7 @@ If the user says “make it like screenshot”:
 * implement the smallest change that matches the intention
 
 Always preserve approved work.
+
+## Skills
+
+* `.claude/skills/seo-geo/` — consolidated SEO + GEO (AI search) skill. Load it for ANY SEO work: audits, meta tags, schema, content optimization, hreflang EN/FR, AI-search citability. The SKILL.md is a router — load only the `references/` file matching the task (schema, technical, content-eeat, international, local-maps, audit-methodology, drift-monitoring...). Never load all references at once.

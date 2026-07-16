@@ -106,7 +106,15 @@ export async function proxy(request: NextRequest) {
     "/favicon.ico",
   ].some((path) => pathname.startsWith(path));
 
-  if (isPublicAsset) {
+  // Any direct file request (image, video, font…) is a public asset: without
+  // this, un-listed files like /about-us-leaf.png were locale-redirected to
+  // /fr/... and the Next image optimizer received HTML instead of the image.
+  const isFileRequest =
+    /\.(png|jpe?g|gif|svg|webp|avif|mp4|webm|ico|txt|xml|json|pdf|woff2?)$/i.test(
+      pathname,
+    );
+
+  if (isPublicAsset || isFileRequest) {
     return NextResponse.next();
   }
 

@@ -162,6 +162,14 @@ const FAMILY_TITLES: Record<string, { fr: string; en: string }> = {
   "conseil-ia": { fr: "Conseil IA", en: "AI Consulting" },
   "formation-ia": { fr: "Formation IA", en: "AI Training" },
   "renfort-equipe": { fr: "Renfort & Équipe", en: "Team Augmentation" },
+  digital: { fr: "Digital", en: "Digital" },
+  "donnees-analytics": { fr: "Données & Analytics", en: "Data & Analytics" },
+  "developpement-logiciel": {
+    fr: "Développement logiciel",
+    en: "Software Development",
+  },
+  securite: { fr: "Sécurité", en: "Security" },
+  "operations-scm": { fr: "Opérations & SCM", en: "Operations & SCM" },
 };
 
 export function getFamilyTitle(family: string, lang: "fr" | "en"): string {
@@ -173,9 +181,14 @@ export function getFamilyTitle(family: string, lang: "fr" | "en"): string {
 export const FAMILY_ORDER = [
   "solutions-ia",
   "conseil-ia",
-  "formation-ia",
+  "digital",
+  "donnees-analytics",
+  "developpement-logiciel",
+  "securite",
+  "operations-scm",
   "sites-et-branding",
   "renfort-equipe",
+  "formation-ia",
 ] as const;
 
 export function familyOrderIndex(family: string): number {

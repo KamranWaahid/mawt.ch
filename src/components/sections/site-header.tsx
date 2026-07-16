@@ -3,12 +3,17 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "motion/react";
 import Image from "next/image";
 import LogoBlack from "../../../public/logo-black.svg";
 import LogoWhite from "../../../public/logo-white.svg";
-import { translatePath } from "@/lib/routing/url-helpers";
+import {
+  translatePath,
+  familySlugForLang,
+  familyOrderIndex,
+  getFamilyTitle,
+} from "@/lib/routing/url-helpers";
 import type { Locale } from "@/lib/routing/url-map";
 
 /**
@@ -22,11 +27,26 @@ function navHref(href: string, lang: Locale): string {
   return translatePath(`/en${normalized}`, "en", lang);
 }
 
+type HeaderService = {
+  _id: string;
+  title?: string;
+  slug?: string;
+  family?: string;
+  tier?: number;
+};
+
+type ServiceMenuGroup = {
+  family: string;
+  title: string;
+  href: string;
+  items: { title: string; href: string }[];
+};
+
 type SiteHeaderProps = {
   title: string;
   theme?: "light" | "dark";
   socialLinks?: { platform: string; url: string }[];
-  services?: unknown[];
+  services?: HeaderService[];
   mainNav?: { label: string; href: string; hasDropdown?: boolean }[];
 };
 
@@ -62,15 +82,47 @@ function navLabel(item: { href: string; label: string }, lang: string): string {
   return NAV_LABELS_FR[item.href] ?? item.label;
 }
 
-export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps) {
+export function SiteHeader({ title, theme: themeProp, services, mainNav }: SiteHeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
   const currentLang = pathname.startsWith("/fr") ? "fr" : "en";
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isServicesOpen, setIsServicesOpen] = useState(false);
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+
+  // Group Sanity services by family (FAMILY_ORDER, then tier) for the mega menu.
+  const serviceGroups: ServiceMenuGroup[] = (() => {
+    const byFamily = new Map<string, ServiceMenuGroup>();
+    const sorted = (services ?? [])
+      .filter((s) => s.family && s.title && s.slug)
+      .slice()
+      .sort(
+        (a, b) =>
+          familyOrderIndex(a.family!) - familyOrderIndex(b.family!) ||
+          (a.tier ?? 50) - (b.tier ?? 50),
+      );
+    for (const s of sorted) {
+      const familySlug = familySlugForLang(s.family!, currentLang as Locale);
+      if (!byFamily.has(s.family!)) {
+        byFamily.set(s.family!, {
+          family: s.family!,
+          title: getFamilyTitle(s.family!, currentLang as Locale),
+          href: `/${currentLang}/services/${familySlug}`,
+          items: [],
+        });
+      }
+      byFamily.get(s.family!)!.items.push({
+        title: s.title!,
+        href: `/${currentLang}/services/${familySlug}/${s.slug}`,
+      });
+    }
+    return Array.from(byFamily.values());
+  })();
+  const hasMegaMenu = serviceGroups.length > 0;
 
   const activeNavItems: NavItem[] = (mainNav && mainNav.length > 0 ? mainNav : navItems).map((item) => ({
     ...item,
-    hasDropdown: false,
+    hasDropdown: hasMegaMenu && item.href === "/services",
   }));
 
   const normalizedPath = pathname.replace(/\/$/, "") || "/";
@@ -90,9 +142,11 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
     };
   }, []);
 
-  const isDark = headerThemeOverride
-    ? headerThemeOverride === "dark"
-    : isMobileMenuOpen || !isHomePage || isPastHero;
+  const isDark = isServicesOpen
+    ? true
+    : headerThemeOverride
+      ? headerThemeOverride === "dark"
+      : isMobileMenuOpen || !isHomePage || isPastHero;
 
   const navTextClass = isDark ? "text-black/72" : "text-white/80";
   const navHoverClass = isDark ? "hover:text-black" : "hover:text-white";
@@ -108,6 +162,8 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
   useEffect(() => {
     if (lastPathnameRef.current !== pathname) {
       setIsMobileMenuOpen(false);
+      setIsServicesOpen(false);
+      setMobileServicesOpen(false);
       lastPathnameRef.current = pathname;
     }
   }, [pathname]);
@@ -205,9 +261,10 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
           hidden: { y: "-100%", opacity: 0 },
         }}
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className={`fixed left-0 right-0 top-0 z-[80] h-[71px] border-b border-transparent px-5 transition-colors duration-300 sm:px-7 md:px-9 lg:px-[2.5vw] ${
-          isPastHero ? "pointer-events-auto bg-transparent" : "pointer-events-none bg-transparent"
-        }`}
+        className={`fixed left-0 right-0 top-0 z-[80] h-[71px] border-b px-5 transition-colors duration-300 sm:px-7 md:px-9 lg:px-[2.5vw] ${
+          isServicesOpen ? "border-black/5 bg-white" : "border-transparent bg-transparent"
+        } ${isPastHero ? "pointer-events-auto" : "pointer-events-none"}`}
+        onMouseLeave={() => setIsServicesOpen(false)}
       >
         <nav
           aria-label="Primary"
@@ -222,9 +279,17 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
                 key={item.href}
                 href={navHref(item.href, currentLang as Locale)}
                 aria-current={pathname === navHref(item.href, currentLang as Locale) ? "page" : undefined}
-                className={`transition-colors ${navHoverClass} ${pathname === navHref(item.href, currentLang as Locale) ? (isDark ? "text-black font-semibold" : "text-white font-semibold") : ""}`}
+                aria-expanded={item.hasDropdown ? isServicesOpen : undefined}
+                onMouseEnter={() => setIsServicesOpen(Boolean(item.hasDropdown))}
+                className={`inline-flex items-center gap-1 transition-colors ${navHoverClass} ${pathname === navHref(item.href, currentLang as Locale) ? (isDark ? "text-black font-semibold" : "text-white font-semibold") : ""}`}
               >
                 {navLabel(item, currentLang)}
+                {item.hasDropdown && (
+                  <ChevronDown
+                    size={13}
+                    className={`transition-transform duration-300 ${isServicesOpen ? "rotate-180 opacity-100" : "opacity-40"}`}
+                  />
+                )}
               </Link>
             ))}
             <span className={navDividerClass}>—</span>
@@ -284,6 +349,46 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
         </div>
       </nav>
 
+      {/* Desktop Mega Menu — Services families and individual offers from Sanity */}
+      <AnimatePresence>
+        {isServicesOpen && hasMegaMenu && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute left-0 right-0 top-full hidden max-h-[calc(100vh-71px)] overflow-y-auto border-b border-black/5 bg-white text-black shadow-[0_24px_48px_-24px_rgba(0,0,0,0.12)] md:block"
+          >
+            <div className="site-container-wide grid grid-cols-3 gap-x-10 gap-y-12 py-12 lg:grid-cols-5">
+              {serviceGroups.map((group) => (
+                <div key={group.family} className="flex flex-col gap-4">
+                  <Link
+                    href={group.href}
+                    onClick={() => setIsServicesOpen(false)}
+                    className="text-[15px] font-medium tracking-tight text-black transition-colors hover:text-[#3fae87]"
+                  >
+                    {group.title}
+                  </Link>
+                  <ul className="flex flex-col gap-2.5">
+                    {group.items.map((item) => (
+                      <li key={item.href}>
+                        <Link
+                          href={item.href}
+                          onClick={() => setIsServicesOpen(false)}
+                          className="block text-[13px] leading-snug text-neutral-500 transition-colors hover:text-black"
+                        >
+                          {item.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMobileMenuOpen && (
@@ -318,13 +423,61 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
                     }}
                     transition={{ duration: 0.4, ease: "easeOut" }}
                   >
-                    <Link
-                      href={navHref(item.href, currentLang as Locale)}
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="text-[clamp(2rem,10vw,3.35rem)] font-normal leading-none tracking-tight text-black"
-                    >
-                      {navLabel(item, currentLang)}
-                    </Link>
+                    {item.hasDropdown ? (
+                      <div className="flex flex-col">
+                        <button
+                          type="button"
+                          onClick={() => setMobileServicesOpen(!mobileServicesOpen)}
+                          aria-expanded={mobileServicesOpen}
+                          className="flex w-full items-center justify-between text-left text-[clamp(2rem,10vw,3.35rem)] font-normal leading-none tracking-tight text-black"
+                        >
+                          {navLabel(item, currentLang)}
+                          <ChevronDown
+                            size={26}
+                            className={`transition-transform duration-300 ${mobileServicesOpen ? "rotate-180" : "opacity-25"}`}
+                          />
+                        </button>
+                        <AnimatePresence>
+                          {mobileServicesOpen && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.3, ease: "easeOut" }}
+                              className="overflow-hidden"
+                            >
+                              <div className="flex flex-col gap-4 border-l border-black/10 py-5 pl-5">
+                                <Link
+                                  href={navHref(item.href, currentLang as Locale)}
+                                  onClick={() => setIsMobileMenuOpen(false)}
+                                  className="text-lg font-normal text-black underline decoration-[#75DAB4] decoration-2 underline-offset-4"
+                                >
+                                  {currentLang === "fr" ? "Tous les services" : "All services"}
+                                </Link>
+                                {serviceGroups.map((group) => (
+                                  <Link
+                                    key={group.family}
+                                    href={group.href}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="text-lg font-normal text-neutral-500 transition-colors hover:text-black"
+                                  >
+                                    {group.title}
+                                  </Link>
+                                ))}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    ) : (
+                      <Link
+                        href={navHref(item.href, currentLang as Locale)}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="text-[clamp(2rem,10vw,3.35rem)] font-normal leading-none tracking-tight text-black"
+                      >
+                        {navLabel(item, currentLang)}
+                      </Link>
+                    )}
                   </motion.div>
                 ))}
               </motion.div>

@@ -150,7 +150,7 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
       <SubpageHero
         eyebrow={dict.services.badge}
         title={dict.services.headline}
-        subtitle={lang === "fr" ? "Cinq piliers d'expertise." : "Five pillars of expertise."}
+        subtitle={lang === "fr" ? "Nos domaines d'expertise." : "Our areas of expertise."}
         compact
       />
       <FlatGrid 

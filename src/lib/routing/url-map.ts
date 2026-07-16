@@ -13,17 +13,6 @@ export const URL_MAP: RouteMapping[] = [
     en: "services",
     children: [
       {
-        fr: "sites-et-branding",
-        en: "sites-and-branding",
-        children: [
-          { fr: "site-internet", en: "website" },
-          { fr: "e-commerce-eshop", en: "e-commerce" },
-          { fr: "branding-identite", en: "branding-identity" },
-          { fr: "audit-ux-seo-performance", en: "ux-seo-performance-audit" },
-          { fr: "refonte-site-web", en: "website-redesign" },
-        ],
-      },
-      {
         fr: "solutions-ia",
         en: "ai-solutions",
         children: [
@@ -31,13 +20,8 @@ export const URL_MAP: RouteMapping[] = [
           { fr: "agent-ia-assistant", en: "ai-agent" },
           { fr: "rag-intelligence-embarquee", en: "rag-enterprise" },
           { fr: "chatbots", en: "chatbots" },
-          {
-            fr: "application-metier-logiciel-sur-mesure",
-            en: "custom-business-application",
-          },
           { fr: "automatisations", en: "ai-automation" },
-          { fr: "integrations-apis", en: "integrations-apis" },
-          { fr: "application-mobile", en: "mobile-app" },
+          { fr: "ia-locale", en: "local-ai" },
           { fr: "portail-client-entreprise", en: "client-business-portal" },
         ],
       },
@@ -51,10 +35,81 @@ export const URL_MAP: RouteMapping[] = [
           { fr: "transformation-numerique", en: "digital-transformation" },
           { fr: "change-management", en: "change-management" },
           { fr: "ai-change-management", en: "ai-change-management" },
+        ],
+      },
+      {
+        fr: "digital",
+        en: "digital",
+        children: [
+          { fr: "conseil-digitalisation", en: "digital-consulting-strategy" },
+          { fr: "e-commerce-eshop", en: "digital-commerce" },
           {
-            fr: "conseil-digitalisation",
-            en: "digital-transformation-consulting",
+            fr: "application-metier-logiciel-sur-mesure",
+            en: "business-applications",
           },
+        ],
+      },
+      {
+        fr: "donnees-analytics",
+        en: "data-analytics",
+        children: [
+          { fr: "modernisation-donnees", en: "data-modernization" },
+          { fr: "donnees-tableaux-de-bord", en: "advanced-analytics" },
+          { fr: "intelligence-connectee", en: "connected-intelligence" },
+          { fr: "gestion-donnees", en: "data-management" },
+          { fr: "ia-generative", en: "generative-ai" },
+        ],
+      },
+      {
+        fr: "developpement-logiciel",
+        en: "software-development",
+        children: [
+          { fr: "mvp-lancement-produit", en: "mvp-development" },
+          { fr: "developpement-ia", en: "ai-development" },
+          { fr: "site-internet", en: "web-development" },
+          { fr: "application-mobile", en: "mobile-development" },
+          { fr: "developpement-desktop", en: "desktop-development" },
+          { fr: "integrations-apis", en: "api-development" },
+          { fr: "developpement-base-de-donnees", en: "database-development" },
+          { fr: "modernisation-logiciel", en: "software-modernization" },
+          { fr: "renfort-equipe-it", en: "it-staff-augmentation" },
+        ],
+      },
+      {
+        fr: "securite",
+        en: "security",
+        children: [
+          { fr: "cybersecurite", en: "cybersecurity" },
+          { fr: "conformite-compliance", en: "compliance-services" },
+          { fr: "tests-securite", en: "security-testing" },
+          { fr: "tests-intrusion-pentest", en: "penetration-testing" },
+          { fr: "services-siem", en: "siem-services" },
+        ],
+      },
+      {
+        fr: "operations-scm",
+        en: "operations-scm",
+        children: [
+          { fr: "erp", en: "erp" },
+          { fr: "gestion-operations", en: "operations-management" },
+          { fr: "gestion-chaine-logistique", en: "supply-chain-management" },
+          { fr: "gestion-entrepot", en: "warehouse-management" },
+          {
+            fr: "gestion-actifs-entreprise",
+            en: "enterprise-asset-management",
+          },
+          { fr: "gestion-fournisseurs", en: "vendor-management" },
+          { fr: "pilotage-projet", en: "project-management" },
+          { fr: "gestion-documentaire-ged", en: "document-management" },
+        ],
+      },
+      {
+        fr: "sites-et-branding",
+        en: "sites-and-branding",
+        children: [
+          { fr: "branding-identite", en: "branding-identity" },
+          { fr: "audit-ux-seo-performance", en: "ux-seo-performance-audit" },
+          { fr: "refonte-site-web", en: "website-redesign" },
         ],
       },
       {
@@ -65,7 +120,6 @@ export const URL_MAP: RouteMapping[] = [
           { fr: "expert-ia-dedie", en: "dedicated-ai-expert" },
           { fr: "designer-ux-dedie", en: "dedicated-ux-designer" },
           { fr: "qa-testing", en: "qa-testing" },
-          { fr: "pilotage-projet", en: "project-management" },
           { fr: "accompagnement-design", en: "design-coaching" },
           { fr: "maintenance-applicative", en: "application-maintenance" },
           { fr: "cto-temps-partiel", en: "fractional-cto" },

@@ -27,6 +27,11 @@ const FAMILY_TAG_MAPPING: Record<string, string[]> = {
   "conseil-ia": ["conseil", "strategie", "audit", "transformation", "change"],
   "renfort-equipe": ["renfort", "developpeur", "fractional", "qa"],
   "formation-ia": ["formation", "chatgpt", "coaching"],
+  digital: ["transformation", "ecommerce", "strategie"],
+  "donnees-analytics": ["ia", "automatisation", "rag"],
+  "developpement-logiciel": ["sites", "mobile", "developpeur", "ia"],
+  securite: ["ia"],
+  "operations-scm": ["automatisation", "crm", "transformation"],
 };
 
 const familyPillarPageQuery = groq`
@@ -389,7 +394,18 @@ export default async function FamilyPillarPage({ params }: Props) {
 }
 
 export async function generateStaticParams() {
-  const families = ["sites-et-branding", "solutions-ia", "conseil-ia", "renfort-equipe", "formation-ia"];
+  const families = [
+    "sites-et-branding",
+    "solutions-ia",
+    "conseil-ia",
+    "renfort-equipe",
+    "formation-ia",
+    "digital",
+    "donnees-analytics",
+    "developpement-logiciel",
+    "securite",
+    "operations-scm",
+  ];
   const params = [];
   for (const lang of ["fr", "en"]) {
     for (const family of families) {

@@ -28,6 +28,11 @@ const FAMILY_TAG_MAPPING: Record<string, string[]> = {
   "conseil-ia": ["conseil", "strategie", "audit", "transformation", "change"],
   "renfort-equipe": ["renfort", "developpeur", "fractional", "qa"],
   "formation-ia": ["formation", "chatgpt", "coaching"],
+  digital: ["transformation", "ecommerce", "strategie"],
+  "donnees-analytics": ["ia", "automatisation", "rag"],
+  "developpement-logiciel": ["sites", "mobile", "developpeur", "ia"],
+  securite: ["ia"],
+  "operations-scm": ["automatisation", "crm", "transformation"],
 };
 
 const serviceDetailPageQuery = groq`
@@ -110,9 +115,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const currentPath = `/${lang}/services/${family}/${service}`;
   const canonical = `https://mawt.ch${currentPath}`;
-  // Strip any trailing "| MAWT" (many Sanity metaTitles carry it): the layout
-  // title template appends the suffix, which rendered "… | MAWT | MAWT".
-  const title = (data.seo?.metaTitle || data.title).replace(/\s*\|\s*MAWT\s*$/i, "");
+  // Many Sanity metaTitles already carry a "| MAWT…" suffix ("| MAWT",
+  // "| MAWT Genève"). The layout title template appends "| MAWT" on top,
+  // which rendered "… | MAWT Genève | MAWT". Strip a bare trailing "| MAWT";
+  // keep richer suffixes ("| MAWT Genève") as authored via an absolute title.
+  const rawTitle = data.seo?.metaTitle || data.title;
+  const hasBrandedSuffix = /\|\s*MAWT\b[^|]*$/i.test(rawTitle);
+  const titleText = rawTitle.replace(/\s*\|\s*MAWT\s*$/i, "").trim();
+  const title = hasBrandedSuffix ? { absolute: rawTitle } : rawTitle;
   const description = data.seo?.metaDescription || data.answerBox || data.description;
 
   // hreflang needs the SIBLING document's localized slug (translatePath cannot
@@ -141,7 +151,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description,
     alternates,
     openGraph: {
-      title,
+      title: titleText,
       description,
       url: canonical,
       locale: lang === "fr" ? "fr_CH" : "en_US",

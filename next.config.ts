@@ -27,12 +27,12 @@ const nextConfig: NextConfig = {
       // Localized shortcut redirects.
       {
         source: "/en/integrations",
-        destination: "/en/services/ai-solutions/integrations-apis",
+        destination: "/en/services/software-development/api-development",
         permanent: true,
       },
       {
         source: "/fr/integrations",
-        destination: "/fr/services/solutions-ia/integrations-apis",
+        destination: "/fr/services/developpement-logiciel/integrations-apis",
         permanent: true,
       },
       // FR pages now use localized slugs. 301 the old English-slug URLs to the

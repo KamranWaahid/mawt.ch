@@ -27,16 +27,26 @@ const COPY = {
     badge: "Genève, Suisse romande",
     title: "IA et transformation digitale à Genève.",
     intro:
-      "MAWT est l'agence IA des entreprises genevoises. Stratégie IA, automatisation, développement sur mesure et renfort d'équipe, livrés par une équipe senior basée à Genève. De la première séance au déploiement, vous parlez à ceux qui construisent.",
+      "MAWT est l’agence IA des entreprises genevoises. Stratégie IA, automatisation, développement sur mesure et renfort d’équipe, livrés par une équipe senior basée à Genève. De la première séance au déploiement, vous parlez à ceux qui construisent.",
     localH2: "Pourquoi MAWT pour une entreprise genevoise",
     local: [
-      { t: "Proximité genevoise", d: "Une équipe sur place, disponible pour des séances en personne à Genève et en Suisse romande. Pas de décalage horaire, pas d'intermédiaire." },
+      { t: "Proximité genevoise", d: "Une équipe sur place, disponible pour des séances en personne à Genève et en Suisse romande. Pas de décalage horaire, pas d’intermédiaire." },
       { t: "Conformité nLPD", d: "Données hébergées en Suisse, conformité nLPD et RGPD pensée dès la conception. Vos informations clients restent sous votre contrôle." },
-      { t: "Secteurs clés du bassin", d: "Nous comprenons les enjeux de la finance et de la banque privée, du négoce, de l'horlogerie et du luxe, de la medtech et des entreprises commerciales en croissance." },
-      { t: "Exécution senior", d: "Un interlocuteur unique, du cadrage à la production. Pas de juniors envoyés en rotation, pas de PowerPoint d'agence. Du concret, livré vite." },
+      { t: "Secteurs clés du bassin", d: "Nous comprenons les enjeux de la finance et de la banque privée, du négoce, de l’horlogerie et du luxe, de la medtech et des entreprises commerciales en croissance." },
+      { t: "Exécution senior", d: "Un interlocuteur unique, du cadrage à la production. Pas de juniors envoyés en rotation, pas de PowerPoint d’agence. Du concret, livré vite." },
     ],
+    expectH2: "Travailler avec une agence IA à Genève : à quoi s’attendre",
+    // Self-contained 134-167 word passage (GEO extraction window): complete
+    // answer, no external context needed.
+    expectBody:
+      "Un projet type démarre par une séance de cadrage, en personne à Genève ou en visioconférence, pour identifier les processus qui coûtent le plus d’heures à vos équipes. Nous livrons ensuite une proposition courte : périmètre, budget et délai — la plupart des automatisations et assistants IA passent en production en quelques semaines, pas en plusieurs mois. Le développement avance par itérations testables : vous voyez le système fonctionner sur vos données réelles avant le déploiement complet. Les données restent hébergées en Suisse, la conformité nLPD est intégrée dès la conception, et une IA locale — sur vos serveurs ou dans un cloud privé suisse — est proposée quand la confidentialité l’exige. Après la mise en production, l’équipe qui a construit votre système en assure le suivi : pas de hotline anonyme, un interlocuteur unique qui connaît votre dossier.",
+    hqH2: "Notre siège à Carouge",
+    hqBody:
+      "MAWT est installée Rue de la Fontenette 23 à Carouge (1227), à quelques minutes du centre de Genève. Nous nous déplaçons chez nos clients dans tout le canton et travaillons à distance avec des entreprises de toute la Suisse romande.",
+    hqAddressLabel: "Adresse",
+    hqContactLabel: "Contact",
     wikiH2: "Le sommaire de nos services",
-    wikiSub: "Un point d'entrée par domaine. Chaque famille regroupe nos services détaillés pour les entreprises de Genève et de Suisse romande.",
+    wikiSub: "Un point d’entrée par domaine. Chaque famille regroupe nos services détaillés pour les entreprises de Genève et de Suisse romande.",
     explore: "Explorer",
     familyBlurb: {
       "sites-et-branding": "E-commerce, branding, audits UX/SEO, référencement IA (GEO) et refontes.",
@@ -45,7 +55,7 @@ const COPY = {
       "renfort-equipe": "Développeurs, CTO, tech leads et experts IA intégrés à votre équipe.",
       "formation-ia": "Formation ChatGPT, ateliers IA par métier et coaching des décideurs.",
       "developpement-logiciel": "Du MVP au système critique : web, mobile, desktop, API, bases de données.",
-      securite: "Cybersécurité, conformité nLPD et tests d'intrusion pour PME.",
+      securite: "Cybersécurité, conformité nLPD et tests d’intrusion pour PME.",
     } as Record<string, string>,
   },
   en: {
@@ -60,6 +70,14 @@ const COPY = {
       { t: "Key local sectors", d: "We understand finance and private banking, commodity trading, watchmaking and luxury, medtech, and growing commercial companies." },
       { t: "Senior execution", d: "One point of contact, from scoping to production. No rotating juniors, no agency slide decks. Concrete work, shipped fast." },
     ],
+    expectH2: "Working with an AI agency in Geneva: what to expect",
+    expectBody:
+      "A typical project starts with a scoping session, in person in Geneva or over video, to identify the processes that cost your teams the most hours. We then deliver a short proposal: scope, budget and timeline — most automations and AI assistants reach production in weeks, not months. Development moves in testable iterations: you see the system running on your real data before full rollout. Data stays hosted in Switzerland, nFADP compliance is designed in from the start, and local AI — on your own servers or in a Swiss private cloud — is proposed whenever confidentiality demands it. After go-live, the team that built your system keeps supporting it: no anonymous hotline, one point of contact who knows your file.",
+    hqH2: "Our Carouge headquarters",
+    hqBody:
+      "MAWT is based at Rue de la Fontenette 23 in Carouge (1227), minutes from central Geneva. We travel to clients across the canton and work remotely with companies throughout French speaking Switzerland.",
+    hqAddressLabel: "Address",
+    hqContactLabel: "Contact",
     wikiH2: "Our services, organized",
     wikiSub: "One entry point per domain. Each family groups our detailed services for businesses in Geneva and French speaking Switzerland.",
     explore: "Explore",
@@ -162,7 +180,46 @@ export default async function GenevaPage({ params }: { params: Promise<{ lang: L
         </div>
       </section>
 
-      {/* 2. Wiki summary: the 5 service families */}
+      {/* 2. What to expect — one self-contained 134-167 word passage (the
+          GEO extraction window) answering the local commercial query end to
+          end: process, timeline, nFADP, Swiss hosting, follow-up. */}
+      <section className="py-16 md:py-24 lg:py-32 border-t border-black/5">
+        <div className="site-container-wide">
+          <h2 className="text-3xl font-normal tracking-tight text-black mb-8">{c.expectH2}</h2>
+          <p className="max-w-3xl text-lg text-neutral-600 font-normal leading-relaxed">
+            {c.expectBody}
+          </p>
+        </div>
+      </section>
+
+      {/* 3. Carouge HQ — visible NAP on the local page itself (engines
+          corroborate the LocalBusiness schema from visible HTML). */}
+      <section className="py-16 md:py-24 lg:py-32 border-t border-black/5">
+        <div className="site-container-wide">
+          <h2 className="text-3xl font-normal tracking-tight text-black mb-8">{c.hqH2}</h2>
+          <div className="grid gap-10 md:grid-cols-[2fr_1fr]">
+            <p className="max-w-3xl text-lg text-neutral-600 font-normal leading-relaxed">
+              {c.hqBody}
+            </p>
+            <address className="not-italic space-y-4 text-[15px] font-normal leading-relaxed">
+              <div>
+                <div className="text-neutral-400">{c.hqAddressLabel}</div>
+                <p className="text-black">MAWT<br />Rue de la Fontenette 23<br />1227 Carouge, {lang === "fr" ? "Genève" : "Geneva"}</p>
+              </div>
+              <div>
+                <div className="text-neutral-400">{c.hqContactLabel}</div>
+                <p>
+                  <a href="tel:+41766363333" className="text-black hover:text-neutral-500 transition-colors">+41 76 636 33 33</a>
+                  <br />
+                  <a href="mailto:info@mawt.ch" className="text-black hover:text-neutral-500 transition-colors">info@mawt.ch</a>
+                </p>
+              </div>
+            </address>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Wiki summary: the service families */}
       <section className="bg-neutral-50 py-16 md:py-24 lg:py-32 border-t border-black/5">
         <div className="site-container-wide">
           <h2 className="text-3xl font-normal tracking-tight text-black">{c.wikiH2}</h2>
@@ -186,7 +243,7 @@ export default async function GenevaPage({ params }: { params: Promise<{ lang: L
         </div>
       </section>
 
-      {/* 3. Conversion */}
+      {/* 5. Conversion */}
       <AiMaturityCta lang={lang} />
     </div>
   );

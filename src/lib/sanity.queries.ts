@@ -443,7 +443,14 @@ export const postBySlugQuery = groq`
   publishedAt,
   excerpt,
   body,
-  seo
+  seo,
+  // Translated twin, resolved in BOTH directions (either side may hold the
+  // translationOf reference). null for genuinely monolingual posts — which
+  // then emit no hreflang at all (correct: no signal beats a false signal).
+  "translation": coalesce(
+    translationOf->{ "slug": slug.current, language },
+    *[_type == "post" && translationOf._ref == ^._id][0]{ "slug": slug.current, language }
+  )
 }
 `;
 

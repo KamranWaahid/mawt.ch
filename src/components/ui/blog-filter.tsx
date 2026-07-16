@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import type { BlogPost } from "@/lib/types";
-import { format } from "date-fns";
 
 interface BlogFilterProps {
   posts: BlogPost[];
@@ -43,12 +42,13 @@ export function BlogFilter({ posts }: BlogFilterProps) {
               key={category}
               onClick={() => setActiveCategory(category)}
               className={`px-6 py-2.5 rounded-full text-[13px] tracking-wide font-medium transition-all duration-300 ${
-                activeCategory === category 
-                  ? "bg-black text-white" 
+                activeCategory === category
+                  ? "bg-black text-white"
                   : "bg-white/55 text-neutral-500 hover:bg-white hover:text-black"
               }`}
             >
-              {category}
+              {/* "All" is the internal filter key — display it localized. */}
+              {category === "All" ? (currentLang === "fr" ? "Tous" : "All") : category}
             </button>
           ))}
         </div>
@@ -59,11 +59,22 @@ export function BlogFilter({ posts }: BlogFilterProps) {
           <motion.div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <AnimatePresence>
               {filteredPosts.map((post, index) => {
-                const category = post.categories?.[0] || "Insight";
-                const title = post.title || "Untitled Post";
-                const date = post.publishedAt ? format(new Date(post.publishedAt), "MMM dd, yyyy") : "Recent";
-                const readTime = "5 min read";
-                const excerpt = post.excerpt || "Field notes on AI in business and automation, from the team that builds the systems.";
+                const isFr = currentLang === "fr";
+                const category = post.categories?.[0] || (isFr ? "Article" : "Insight");
+                const title = post.title || (isFr ? "Article sans titre" : "Untitled Post");
+                // Localized date rendering — the FR listing showed EN dates
+                // ("May 17, 2026") on /fr/blog.
+                const date = post.publishedAt
+                  ? new Date(post.publishedAt).toLocaleDateString(isFr ? "fr-CH" : "en-US", {
+                      day: "numeric",
+                      month: "short",
+                      year: "numeric",
+                    })
+                  : isFr ? "Récent" : "Recent";
+                const readTime = isFr ? "5 min de lecture" : "5 min read";
+                const excerpt = post.excerpt || (isFr
+                  ? "Notes de terrain sur l'IA en entreprise et l'automatisation, par l'équipe qui construit les systèmes."
+                  : "Field notes on AI in business and automation, from the team that builds the systems.");
 
                 return (
                   <motion.article

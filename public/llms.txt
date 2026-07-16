@@ -76,7 +76,7 @@ Page famille : https://mawt.ch/fr/services/formation-ia
 - [Accompagnement adoption IA](https://mawt.ch/fr/services/formation-ia/accompagnement-adoption-ia) — accompagnement complet de l'adoption IA, du diagnostic au suivi long terme.
 
 ## Pages clés
-- [Agence IA à Genève](https://mawt.ch/fr/geneve) — page locale : secteurs servis (finance, négoce, horlogerie, medtech), ancrage Suisse romande.
+- [IA et transformation digitale à Genève](https://mawt.ch/fr/geneve) — page locale : secteurs servis (finance, négoce, horlogerie, medtech), ancrage Suisse romande, siège à Carouge.
 - [Tous les services](https://mawt.ch/fr/services)
 - [À propos](https://mawt.ch/fr/a-propos)
 - [Notre méthode](https://mawt.ch/fr/notre-methode)
@@ -85,7 +85,23 @@ Page famille : https://mawt.ch/fr/services/formation-ia
 - [FAQ](https://mawt.ch/fr/faqs)
 
 ## English
+The full catalog exists in English under https://mawt.ch/en/ — every French page above has an English twin (hreflang-linked, x-default = EN).
+
+Service families:
+- [AI Solutions](https://mawt.ch/en/services/ai-solutions) — smart CRM, AI agents & assistants, enterprise RAG, chatbots, generative AI, AI automation, local AI & custom models, advanced analytics, data modernization.
+- [AI Consulting](https://mawt.ch/en/services/ai-consulting) — AI strategy, operational audits, digital consulting and transformation.
+- [Software Development](https://mawt.ch/en/services/software-development) — web, mobile, desktop, API development, databases, software modernization, IT staff augmentation.
+- [Security](https://mawt.ch/en/services/security) — cybersecurity, compliance services, penetration testing for SMEs.
+- [Sites & Branding](https://mawt.ch/en/services/sites-and-branding) — e-commerce, brand identity, UX/SEO audits, AI search optimization (GEO), website redesign.
+- [Team Augmentation](https://mawt.ch/en/services/team-augmentation) — dedicated developers, dedicated AI experts, fractional CTO.
+- [AI Training](https://mawt.ch/en/services/ai-training) — corporate ChatGPT training, AI workshops per function, leadership coaching.
+
+Key pages:
+- [AI and digital transformation in Geneva](https://mawt.ch/en/geneva) — local page: sectors served (finance, trading, watchmaking, medtech), Carouge headquarters.
 - [All services](https://mawt.ch/en/services)
 - [About](https://mawt.ch/en/about)
+- [Our process](https://mawt.ch/en/our-process)
+- [Case studies](https://mawt.ch/en/work)
 - [Contact](https://mawt.ch/en/contact)
+- [FAQ](https://mawt.ch/en/faqs)
 - [Sitemap](https://mawt.ch/sitemap.xml)

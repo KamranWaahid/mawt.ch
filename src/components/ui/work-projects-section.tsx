@@ -56,7 +56,13 @@ export function WorkProjectsSection({ projects, lang }: WorkProjectsSectionProps
                     activeType === type ? "text-black" : "text-neutral-400 hover:text-black"
                   }`}
                 >
-                  {type}
+                  {/* "All"/"Other" are internal filter keys — display them
+                      localized (they rendered in English on /fr/projets). */}
+                  {type === "All"
+                    ? lang === "fr" ? "Tous" : "All"
+                    : type === "Other"
+                      ? lang === "fr" ? "Autre" : "Other"
+                      : type}
                 </button>
               </span>
             ))}

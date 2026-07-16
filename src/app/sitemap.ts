@@ -153,16 +153,42 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Blog posts ARE language-split (the article route filters by post language):
   // listing every post under both locales produced sitemap 404s. Emit each post
   // only under its own locale, at the localized public path (/fr/blog, /en/news).
-  const posts = await client.fetch<{ slug: string; language?: string; _updatedAt?: string }[]>(
-    groq`*[_type == "post" && !(_id in path("drafts.**")) && defined(slug.current)]{ "slug": slug.current, language, _updatedAt }`,
+  // Translated pairs (translationOf reference, resolved both directions) get
+  // the full fr/en/x-default alternates; monolingual posts emit none.
+  const posts = await client.fetch<
+    {
+      slug: string;
+      language?: string;
+      _updatedAt?: string;
+      twinSlug?: string | null;
+      twinLang?: string | null;
+    }[]
+  >(
+    groq`*[_type == "post" && !(_id in path("drafts.**")) && defined(slug.current)]{
+      "slug": slug.current,
+      language,
+      _updatedAt,
+      "twinSlug": coalesce(translationOf->slug.current, *[_type == "post" && translationOf._ref == ^._id][0].slug.current),
+      "twinLang": coalesce(translationOf->language, *[_type == "post" && translationOf._ref == ^._id][0].language)
+    }`,
   );
   for (const p of posts) {
     const lang: Locale = p.language === "fr" ? "fr" : "en";
+    const url = `${SITE_URL}${localizedHref("blog", lang)}/${p.slug}`;
+    let alternates: { languages: Record<string, string> } | undefined;
+    if (p.twinSlug && p.twinLang && p.twinLang !== p.language) {
+      const twinLang: Locale = p.twinLang === "fr" ? "fr" : "en";
+      const twinUrl = `${SITE_URL}${localizedHref("blog", twinLang)}/${p.twinSlug}`;
+      const frUrl = lang === "fr" ? url : twinUrl;
+      const enUrl = lang === "en" ? url : twinUrl;
+      alternates = { languages: { fr: frUrl, en: enUrl, "x-default": enUrl } };
+    }
     out.push({
-      url: `${SITE_URL}${localizedHref("blog", lang)}/${p.slug}`,
+      url,
       ...(p._updatedAt ? { lastModified: p._updatedAt } : {}),
       changeFrequency: "monthly",
       priority: 0.6,
+      ...(alternates ? { alternates } : {}),
     });
   }
 

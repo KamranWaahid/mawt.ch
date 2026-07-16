@@ -27,15 +27,27 @@ export async function generateMetadata({
     ? urlForImage(post.mainImage)?.width(1200).height(630).url()
     : null;
 
-  // Articles are single-language and reachable under two prefixes
-  // (/fr/blog and /fr/news both resolve): a self-canonical stops the
-  // duplicate-URL indexing.
+  // Posts are reachable under two prefixes (/fr/blog and /fr/news both
+  // resolve): a self-canonical stops the duplicate-URL indexing. When a
+  // translated twin exists (translationOf reference, resolved both ways),
+  // emit the full hreflang set; monolingual posts emit the canonical only.
   const canonical = `https://mawt.ch/${lang}/${lang === "fr" ? "blog" : "news"}/${slug}`;
+  let alternates: Metadata["alternates"] = { canonical };
+  if (post.translation?.slug && post.translation.language && post.translation.language !== lang) {
+    const twinLang = post.translation.language === "fr" ? "fr" : "en";
+    const twinUrl = `https://mawt.ch/${twinLang}/${twinLang === "fr" ? "blog" : "news"}/${post.translation.slug}`;
+    const frUrl = lang === "fr" ? canonical : twinUrl;
+    const enUrl = lang === "en" ? canonical : twinUrl;
+    alternates = {
+      canonical,
+      languages: { fr: frUrl, en: enUrl, "x-default": enUrl },
+    };
+  }
 
   return {
     title: post.title,
     description: post.excerpt || post.title,
-    alternates: { canonical },
+    alternates,
     openGraph: {
       title: post.title,
       description: post.excerpt,

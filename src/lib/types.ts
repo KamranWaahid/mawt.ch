@@ -144,6 +144,8 @@ export type BlogPost = {
   language?: string;
   title: string;
   slug: string;
+  /** Translated twin (resolved both directions via translationOf). */
+  translation?: { slug: string; language: string } | null;
   author?: Author;
   mainImage?: SanityImageSource;
   categories?: string[];

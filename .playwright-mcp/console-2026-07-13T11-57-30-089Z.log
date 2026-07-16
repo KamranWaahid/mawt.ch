@@ -1,3 +1,0 @@
-[       4ms] [WARNING] <link rel=preload> uses an unsupported `as` value @ https://www.ascii-magic.com/:68
-[     125ms] [ERROR] Failed to load resource: net::ERR_CACHE_OPERATION_NOT_SUPPORTED @ https://pub-76499eb758d942ca8ea20206de006180.r2.dev/usecases/Cool%20Videos/ascii-art%20(12).mp4:0
-[    3096ms] [WARNING] <link rel=preload> uses an unsupported `as` value @ https://www.ascii-magic.com/:68

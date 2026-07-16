@@ -43,3 +43,11 @@ next-env.d.ts
 
 # Local audit artifacts
 lighthouse-reports/
+
+# Session artifacts
+.playwright-mcp/
+/hero-light-*.png
+/clients-logos-*.png
+/hero-logos-*.png
+/mega-menu-*.png
+/tech-section-*.png

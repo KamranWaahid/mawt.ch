@@ -42,9 +42,12 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
   // 100vh section: no re-scrolling three screens of already-black text.
   const [collapsed, setCollapsed] = useState(false);
   const collapsedRef = useRef(false);
-  const reverseIntentRef = useRef(false);
-  const idleSinceRef = useRef(0);
-  const lenisRef = useRef<{ scrollTo: (t: number, o?: object) => void; velocity?: number } | null>(null);
+  const lenisRef = useRef<{
+    scrollTo: (t: number, o?: object) => void;
+    scroll?: number;
+    targetScroll?: number;
+    resize?: () => void;
+  } | null>(null);
 
   const collapse = useCallback((adjustScroll: "shift" | "snap" | "none") => {
     const container = containerRef.current;
@@ -60,14 +63,28 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
       // sticky screen renders identically at the section top.
       const target =
         adjustScroll === "shift" ? window.scrollY - removed : rect.top + window.scrollY;
-      window.scrollTo({ top: target, behavior: "instant" as ScrollBehavior });
-      lenisRef.current?.scrollTo(target, { immediate: true, force: true });
+      const lenis = lenisRef.current;
+      if (lenis) {
+        // Never move the native scroll directly: Lenis's onNativeScroll
+        // resyncs to it and derives a huge parasite velocity from the jump.
+        // Snap through Lenis, then re-issue the un-consumed part of the
+        // current gesture (targetScroll - scroll) as an animated target —
+        // dropping it froze the scroll dead mid-flick, which was the hitch.
+        const pending = (lenis.targetScroll ?? 0) - (lenis.scroll ?? 0);
+        lenis.resize?.();
+        lenis.scrollTo(target, { immediate: true, force: true });
+        if (Math.abs(pending) > 1) {
+          lenis.scrollTo(target + pending, { force: true });
+        }
+      } else {
+        window.scrollTo({ top: target, behavior: "instant" as ScrollBehavior });
+      }
     }
     wordProgress.set(1);
     setCollapsed(true);
   }, [wordProgress]);
 
-  const updateScrollProgress = useCallback((velocity?: number) => {
+  const updateScrollProgress = useCallback(() => {
     const container = containerRef.current;
     if (!container || collapsedRef.current || typeof window === "undefined") return;
 
@@ -96,27 +113,12 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
         // only moves content that is below the fold — no adjustment needed.
         collapse("none");
       } else {
-        // Scrolling back up after the reveal: collapse to a normal section,
-        // but only after 120ms of TRUE stillness — snapping mid-inertia (or
-        // between two wheel notches, where Lenis velocity dips) killed the
-        // momentum and felt like a hitch. At rest the swap is pixel-identical,
-        // so the user never sees it. The raw < 0.84 guard keeps the
-        // end-of-track fade from popping back to full opacity.
-        if (clamped < previousRaw - 0.0005) reverseIntentRef.current = true;
-        if (reverseIntentRef.current && clamped < 0.84) {
-          if (velocity !== undefined && Math.abs(velocity) < 0.05) {
-            const now = performance.now();
-            if (idleSinceRef.current === 0) {
-              idleSinceRef.current = now;
-            } else if (now - idleSinceRef.current > 120) {
-              collapse("snap");
-            }
-            // Lenis stops emitting once settled, which could leave the idle
-            // window unfinished — re-check shortly after the last event.
-            window.setTimeout(() => updateScrollProgress(lenisRef.current?.velocity ?? 0), 150);
-          } else {
-            idleSinceRef.current = 0;
-          }
+        // Scrolling back up after the reveal: collapse right away so the
+        // user never re-scrolls the pinned track in reverse. The momentum-
+        // preserving snap in collapse() keeps the gesture fluid, and the
+        // raw < 0.84 guard keeps the end-of-track fade from popping.
+        if (clamped < previousRaw - 0.0005 && clamped < 0.84) {
+          collapse("snap");
         }
       }
     }
@@ -124,7 +126,7 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
 
   useLenis((lenis) => {
     lenisRef.current = lenis;
-    updateScrollProgress(lenis?.velocity);
+    updateScrollProgress();
   });
 
   useEffect(() => {

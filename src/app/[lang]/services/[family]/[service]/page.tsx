@@ -549,14 +549,19 @@ export default async function ServiceDetailPage({ params }: Props) {
                   <p className="text-sm text-neutral-500 leading-relaxed max-w-3xl">
                     {project.excerpt}
                   </p>
-                  <div className="pt-1">
-                    <Link
-                      href={`/${lang}/work/${project.slug}`}
-                      className="inline-flex items-center gap-1.5 text-xs font-normal text-[#75DAB4] hover:text-black transition-colors"
-                    >
-                      {labels.viewCaseStudy} <ArrowRight size={12} />
-                    </Link>
-                  </div>
+                  {/* Case-study pages without visuals aren't linked yet: keep
+                      the project name/excerpt, drop the link until the
+                      project has a cover image. */}
+                  {project.coverImage?.asset && (
+                    <div className="pt-1">
+                      <Link
+                        href={`/${lang}/${lang === "fr" ? "projets" : "work"}/${project.slug}`}
+                        className="inline-flex items-center gap-1.5 text-xs font-normal text-[#75DAB4] hover:text-black transition-colors"
+                      >
+                        {labels.viewCaseStudy} <ArrowRight size={12} />
+                      </Link>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

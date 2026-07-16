@@ -12,7 +12,10 @@ export function VisionSection({ dict, services }: { dict: any; services?: any[] 
   const displayItems = services && services.length > 0 ? services : dict.items;
 
   return (
-    <section className="relative pt-12 md:pt-18 lg:pt-24 pb-4 md:pb-6 lg:pb-8">
+    // Negative top margin: the problem section's statement sits centered in a
+// 100vh screen and fades out over its last 15%, leaving the bottom half
+// empty — this section climbs into that void instead of waiting below it.
+<section className="relative -mt-[12vh] md:-mt-[16vh] pt-4 md:pt-6 lg:pt-8 pb-4 md:pb-6 lg:pb-8">
       <div className="site-container">
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">

@@ -233,7 +233,10 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
     offset: ["start start", "end end"],
   });
   
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 80, damping: 25, restDelta: 0.0001 });
+  // Lenis already smooths the scroll itself, so the spring only needs a light
+  // touch: at 80/25 the two smoothings stacked into a near-second of visible
+  // lag on the first scroll. 120/26 halves the settle time, still overdamped.
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 120, damping: 26, restDelta: 0.0001 });
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     setScrollProgress(latest);
@@ -348,9 +351,12 @@ export function HomepageHeroSection({ settings, dict, transitionDict }: Homepage
   // itself fades in later (0.13-0.18), once the hole is big enough that its
   // faint pre-glow through the 80% plate reads as intentional.
   const maskCoverOpacityDown = useTransform(smoothProgress, [0.10, 0.15], [1, 0]);
+  // The dim starts almost immediately (1.5% of the track) so the very first
+  // wheel tick produces visible feedback — the old 5% threshold left a dead
+  // zone where scrolling did nothing, which read as input lag.
   const maskLayerOpacityDown = useTransform(
     smoothProgress,
-    [0.05, 0.08, 0.18, 0.23, 0.50, 0.60],
+    [0.015, 0.06, 0.18, 0.23, 0.50, 0.60],
     [0, 0.8, 0.8, 1, 1, 0],
   );
   const heroLogoOpacityDown = useTransform(smoothProgress, [0.50, 0.60], [1, 0]);

@@ -41,6 +41,15 @@ const VIDEO_SCRUB_START = 0.04;
 const VIDEO_OPEN_PROGRESS = 0.18;
 const VIDEO_SCRUB_SECONDS = 3;
 
+const HERO_VIDEO_DESKTOP = "/MotionMAWT.mp4";
+const HERO_VIDEO_MOBILE = "/MotionMAWTMobile.mp4";
+
+/** Portrait phones / narrow vertical viewports get the 9:16 mobile cut. */
+function shouldUseMobileHeroVideo() {
+  if (typeof window === "undefined") return false;
+  return window.innerWidth < 768 && window.innerHeight > window.innerWidth;
+}
+
 const navItems = [
   { label: "Work", labelFr: "Projets", route: "projets" },
   { label: "Approach", labelFr: "Approche", route: "notre-methode" },
@@ -240,8 +249,10 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   const [isHeroMobileMenuOpen, setIsHeroMobileMenuOpen] = useState(false);
   const [isAsciiVideoReady, setIsAsciiVideoReady] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [useMobileHeroVideo, setUseMobileHeroVideo] = useState(false);
   const shouldReduceMotion = useReducedMotion();
   useBodyScrollLock(isHeroMobileMenuOpen);
+  const heroVideoSrc = useMobileHeroVideo ? HERO_VIDEO_MOBILE : HERO_VIDEO_DESKTOP;
 
   useEffect(() => {
     if (!isHeroMobileMenuOpen) return;
@@ -363,12 +374,22 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 1024);
+      const nextUseMobile = shouldUseMobileHeroVideo();
+      setUseMobileHeroVideo((prev) => {
+        if (prev !== nextUseMobile) {
+          // Source swap remounts decode state — allow the iOS warm-up again.
+          videoWarmedRef.current = false;
+        }
+        return nextUseMobile;
+      });
     };
     handleResize();
     window.addEventListener("resize", handleResize, { passive: true });
+    window.addEventListener("orientationchange", handleResize, { passive: true });
 
     return () => {
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
     };
   }, []);
 
@@ -519,14 +540,19 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
               scaling the container would shrink the full-screen dim overlay
               and leave undimmed bands at the screen edges. */}
           <motion.video
+            key={heroVideoSrc}
             ref={videoRef}
-            src="/MotionMAWT.mp4"
-            className="home-hero-top-video relative w-[82vw] max-w-[820px] aspect-video object-cover shadow-2xl"
+            src={heroVideoSrc}
+            className={
+              useMobileHeroVideo
+                ? "home-hero-top-video relative h-[72dvh] max-h-[720px] w-auto max-w-[86vw] aspect-[9/16] object-cover shadow-2xl"
+                : "home-hero-top-video relative w-[82vw] max-w-[820px] aspect-video object-cover shadow-2xl"
+            }
             style={{ scale: videoScale }}
             playsInline
             muted
             loop
-            // metadata, not auto: the full file is 11 MB and the video is only
+            // metadata, not auto: the full file is large and the video is only
             // revealed on scroll — an eager download competed with JS/fonts during the
             // LCP phase. Metadata alone (a few KB) is enough for the scroll
             // scrub (readyState >= 1); the browser then streams the segments

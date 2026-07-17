@@ -79,7 +79,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       { family: canonicalFamily, lang }
     );
     if (services?.length) {
-      servicesListString = services.map((s) => s.title).join(", ");
+      servicesListString = services
+        .filter((s): s is { title: string } => Boolean(s?.title))
+        .map((s) => s.title)
+        .join(", ");
     }
   }
 
@@ -143,8 +146,13 @@ export default async function FamilyPillarPage({ params }: Props) {
     { family: canonicalFamily, lang, tags }
   );
 
-  const services = data?.services || [];
-  const projects = data?.projects || [];
+  const services = (data?.services || []).filter(
+    (s: { _id?: string; title?: string; slug?: string } | null) =>
+      Boolean(s?._id && s.title && s.slug),
+  );
+  const projects = (data?.projects || []).filter(
+    (p: { _id?: string; title?: string } | null) => Boolean(p?._id && p.title),
+  );
   const testimonial = data?.testimonial;
   const faqs = data?.faqs || [];
 

@@ -54,6 +54,9 @@ const serviceDetailPageQuery = groq`
     comparisonTable{ title, columns, rows[]{ cells } },
     faq[]{ question, answer },
     cta,
+    // defined(_id) drops nulls from broken/deleted references — without it,
+    // `[!(hidden == true)]` keeps nulls (null.hidden is undefined) and later
+    // `.map(p => p.title)` throws during static generation.
     "featuredProjects": featuredProjects[]->{
       _id,
       title,
@@ -63,15 +66,15 @@ const serviceDetailPageQuery = groq`
       year,
       tags,
       hidden
-    }[!(hidden == true)],
-    relatedServices[]->{
+    }[defined(_id) && !(hidden == true)],
+    "relatedServices": relatedServices[]->{
       _id,
       title,
       "slug": slug.current,
       family,
       description,
       icon
-    },
+    }[defined(_id) && defined(title) && defined(slug)],
     seo
   },
   "siblingServices": *[_type == "service" && family == $family && slug.current != $serviceSlug && language == $lang && displayAsCard == true] | order(tier asc)[0..2]{
@@ -118,6 +121,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // which rendered "… | MAWT Genève | MAWT". Strip a bare trailing "| MAWT";
   // keep richer suffixes ("| MAWT Genève") as authored via an absolute title.
   const rawTitle = data.seo?.metaTitle || data.title;
+  if (!rawTitle) return {};
   const hasBrandedSuffix = /\|\s*MAWT\b[^|]*$/i.test(rawTitle);
   const titleText = rawTitle.replace(/\s*\|\s*MAWT\s*$/i, "").trim();
   const title = hasBrandedSuffix ? { absolute: rawTitle } : rawTitle;
@@ -230,14 +234,24 @@ export default async function ServiceDetailPage({ params }: Props) {
   );
 
   const svc = data?.service;
-  if (!svc) {
+  if (!svc?.title) {
     notFound();
   }
 
-  // Use explicit references if present in Sanity; fallback to automatically filtered sibling services
-  const related = (svc.relatedServices && svc.relatedServices.length > 0)
-    ? svc.relatedServices
-    : (data?.siblingServices || []);
+  // Use explicit references if present in Sanity; fallback to automatically filtered sibling services.
+  // Filter again in JS: GROQ can still surface sparse arrays if a reference is mid-delete.
+  const related = (
+    svc.relatedServices?.length
+      ? svc.relatedServices
+      : data?.siblingServices || []
+  ).filter((item: { _id?: string; title?: string; slug?: string } | null) =>
+    Boolean(item?._id && item.title && item.slug),
+  );
+
+  const featuredProjects = (svc.featuredProjects || []).filter(
+    (project: { _id?: string; title?: string } | null) =>
+      Boolean(project?._id && project.title),
+  );
 
   // Prefer the service's own rich FAQ; fall back to tag matched FAQ docs.
   const faqItems = (svc.faq && svc.faq.length > 0 ? svc.faq : data?.faqs || []) as { question: string; answer: string }[];
@@ -392,7 +406,7 @@ export default async function ServiceDetailPage({ params }: Props) {
               >
                 {labels.ctaPrimary}
               </Link>
-              {svc.featuredProjects && svc.featuredProjects.length > 0 && (
+              {featuredProjects.length > 0 && (
                 <a
                   href="#projects"
                   className="px-6 py-3.5 border border-black/10 hover:border-black text-black transition-all duration-300 text-xs font-normal uppercase tracking-widest text-center rounded-sm"
@@ -545,13 +559,13 @@ export default async function ServiceDetailPage({ params }: Props) {
         )}
 
         {/* Row 8: Featured Projects */}
-        {svc.featuredProjects && svc.featuredProjects.length > 0 && (
+        {featuredProjects.length > 0 && (
           <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
             <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
               {labels.projectsH2}
             </div>
             <div className="md:col-span-9 lg:col-span-8 space-y-8" id="projects">
-              {svc.featuredProjects.map((project: any) => (
+              {featuredProjects.map((project: any) => (
                 <div key={project._id} className="space-y-2 group">
                   <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
                     <h4 className="text-base font-normal text-black group-hover:text-[#75DAB4] transition-colors">
@@ -686,15 +700,23 @@ export async function generateStaticParams() {
 
   const services = await client.fetch<{
     family: string;
-    slug: { current: string };
+    slug: string;
     language: "fr" | "en";
+    title?: string;
   }[]>(
-    groq`*[_type == "service" && defined(slug.current)]{family, slug, language}`
+    groq`*[_type == "service" && defined(slug.current) && defined(family) && defined(language) && defined(title)]{
+      family,
+      "slug": slug.current,
+      language,
+      title
+    }`
   );
 
-  return services.map((svc) => ({
-    lang: svc.language,
-    family: familySlugForLang(svc.family, svc.language),
-    service: svc.slug.current,
-  }));
+  return (services || [])
+    .filter((svc) => svc?.family && svc?.slug && svc?.language && svc?.title)
+    .map((svc) => ({
+      lang: svc.language,
+      family: familySlugForLang(svc.family, svc.language),
+      service: svc.slug,
+    }));
 }

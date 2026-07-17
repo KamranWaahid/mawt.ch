@@ -3,14 +3,22 @@ import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { SectionReveal } from "@/components/ui/section-reveal";
-import { AnimatedTitle } from "@/components/ui/animated-title";
-import { SubpageHero } from "@/components/sections/subpage-hero";
+import { HeaderTheme } from "@/components/ui/header-theme";
+import { SlidePageBody } from "@/components/ui/slide-page-body";
+import { DarkPageIcon } from "@/components/ui/dark-page-icon";
+import { CurtainLink } from "@/components/ui/curtain-link";
 import Link from "next/link";
 import Image from "next/image";
 import { urlForImage } from "@/lib/sanity.image";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Layers } from "lucide-react";
 import * as Icons from "lucide-react";
-import { getFamilyTitle, familySlugForLang, canonicalizeFamilySlug, hreflangAlternates, localizedHref } from "@/lib/routing/url-helpers";
+import {
+  getFamilyTitle,
+  familySlugForLang,
+  canonicalizeFamilySlug,
+  hreflangAlternates,
+  localizedHref,
+} from "@/lib/routing/url-helpers";
 import { PILLAR_COPY, type FamilyKey } from "@/content/services-pillar-copy";
 import { JsonLd, breadcrumbLd, itemListLd, faqPageLd, SITE_URL } from "@/components/seo/structured-data";
 import type { Locale } from "@/lib/routing/url-map";
@@ -76,7 +84,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (client) {
     const services = await client.fetch<{ title: string }[]>(
       groq`*[_type == "service" && family == $family && language == $lang] | order(tier asc){title}`,
-      { family: canonicalFamily, lang }
+      { family: canonicalFamily, lang },
     );
     if (services?.length) {
       servicesListString = services
@@ -88,16 +96,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const descParts = copy.metaDescription.split(". ");
   const descSuffix = descParts.length > 1 ? descParts.slice(1).join(". ") : copy.metaDescription;
-  // With the larger families the joined service list can blow past any sane
-  // meta-description length — fall back to the authored copy in that case.
   const listDescription = `${servicesListString}. ${descSuffix}`;
   const dynamicMetaDescription =
     servicesListString && listDescription.length <= 170
       ? listDescription
       : copy.metaDescription;
 
-  // The pillar copy metaTitles end in "| MAWT" while the layout template
-  // appends the suffix too — mark them absolute to avoid "| MAWT | MAWT".
   const title = /\|\s*MAWT\s*$/i.test(copy.metaTitle)
     ? { absolute: copy.metaTitle }
     : copy.metaTitle;
@@ -141,10 +145,11 @@ export default async function FamilyPillarPage({ params }: Props) {
 
   const tags = FAMILY_TAG_MAPPING[canonicalFamily] || [];
 
-  const data = await client.fetch<any>(
-    familyPillarPageQuery,
-    { family: canonicalFamily, lang, tags }
-  );
+  const data = await client.fetch<any>(familyPillarPageQuery, {
+    family: canonicalFamily,
+    lang,
+    tags,
+  });
 
   const services = (data?.services || []).filter(
     (s: { _id?: string; title?: string; slug?: string } | null) =>
@@ -156,11 +161,11 @@ export default async function FamilyPillarPage({ params }: Props) {
   const testimonial = data?.testimonial;
   const faqs = data?.faqs || [];
 
-  const servicesListString = services.length > 0
-    ? services.map((s: any) => s.title).join(", ")
-    : "";
+  const servicesListString =
+    services.length > 0 ? services.map((s: any) => s.title).join(", ") : "";
   const subheadParts = copy.subhead.split(". ");
-  const subheadSuffix = subheadParts.length > 1 ? subheadParts.slice(1).join(". ") : copy.subhead;
+  const subheadSuffix =
+    subheadParts.length > 1 ? subheadParts.slice(1).join(". ") : copy.subhead;
   const dynamicSubhead = servicesListString
     ? `${servicesListString}. ${subheadSuffix}`
     : copy.subhead;
@@ -168,28 +173,29 @@ export default async function FamilyPillarPage({ params }: Props) {
   const labels = {
     fr: {
       breadServices: "Services",
-      methodH2: "Notre Méthode",
-      methodPitch: "Nous croyons en un process transparent et structuré : Audit, Construction, Déploiement et Optimisation continue.",
-      methodCta: "Explorer notre méthodologie",
+      whyH2: "Pourquoi collaborer avec nous ?",
+      explore: "Explorer",
       viewCaseStudy: "Voir l'étude de cas",
+      proofLabel: "Preuve",
     },
     en: {
       breadServices: "Services",
-      methodH2: "Our Process",
-      methodPitch: "We believe in a transparent and structured lifecycle : Audit, Build, Deploy, and Continuous Optimization.",
-      methodCta: "Explore our methodology",
+      whyH2: "Why partner with us?",
+      explore: "Explore",
       viewCaseStudy: "View Case Study",
+      proofLabel: "Proof",
     },
   }[lang as "fr" | "en"] || {
     breadServices: "Services",
-    methodH2: "Our Process",
-    methodPitch: "We believe in a transparent and structured lifecycle : Audit, Build, Deploy, and Continuous Optimization.",
-    methodCta: "Explore our methodology",
+    whyH2: "Why partner with us?",
+    explore: "Explore",
     viewCaseStudy: "View Case Study",
+    proofLabel: "Proof",
   };
 
   const familyTitle = getFamilyTitle(canonicalFamily, lang as Locale);
   const familyUrl = `${SITE_URL}/${lang}/services/${family}`;
+  const contactHref = localizedHref("contact", lang as Locale);
   const crumbLd = breadcrumbLd([
     { name: "MAWT", url: `${SITE_URL}/${lang}` },
     { name: labels.breadServices, url: `${SITE_URL}${localizedHref("services", lang as Locale)}` },
@@ -208,214 +214,231 @@ export default async function FamilyPillarPage({ params }: Props) {
   );
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#161616] text-white">
+      <HeaderTheme theme="light" />
       <JsonLd data={faqLd ? [crumbLd, serviceItemsLd, faqLd] : [crumbLd, serviceItemsLd]} />
+
       <Breadcrumb
         items={[
           { label: labels.breadServices, to: "services" },
-          { label: getFamilyTitle(canonicalFamily, lang as Locale), to: null },
+          { label: familyTitle, to: null },
         ]}
         lang={lang as Locale}
+        tone="dark"
       />
 
-      {/* Hero Section — uses shared InternalPageHero design */}
-      <SubpageHero
-        eyebrow={getFamilyTitle(canonicalFamily, lang as Locale)}
-        title={copy.h1}
-        description={dynamicSubhead}
-        cta={{ label: copy.ctaPrimary, href: `/${lang}/${copy.ctaPrimaryHref}` }}
-        compact
-        flushTop
-        noGradient
-      />
-
-      {/* Intro Narrative */}
-      <section className="py-16 md:py-24 lg:py-32 border-b border-black/5">
-        <div className="site-container-wide grid lg:grid-cols-12 gap-12 lg:gap-16">
-          <div className="lg:col-span-5">
-            <AnimatedTitle
-              as="h2"
-              text={lang === "fr" ? "Pourquoi collaborer avec nous ?" : "Why partner with us?"}
-              className="text-2xl-fluid font-medium tracking-tight text-black"
-              splitBy="word"
-            />
+      <section className="pb-[8vh] pt-8 md:pt-10">
+        <div className="site-container-xwide">
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-16">
+            <div className="lg:col-span-8">
+              <p className="mb-5 text-[13px] font-normal text-white/40">{familyTitle}</p>
+              <h1 className="max-w-[14ch] text-[clamp(2.8rem,5.2vw,4.8rem)] font-medium leading-[0.98] tracking-tight text-white">
+                {copy.h1}
+              </h1>
+            </div>
+            <div className="lg:col-span-4">
+              <p className="max-w-[36ch] text-[15px] font-normal leading-relaxed text-white/55 md:text-[16px]">
+                {dynamicSubhead}
+              </p>
+              <CurtainLink
+                href={contactHref}
+                className="mt-8 inline-flex items-center gap-3 rounded-full bg-white/[0.08] py-[13px] pl-6 pr-4 text-[13px] font-normal text-white/85 transition-colors hover:bg-white/[0.16] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
+              >
+                {copy.ctaPrimary}
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10">
+                  <ArrowRight size={13} aria-hidden="true" />
+                </span>
+              </CurtainLink>
+            </div>
           </div>
-          <div className="lg:col-span-7 space-y-6">
-            <div className="space-y-6 text-base-fluid text-neutral-500 leading-relaxed font-normal max-w-[55ch]">
+        </div>
+      </section>
+
+      <SlidePageBody>
+        <section className="border-t border-white/10 py-16 md:py-24 lg:py-28">
+          <div className="site-container-xwide grid gap-10 lg:grid-cols-12 lg:gap-16">
+            <SectionReveal className="lg:col-span-4">
+              <h2 className="max-w-[14ch] text-[clamp(1.6rem,2.8vw,2.2rem)] font-medium leading-tight tracking-tight text-white">
+                {labels.whyH2}
+              </h2>
+            </SectionReveal>
+            <SectionReveal className="space-y-5 lg:col-span-7 lg:col-start-6" delay={0.04}>
               {copy.introParagraphs.map((p: string, idx: number) => (
-                <p key={idx}>{p}</p>
+                <p
+                  key={idx}
+                  className="max-w-[52ch] text-[15px] font-normal leading-relaxed text-white/55 md:text-[16px]"
+                >
+                  {p}
+                </p>
               ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Services Cards Grid */}
-      <section className="bg-neutral-50/20 py-16 md:py-24 lg:py-32 border-b border-black/5">
-        <div className="site-container-wide">
-          <div className="mb-16">
-            <AnimatedTitle
-              as="h2"
-              text={copy.servicesH2}
-              className="text-3xl-fluid font-medium tracking-tighter text-black"
-              splitBy="word"
-            />
-            {copy.socialProof && (
-              <p className="text-sm-fluid text-neutral-500 font-normal mt-3 max-w-[55ch] leading-relaxed">
-                {copy.socialProof}
-              </p>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((item: any, i: number) => {
-              const ItemIcon = (Icons as any)[item.icon || "Layers"] || Icons.Layers;
-              const localizedFamily = familySlugForLang(item.family, lang as Locale);
-              return (
-                <SectionReveal key={item._id} delay={i * 0.08} className="border border-black/5 hover:border-black/20 p-8 rounded-sm transition-all duration-300 flex flex-col justify-between">
-                  <div className="space-y-6">
-                    <div className="text-[#75DAB4]">
-                      <ItemIcon size={32} strokeWidth={1.5} />
-                    </div>
-                    <div className="space-y-3">
-                      <h3 className="text-lg-fluid font-medium tracking-tight text-black">{item.title}</h3>
-                      <p className="text-sm-fluid text-neutral-500 leading-relaxed font-normal">{item.description}</p>
-                    </div>
-                  </div>
-                  <div className="pt-8">
-                    <Link
-                      href={`/${lang}/services/${localizedFamily}/${item.slug}`}
-                      className="text-xs font-normal uppercase tracking-widest text-[#75DAB4] hover:text-black transition-colors flex items-center gap-1.5"
-                    >
-                      {lang === "fr" ? "Explorer →" : "Explore →"}
-                    </Link>
-                  </div>
-                </SectionReveal>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Case Studies Section */}
-      {projects.length > 0 && (
-        <section className="py-16 md:py-24 lg:py-32 border-b border-black/5">
-          <div className="site-container-wide">
-            <div className="mb-16">
-              <span className="text-xs-fluid font-medium text-neutral-400 uppercase tracking-label mb-4 block">
-                Proof of Excellence
-              </span>
-              <AnimatedTitle
-                as="h2"
-                text={copy.projectsH2}
-                className="text-3xl-fluid font-medium tracking-tighter text-black"
-                splitBy="word"
-              />
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              {projects.map((project: any, i: number) => {
-                const coverImage = project.coverImage
-                  ? urlForImage(project.coverImage)?.width(1000).url()
-                  : null;
-
-                return (
-                <SectionReveal key={project._id} delay={i * 0.1} className="group bg-white overflow-hidden border border-black/5 rounded-sm flex flex-col justify-between">
-                  <div>
-                    <div className="relative aspect-[16/10] bg-neutral-100 overflow-hidden">
-                      {coverImage ? (
-                        <Image
-                          src={coverImage}
-                          alt={project.title}
-                          fill
-                          className="object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                      ) : null}
-                    </div>
-                    <div className="p-8 space-y-4">
-                      <span className="text-xs-fluid uppercase tracking-label text-neutral-400 font-medium block">
-                        {project.tags?.[0] || "Case Study"}
-                      </span>
-                      <h3 className="text-xl-fluid font-medium tracking-tight text-black">
-                        {project.title}
-                      </h3>
-                      <p className="text-sm-fluid text-neutral-500 font-normal leading-relaxed max-w-[40ch]">
-                        {project.excerpt}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="px-8 pb-8 pt-4">
-                    <Link
-                      href={`/${lang}/${lang === "fr" ? "projets" : "work"}/${project.slug}`}
-                      className="inline-flex items-center gap-2 text-sm font-normal text-black border-b border-black pb-1 hover:opacity-60 transition-opacity"
-                    >
-                      {labels.viewCaseStudy} <ArrowRight size={14} />
-                    </Link>
-                  </div>
-                </SectionReveal>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Testimonial Quote */}
-      {testimonial && (
-        <section className="bg-black text-white py-16 md:py-24 lg:py-32 border-b border-white/5">
-          <div className="max-w-[1000px] mx-auto text-center space-y-8">
-            <SectionReveal>
-              <p className="text-3xl-fluid font-serif font-normal italic tracking-tight leading-relaxed text-neutral-300">
-                &ldquo;{testimonial.quote}&rdquo;
-              </p>
-              <div className="pt-6">
-                <p className="text-xs-fluid font-medium tracking-label text-[#75DAB4] uppercase">{testimonial.name}</p>
-                {testimonial.role && <p className="text-xs-fluid text-neutral-400 font-normal mt-1">{testimonial.role}</p>}
-              </div>
             </SectionReveal>
           </div>
         </section>
-      )}
 
-      {/* FAQ Section */}
-      {faqs.length > 0 && (
-        <section className="bg-neutral-50/20 py-16 md:py-24 lg:py-32 border-b border-black/5">
-          <div className="site-container-wide">
-            <div className="text-center mb-10 md:mb-14">
-              <AnimatedTitle
-                as="h2"
-                text={copy.faqH2}
-                className="text-3xl-fluid font-medium tracking-tighter text-black"
-                splitBy="word"
-              />
-            </div>
-            <FAQAccordion items={faqs} noWrapper={true} />
+        <section className="border-y border-white/10 bg-[#1d1d1d] py-16 md:py-24 lg:py-28">
+          <div className="site-container-xwide">
+            <SectionReveal className="mb-12 max-w-[48ch]">
+              <h2 className="text-[clamp(1.8rem,3.2vw,2.8rem)] font-medium leading-tight tracking-tight text-white">
+                {copy.servicesH2}
+              </h2>
+              {copy.socialProof && (
+                <p className="mt-4 text-[14px] font-normal leading-relaxed text-white/45">
+                  {copy.socialProof}
+                </p>
+              )}
+            </SectionReveal>
+
+            <ul className="divide-y divide-white/10 border-y border-white/10">
+              {services.map((item: any) => {
+                const ItemIcon = (Icons as any)[item.icon || "Layers"] || Layers;
+                const localizedFamily = familySlugForLang(item.family, lang as Locale);
+                return (
+                  <li key={item._id}>
+                    <Link
+                      href={`/${lang}/services/${localizedFamily}/${item.slug}`}
+                      className="group grid gap-4 py-7 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 md:grid-cols-[auto_1fr_auto] md:items-center md:gap-8"
+                    >
+                      <DarkPageIcon icon={ItemIcon} />
+                      <div className="min-w-0">
+                        <h3 className="text-[17px] font-medium tracking-tight text-white/90 transition-colors group-hover:text-white">
+                          {item.title}
+                        </h3>
+                        {item.description && (
+                          <p className="mt-1.5 max-w-[52ch] text-[14px] font-normal leading-relaxed text-white/45">
+                            {item.description}
+                          </p>
+                        )}
+                      </div>
+                      <span className="inline-flex items-center gap-1.5 text-[12px] font-normal text-white/35 transition-colors group-hover:text-white/70">
+                        {labels.explore}
+                        <ArrowUpRight size={13} aria-hidden="true" />
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         </section>
-      )}
 
-      {/* Bottom CTA */}
-      <section className="bg-black text-white py-20 md:py-28 lg:py-36 text-center">
-        <div className="max-w-3xl mx-auto space-y-8">
-          <AnimatedTitle
-            as="h2"
-            text={copy.bottomCtaH2}
-            className="text-4xl-fluid font-medium tracking-tighter text-white max-w-3xl mx-auto"
-            splitBy="word"
-          />
-          <p className="text-base-fluid text-neutral-400 leading-relaxed font-normal max-w-[55ch] mx-auto">
-            {copy.bottomCtaPitch}
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-4">
-            <Link
-              href={`/${lang}/contact`}
-              className="px-8 py-4 bg-[#75DAB4] text-black hover:bg-white transition-colors duration-300 text-sm font-normal uppercase tracking-widest rounded-sm w-full sm:w-auto text-center"
-            >
-              {copy.bottomCtaLabel}
-            </Link>
+        {projects.length > 0 && (
+          <section className="py-16 md:py-24 lg:py-28">
+            <div className="site-container-xwide">
+              <SectionReveal className="mb-12">
+                <p className="mb-4 text-[13px] font-normal text-white/40">
+                  {labels.proofLabel}
+                </p>
+                <h2 className="max-w-[18ch] text-[clamp(1.8rem,3.2vw,2.8rem)] font-medium leading-tight tracking-tight text-white">
+                  {copy.projectsH2}
+                </h2>
+              </SectionReveal>
+
+              <div className="grid gap-8 md:grid-cols-2">
+                {projects.map((project: any, i: number) => {
+                  const coverImage = project.coverImage
+                    ? urlForImage(project.coverImage)?.width(1000).url()
+                    : null;
+
+                  return (
+                    <SectionReveal
+                      key={project._id}
+                      delay={i * 0.06}
+                      className="group border border-white/10 bg-white/[0.02] transition-colors hover:border-white/25"
+                    >
+                      <div className="relative aspect-[16/10] overflow-hidden border-b border-white/10 bg-white/[0.03]">
+                        {coverImage ? (
+                          <Image
+                            src={coverImage}
+                            alt={project.title}
+                            fill
+                            className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                          />
+                        ) : null}
+                      </div>
+                      <div className="space-y-3 p-7">
+                        <p className="text-[12px] font-normal tracking-wide text-white/35">
+                          {project.tags?.[0] || (lang === "fr" ? "Étude de cas" : "Case study")}
+                          {project.year ? ` · ${project.year}` : ""}
+                        </p>
+                        <h3 className="text-[18px] font-medium tracking-tight text-white">
+                          {project.title}
+                        </h3>
+                        {project.excerpt && (
+                          <p className="max-w-[40ch] text-[14px] font-normal leading-relaxed text-white/45">
+                            {project.excerpt}
+                          </p>
+                        )}
+                        <Link
+                          href={`/${lang}/${lang === "fr" ? "projets" : "work"}/${project.slug}`}
+                          className="inline-flex items-center gap-2 pt-2 text-[13px] font-normal text-white/60 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
+                        >
+                          {labels.viewCaseStudy}
+                          <ArrowRight size={13} aria-hidden="true" />
+                        </Link>
+                      </div>
+                    </SectionReveal>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {testimonial && (
+          <section className="border-y border-white/10 bg-[#1d1d1d] py-20 md:py-28">
+            <div className="site-container-xwide">
+              <SectionReveal className="mx-auto max-w-[820px]">
+                <p className="text-[clamp(1.5rem,3vw,2.4rem)] font-medium leading-[1.25] tracking-tight text-white/85">
+                  &ldquo;{testimonial.quote}&rdquo;
+                </p>
+                <div className="mt-8 border-t border-white/10 pt-6">
+                  <p className="text-[13px] font-normal text-white/70">{testimonial.name}</p>
+                  {testimonial.role && (
+                    <p className="mt-1 text-[12px] font-normal text-white/35">
+                      {testimonial.role}
+                    </p>
+                  )}
+                </div>
+              </SectionReveal>
+            </div>
+          </section>
+        )}
+
+        {faqs.length > 0 && (
+          <section className="py-16 md:py-24 lg:py-28">
+            <div className="site-container-xwide">
+              <SectionReveal className="mb-10 md:mb-14">
+                <h2 className="max-w-[18ch] text-[clamp(1.8rem,3.2vw,2.8rem)] font-medium leading-tight tracking-tight text-white">
+                  {copy.faqH2}
+                </h2>
+              </SectionReveal>
+              <FAQAccordion items={faqs} noWrapper tone="dark" />
+            </div>
+          </section>
+        )}
+
+        <section className="border-t border-white/10 py-20 md:py-28 lg:py-36">
+          <div className="site-container-xwide">
+            <SectionReveal>
+              <h2 className="max-w-[14ch] text-[clamp(2.2rem,4.6vw,4rem)] font-medium leading-[1.05] tracking-tight text-white">
+                {copy.bottomCtaH2}
+              </h2>
+              <p className="mt-6 max-w-[48ch] text-[15px] font-normal leading-relaxed text-white/55">
+                {copy.bottomCtaPitch}
+              </p>
+              <CurtainLink
+                href={contactHref}
+                className="mt-10 inline-flex items-center gap-3 rounded-full bg-white/[0.08] py-[13px] pl-6 pr-4 text-[13px] font-normal text-white/85 transition-colors hover:bg-white/[0.16] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
+              >
+                {copy.bottomCtaLabel}
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10">
+                  <ArrowRight size={13} aria-hidden="true" />
+                </span>
+              </CurtainLink>
+            </SectionReveal>
           </div>
-        </div>
-      </section>
+        </section>
+      </SlidePageBody>
     </div>
   );
 }

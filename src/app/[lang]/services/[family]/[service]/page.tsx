@@ -1,14 +1,17 @@
+import type { ReactNode } from "react";
 import { getSanityClient } from "@/lib/sanity.client";
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { SectionReveal } from "@/components/ui/section-reveal";
-import { SubpageHero } from "@/components/sections/subpage-hero";
-import { AnimatedTitle } from "@/components/ui/animated-title";
+import { HeaderTheme } from "@/components/ui/header-theme";
+import { SlidePageBody } from "@/components/ui/slide-page-body";
+import { DarkPageIcon } from "@/components/ui/dark-page-icon";
+import { CurtainLink } from "@/components/ui/curtain-link";
 import { PortableText } from "@portabletext/react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Layers, type LucideIcon } from "lucide-react";
 import * as Icons from "lucide-react";
-import { getFamilyTitle, familySlugForLang, canonicalizeFamilySlug } from "@/lib/routing/url-helpers";
+import { getFamilyTitle, familySlugForLang, canonicalizeFamilySlug, localizedHref } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/lib/routing/url-map";
 import { areaServed } from "@/components/seo/structured-data";
 import { groq } from "next-sanity";
@@ -169,43 +172,60 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const components = {
   block: {
-    // Authored "h1" blocks render as <h2>: the page owns a single H1 (hero),
-    // so body content starts at H2 for a strict, parser-friendly hierarchy.
-    h1: ({ children }: any) => <h2 className="text-xl font-normal text-black mt-8 mb-4">{children}</h2>,
-    h2: ({ children }: any) => <h2 className="text-xl font-normal text-black mt-8 mb-4">{children}</h2>,
-    h3: ({ children }: any) => <h3 className="text-lg font-normal text-black mt-6 mb-3">{children}</h3>,
-    h4: ({ children }: any) => <h4 className="text-base font-normal text-black mt-4 mb-2">{children}</h4>,
-    normal: ({ children }: any) => <p className="text-base text-neutral-600 font-normal leading-relaxed mb-4">{children}</p>,
+    // Authored "h1" blocks render as <h2>: the page owns a single H1 (hero).
+    h1: ({ children }: any) => (
+      <h2 className="mt-8 mb-4 text-xl font-medium tracking-tight text-white">{children}</h2>
+    ),
+    h2: ({ children }: any) => (
+      <h2 className="mt-8 mb-4 text-xl font-medium tracking-tight text-white">{children}</h2>
+    ),
+    h3: ({ children }: any) => (
+      <h3 className="mt-6 mb-3 text-lg font-medium tracking-tight text-white">{children}</h3>
+    ),
+    h4: ({ children }: any) => (
+      <h4 className="mt-4 mb-2 text-base font-medium tracking-tight text-white/90">{children}</h4>
+    ),
+    normal: ({ children }: any) => (
+      <p className="mb-4 text-base font-normal leading-relaxed text-white/55">{children}</p>
+    ),
     blockquote: ({ children }: any) => (
-      <blockquote className="border-l-2 border-[#75DAB4] pl-5 py-1 italic text-neutral-500 my-6">
+      <blockquote className="my-6 border-l border-[#75DAB4]/70 pl-5 py-1 text-white/50">
         {children}
       </blockquote>
     ),
   },
   list: {
-    bullet: ({ children }: any) => <ul className="list-disc pl-5 mb-4 text-neutral-600 space-y-1.5 text-base">{children}</ul>,
-    number: ({ children }: any) => <ol className="list-decimal pl-5 mb-4 text-neutral-600 space-y-1.5 text-base">{children}</ol>,
+    bullet: ({ children }: any) => (
+      <ul className="mb-4 list-disc space-y-1.5 pl-5 text-base text-white/55">{children}</ul>
+    ),
+    number: ({ children }: any) => (
+      <ol className="mb-4 list-decimal space-y-1.5 pl-5 text-base text-white/55">{children}</ol>
+    ),
   },
   listItem: {
-    bullet: ({ children }: any) => <li className="text-neutral-600">{children}</li>,
-    number: ({ children }: any) => <li className="text-neutral-600">{children}</li>,
+    bullet: ({ children }: any) => <li className="text-white/55">{children}</li>,
+    number: ({ children }: any) => <li className="text-white/55">{children}</li>,
   },
   marks: {
-    // Flat semantic emphasis (GEO): keeps the <strong> signal at weight 400.
-    strong: ({ children }: any) => <strong className="font-normal text-black">{children}</strong>,
-    em: ({ children }: any) => <em className="not-italic text-black">{children}</em>,
-    highlight: ({ children }: any) => <mark>{children}</mark>,
+    strong: ({ children }: any) => <strong className="font-normal text-white">{children}</strong>,
+    em: ({ children }: any) => <em className="not-italic text-white/80">{children}</em>,
+    highlight: ({ children }: any) => <mark className="bg-[#75DAB4]/20 text-white">{children}</mark>,
     link: ({ children, value }: any) => {
       const href = value?.href || "#";
       if (href.startsWith("/")) {
         return (
-          <Link href={href} className="text-[#75DAB4] underline hover:text-black transition-colors">
+          <Link href={href} className="text-[#75DAB4] underline transition-colors hover:text-white">
             {children}
           </Link>
         );
       }
       return (
-        <a href={href} target="_blank" rel="noopener noreferrer" className="text-[#75DAB4] underline hover:text-black transition-colors">
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[#75DAB4] underline transition-colors hover:text-white"
+        >
           {children}
         </a>
       );
@@ -296,8 +316,9 @@ export default async function ServiceDetailPage({ params }: Props) {
         }
       : null;
 
-  // Dynamically resolve icon
-  const IconComponent = (Icons as any)[svc.icon || "Layers"] || Icons.Layers;
+  const IconComponent = ((Icons as unknown as Record<string, LucideIcon>)[svc.icon || "Layers"] || Layers);
+  const familyTitle = getFamilyTitle(canonicalFamily, lang as Locale);
+  const contactHref = localizedHref("contact", lang as Locale);
 
   const labels = {
     fr: {
@@ -310,6 +331,14 @@ export default async function ServiceDetailPage({ params }: Props) {
       faqH2: "Questions fréquentes",
       bottomCtaH2: `Discutons de votre besoin sur ${svc.title}`,
       viewCaseStudy: "Voir l'étude de cas",
+      overview: "Aperçu",
+      target: "Pour qui",
+      details: "Détails",
+      deliverables: "Livrables",
+      comparison: "Comparatif",
+      takeaways: "À retenir",
+      nextSteps: "Contact",
+      startProject: "Démarrer un projet",
     },
     en: {
       breadServices: "Services",
@@ -321,6 +350,14 @@ export default async function ServiceDetailPage({ params }: Props) {
       faqH2: "Frequent questions",
       bottomCtaH2: `Let's talk about your ${svc.title} need`,
       viewCaseStudy: "View Case Study",
+      overview: "Overview",
+      target: "Target",
+      details: "Details",
+      deliverables: "Deliverables",
+      comparison: "Comparison",
+      takeaways: "Takeaways",
+      nextSteps: "Next steps",
+      startProject: "Start a Conversation",
     },
   }[lang as "fr" | "en"] || {
     breadServices: "Services",
@@ -332,364 +369,345 @@ export default async function ServiceDetailPage({ params }: Props) {
     faqH2: "Frequent questions",
     bottomCtaH2: `Let's talk about your ${svc.title} need`,
     viewCaseStudy: "View Case Study",
+    overview: "Overview",
+    target: "Target",
+    details: "Details",
+    deliverables: "Deliverables",
+    comparison: "Comparison",
+    takeaways: "Takeaways",
+    nextSteps: "Next steps",
+    startProject: "Start a Conversation",
   };
 
-  // Helper function to prevent double slash in link URLs
   const cleanPath = (path: string) => {
     if (!path) return "";
     return path.startsWith("/") ? path.slice(1) : path;
   };
 
+  const RowLabel = ({ children }: { children: ReactNode }) => (
+    <div className="text-[13px] font-normal text-white/35 md:col-span-3">{children}</div>
+  );
+
   return (
-    <div className="min-h-screen text-black font-sans selection:bg-[#d7b687]/30">
-      {/* JSON-LD — server rendered */}
+    <div className="min-h-screen bg-[#161616] text-white">
+      <HeaderTheme theme="light" />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       {faqLd && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       )}
 
-      {/* Header & Hero Background Container spanning to the top of the viewport */}
-      <div className="relative">
-        <div className="relative z-10">
-          <Breadcrumb
-            items={[
-              { label: labels.breadServices, to: "services" },
-              { label: getFamilyTitle(canonicalFamily, lang as Locale), to: `services/${family}` },
-              { label: svc.title, to: null },
-            ]}
-            lang={lang as Locale}
-          />
+      <Breadcrumb
+        items={[
+          { label: labels.breadServices, to: "services" },
+          { label: familyTitle, to: `services/${family}` },
+          { label: svc.title, to: null },
+        ]}
+        lang={lang as Locale}
+        tone="dark"
+      />
 
-          <SubpageHero
-            eyebrow={getFamilyTitle(canonicalFamily, lang as Locale)}
-            title={svc.heroH1 || svc.title}
-            noGradient={true}
-            compact
-            flushTop
-          />
-        </div>
-      </div>
-
-      {/* Split Grid Content Block (Resume-style vertical stack in white) */}
-      <main className="site-container-wide py-8 md:py-16 divide-y divide-black/5">
-        
-        {/* Row 1: Overview */}
-        <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12 first:pt-0">
-          <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
-            {lang === "fr" ? "Aperçu" : "Overview"}
-          </div>
-          <div className="md:col-span-9 lg:col-span-8 space-y-8">
-            <div className="text-[#75DAB4] flex items-center gap-4">
-              <IconComponent size={32} strokeWidth={1} />
-              <div className="h-px flex-1 bg-black/5" />
+      <section className="pb-10 pt-6 md:pb-14 md:pt-8">
+        <div className="site-container-xwide">
+          <div className="grid gap-8 lg:grid-cols-12 lg:items-end lg:gap-16">
+            <div className="lg:col-span-8">
+              <p className="mb-5 text-[13px] font-normal text-white/40">{familyTitle}</p>
+              <h1 className="max-w-[14ch] text-[clamp(2.6rem,5vw,4.6rem)] font-medium leading-[0.98] tracking-tight text-white">
+                {svc.heroH1 || svc.title}
+              </h1>
             </div>
+            <div className="lg:col-span-4">
+              <DarkPageIcon icon={IconComponent} className="mb-6" />
+              {(svc.heroH2 || svc.description) && (
+                <p className="max-w-[36ch] text-[15px] font-normal leading-relaxed text-white/55 md:text-[16px]">
+                  {svc.heroH2 || svc.description}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
 
-            {(svc.heroH2 || svc.description) && (
-              <p className="text-xl sm:text-2xl text-neutral-800 font-normal leading-relaxed text-balance">
-                {svc.heroH2 || svc.description}
-              </p>
-            )}
+      <SlidePageBody>
+        <main className="site-container-xwide divide-y divide-white/10 border-t border-white/10 pb-8 md:pb-16">
+          <SectionReveal className="grid grid-cols-1 gap-8 py-12 md:grid-cols-12 first:pt-10">
+            <RowLabel>{labels.overview}</RowLabel>
+            <div className="space-y-7 md:col-span-9 lg:col-span-8">
+              {svc.answerBox && (
+                <div className="border-l border-[#75DAB4]/70 pl-4 py-1">
+                  <p className="text-[16px] font-normal leading-relaxed text-white/60 md:text-[17px]">
+                    {svc.answerBox}
+                  </p>
+                </div>
+              )}
+              <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+                <CurtainLink
+                  href={contactHref}
+                  className="inline-flex items-center justify-center gap-3 rounded-full bg-white/[0.08] py-[13px] pl-6 pr-4 text-[13px] font-normal text-white/85 transition-colors hover:bg-white/[0.16] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
+                >
+                  {labels.ctaPrimary}
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10">
+                    <ArrowRight size={13} aria-hidden="true" />
+                  </span>
+                </CurtainLink>
+                {featuredProjects.length > 0 && (
+                  <a
+                    href="#projects"
+                    className="inline-flex items-center justify-center border border-white/20 px-6 py-3.5 text-[13px] font-normal text-white/70 transition-colors hover:border-white hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
+                  >
+                    {labels.ctaSecondary}
+                  </a>
+                )}
+              </div>
+            </div>
+          </SectionReveal>
 
-            {svc.answerBox && (
-              <div className="border-l border-[#75DAB4] pl-4 py-1">
-                <p className="text-base sm:text-lg text-neutral-600 font-normal leading-relaxed italic">
-                  {svc.answerBox}
+          {svc.whoFor && (
+            <SectionReveal className="grid grid-cols-1 gap-8 py-12 md:grid-cols-12">
+              <RowLabel>{labels.target}</RowLabel>
+              <div className="md:col-span-9 lg:col-span-8">
+                <p className="max-w-[54ch] text-[15px] font-normal leading-relaxed text-white/55 md:text-[16px]">
+                  {svc.whoFor}
                 </p>
               </div>
-            )}
+            </SectionReveal>
+          )}
 
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4">
-              <Link
-                href={`/${lang}/contact`}
-                className="px-6 py-3.5 bg-[#75DAB4] hover:bg-black text-black hover:text-white transition-all duration-300 text-xs font-normal uppercase tracking-widest text-center rounded-sm"
-              >
-                {labels.ctaPrimary}
-              </Link>
-              {featuredProjects.length > 0 && (
-                <a
-                  href="#projects"
-                  className="px-6 py-3.5 border border-black/10 hover:border-black text-black transition-all duration-300 text-xs font-normal uppercase tracking-widest text-center rounded-sm"
-                >
-                  {labels.ctaSecondary}
-                </a>
-              )}
-            </div>
-          </div>
-        </SectionReveal>
-
-        {/* Row 2: Target Audience */}
-        {svc.whoFor && (
-          <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
-            <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
-              {lang === "fr" ? "Pour qui" : "Target"}
-            </div>
-            <div className="md:col-span-9 lg:col-span-8">
-              <p className="text-base text-neutral-600 leading-relaxed font-normal">
-                {svc.whoFor}
-              </p>
-            </div>
-          </SectionReveal>
-        )}
-
-        {/* Row 3: Narrative Details */}
-        {(svc.longDescription || (svc.sections && svc.sections.length > 0)) && (
-          <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
-            <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
-              {lang === "fr" ? "Détails" : "Details"}
-            </div>
-            <div className="md:col-span-9 lg:col-span-8 space-y-12">
-              {svc.longDescription && (
-                <div className="prose prose-neutral max-w-none text-neutral-800">
+          {(svc.longDescription || (svc.sections && svc.sections.length > 0)) && (
+            <SectionReveal className="grid grid-cols-1 gap-8 py-12 md:grid-cols-12">
+              <RowLabel>{labels.details}</RowLabel>
+              <div className="space-y-12 md:col-span-9 lg:col-span-8">
+                {svc.longDescription && (
                   <PortableText value={svc.longDescription} components={components} />
-                </div>
-              )}
+                )}
+                {svc.sections?.map((sec: any, i: number) => (
+                  <div key={i} className="space-y-4">
+                    <h2 className="text-[18px] font-medium tracking-tight text-white">{sec.h2}</h2>
+                    {sec.paragraphs?.map((p: string, j: number) => (
+                      <p key={j} className="text-[15px] font-normal leading-relaxed text-white/55">
+                        {p}
+                      </p>
+                    ))}
+                    {sec.bullets && sec.bullets.length > 0 && (
+                      <ul className="list-disc space-y-1.5 pl-5 text-[15px] text-white/50">
+                        {sec.bullets.map((b: string, j: number) => (
+                          <li key={j}>{b}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </SectionReveal>
+          )}
 
-              {svc.sections?.map((sec: any, i: number) => (
-                <div key={i} className="space-y-4">
-                  {/* h2, not h3: the page's only h1 is the hero — main content
-                      sections must not skip a heading level (classes carry the
-                      style, so the promotion has zero visual impact). */}
-                  <h2 className="text-lg font-normal text-black">{sec.h2}</h2>
-                  {sec.paragraphs?.map((p: string, j: number) => (
-                    <p key={j} className="text-sm sm:text-base text-neutral-600 font-normal leading-relaxed">{p}</p>
+          {svc.features && svc.features.length > 0 && (
+            <SectionReveal className="grid grid-cols-1 gap-8 py-12 md:grid-cols-12">
+              <RowLabel>{labels.featuresH2}</RowLabel>
+              <div className="md:col-span-9 lg:col-span-8">
+                <ul className="divide-y divide-white/10 border-y border-white/10">
+                  {svc.features.map((feature: string, i: number) => (
+                    <li
+                      key={i}
+                      className="flex items-start gap-3 py-3.5 text-[15px] font-normal text-white/60"
+                    >
+                      <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-[#75DAB4]" aria-hidden="true" />
+                      <span>{feature}</span>
+                    </li>
                   ))}
-                  {sec.bullets && sec.bullets.length > 0 && (
-                    <ul className="list-disc pl-5 space-y-1.5 text-sm sm:text-base text-neutral-500">
-                      {sec.bullets.map((b: string, j: number) => (
-                        <li key={j}>{b}</li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              ))}
-            </div>
-          </SectionReveal>
-        )}
+                </ul>
+              </div>
+            </SectionReveal>
+          )}
 
-        {/* Row 4: Capabilities */}
-        {svc.features && svc.features.length > 0 && (
-          <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
-            <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
-              {labels.featuresH2}
-            </div>
-            <div className="md:col-span-9 lg:col-span-8">
-              <ul className="space-y-3">
-                {svc.features.map((feature: string, i: number) => (
-                  <li key={i} className="text-sm sm:text-base text-neutral-600 font-normal flex items-start gap-2">
-                    <span className="text-[#75DAB4] select-none">•</span>
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </SectionReveal>
-        )}
+          {svc.deliverables && svc.deliverables.length > 0 && (
+            <SectionReveal className="grid grid-cols-1 gap-8 py-12 md:grid-cols-12">
+              <RowLabel>{labels.deliverables}</RowLabel>
+              <div className="md:col-span-9 lg:col-span-8">
+                <ul className="space-y-3">
+                  {svc.deliverables.map((d: string, i: number) => (
+                    <li key={i} className="flex items-start gap-3 text-[15px] font-normal text-white/60">
+                      <span className="text-[#75DAB4]" aria-hidden="true">•</span>
+                      <span>{d}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </SectionReveal>
+          )}
 
-        {/* Row 5: Deliverables */}
-        {svc.deliverables && svc.deliverables.length > 0 && (
-          <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
-            <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
-              {lang === "fr" ? "Livrables" : "Deliverables"}
-            </div>
-            <div className="md:col-span-9 lg:col-span-8">
-              <ul className="space-y-3">
-                {svc.deliverables.map((d: string, i: number) => (
-                  <li key={i} className="text-sm sm:text-base text-neutral-600 font-normal flex items-start gap-2">
-                    <span className="text-[#75DAB4] select-none">•</span>
-                    <span>{d}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </SectionReveal>
-        )}
-
-        {/* Row 6: Comparison Table */}
-        {hasTable && (
-          <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
-            <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
-              {lang === "fr" ? "Comparatif" : "Comparison"}
-            </div>
-            <div className="md:col-span-9 lg:col-span-8 space-y-4">
-              {table.title && (
-                <h2 className="text-base font-normal text-black">{table.title}</h2>
-              )}
-              <div className="overflow-x-auto">
-                <table className="w-full border-collapse text-left">
-                  <thead>
-                    <tr className="border-b border-black/10">
-                      {table.columns?.map((c: string, i: number) => (
-                        <th key={i} className="py-3 pr-4 text-xs font-normal text-neutral-400">{c}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {table.rows?.map((row: any, i: number) => (
-                      <tr key={i} className="border-b border-black/5">
-                        {row.cells?.map((cell: string, j: number) => (
-                          <td key={j} className={`py-3 pr-4 text-xs sm:text-sm ${j === 0 ? "text-black font-normal" : "text-neutral-500"}`}>{cell}</td>
+          {hasTable && (
+            <SectionReveal className="grid grid-cols-1 gap-8 py-12 md:grid-cols-12">
+              <RowLabel>{labels.comparison}</RowLabel>
+              <div className="space-y-4 md:col-span-9 lg:col-span-8">
+                {table.title && (
+                  <h2 className="text-[16px] font-medium tracking-tight text-white">{table.title}</h2>
+                )}
+                <div className="overflow-x-auto border border-white/10">
+                  <table className="w-full border-collapse text-left">
+                    <thead>
+                      <tr className="border-b border-white/10 bg-white/[0.03]">
+                        {table.columns?.map((c: string, i: number) => (
+                          <th key={i} className="px-4 py-3 text-[12px] font-normal text-white/40">
+                            {c}
+                          </th>
                         ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {table.rows?.map((row: any, i: number) => (
+                        <tr key={i} className="border-b border-white/5 last:border-b-0">
+                          {row.cells?.map((cell: string, j: number) => (
+                            <td
+                              key={j}
+                              className={`px-4 py-3 text-[13px] ${
+                                j === 0 ? "text-white/85" : "text-white/45"
+                              }`}
+                            >
+                              {cell}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          </SectionReveal>
-        )}
+            </SectionReveal>
+          )}
 
-        {/* Row 7: Key Takeaways */}
-        {svc.keyTakeaways && svc.keyTakeaways.length > 0 && (
-          <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
-            <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
-              {lang === "fr" ? "À retenir" : "Takeaways"}
-            </div>
-            <div className="md:col-span-9 lg:col-span-8">
-              <ul className="space-y-4">
-                {svc.keyTakeaways.map((k: string, i: number) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <span className="mt-2 h-1.5 w-1.5 rounded-full bg-[#75DAB4] shrink-0" />
-                    <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-normal">{k}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </SectionReveal>
-        )}
+          {svc.keyTakeaways && svc.keyTakeaways.length > 0 && (
+            <SectionReveal className="grid grid-cols-1 gap-8 py-12 md:grid-cols-12">
+              <RowLabel>{labels.takeaways}</RowLabel>
+              <div className="md:col-span-9 lg:col-span-8">
+                <ul className="space-y-4">
+                  {svc.keyTakeaways.map((k: string, i: number) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#75DAB4]" aria-hidden="true" />
+                      <p className="text-[15px] font-normal leading-relaxed text-white/55">{k}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </SectionReveal>
+          )}
 
-        {/* Row 8: Featured Projects */}
-        {featuredProjects.length > 0 && (
-          <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
-            <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
-              {labels.projectsH2}
-            </div>
-            <div className="md:col-span-9 lg:col-span-8 space-y-8" id="projects">
-              {featuredProjects.map((project: any) => (
-                <div key={project._id} className="space-y-2 group">
-                  <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
-                    <h4 className="text-base font-normal text-black group-hover:text-[#75DAB4] transition-colors">
-                      {project.title}
-                    </h4>
-                    <div className="flex items-center gap-2 text-xs text-neutral-400 font-normal">
-                      <span>{project.year}</span>
-                      {project.tags?.[0] && (
-                        <>
-                          <span>•</span>
-                          <span>{project.tags[0]}</span>
-                        </>
-                      )}
+          {featuredProjects.length > 0 && (
+            <SectionReveal className="grid grid-cols-1 gap-8 py-12 md:grid-cols-12">
+              <RowLabel>{labels.projectsH2}</RowLabel>
+              <div className="space-y-8 md:col-span-9 lg:col-span-8" id="projects">
+                {featuredProjects.map((project: any) => (
+                  <div key={project._id} className="group space-y-2 border-b border-white/10 pb-8 last:border-b-0 last:pb-0">
+                    <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+                      <h3 className="text-[16px] font-medium tracking-tight text-white transition-colors group-hover:text-white/80">
+                        {project.title}
+                      </h3>
+                      <div className="flex items-center gap-2 text-[12px] font-normal text-white/35">
+                        <span>{project.year}</span>
+                        {project.tags?.[0] && (
+                          <>
+                            <span aria-hidden="true">•</span>
+                            <span>{project.tags[0]}</span>
+                          </>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <p className="text-sm text-neutral-500 leading-relaxed max-w-3xl">
-                    {project.excerpt}
-                  </p>
-                  {/* Case-study pages without visuals aren't linked yet: keep
-                      the project name/excerpt, drop the link until the
-                      project has a cover image. */}
-                  {project.coverImage?.asset && (
-                    <div className="pt-1">
+                    <p className="max-w-3xl text-[14px] font-normal leading-relaxed text-white/45">
+                      {project.excerpt}
+                    </p>
+                    {project.coverImage?.asset && (
                       <Link
                         href={`/${lang}/${lang === "fr" ? "projets" : "work"}/${project.slug}`}
-                        className="inline-flex items-center gap-1.5 text-xs font-normal text-[#75DAB4] hover:text-black transition-colors"
+                        className="inline-flex items-center gap-1.5 pt-1 text-[12px] font-normal text-white/55 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
                       >
-                        {labels.viewCaseStudy} <ArrowRight size={12} />
+                        {labels.viewCaseStudy} <ArrowRight size={12} aria-hidden="true" />
                       </Link>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </SectionReveal>
-        )}
-
-        {/* Row 9: Related Services */}
-        {related.length > 0 && (
-          <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
-            <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
-              {labels.relatedH2}
-            </div>
-            <div className="md:col-span-9 lg:col-span-8 space-y-6">
-              {related.map((item: any) => {
-                const localizedFamily = familySlugForLang(item.family, lang as Locale);
-                return (
-                  <div key={item._id} className="space-y-1 group">
-                    <h4 className="text-base font-normal text-black group-hover:text-[#75DAB4] transition-colors">
-                      <Link href={`/${lang}/services/${localizedFamily}/${item.slug}`}>
-                        {item.title}
-                      </Link>
-                    </h4>
-                    <p className="text-xs sm:text-sm text-neutral-500 leading-relaxed max-w-3xl font-normal">
-                      {item.description}
-                    </p>
+                    )}
                   </div>
-                );
-              })}
-            </div>
-          </SectionReveal>
-        )}
+                ))}
+              </div>
+            </SectionReveal>
+          )}
 
-        {/* Row 10: FAQ */}
-        {faqItems.length > 0 && (
-          <SectionReveal className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12">
-            <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
-              {labels.faqH2}
-            </div>
-            <div className="md:col-span-9 lg:col-span-8">
-              <div className="space-y-4 divide-y divide-black/5">
+          {related.length > 0 && (
+            <SectionReveal className="grid grid-cols-1 gap-8 py-12 md:grid-cols-12">
+              <RowLabel>{labels.relatedH2}</RowLabel>
+              <div className="divide-y divide-white/10 border-y border-white/10 md:col-span-9 lg:col-span-8">
+                {related.map((item: any) => {
+                  const localizedFamily = familySlugForLang(item.family, lang as Locale);
+                  return (
+                    <Link
+                      key={item._id}
+                      href={`/${lang}/services/${localizedFamily}/${item.slug}`}
+                      className="group block space-y-1 py-5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
+                    >
+                      <h3 className="text-[16px] font-medium tracking-tight text-white/90 group-hover:text-white">
+                        {item.title}
+                      </h3>
+                      {item.description && (
+                        <p className="max-w-3xl text-[13px] font-normal leading-relaxed text-white/45">
+                          {item.description}
+                        </p>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            </SectionReveal>
+          )}
+
+          {faqItems.length > 0 && (
+            <SectionReveal className="grid grid-cols-1 gap-8 py-12 md:grid-cols-12">
+              <RowLabel>{labels.faqH2}</RowLabel>
+              <div className="divide-y divide-white/10 border-y border-white/10 md:col-span-9 lg:col-span-8">
                 {faqItems.map((item, index: number) => (
-                  <details key={index} className="group pt-4 first:pt-0">
-                    <summary className="flex justify-between items-center font-normal text-base text-black cursor-pointer list-none select-none hover:text-neutral-500 transition-colors">
-                      {/* Real heading in the SSR HTML: AI engines segment and
-                          extract passages by headings — a <span> question is
-                          invisible to that pass. */}
-                      <h3 className="font-normal text-base">{item.question}</h3>
-                      <span className="transition-transform duration-200 group-open:rotate-45 text-neutral-400">
-                        <Icons.Plus size={16} />
+                  <details key={index} className="group py-5 first:pt-5">
+                    <summary className="flex cursor-pointer list-none items-start justify-between gap-6 text-left select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35">
+                      <h3 className="text-[15px] font-normal text-white/85 transition-colors group-hover:text-white md:text-[16px]">
+                        {item.question}
+                      </h3>
+                      <span className="mt-0.5 text-white/40 transition-transform duration-200 group-open:rotate-45">
+                        <Icons.Plus size={16} aria-hidden="true" />
                       </span>
                     </summary>
-                    <div className="mt-3 text-sm leading-relaxed text-neutral-500 font-normal">
+                    <div className="mt-3 max-w-[54ch] text-[14px] font-normal leading-relaxed text-white/50">
                       {item.answer}
                     </div>
                   </details>
                 ))}
               </div>
-            </div>
-          </SectionReveal>
-        )}
+            </SectionReveal>
+          )}
 
-        {/* Row 11: Bottom CTA */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 py-12 border-b-0">
-          <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
-            {lang === "fr" ? "Contact" : "Next steps"}
-          </div>
-          <div className="md:col-span-9 lg:col-span-8 space-y-6">
-            <AnimatedTitle
-              as="h2"
-              text={svc.cta?.headline || labels.bottomCtaH2}
-              className="text-xl sm:text-2xl font-normal text-black leading-snug text-balance"
-              splitBy="word"
-            />
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
-              <Link
-                href={`/${lang}/${cleanPath(svc.cta?.primaryHref || "contact")}`}
-                className="px-6 py-3.5 bg-black hover:bg-[#75DAB4] text-white hover:text-black transition-all duration-300 text-xs font-normal uppercase tracking-widest text-center rounded-sm"
-              >
-                {svc.cta?.primaryLabel || (lang === "fr" ? "Démarrer un projet" : "Start a Conversation")}
-              </Link>
-              {svc.cta?.secondaryLabel && (
-                <Link
-                  href={`/${lang}/${cleanPath(svc.cta?.secondaryHref || (lang === "fr" ? "projets" : "work"))}`}
-                  className="px-6 py-3.5 border border-black/10 hover:border-black text-black transition-all duration-300 text-xs font-normal uppercase tracking-widest text-center rounded-sm"
+          <section className="grid grid-cols-1 gap-8 py-16 md:grid-cols-12 md:py-20">
+            <RowLabel>{labels.nextSteps}</RowLabel>
+            <div className="space-y-6 md:col-span-9 lg:col-span-8">
+              <h2 className="max-w-[18ch] text-[clamp(1.8rem,3.2vw,2.6rem)] font-medium leading-tight tracking-tight text-white">
+                {svc.cta?.headline || labels.bottomCtaH2}
+              </h2>
+              <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+                <CurtainLink
+                  href={`/${lang}/${cleanPath(svc.cta?.primaryHref || "contact")}`}
+                  className="inline-flex items-center justify-center gap-3 rounded-full bg-white/[0.08] py-[13px] pl-6 pr-4 text-[13px] font-normal text-white/85 transition-colors hover:bg-white/[0.16] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
                 >
-                  {svc.cta.secondaryLabel}
-                </Link>
-              )}
+                  {svc.cta?.primaryLabel || labels.startProject}
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10">
+                    <ArrowRight size={13} aria-hidden="true" />
+                  </span>
+                </CurtainLink>
+                {svc.cta?.secondaryLabel && (
+                  <Link
+                    href={`/${lang}/${cleanPath(svc.cta?.secondaryHref || (lang === "fr" ? "projets" : "work"))}`}
+                    className="inline-flex items-center justify-center border border-white/20 px-6 py-3.5 text-[13px] font-normal text-white/70 transition-colors hover:border-white hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
+                  >
+                    {svc.cta.secondaryLabel}
+                  </Link>
+                )}
+              </div>
             </div>
-          </div>
-        </div>
-
-      </main>
+          </section>
+        </main>
+      </SlidePageBody>
     </div>
   );
 }

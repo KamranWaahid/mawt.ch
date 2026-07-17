@@ -144,6 +144,9 @@
     "statement": "Ideas, methods and notes from building AI systems in Geneva.",
     "statementCta": "Start a project",
     "readArticle": "Read article",
+    "backToInsights": "Back to News",
+    "writtenBy": "Written by",
+    "teamFallback": "Team MAWT",
     "filterAll": "All",
     "featuredLabel": "Featured",
     "articles": [

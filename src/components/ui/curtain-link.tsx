@@ -2,14 +2,16 @@
 
 import Link from "next/link";
 import type { ComponentProps, MouseEvent } from "react";
-import { useCurtainTransition, slideDestinationForHref } from "@/components/providers/curtain-transition";
+import {
+  isCurtainNavigableHref,
+  useCurtainTransition,
+} from "@/components/providers/curtain-transition";
 
 type CurtainLinkProps = ComponentProps<typeof Link>;
 
 /**
- * Link that uses the slide-up curtain when the href is a curtain destination
- * (/services, /work|/projets, /news|/blog, /about|/a-propos, or /contact).
- * Falls back to normal navigation for everything else.
+ * Link that uses the slide-up curtain for every internal site navigation.
+ * External / hash / studio / admin links keep normal Next.js navigation.
  */
 export function CurtainLink({ href, onClick, ...props }: CurtainLinkProps) {
   const { navigateWithCurtain } = useCurtainTransition();
@@ -21,7 +23,7 @@ export function CurtainLink({ href, onClick, ...props }: CurtainLinkProps) {
       onClick={(e: MouseEvent<HTMLAnchorElement>) => {
         onClick?.(e);
         if (e.defaultPrevented) return;
-        if (!hrefString || !slideDestinationForHref(hrefString)) return;
+        if (!hrefString || !isCurtainNavigableHref(hrefString)) return;
         e.preventDefault();
         navigateWithCurtain(hrefString);
       }}

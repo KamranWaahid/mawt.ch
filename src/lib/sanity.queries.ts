@@ -571,26 +571,30 @@ export async function getContactSettings(): Promise<ContactSettings> {
   };
 
   if (!sanityClient) return defaultContact;
-  const data = await sanityClient.fetch<ContactSettings>(contactQuery, {}, {
-    next: { tags: ["contact"] }
-  });
-  
-  const merged: ContactSettings = {
-    ...defaultContact,
-    ...data,
-    email: process.env.CONTACT_FALLBACK_EMAIL || data?.email || defaultContact.email,
-    phone: process.env.CONTACT_FALLBACK_PHONE || data?.phone || defaultContact.phone,
-    headline: process.env.CONTACT_FALLBACK_HEADLINE || data?.headline || defaultContact.headline,
-    offices: process.env.CONTACT_FALLBACK_CITY
-      ? [
-          {
-            city: process.env.CONTACT_FALLBACK_CITY,
-            address: process.env.CONTACT_FALLBACK_ADDRESS || "",
-            isMain: true,
-          },
-        ]
-      : (data?.offices || defaultContact.offices),
-  };
 
-  return merged;
+  try {
+    const data = await sanityClient.fetch<ContactSettings>(contactQuery, {}, {
+      next: { tags: ["contact"] },
+    });
+
+    return {
+      ...defaultContact,
+      ...data,
+      email: process.env.CONTACT_FALLBACK_EMAIL || data?.email || defaultContact.email,
+      phone: process.env.CONTACT_FALLBACK_PHONE || data?.phone || defaultContact.phone,
+      headline: process.env.CONTACT_FALLBACK_HEADLINE || data?.headline || defaultContact.headline,
+      offices: process.env.CONTACT_FALLBACK_CITY
+        ? [
+            {
+              city: process.env.CONTACT_FALLBACK_CITY,
+              address: process.env.CONTACT_FALLBACK_ADDRESS || "",
+              isMain: true,
+            },
+          ]
+        : (data?.offices || defaultContact.offices),
+    };
+  } catch (error) {
+    console.warn("Failed to fetch Sanity contact settings, using fallback:", error);
+    return defaultContact;
+  }
 }

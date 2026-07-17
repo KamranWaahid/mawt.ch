@@ -3,6 +3,7 @@
 import { useRef, useEffect, useCallback, useState } from "react";
 import { motion, useTransform, MotionValue, useMotionValue } from "motion/react";
 import { useLenis } from "lenis/react";
+import { prefersNativeScroll } from "@/lib/scroll-environment";
 
 type ProblemCopy = {
   story?: string[];
@@ -38,16 +39,32 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
   const rawProgress = useMotionValue(0);
   const wordProgress = useMotionValue(0);
 
-  // Once the scrub is complete, the 400vh pinned track collapses to a normal
+  // Once the scrub is complete, the pinned track collapses to a normal
   // 100vh section: no re-scrolling three screens of already-black text.
   const [collapsed, setCollapsed] = useState(false);
+  const [nativeScroll, setNativeScroll] = useState(false);
   const collapsedRef = useRef(false);
+  const nativeScrollRef = useRef(false);
   const lenisRef = useRef<{
     scrollTo: (t: number, o?: object) => void;
     scroll?: number;
     targetScroll?: number;
     resize?: () => void;
   } | null>(null);
+
+  useEffect(() => {
+    const sync = () => {
+      const next = prefersNativeScroll();
+      nativeScrollRef.current = next;
+      setNativeScroll(next);
+    };
+    sync();
+    const media = window.matchMedia(
+      "(hover: none) and (pointer: coarse), (prefers-reduced-motion: reduce)",
+    );
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
 
   const collapse = useCallback((adjustScroll: "shift" | "snap" | "none") => {
     const container = containerRef.current;
@@ -76,7 +93,9 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
         if (Math.abs(pending) > 1) {
           lenis.scrollTo(target + pending, { force: true });
         }
-      } else {
+      } else if (adjustScroll === "shift") {
+        // Native scroll: only adjust when the section is already off-screen.
+        // Mid-gesture scrollTo kills iOS/Android momentum and feels like a jump.
         window.scrollTo({ top: target, behavior: "instant" as ScrollBehavior });
       }
     }
@@ -112,11 +131,9 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
         // Section entirely below the viewport (exited upwards): collapsing
         // only moves content that is below the fold — no adjustment needed.
         collapse("none");
-      } else {
-        // Scrolling back up after the reveal: collapse right away so the
-        // user never re-scrolls the pinned track in reverse. The momentum-
-        // preserving snap in collapse() keeps the gesture fluid, and the
-        // raw < 0.84 guard keeps the end-of-track fade from popping.
+      } else if (!nativeScrollRef.current) {
+        // Desktop + Lenis only: snap-collapse when reversing mid-track.
+        // Native momentum scroll must never be interrupted mid-gesture.
         if (clamped < previousRaw - 0.0005 && clamped < 0.84) {
           collapse("snap");
         }
@@ -156,10 +173,12 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
   return (
     <div
       ref={containerRef}
-      style={{ height: collapsed ? "100vh" : "400vh" }}
+      // Shorter pin on native/touch: less dead track after the scrub, fewer
+      // chances for sticky + momentum to fight. Desktop keeps the full 400vh.
+      style={{ height: collapsed ? "100vh" : nativeScroll ? "240vh" : "400vh" }}
       className="relative w-full"
     >
-      <section className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
+      <section className="sticky top-0 h-[100dvh] w-full flex items-center justify-center overflow-hidden">
         <motion.div
           className="site-container-xwide relative z-10 w-full"
           style={{ opacity: blockOpacity, y: blockY }}

@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { DarkPageIcon } from "@/components/ui/dark-page-icon";
+import { prefersNativeScroll } from "@/lib/scroll-environment";
 
 type ApproachStep = {
   id: string;
@@ -227,7 +228,9 @@ export function ApproachStickySteps({
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024);
+      // Native-scroll devices (phones/tablets) must never enter the desktop
+      // lock/hijack path — even at ≥1024px (iPad landscape).
+      setIsMobile(window.innerWidth < 1024 || prefersNativeScroll());
     };
     handleResize();
     window.addEventListener("resize", handleResize, { passive: true });
@@ -286,31 +289,42 @@ export function ApproachStickySteps({
     setLockState(state);
   };
 
-  useLenis((lenis) => {
-    if (!isMounted) return;
+  // Mobile / native-scroll progress (works without Lenis).
+  useEffect(() => {
+    if (!isMounted || !isMobile) return;
 
-    lenisRef.current = lenis;
-    if (!containerRef.current) return;
-
-    if (isMobile) {
+    const updateFromScroll = () => {
+      if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       const scrollableHeight = rect.height - window.innerHeight;
       if (scrollableHeight <= 0) return;
 
       const progress = Math.max(0, Math.min(1, -rect.top / scrollableHeight));
       const nextIndex = Math.min(
-        Math.floor(progress * totalSteps),
-        totalSteps - 1,
+        Math.floor(progress * totalStepsRef.current),
+        Math.max(totalStepsRef.current - 1, 0),
       );
       if (nextIndex !== activeIndexRef.current) {
         setNavigationDirection(nextIndex > activeIndexRef.current ? 1 : -1);
         activeIndexRef.current = nextIndex;
         setActiveIndex(nextIndex);
       }
-      return;
-    }
+    };
 
-    if (isLockedRef.current) return;
+    updateFromScroll();
+    window.addEventListener("scroll", updateFromScroll, { passive: true });
+    window.addEventListener("resize", updateFromScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", updateFromScroll);
+      window.removeEventListener("resize", updateFromScroll);
+    };
+  }, [isMounted, isMobile]);
+
+  useLenis((lenis) => {
+    if (!isMounted || isMobile) return;
+
+    lenisRef.current = lenis;
+    if (!containerRef.current || isLockedRef.current) return;
 
     const rect = containerRef.current.getBoundingClientRect();
     const isScrollingDown = lenis.direction === 1;
@@ -695,7 +709,10 @@ export function ApproachStickySteps({
         style={{ height: `${Math.max(totalSteps * 55, 240)}vh` }}
         aria-label="Approach steps (mobile)"
       >
-        <div className="sticky top-0 h-[100dvh] w-full overflow-hidden bg-[#161616] max-[520px]:overflow-y-auto max-[520px]:overscroll-contain">
+        {/* Keep overflow hidden — never nest a second scrollport here.
+            Nested overflow-y on small phones fought the document scroll and
+            froze momentum mid-gesture. */}
+        <div className="sticky top-0 h-[100dvh] w-full overflow-hidden bg-[#161616]">
           <motion.div
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[520vh] w-full"

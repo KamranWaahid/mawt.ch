@@ -35,7 +35,6 @@ type SiteHeaderProps = {
 type NavItem = {
   href: string;
   label: string;
-  usesCurtain?: boolean;
 };
 
 const navItems = [
@@ -74,12 +73,9 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
   const menuButtonRef = useRef<HTMLButtonElement>(null);
   useBodyScrollLock(isMobileMenuOpen);
 
-  // Dark catalogue pages use the DHNN slide-up curtain.
-  const curtainHrefs = new Set(["/services", "/work", "/news", "/about", "/contact"]);
-  const activeNavItems: NavItem[] = (mainNav && mainNav.length > 0 ? mainNav : navItems).map((item) => ({
-    ...item,
-    usesCurtain: curtainHrefs.has(item.href),
-  }));
+  // Every internal nav destination uses the DHNN slide-up curtain.
+  const activeNavItems: NavItem[] =
+    mainNav && mainNav.length > 0 ? mainNav : navItems;
 
   const normalizedPath = pathname.replace(/\/$/, "") || "/";
   const isHomePage = ["/", "/en", "/fr", ""].includes(normalizedPath);
@@ -196,6 +192,10 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
           <Link
             href={`/${currentLang}`}
             aria-label={`${title} home`}
+            onClick={(e) => {
+              e.preventDefault();
+              navigateWithCurtain(`/${currentLang}`);
+            }}
             className="pointer-events-auto block w-[98px] shrink-0 transition-opacity hover:opacity-80"
           >
             <Image
@@ -248,14 +248,10 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
                 key={item.href}
                 href={navHref(item.href, currentLang as Locale)}
                 aria-current={pathname === navHref(item.href, currentLang as Locale) ? "page" : undefined}
-                onClick={
-                  item.usesCurtain
-                    ? (e) => {
-                        e.preventDefault();
-                        navigateWithCurtain(navHref(item.href, currentLang as Locale));
-                      }
-                    : undefined
-                }
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateWithCurtain(navHref(item.href, currentLang as Locale));
+                }}
                 className={`inline-flex min-h-11 items-center transition-colors ${navHoverClass} ${pathname === navHref(item.href, currentLang as Locale) ? (isDark ? "text-black font-semibold" : "text-white font-semibold") : ""}`}
               >
                 {navLabel(item, currentLang)}
@@ -362,11 +358,9 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
                     <Link
                       href={navHref(item.href, currentLang as Locale)}
                       onClick={(e) => {
+                        e.preventDefault();
                         setIsMobileMenuOpen(false);
-                        if (item.usesCurtain) {
-                          e.preventDefault();
-                          navigateWithCurtain(navHref(item.href, currentLang as Locale));
-                        }
+                        navigateWithCurtain(navHref(item.href, currentLang as Locale));
                       }}
                       className="text-[clamp(2rem,10vw,3.35rem)] font-normal leading-none tracking-tight text-white"
                     >

@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState, useEffect } from "react";
+import { useId, useRef, useState, useEffect, useLayoutEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform, useSpring, MotionValue } from "motion/react";
@@ -11,6 +11,7 @@ import type { Locale } from "@/lib/routing/url-map";
 import { AsciiWave } from "@/components/ui/ascii-wave";
 import { useCurtainTransition } from "@/components/providers/curtain-transition";
 import { useBodyScrollLock } from "@/hooks/use-body-scroll-lock";
+import { prefersNativeScroll } from "@/lib/scroll-environment";
 
 type HomepageHeroCopy = {
   statement: string;
@@ -245,11 +246,14 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   const sectionRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const videoWarmedRef = useRef(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  // Discrete UI flags only — never store continuous scroll in React state
+  // (that re-rendered the whole hero every frame and janked mobile scroll).
+  const [heroUi, setHeroUi] = useState({ logoInteractive: true, asciiActive: true });
   const [isHeroMobileMenuOpen, setIsHeroMobileMenuOpen] = useState(false);
   const [isAsciiVideoReady, setIsAsciiVideoReady] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [useMobileHeroVideo, setUseMobileHeroVideo] = useState(false);
+  const [nativeScroll, setNativeScroll] = useState(false);
   const shouldReduceMotion = useReducedMotion();
   useBodyScrollLock(isHeroMobileMenuOpen);
   const heroVideoSrc = useMobileHeroVideo ? HERO_VIDEO_MOBILE : HERO_VIDEO_DESKTOP;
@@ -269,13 +273,30 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
     offset: ["start start", "end end"],
   });
   
-  // Lenis already smooths the scroll itself, so the spring only needs a light
-  // touch: at 80/25 the two smoothings stacked into a near-second of visible
-  // lag on the first scroll. 120/26 halves the settle time, still overdamped.
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 120, damping: 26, restDelta: 0.0001 });
+  // Lenis already smooths desktop wheel scroll, so the spring only needs a
+  // light touch. On native/touch devices skip the spring entirely — stacked
+  // smoothing reads as lag and breaks momentum feel.
+  const springProgress = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 26,
+    restDelta: 0.0001,
+  });
+  const smoothProgress = nativeScroll ? scrollYProgress : springProgress;
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    setScrollProgress(latest);
+    setHeroUi((prev) => {
+      const next = {
+        logoInteractive: latest < 0.03,
+        asciiActive: latest < 0.63,
+      };
+      if (
+        prev.logoInteractive === next.logoInteractive &&
+        prev.asciiActive === next.asciiActive
+      ) {
+        return prev;
+      }
+      return next;
+    });
 
     const video = videoRef.current;
     if (video) {
@@ -343,15 +364,21 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   // measured value; afterwards it tracks normally.
   useEffect(() => {
     const sync = (v: number) => {
-      smoothProgress.jump(v);
-      setScrollProgress(v);
+      // Jump the spring only when it is actually driving visuals (desktop).
+      if (!prefersNativeScroll()) {
+        springProgress.jump(v);
+      }
+      setHeroUi({
+        logoInteractive: v < 0.03,
+        asciiActive: v < 0.63,
+      });
       // Refreshing straight into the cinema phase must also start the film.
       const video = videoRef.current;
       if (video && v >= VIDEO_OPEN_PROGRESS && video.paused) {
         video.play().catch(() => {});
       }
     };
-    if (Math.abs(scrollYProgress.get() - smoothProgress.get()) > 0.001) {
+    if (Math.abs(scrollYProgress.get() - springProgress.get()) > 0.001) {
       sync(scrollYProgress.get());
       return;
     }
@@ -371,9 +398,14 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useLayoutEffect(() => {
+    setNativeScroll(prefersNativeScroll());
+  }, []);
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 1024);
+      setNativeScroll(prefersNativeScroll());
       const nextUseMobile = shouldUseMobileHeroVideo();
       setUseMobileHeroVideo((prev) => {
         if (prev !== nextUseMobile) {
@@ -468,14 +500,9 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   // flickering (AsciiWave's `active` prop), so the wave shows as a still.
   // The field stays behind everything while scrolling and only fades once the
   // gradient transition sweeps up to cover it (~0.55 on the scroll track).
-  const asciiLayerOpacity = !isAsciiVideoReady
-    ? 0
-    : scrollProgress <= 0.52
-      ? 1
-      : scrollProgress >= 0.62
-        ? 0
-        : 1 - (scrollProgress - 0.52) / 0.1;
-  const asciiLayerVisibility = isAsciiVideoReady && scrollProgress < 0.63 ? "visible" : "hidden";
+  const asciiFadeOpacity = useTransform(smoothProgress, [0.52, 0.62], [1, 0]);
+  const asciiLayerOpacity = isAsciiVideoReady ? asciiFadeOpacity : 0;
+  const asciiLayerVisibility = isAsciiVideoReady && heroUi.asciiActive ? "visible" : "hidden";
   const heroContentOpacity = useTransform(smoothProgress, [0.04, 0.10], [1, 0]);
   const scrollIndicatorOpacity = useTransform(smoothProgress, [0.45, 0.50], [1, 0]);
   
@@ -571,7 +598,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
           <div className="ascii-wave-viewport">
             <AsciiWave
               src="/hero-ascii-map.jpg"
-              active={scrollProgress < 0.63}
+              active={heroUi.asciiActive}
               focusX={isMobile ? 0.35 : 0.5}
               focusY={isMobile ? 0.6 : 0.68}
               className="ascii-wave-canvas"
@@ -598,7 +625,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                   href={`/${lang}`}
                   aria-label="MAWT home"
                   className="block"
-                  style={{ pointerEvents: scrollProgress < 0.03 ? "auto" : "none" }}
+                  style={{ pointerEvents: heroUi.logoInteractive ? "auto" : "none" }}
                 >
                   <MawatLogo className="h-auto w-full" tone="light" />
                 </a>
@@ -621,7 +648,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                   href={`/${lang}`}
                   aria-label="MAWT home"
                   className="block"
-                  style={{ pointerEvents: scrollProgress < 0.03 ? "auto" : "none" }}
+                  style={{ pointerEvents: heroUi.logoInteractive ? "auto" : "none" }}
                 >
                   <MawatLogo className="h-auto w-full" tone="light" />
                 </a>
@@ -644,7 +671,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                   href={`/${lang}`}
                   aria-label="MAWT home"
                   className="block"
-                  style={{ pointerEvents: scrollProgress < 0.03 ? "auto" : "none" }}
+                  style={{ pointerEvents: heroUi.logoInteractive ? "auto" : "none" }}
                 >
                   <MawatLogo className="h-auto w-full" tone="light" />
                 </a>
@@ -871,18 +898,10 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 <Link
                   key={item.route}
                   href={navHref(item.route)}
-                  onClick={
-                    item.route === "services" ||
-                    item.route === "projets" ||
-                    item.route === "news" ||
-                    item.route === "a-propos" ||
-                    item.route === "contact"
-                      ? (e) => {
-                          e.preventDefault();
-                          navigateWithCurtain(navHref(item.route));
-                        }
-                      : undefined
-                  }
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigateWithCurtain(navHref(item.route));
+                  }}
                   className="transition-colors"
                 >
                   {navItemLabel(item, lang)}
@@ -938,17 +957,9 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                   key={item.route}
                   href={navHref(item.route)}
                   onClick={(e) => {
+                    e.preventDefault();
                     setIsHeroMobileMenuOpen(false);
-                    if (
-                      item.route === "services" ||
-                      item.route === "projets" ||
-                      item.route === "news" ||
-                      item.route === "a-propos" ||
-                      item.route === "contact"
-                    ) {
-                      e.preventDefault();
-                      navigateWithCurtain(navHref(item.route));
-                    }
+                    navigateWithCurtain(navHref(item.route));
                   }}
                   className="text-[clamp(2rem,10vw,3.35rem)] font-medium leading-none tracking-tight text-white"
                 >

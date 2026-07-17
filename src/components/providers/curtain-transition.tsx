@@ -21,22 +21,14 @@ import { useReducedMotion } from "motion/react";
  * depends on the destination page at all:
  *
  *  1. click → freeze a DOM snapshot of the current page (z-110) and rise a
- *     LIGHTWEIGHT FACADE sheet (z-120) styled exactly like the destination
- *     hero (same background, markup and classes, so the reveal is seamless).
- *     The facade is a few DOM nodes — it commits and paints instantly, and
- *     the keyframed rise runs on the compositor (translate3d), immune to
- *     main-thread jank. The rise starts the moment the user clicks.
- *  2. router.push runs in parallel; the real page mounts and hydrates in
- *     normal flow, invisible under the snapshot.
- *  3. when the facade has landed AND the page has mounted (scroll already
- *     reset under cover), the snapshot is removed and the facade fades out,
- *     revealing the real page — whose hero sits exactly where the facade's
- *     is.
+ *     LIGHTWEIGHT FACADE sheet (z-120) styled like the destination hero when
+ *     we have preview copy, otherwise a clean dark sheet.
+ *  2. router.push runs in parallel; the real page mounts under the snapshot.
+ *  3. when the facade has landed AND the page has mounted, the snapshot is
+ *     removed and the facade fades out.
  *
- * Failsafes: arming auto-expires (never a stuck frozen screen), reduced
- * motion gets a plain navigation, same-route clicks skip the effect.
- * Re-entry while a transition is in flight is ignored so rapid clicks cannot
- * stack overlays or leave stale rAF callbacks uncovering the wrong page.
+ * Applies to every internal site navigation (navbar, CurtainLink, CTAs).
+ * External / studio / admin / hash links stay plain.
  */
 
 const SNAPSHOT_ID = "mawt-slide-snapshot";
@@ -61,7 +53,109 @@ export type SlidePreview = {
   layout?: "catalogue" | "statement";
 };
 
-export type SlideDestination = "services" | "work" | "news" | "about" | "contact";
+export type SlideDestination =
+  | "services"
+  | "work"
+  | "news"
+  | "about"
+  | "contact"
+  | "approach"
+  | "home"
+  | "generic";
+
+function normalizePath(path: string): string {
+  const cleaned = path.split("?")[0]?.split("#")[0] || "/";
+  if (cleaned.length > 1 && cleaned.endsWith("/")) return cleaned.slice(0, -1);
+  return cleaned || "/";
+}
+
+function pathWithoutLocale(path: string): string {
+  const normalized = normalizePath(path);
+  const stripped = normalized.replace(/^\/(en|fr)(?=\/|$)/, "");
+  return stripped || "/";
+}
+
+/** True for in-app navigations that should use the slide-up curtain. */
+export function isCurtainNavigableHref(href: string): boolean {
+  if (!href) return false;
+  const trimmed = href.trim();
+  if (
+    trimmed.startsWith("#") ||
+    trimmed.startsWith("mailto:") ||
+    trimmed.startsWith("tel:") ||
+    trimmed.startsWith("javascript:")
+  ) {
+    return false;
+  }
+
+  let path = trimmed;
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    try {
+      const url = new URL(trimmed);
+      if (typeof window !== "undefined" && url.origin !== window.location.origin) {
+        return false;
+      }
+      path = url.pathname;
+    } catch {
+      return false;
+    }
+  } else if (!trimmed.startsWith("/")) {
+    return false;
+  }
+
+  const clean = normalizePath(path);
+  if (
+    clean.startsWith("/studio") ||
+    clean.startsWith("/admin") ||
+    clean.includes("/login")
+  ) {
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Map an href to a facade preview key. Returns null only when the href should
+ * NOT use the curtain (external, hash, studio…). Every other internal path
+ * gets a destination — named preview or generic dark sheet.
+ */
+export function slideDestinationForHref(href: string): SlideDestination | null {
+  if (!isCurtainNavigableHref(href)) return null;
+
+  let path = href.trim();
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    try {
+      path = new URL(path).pathname;
+    } catch {
+      return "generic";
+    }
+  }
+
+  const withoutLocale = pathWithoutLocale(path);
+
+  if (withoutLocale === "/") return "home";
+
+  if (withoutLocale === "/services") return "services";
+  if (
+    withoutLocale === "/work" ||
+    withoutLocale === "/projets" ||
+    withoutLocale === "/projects"
+  ) {
+    return "work";
+  }
+  if (withoutLocale === "/news" || withoutLocale === "/blog") return "news";
+  if (withoutLocale === "/about" || withoutLocale === "/a-propos") return "about";
+  if (withoutLocale === "/contact") return "contact";
+  if (
+    withoutLocale === "/our-process" ||
+    withoutLocale === "/notre-methode" ||
+    withoutLocale === "/approach"
+  ) {
+    return "approach";
+  }
+
+  return "generic";
+}
 
 function createSnapshot() {
   const main = document.querySelector("main");
@@ -106,40 +200,6 @@ function removeSnapshot() {
   document.getElementById(SNAPSHOT_ID)?.remove();
 }
 
-/** Match dark catalogue indexes: services, work, news, about, contact. */
-export function slideDestinationForHref(href: string): SlideDestination | null {
-  const path = href.split("?")[0]?.replace(/\/$/, "") || "";
-  if (/\/(en|fr)\/services$/.test(path) || path.endsWith("/services")) return "services";
-  if (
-    /\/(en|fr)\/work$/.test(path) ||
-    /\/(en|fr)\/projets$/.test(path) ||
-    path.endsWith("/work") ||
-    path.endsWith("/projets")
-  ) {
-    return "work";
-  }
-  if (
-    /\/(en|fr)\/news$/.test(path) ||
-    /\/(en|fr)\/blog$/.test(path) ||
-    path.endsWith("/news") ||
-    path.endsWith("/blog")
-  ) {
-    return "news";
-  }
-  if (
-    /\/(en|fr)\/about$/.test(path) ||
-    /\/(en|fr)\/a-propos$/.test(path) ||
-    path.endsWith("/about") ||
-    path.endsWith("/a-propos")
-  ) {
-    return "about";
-  }
-  if (/\/(en|fr)\/contact$/.test(path) || path.endsWith("/contact")) {
-    return "contact";
-  }
-  return null;
-}
-
 type Phase = "idle" | "rising" | "revealing";
 
 const CurtainContext = createContext<{
@@ -166,6 +226,8 @@ export function CurtainTransitionProvider({
   newsPreview,
   aboutPreview,
   contactPreview,
+  approachPreview,
+  homePreview,
 }: {
   children: ReactNode;
   servicesPreview?: SlidePreview;
@@ -173,6 +235,8 @@ export function CurtainTransitionProvider({
   newsPreview?: SlidePreview;
   aboutPreview?: SlidePreview;
   contactPreview?: SlidePreview;
+  approachPreview?: SlidePreview;
+  homePreview?: SlidePreview;
 }) {
   const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
@@ -185,12 +249,18 @@ export function CurtainTransitionProvider({
   const genRef = useRef(0);
   const revealRafRef = useRef(0);
   const revealRaf2Ref = useRef(0);
+  const phaseRef = useRef<Phase>("idle");
   const [phase, setPhase] = useState<Phase>("idle");
   const [armId, setArmId] = useState(0);
   const [risen, setRisen] = useState(false);
   /** React-owned transform pose so re-renders cannot wipe WAAPI / settle(). */
   const [sheetPose, setSheetPose] = useState<"down" | "up">("down");
   const [destination, setDestination] = useState<SlideDestination | null>(null);
+
+  const setPhaseBoth = useCallback((next: Phase) => {
+    phaseRef.current = next;
+    setPhase(next);
+  }, []);
 
   const cancelRevealRafs = useCallback(() => {
     if (revealRafRef.current) cancelAnimationFrame(revealRafRef.current);
@@ -209,8 +279,8 @@ export function CurtainTransitionProvider({
     setRisen(false);
     setSheetPose("down");
     setDestination(null);
-    setPhase("idle");
-  }, [cancelRevealRafs]);
+    setPhaseBoth("idle");
+  }, [cancelRevealRafs, setPhaseBoth]);
 
   // Landed + page mounted → drop the snapshot, then fade the facade away
   // over the real page (identical hero underneath — the swap is seamless).
@@ -223,10 +293,10 @@ export function CurtainTransitionProvider({
       revealRaf2Ref.current = requestAnimationFrame(() => {
         if (gen !== genRef.current) return;
         removeSnapshot();
-        setPhase((p) => (p === "rising" ? "revealing" : p));
+        setPhaseBoth(phaseRef.current === "rising" ? "revealing" : phaseRef.current);
       });
     });
-  }, [cancelRevealRafs]);
+  }, [cancelRevealRafs, setPhaseBoth]);
 
   const navigateWithCurtain = useCallback(
     (href: string) => {
@@ -234,22 +304,44 @@ export function CurtainTransitionProvider({
         router.push(href);
         return;
       }
-      // Already there: plain navigation, no freeze — a same-route push never
-      // changes pathname, so the armed state would only clear via the failsafe.
-      if (typeof window !== "undefined" && window.location.pathname === href) {
-        router.push(href);
-        return;
-      }
-      // Transition in flight: ignore re-entry. Competing arms left stale
-      // snapshots, uncancellable rAFs, and a non-reset 8s failsafe.
-      if (phase !== "idle") {
-        return;
-      }
 
       const dest = slideDestinationForHref(href);
       if (!dest) {
         router.push(href);
         return;
+      }
+
+      const targetPath = normalizePath(
+        href.startsWith("http")
+          ? (() => {
+              try {
+                return new URL(href).pathname;
+              } catch {
+                return href;
+              }
+            })()
+          : href,
+      );
+      const currentPath =
+        typeof window !== "undefined"
+          ? normalizePath(window.location.pathname)
+          : "";
+
+      // Already there: plain navigation, no freeze — a same-route push never
+      // changes pathname, so the armed state would only clear via the failsafe.
+      if (currentPath && currentPath === targetPath) {
+        router.push(href);
+        return;
+      }
+
+      // Abort an in-flight transition so navbar clicks always take effect.
+      if (phaseRef.current !== "idle") {
+        genRef.current += 1;
+        cancelRevealRafs();
+        removeSnapshot();
+        pendingRef.current = false;
+        landedRef.current = false;
+        pageReadyRef.current = false;
       }
 
       genRef.current += 1;
@@ -262,10 +354,10 @@ export function CurtainTransitionProvider({
       setRisen(false);
       setSheetPose("down");
       setArmId((id) => id + 1);
-      setPhase("rising");
+      setPhaseBoth("rising");
       router.push(href);
     },
-    [router, shouldReduceMotion, phase, cancelRevealRafs],
+    [router, shouldReduceMotion, cancelRevealRafs, setPhaseBoth],
   );
 
   // One-shot consumption by PageTransition when the pathname actually
@@ -384,18 +476,18 @@ export function CurtainTransitionProvider({
     return () => clearTimeout(t);
   }, [phase, cleanup, armId]);
 
-  const activePreview =
-    destination === "work"
-      ? workPreview
-      : destination === "news"
-        ? newsPreview
-        : destination === "services"
-          ? servicesPreview
-          : destination === "about"
-            ? aboutPreview
-            : destination === "contact"
-              ? contactPreview
-              : null;
+  const previewByDestination: Record<SlideDestination, SlidePreview | undefined> = {
+    services: servicesPreview,
+    work: workPreview,
+    news: newsPreview,
+    about: aboutPreview,
+    contact: contactPreview,
+    approach: approachPreview,
+    home: homePreview,
+    generic: undefined,
+  };
+
+  const activePreview = destination ? previewByDestination[destination] : null;
 
   return (
     <CurtainContext.Provider

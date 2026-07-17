@@ -139,6 +139,15 @@ export default async function LangLayout({
                 crossLabel: dictionary.contact.hero.crossLabel,
                 tagline: dictionary.contact.hero.tagline,
               }}
+              approachPreview={{
+                title: dictionary.approach.page.wordmark,
+                crossLabel: dictionary.approach.page.crossLabel,
+                tagline: dictionary.approach.page.tagline,
+              }}
+              homePreview={{
+                title: "MAWT",
+                layout: "statement",
+              }}
             >
               <div className="relative min-h-screen bg-[#161616] text-white" lang={htmlLang}>
                 {/* Global JSON-LD (Organization + LocalBusiness + WebSite) — SSR */}

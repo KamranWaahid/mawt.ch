@@ -1,17 +1,46 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { ReactLenis } from "lenis/react";
 import { usePathname } from "next/navigation";
+import { prefersNativeScroll } from "@/lib/scroll-environment";
 
 type LenisProviderProps = {
   children: React.ReactNode;
 };
 
+type ScrollMode = "pending" | "native" | "lenis";
+
+/**
+ * Lenis wheel smoothing on desktop only.
+ * Touch / coarse-pointer devices keep native momentum scrolling — Lenis
+ * virtual scroll is the main source of mobile stutter, freezes, and jumps.
+ */
 export function LenisProvider({ children }: LenisProviderProps) {
   const pathname = usePathname();
+  const [mode, setMode] = useState<ScrollMode>("pending");
 
-  // Disable smooth scrolling in Sanity Studio as it breaks nested scrolling panels
+  useEffect(() => {
+    const media = window.matchMedia(
+      "(hover: none) and (pointer: coarse), (prefers-reduced-motion: reduce)",
+    );
+
+    const sync = () => {
+      setMode(prefersNativeScroll() ? "native" : "lenis");
+    };
+
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
+
+  // Sanity Studio nested panels need native scroll.
   if (pathname?.startsWith("/studio")) {
+    return <>{children}</>;
+  }
+
+  // Pending + native: never mount Lenis (avoids start/teardown flash on phones).
+  if (mode !== "lenis") {
     return <>{children}</>;
   }
 
@@ -24,9 +53,10 @@ export function LenisProvider({ children }: LenisProviderProps) {
         // Soft exponential ease similar to Framer-style scroll smoothing.
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
+        // Touch stays native even if a desktop user briefly uses a touchscreen.
+        syncTouch: false,
         wheelMultiplier: 0.45,
-        // Lower touch multiplier prevents over-scrolling on mobile.
-        touchMultiplier: 0.95,
+        touchMultiplier: 1,
         // Lower lerp adds a smoother, more composed glide without feeling stuck.
         lerp: 0.035,
         // Prevent Lenis from hijacking touch events on elements that need
@@ -38,7 +68,10 @@ export function LenisProvider({ children }: LenisProviderProps) {
           // Prevent scroll capturing in any overflow:auto/scroll children
           const style = window.getComputedStyle(node);
           const overflowX = style.overflowX;
-          if ((overflowX === "auto" || overflowX === "scroll") && node.scrollWidth > node.clientWidth) {
+          if (
+            (overflowX === "auto" || overflowX === "scroll") &&
+            node.scrollWidth > node.clientWidth
+          ) {
             return true;
           }
           return false;

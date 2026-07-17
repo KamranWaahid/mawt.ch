@@ -404,23 +404,21 @@ body::after {
   }
 }
 
-/* Progressive gradient blur for the transparent navbar.
-   Eight stacked backdrop-filter layers (::before + 6 divs + ::after), each masked
-   to a sliding band. Blur is strongest (64px) at the very top and halves band by
-   band until it fully dissolves at the bottom edge — no hard cut-off line.
-   Same technique as the reference pen, inverted to run top → bottom via `to top`
-   masks on a top-anchored container. */
+/* Progressive glass blur for the transparent navbar.
+   Eight stacked backdrop-filter bands (::before + 6 divs + ::after), each masked
+   to a sliding feathered strip. Blur is strongest at the top and dissolves into
+   the page — no hard cut-off, no milky white wash. `saturate` keeps colour
+   alive under the frost so it reads as glass, not fog. */
 .navbar-blur-backdrop {
   position: fixed;
   left: 0;
   right: 0;
   top: 0;
-  height: 150px; /* Well past the 71px header: each mask band gets ~19px, so the
-     weak-blur tail dies out slowly instead of collapsing to sharp over ~30px,
-     which read as a bottom border. */
+  /* Past the 71px bar so the dissolve clears the nav, without a tall fog veil. */
+  height: 112px;
   z-index: 79;
   pointer-events: none;
-  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1);
   opacity: 0;
   isolation: isolate;
 }
@@ -429,26 +427,31 @@ body::after {
   opacity: 1;
 }
 
-/* Glass tint, fading with the blur (light = dark nav text over a light page) */
-.navbar-blur-backdrop.is-light-bg {
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.21), rgba(255, 255, 255, 0));
-}
-
+/* No fills — blur alone. Dark/white washes turn the bar into a solid slab
+   over the #161616 shell. */
+.navbar-blur-backdrop.is-light-bg,
 .navbar-blur-backdrop.is-dark-bg {
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0));
+  background: transparent;
 }
 
-/* Fallback for browsers without backdrop-filter (old Firefox, dated Android
-   WebViews): no glass is possible, so strengthen the tint gradient enough to
-   keep the nav text readable over busy content. Declared AFTER the normal
-   tints so it wins at equal specificity inside unsupporting browsers. */
+/* Fallback when backdrop-filter is unavailable — use site tones, never pure white. */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .navbar-blur-backdrop.is-light-bg {
-    background: linear-gradient(to bottom, rgba(246, 245, 244, 0.92), rgba(246, 245, 244, 0.75) 47%, rgba(246, 245, 244, 0));
+    background: linear-gradient(
+      to bottom,
+      rgba(246, 245, 244, 0.94) 0%,
+      rgba(246, 245, 244, 0.72) 48%,
+      rgba(246, 245, 244, 0) 100%
+    );
   }
 
   .navbar-blur-backdrop.is-dark-bg {
-    background: linear-gradient(to bottom, rgba(5, 6, 6, 0.85), rgba(5, 6, 6, 0.6) 47%, rgba(5, 6, 6, 0));
+    background: linear-gradient(
+      to bottom,
+      rgba(5, 6, 6, 0.9) 0%,
+      rgba(5, 6, 6, 0.62) 48%,
+      rgba(5, 6, 6, 0) 100%
+    );
   }
 }
 
@@ -459,56 +462,172 @@ body::after {
   inset: 0;
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
 }
 
+/* Band masks: `to top` on a top-anchored stack = strongest blur at the top,
+   weakest at the bottom. Wider feathers (overlapping ~2 bands) hide seams. */
 .navbar-blur-backdrop::before {
   content: "";
   z-index: 1;
-  backdrop-filter: blur(0.5px);
-  mask: linear-gradient(to top, rgba(0, 0, 0, 0) 0%, #000 12.5%, #000 25%, rgba(0, 0, 0, 0) 37.5%);
+  -webkit-backdrop-filter: blur(0.75px) saturate(1.12);
+  backdrop-filter: blur(0.75px) saturate(1.12);
+  -webkit-mask-image: linear-gradient(
+    to top,
+    transparent 0%,
+    #000 10%,
+    #000 28%,
+    transparent 44%
+  );
+  mask-image: linear-gradient(
+    to top,
+    transparent 0%,
+    #000 10%,
+    #000 28%,
+    transparent 44%
+  );
 }
 
 .navbar-blur-backdrop > div:nth-of-type(1) {
   z-index: 2;
-  backdrop-filter: blur(1px);
-  mask: linear-gradient(to top, rgba(0, 0, 0, 0) 12.5%, #000 25%, #000 37.5%, rgba(0, 0, 0, 0) 50%);
+  -webkit-backdrop-filter: blur(1.5px) saturate(1.14);
+  backdrop-filter: blur(1.5px) saturate(1.14);
+  -webkit-mask-image: linear-gradient(
+    to top,
+    transparent 8%,
+    #000 20%,
+    #000 38%,
+    transparent 54%
+  );
+  mask-image: linear-gradient(
+    to top,
+    transparent 8%,
+    #000 20%,
+    #000 38%,
+    transparent 54%
+  );
 }
 
 .navbar-blur-backdrop > div:nth-of-type(2) {
   z-index: 3;
-  backdrop-filter: blur(2px);
-  mask: linear-gradient(to top, rgba(0, 0, 0, 0) 25%, #000 37.5%, #000 50%, rgba(0, 0, 0, 0) 62.5%);
+  -webkit-backdrop-filter: blur(3px) saturate(1.16);
+  backdrop-filter: blur(3px) saturate(1.16);
+  -webkit-mask-image: linear-gradient(
+    to top,
+    transparent 18%,
+    #000 30%,
+    #000 48%,
+    transparent 64%
+  );
+  mask-image: linear-gradient(
+    to top,
+    transparent 18%,
+    #000 30%,
+    #000 48%,
+    transparent 64%
+  );
 }
 
 .navbar-blur-backdrop > div:nth-of-type(3) {
   z-index: 4;
-  backdrop-filter: blur(4px);
-  mask: linear-gradient(to top, rgba(0, 0, 0, 0) 37.5%, #000 50%, #000 62.5%, rgba(0, 0, 0, 0) 75%);
+  -webkit-backdrop-filter: blur(6px) saturate(1.18);
+  backdrop-filter: blur(6px) saturate(1.18);
+  -webkit-mask-image: linear-gradient(
+    to top,
+    transparent 28%,
+    #000 40%,
+    #000 58%,
+    transparent 74%
+  );
+  mask-image: linear-gradient(
+    to top,
+    transparent 28%,
+    #000 40%,
+    #000 58%,
+    transparent 74%
+  );
 }
 
 .navbar-blur-backdrop > div:nth-of-type(4) {
   z-index: 5;
-  backdrop-filter: blur(8px);
-  mask: linear-gradient(to top, rgba(0, 0, 0, 0) 50%, #000 62.5%, #000 75%, rgba(0, 0, 0, 0) 87.5%);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-mask-image: linear-gradient(
+    to top,
+    transparent 38%,
+    #000 50%,
+    #000 68%,
+    transparent 84%
+  );
+  mask-image: linear-gradient(
+    to top,
+    transparent 38%,
+    #000 50%,
+    #000 68%,
+    transparent 84%
+  );
 }
 
 .navbar-blur-backdrop > div:nth-of-type(5) {
   z-index: 6;
-  backdrop-filter: blur(16px);
-  mask: linear-gradient(to top, rgba(0, 0, 0, 0) 62.5%, #000 75%, #000 87.5%, rgba(0, 0, 0, 0) 100%);
+  -webkit-backdrop-filter: blur(22px) saturate(1.22);
+  backdrop-filter: blur(22px) saturate(1.22);
+  -webkit-mask-image: linear-gradient(
+    to top,
+    transparent 48%,
+    #000 60%,
+    #000 78%,
+    transparent 94%
+  );
+  mask-image: linear-gradient(
+    to top,
+    transparent 48%,
+    #000 60%,
+    #000 78%,
+    transparent 94%
+  );
 }
 
 .navbar-blur-backdrop > div:nth-of-type(6) {
   z-index: 7;
-  backdrop-filter: blur(32px);
-  mask: linear-gradient(to top, rgba(0, 0, 0, 0) 75%, #000 87.5%, #000 100%);
+  -webkit-backdrop-filter: blur(40px) saturate(1.24);
+  backdrop-filter: blur(40px) saturate(1.24);
+  -webkit-mask-image: linear-gradient(
+    to top,
+    transparent 58%,
+    #000 72%,
+    #000 90%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to top,
+    transparent 58%,
+    #000 72%,
+    #000 90%,
+    transparent 100%
+  );
 }
 
 .navbar-blur-backdrop::after {
   content: "";
   z-index: 8;
-  backdrop-filter: blur(64px);
-  mask: linear-gradient(to top, rgba(0, 0, 0, 0) 87.5%, #000 100%);
+  -webkit-backdrop-filter: blur(64px) saturate(1.26);
+  backdrop-filter: blur(64px) saturate(1.26);
+  -webkit-mask-image: linear-gradient(
+    to top,
+    transparent 72%,
+    #000 88%,
+    #000 100%
+  );
+  mask-image: linear-gradient(
+    to top,
+    transparent 72%,
+    #000 88%,
+    #000 100%
+  );
 }
 
 .home-hero-video-mask {

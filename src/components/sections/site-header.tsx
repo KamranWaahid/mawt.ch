@@ -98,12 +98,11 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
     };
   }, []);
 
-  // "isDark" here means dark-colored chrome (black text) for light grounds.
-  // Mobile menu is always dark catalogue chrome, so opening it must not flip
-  // the header into black-on-dark. Catalogue pages force theme="light".
-  const isDark = headerThemeOverride
-    ? headerThemeOverride === "dark"
-    : !isHomePage || isPastHero;
+  // "isDark" = dark-colored chrome (black text) for light grounds.
+  // Site shell is dark (#161616), so default to light chrome (white text/logo).
+  // Only flip to black chrome when a page explicitly requests theme="dark".
+  // (Never default to black-on-dark — that reads as a solid black navbar.)
+  const isDark = headerThemeOverride === "dark";
 
   const navTextClass = isDark ? "text-black/72" : "text-white/80";
   const navHoverClass = isDark ? "hover:text-black" : "hover:text-white";
@@ -208,9 +207,8 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
         </div>
       </motion.div>
 
-      {/* Progressive glass blur (does not inherit mix-blend-difference to avoid color inversion).
-          Eight stacked backdrop-filter layers (::before + 6 divs + ::after), each masked to a
-          sliding band, so the blur is strongest at the top and fully dissolved at the bottom. */}
+      {/* Progressive glass blur (no mix-blend — avoids color inversion).
+          Eight stacked backdrop-filter bands dissolve top → bottom; no milky white wash. */}
       <div
         className={`navbar-blur-backdrop ${isPastHero ? "visible" : ""} ${isDark ? "is-light-bg" : "is-dark-bg"}`}
       >

@@ -195,11 +195,12 @@ body::after {
 }
 
 .homepage-flow {
-  background: #F6F5F4;
+  background: #161616;
+  color: #ffffff;
 }
 
 .homepage-flow > section {
-  background-color: #F6F5F4;
+  background-color: #161616;
 }
 
 .internal-page-shell {
@@ -213,13 +214,7 @@ body::after {
 }
 
 .internal-page-shell .homepage-flow {
-  background:
-    linear-gradient(
-      180deg,
-      #F6F5F4 0%,
-      #F8F8F6 80%,
-      #F6F5F4 100%
-    );
+  background: #161616;
 }
 
 .internal-page-shell > div:not(.homepage-flow) section.bg-white,

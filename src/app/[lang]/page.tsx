@@ -7,6 +7,7 @@ import { InsightsSection } from "@/components/sections/insights-section";
 import { WorkSection } from "@/components/sections/work-section";
 import { SolutionSection } from "@/components/sections/solution-section";
 import { VisionSection } from "@/components/sections/vision-section";
+import { HomepageFlowHeaderTheme } from "@/components/ui/homepage-flow-header-theme";
 import { getHomePageData, getPartners } from "@/lib/sanity.queries";
 import { getDictionary } from "@/get-dictionary";
 import type { Locale } from "@/i18n-config";
@@ -175,7 +176,10 @@ export default async function HomePage({
         transitionDict={dictionary.heroTransition}
         services={data.services}
       />
-      <div className="homepage-flow" style={{ backgroundColor: "#F6F5F4" }}>
+      <HomepageFlowHeaderTheme
+        className="homepage-flow"
+        style={{ backgroundColor: "#161616" }}
+      >
         <ClientsSection dict={dictionary.clients} partners={partners} />
         <DescriptionSection dict={dictionary.description} />
         <ProblemSection dict={dictionary.problem} />
@@ -184,7 +188,7 @@ export default async function HomePage({
         <ApproachSection dict={dictionary.approach} />
         <WorkSection dict={dictionary.work} projects={data.projects} />
         <InsightsSection dict={dictionary.insights} posts={data.posts} />
-      </div>
+      </HomepageFlowHeaderTheme>
     </>
   );
 }

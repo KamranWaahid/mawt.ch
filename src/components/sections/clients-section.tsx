@@ -3,7 +3,7 @@
 import type { CSSProperties } from "react";
 import { motion } from "motion/react";
 import { urlForImage } from "@/lib/sanity.image";
-import { sectionTitleClass } from "@/components/ui/section-title-style";
+import { sectionTitleDarkClass } from "@/components/ui/section-title-style";
 import type { Partner } from "@/lib/types";
 
 type ClientsCopy = {
@@ -52,9 +52,6 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
     .filter((partner) => partner.featured !== false)
     .map((partner) => {
       const asset = partner.logo?.asset as (NonNullable<Partner["logo"]["asset"]> & { url?: string }) | undefined;
-      // Transformed CDN URL first: the raw asset.url serves the full-size
-      // upload (a 2560px PNG for a ~150px logo). Fall back to the raw URL
-      // with resize params appended (same Sanity CDN API).
       const logoSrc =
         urlForImage(partner.logo)?.width(360).fit("max").auto("format").url() ??
         (asset?.url ? `${asset.url}?w=360&fit=max&auto=format` : null);
@@ -73,8 +70,8 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
 
   return (
     <section
-      className="relative overflow-hidden bg-[#F6F5F4] pt-3 pb-4 md:pt-4 md:pb-5 lg:pt-5 lg:pb-6"
-      style={{ backgroundColor: "#F6F5F4" }}
+      className="relative overflow-hidden bg-[#161616] pt-8 pb-10 md:pt-10 md:pb-12 lg:pt-12 lg:pb-14"
+      style={{ backgroundColor: "#161616" }}
     >
       <div className="site-container relative z-10">
         <motion.h2
@@ -82,11 +79,11 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
           whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           viewport={{ once: true, amount: 0.45 }}
           transition={revealTransition}
-          className={`${sectionTitleClass} text-black`}
+          className={sectionTitleDarkClass}
         >
           {dict?.title || "Who trust us?"}
         </motion.h2>
-        
+
         {hasPartnerLogos ? (
           <motion.ul
             initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
@@ -103,11 +100,9 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
                   alt={logo.name}
                   loading="lazy"
                   decoding="async"
-                  // Intrinsic-size hint (aspect ratio) for the CLS audit; the
-                  // CSS classes still control the rendered size.
                   width={150}
                   height={40}
-                  className="block h-auto max-h-10 w-full max-w-[150px] object-contain opacity-45 grayscale contrast-75 brightness-90 mix-blend-multiply transition duration-300 group-hover:opacity-70 group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-95"
+                  className="block h-auto max-h-10 w-full max-w-[150px] object-contain opacity-40 brightness-0 invert transition duration-300 group-hover:opacity-85"
                 />
               );
 
@@ -119,7 +114,7 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={logo.name}
-                      className="group flex h-full w-full items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
+                      className="group flex h-full w-full items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/50"
                     >
                       {mark}
                     </a>
@@ -134,61 +129,66 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
           </motion.ul>
         ) : (
           <motion.ul
-          initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
-          whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          viewport={{ once: true, amount: 0.28 }}
-          transition={{ ...revealTransition, delay: 0.1 }}
-          className="mt-7 grid grid-cols-2 items-center gap-x-6 gap-y-7 sm:mt-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7"
-          aria-label={dict?.title}
-        >
-          {fallbackLogos.map((logo) => {
-            const logoStyle = {
-              "--logo-x": `${logo.x}px`,
-              "--logo-y": `${logo.y}px`,
-              "--logo-w": `${logo.width}px`,
-              "--logo-h": `${logo.height}px`,
-              "--sprite-w": `${spriteSize.width}px`,
-              "--sprite-h": `${spriteSize.height}px`,
-            } as CSSProperties;
+            initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, amount: 0.28 }}
+            transition={{ ...revealTransition, delay: 0.1 }}
+            className="mt-7 grid grid-cols-2 items-center gap-x-6 gap-y-7 sm:mt-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7"
+            aria-label={dict?.title}
+          >
+            {fallbackLogos.map((logo) => {
+              const logoStyle = {
+                "--logo-x": `${logo.x}px`,
+                "--logo-y": `${logo.y}px`,
+                "--logo-w": `${logo.width}px`,
+                "--logo-h": `${logo.height}px`,
+                "--sprite-w": `${spriteSize.width}px`,
+                "--sprite-h": `${spriteSize.height}px`,
+              } as CSSProperties;
 
-            const mark = (
-              <span
-                className="block bg-no-repeat opacity-45 grayscale contrast-75 brightness-90 mix-blend-multiply transition duration-300 [--logo-scale:clamp(0.39,3.4vw,0.56)] group-hover:opacity-70 group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-95"
-                style={{
-                  ...logoStyle,
-                  backgroundImage: "url('/client-logos.png')",
-                  width: "calc(var(--logo-w) * var(--logo-scale))",
-                  height: "calc(var(--logo-h) * var(--logo-scale))",
-                  backgroundPosition: "calc(var(--logo-x) * -1 * var(--logo-scale)) calc(var(--logo-y) * -1 * var(--logo-scale))",
-                  backgroundSize: "calc(var(--sprite-w) * var(--logo-scale)) calc(var(--sprite-h) * var(--logo-scale))",
-                }}
-                aria-hidden="true"
-              />
-            );
+              const mark = (
+                <span
+                  className="block bg-no-repeat opacity-40 brightness-0 invert transition duration-300 [--logo-scale:clamp(0.39,3.4vw,0.56)] group-hover:opacity-85"
+                  style={{
+                    ...logoStyle,
+                    backgroundImage: "url('/client-logos.png')",
+                    width: "calc(var(--logo-w) * var(--logo-scale))",
+                    height: "calc(var(--logo-h) * var(--logo-scale))",
+                    backgroundPosition:
+                      "calc(var(--logo-x) * -1 * var(--logo-scale)) calc(var(--logo-y) * -1 * var(--logo-scale))",
+                    backgroundSize:
+                      "calc(var(--sprite-w) * var(--logo-scale)) calc(var(--sprite-h) * var(--logo-scale))",
+                  }}
+                  aria-hidden="true"
+                />
+              );
 
-            return (
-              <li
-                key={logo.name}
-                className="flex h-16 items-center justify-center px-3 sm:h-18"
-              >
-                {logo.href ? (
-                  <a
-                    href={logo.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={logo.name}
-                    className="group flex h-full w-full items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
-                  >
-                    {mark}
-                  </a>
-                ) : (
-                  <span className="group flex h-full w-full items-center justify-center" aria-label={logo.name}>
-                    {mark}
-                  </span>
-                )}
-              </li>
-            );
-          })}
+              return (
+                <li
+                  key={logo.name}
+                  className="flex h-16 items-center justify-center px-3 sm:h-18"
+                >
+                  {logo.href ? (
+                    <a
+                      href={logo.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={logo.name}
+                      className="group flex h-full w-full items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white/50"
+                    >
+                      {mark}
+                    </a>
+                  ) : (
+                    <span
+                      className="group flex h-full w-full items-center justify-center"
+                      aria-label={logo.name}
+                    >
+                      {mark}
+                    </span>
+                  )}
+                </li>
+              );
+            })}
           </motion.ul>
         )}
       </div>

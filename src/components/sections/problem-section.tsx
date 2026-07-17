@@ -164,7 +164,7 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
           className="site-container relative z-10 w-full"
           style={{ opacity: blockOpacity, y: blockY }}
         >
-          <h2 className="max-w-[1280px] select-text font-serif text-[clamp(1.85rem,3.15vw,3rem)] font-normal leading-[1.04] tracking-normal text-neutral-900">
+          <h2 className="max-w-[1280px] select-text text-[clamp(1.85rem,3.15vw,3rem)] font-medium leading-[1.04] tracking-tight text-white">
             {words.map((word, i) => {
               // The text scrub runs from 0.05 to 0.8
               const start = 0.05 + (i / words.length) * 0.75;

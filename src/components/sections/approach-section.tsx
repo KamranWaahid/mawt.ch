@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useMotionValueEvent } from "motion/react";
 import Image from "next/image";
 import { AnimatedTitle } from "@/components/ui/animated-title";
-import { sectionTitleClass } from "@/components/ui/section-title-style";
+import { sectionTitleDarkClass } from "@/components/ui/section-title-style";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -72,14 +72,14 @@ export function ApproachSection({ dict }: { dict: any }) {
         <div className="site-container-wide w-full" ref={containerRef}>
 
           {/* Horizontal Divider */}
-          <div className="mb-10 h-px w-full bg-black/10" />
+          <div className="mb-10 h-px w-full bg-white/10" />
 
           {/* Headline */}
           <div className="mb-10 sm:mb-14">
             <AnimatedTitle
               as="h2"
               text={dict.headline}
-              className={sectionTitleClass}
+              className={sectionTitleDarkClass}
               splitBy="word"
             />
           </div>
@@ -88,7 +88,7 @@ export function ApproachSection({ dict }: { dict: any }) {
           <div className="relative overflow-hidden">
             {/* Left blur overlay */}
             <div
-              className={`absolute left-0 top-0 bottom-6 z-10 pointer-events-none bg-gradient-to-r from-[#F4F8F5] via-[#F4F8F5]/60 to-transparent backdrop-blur-[3px] w-8 sm:w-16 md:w-28 lg:w-36 transition-opacity duration-300 ${
+              className={`absolute left-0 top-0 bottom-6 z-10 pointer-events-none bg-gradient-to-r from-[#161616] via-[#161616]/60 to-transparent backdrop-blur-[3px] w-8 sm:w-16 md:w-28 lg:w-36 transition-opacity duration-300 ${
                 showLeftBlur ? "opacity-100" : "opacity-0"
               }`}
               style={{
@@ -99,7 +99,7 @@ export function ApproachSection({ dict }: { dict: any }) {
 
             {/* Right blur overlay */}
             <div
-              className={`absolute right-0 top-0 bottom-6 z-10 pointer-events-none bg-gradient-to-l from-[#F4F8F5] via-[#F4F8F5]/60 to-transparent backdrop-blur-[3px] w-8 sm:w-16 md:w-28 lg:w-36 transition-opacity duration-300 ${
+              className={`absolute right-0 top-0 bottom-6 z-10 pointer-events-none bg-gradient-to-l from-[#161616] via-[#161616]/60 to-transparent backdrop-blur-[3px] w-8 sm:w-16 md:w-28 lg:w-36 transition-opacity duration-300 ${
                 showRightBlur ? "opacity-100" : "opacity-0"
               }`}
               style={{
@@ -123,14 +123,14 @@ export function ApproachSection({ dict }: { dict: any }) {
                   <motion.div
                     key={item.id}
                     variants={itemVariants}
-                    className="group relative flex flex-col justify-between bg-[#EDEDED]/50 hover:bg-[#E3EAE6]/70 border border-black/[0.02] rounded-2xl pt-8 px-5 xs:px-8 pb-0 md:pt-12 md:px-10 md:pb-0 transition-all duration-500 ease-out w-[calc(100vw-3rem)] sm:w-[375px] md:w-[410px] shrink-0 min-h-[460px] sm:min-h-[500px] md:min-h-[520px] overflow-hidden"
+                    className="group relative flex min-h-[460px] w-[calc(100vw-3rem)] shrink-0 flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] px-5 pb-0 pt-8 transition-colors duration-500 ease-out hover:bg-white/[0.06] xs:px-8 sm:min-h-[500px] sm:w-[375px] md:min-h-[520px] md:w-[410px] md:px-10 md:pb-0 md:pt-12"
                   >
                     {/* Upper Text */}
                     <div className="space-y-4">
-                      <h3 className="text-xl font-semibold tracking-[-0.02em] text-neutral-900 leading-tight sm:text-2xl">
+                      <h3 className="text-xl font-semibold leading-tight tracking-[-0.02em] text-white sm:text-2xl">
                         {item.title}
                       </h3>
-                      <p className="text-sm font-normal leading-[1.6] tracking-[-0.015em] text-black/50">
+                      <p className="text-sm font-normal leading-[1.6] tracking-[-0.015em] text-white/50">
                         {item.description}
                       </p>
                     </div>

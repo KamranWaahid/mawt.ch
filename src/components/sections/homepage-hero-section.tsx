@@ -938,6 +938,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
             initial={{ opacity: 0, y: -8, filter: "blur(10px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             exit={{ opacity: 0, y: -8, filter: "blur(10px)" }}
+            data-curtain-defer="280"
             className="fixed inset-0 z-[49] bg-black/94 px-6 pb-10 pt-[calc(env(safe-area-inset-top)+6rem)] text-white md:hidden"
           >
             <div className="flex flex-col gap-7">

@@ -289,6 +289,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
             exit={{ opacity: 0, y: -8, filter: "blur(10px)" }}
             transition={{ duration: 0.28, ease: "easeOut" }}
             style={{ paddingTop: "calc(env(safe-area-inset-top) + 6rem)", paddingBottom: "calc(env(safe-area-inset-bottom) + 4rem)" }}
+            data-curtain-defer="320"
             className="fixed inset-0 z-40 overflow-y-auto bg-white/95 px-6 md:hidden"
           >
             <div className="flex flex-col gap-12 pb-24">

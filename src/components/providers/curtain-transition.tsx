@@ -339,16 +339,10 @@ export function CurtainTransitionProvider({
       setActivePreview(resolvePreview(href, previewsRef.current, hint));
       createSnapshot();
       setPhase("rising");
-      // Push AFTER the sheet's animation is committed to the compositor
-      // (two frames past the render). Otherwise rendering the destination
-      // can block the main thread before the rise ever starts, and the
-      // curtain appears to stall or skip. Prefetch-on-hover makes the
-      // deferred push nearly free.
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() => {
-          router.push(href);
-        }),
-      );
+      // Immediate push — rAF-deferred pushes hang in throttled/background
+      // tabs (rAF never fires). The rise is a CSS animation on the
+      // compositor, and hover-prefetch keeps the push light anyway.
+      router.push(href);
     },
     [router, shouldReduceMotion],
   );
@@ -378,7 +372,20 @@ export function CurtainTransitionProvider({
       if (!href) return;
 
       event.preventDefault();
-      navigateWithCurtain(href, extractHint(anchor));
+      const hint = extractHint(anchor);
+
+      // Links inside a closing overlay (mobile menu): let the overlay play its
+      // exit animation before freezing the page — an instant snapshot would
+      // hard-cut the menu away. The overlay's own onClick still closes it.
+      const deferMs = anchor.closest("[data-curtain-defer]")
+        ? Number((anchor.closest("[data-curtain-defer]") as HTMLElement).dataset.curtainDefer) || 320
+        : 0;
+
+      if (deferMs > 0) {
+        setTimeout(() => navigateWithCurtain(href, hint), deferMs);
+      } else {
+        navigateWithCurtain(href, hint);
+      }
     };
 
     document.addEventListener("click", onClick, true);

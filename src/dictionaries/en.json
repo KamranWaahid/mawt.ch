@@ -183,6 +183,13 @@
     "cookieSettings": "Cookie Settings",
     "address": "Rue de la Fontenette 23, 1227 Carouge (Geneva)",
     "phoneDisplay": "+41 76 636 33 33",
+    "regions": "Regions",
+    "geneva": "Geneva",
+    "cta": {
+      "headline": "Let's build what moves you forward.",
+      "body": "30 minutes together to get to know each other. If it clicks, we move forward. If not, we point you to those who can help.",
+      "label": "Get in touch"
+    },
     "columns": [
       {
         "title": "Company",

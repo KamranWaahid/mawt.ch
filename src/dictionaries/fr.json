@@ -181,6 +181,15 @@
   "footer": {
     "rights": "© 2026 MAWT. Tous droits réservés.",
     "cookieSettings": "Paramètres des cookies",
+    "address": "Rue de la Fontenette 23, 1227 Carouge (Genève)",
+    "phoneDisplay": "+41 76 636 33 33",
+    "regions": "Régions",
+    "geneva": "Genève",
+    "cta": {
+      "headline": "Construisons ce qui vous fait avancer.",
+      "body": "30 minutes ensemble pour qu'on se comprenne. Si ça matche, on enchaîne. Si non, on vous oriente vers ceux qui peuvent vous aider.",
+      "label": "Discutons"
+    },
     "columns": [
       {
         "title": "Entreprise",

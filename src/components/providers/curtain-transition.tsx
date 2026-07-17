@@ -17,42 +17,79 @@ import { useReducedMotion } from "motion/react";
  *
  * Putting the REAL destination page inside the rising sheet doesn't survive
  * heavy hydration: the main thread blocks, frames drop, and the rise janks
- * or appears instant (observed twice on this project). So the rise never
- * depends on the destination page at all:
+ * or appears instant. So the rise never depends on the destination page:
  *
  *  1. click → freeze a DOM snapshot of the current page (z-110) and rise a
- *     LIGHTWEIGHT FACADE sheet (z-120) styled exactly like the destination
- *     hero (same background, markup and classes, so the reveal is seamless).
- *     The facade is a few DOM nodes — it commits and paints instantly, and
- *     the transform transition runs on the compositor, immune to
- *     main-thread jank. The rise starts the moment the user clicks.
- *  2. router.push runs in parallel; the real page mounts and hydrates in
- *     normal flow, invisible under the snapshot.
- *  3. when the facade has landed AND the page has mounted (scroll already
- *     reset under cover), the snapshot is removed and the facade fades out,
- *     revealing the real page — whose hero sits exactly where the facade's
- *     is.
+ *     LIGHTWEIGHT FACADE sheet (z-120) styled like the destination hero.
+ *  2. router.push runs in parallel; the real page mounts under the snapshot.
+ *  3. when the facade has landed AND the page has mounted, the snapshot is
+ *     removed and the facade fades out, revealing the real page.
  *
- * Failsafes: arming auto-expires (never a stuck frozen screen), reduced
- * motion gets a plain navigation, same-route clicks skip the effect.
+ * All same-origin internal navigations opt in via a capture-phase click
+ * interceptor (nav, footer, CTAs, cards). Reduced motion / external /
+ * modified clicks stay plain.
  */
 
 const SNAPSHOT_ID = "mawt-slide-snapshot";
-// Dev compiles routes on demand and can take seconds; prod navigations are
-// near-instant. The failsafe only exists so a failed navigation never leaves
-// a frozen screen.
 const ARM_TIMEOUT_MS = 8000;
-const RISE_MS = 750;
-const REVEAL_MS = 300;
-// Top overshoot: the sheet's rounded corners live above the viewport once
-// landed, so the radius never has to be animated away.
+const RISE_MS = 900;
+const REVEAL_MS = 340;
+// Overshoot on BOTH ends: top hides the rounded corners once landed, bottom
+// covers the keyframe over-travel (the sheet briefly rises past 0 and settles).
 const SHEET_OVERSHOOT_PX = 28;
 
 export type SlidePreview = {
-  title: string;
-  crossLabel: string;
-  tagline: string;
+  theme: "dark" | "light" | "home";
+  /** Dark services wordmark layout */
+  title?: string;
+  crossLabel?: string;
+  tagline?: string;
+  /** Light SubpageHero layout */
+  subtitle?: string;
 };
+
+function normalizePath(href: string): string {
+  try {
+    const url = new URL(href, window.location.origin);
+    const path = url.pathname.replace(/\/$/, "") || "/";
+    return path;
+  } catch {
+    return href.split("?")[0].split("#")[0].replace(/\/$/, "") || "/";
+  }
+}
+
+function isLocaleRoot(path: string): boolean {
+  return path === "/en" || path === "/fr" || path === "/";
+}
+
+type PreviewHint = { title?: string; subtitle?: string };
+
+function resolvePreview(
+  href: string,
+  previews: Record<string, SlidePreview>,
+  hint?: PreviewHint,
+): SlidePreview {
+  const path = normalizePath(href);
+  if (previews[path]) return previews[path];
+  if (isLocaleRoot(path)) return { theme: "home" };
+  // Unmapped internals (service details, blog posts, projects): the clicked
+  // link's own text becomes the facade title, so the destination's content
+  // visibly arrives WITH the curtain instead of after it.
+  return { theme: "light", title: hint?.title, subtitle: hint?.subtitle };
+}
+
+/** Best label for an arbitrary clicked link — explicit attr, then aria, then
+ * the anchor's visible text if it reads like a title (not a whole card). */
+function extractHint(anchor: HTMLAnchorElement): PreviewHint | undefined {
+  const explicit = anchor.dataset.curtainTitle;
+  if (explicit) return { title: explicit, subtitle: anchor.dataset.curtainSubtitle };
+  const aria = anchor.getAttribute("aria-label");
+  if (aria && aria.length <= 90) return { title: aria };
+  const heading = anchor.querySelector("h1, h2, h3, h4");
+  const text = (heading?.textContent || anchor.textContent || "").trim().replace(/\s+/g, " ");
+  if (text && text.length >= 2 && text.length <= 90) return { title: text };
+  return undefined;
+}
 
 function createSnapshot() {
   const main = document.querySelector("main");
@@ -68,8 +105,7 @@ function createSnapshot() {
   clone.style.cssText = `position:absolute;left:0;right:0;top:${-window.scrollY}px;margin:0;`;
   clone.removeAttribute("id");
 
-  // Canvases clone blank — copy their pixels so animated backgrounds
-  // (ASCII hero) stay visible in the frozen frame.
+  // Canvases clone blank — copy pixels so animated backgrounds stay frozen.
   const src = main.querySelectorAll("canvas");
   const dst = clone.querySelectorAll("canvas");
   src.forEach((c, i) => {
@@ -84,20 +120,27 @@ function createSnapshot() {
     }
   });
 
-  holder.appendChild(clone);
+  // Parallax stage: the frozen page recedes upward and shrinks slightly while
+  // the sheet rises over it — two planes moving against each other reads as
+  // depth, not a flat slide. Transform + opacity only (compositor-safe).
+  const stage = document.createElement("div");
+  stage.style.cssText =
+    "position:absolute;inset:0;transform:translateY(0) scale(1);transform-origin:50% 18%;" +
+    `transition:transform ${900}ms cubic-bezier(0.6,0.05,0.14,0.99);will-change:transform;`;
+  stage.appendChild(clone);
 
-  // Dim scrim over the frozen page: both the homepage and the facade are
-  // near-black, so the rising sheet was invisible dark-on-dark. Fading the
-  // snapshot's CONTENT down (white text, ASCII field) makes the full-
-  // luminance sheet read clearly — the DHNN pattern. Opacity-only, so the
-  // fade runs on the compositor alongside the sheet's transform.
+  // Dim the frozen page so the rising sheet always reads clearly
+  // (dark-on-dark and light-on-light both need separation).
   const dim = document.createElement("div");
   dim.style.cssText =
-    "position:absolute;inset:0;background:#000;opacity:0;transition:opacity 750ms cubic-bezier(0.76,0,0.24,1);pointer-events:none;";
-  holder.appendChild(dim);
+    "position:absolute;inset:0;background:#000;opacity:0;transition:opacity 900ms cubic-bezier(0.6,0.05,0.14,0.99);pointer-events:none;";
+  stage.appendChild(dim);
+
+  holder.appendChild(stage);
   requestAnimationFrame(() =>
     requestAnimationFrame(() => {
-      dim.style.opacity = "0.55";
+      stage.style.transform = "translateY(-9vh) scale(0.962)";
+      dim.style.opacity = "0.52";
     }),
   );
 
@@ -108,10 +151,41 @@ function removeSnapshot() {
   document.getElementById(SNAPSHOT_ID)?.remove();
 }
 
+function shouldInterceptAnchor(anchor: HTMLAnchorElement, event: MouseEvent): string | null {
+  if (event.defaultPrevented) return null;
+  if (event.button !== 0) return null;
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return null;
+  if (anchor.target && anchor.target !== "_self") return null;
+  if (anchor.hasAttribute("download")) return null;
+  if (anchor.dataset.curtain === "off") return null;
+
+  const raw = anchor.getAttribute("href");
+  if (!raw || raw.startsWith("#") || raw.startsWith("mailto:") || raw.startsWith("tel:")) {
+    return null;
+  }
+
+  let url: URL;
+  try {
+    url = new URL(raw, window.location.origin);
+  } catch {
+    return null;
+  }
+
+  if (url.origin !== window.location.origin) return null;
+  if (url.pathname.startsWith("/studio") || url.pathname.startsWith("/admin")) return null;
+
+  // Same-path hash / query toggles: let the browser handle them.
+  const nextPath = url.pathname.replace(/\/$/, "") || "/";
+  const currentPath = window.location.pathname.replace(/\/$/, "") || "/";
+  if (nextPath === currentPath) return null;
+
+  return `${url.pathname}${url.search}${url.hash}`;
+}
+
 type Phase = "idle" | "rising" | "revealing";
 
 const CurtainContext = createContext<{
-  navigateWithCurtain: (href: string) => void;
+  navigateWithCurtain: (href: string, hint?: PreviewHint) => void;
   takePendingSlide: () => boolean;
   notifyPageReady: () => void;
 }>({
@@ -122,36 +196,112 @@ const CurtainContext = createContext<{
 
 export const useCurtainTransition = () => useContext(CurtainContext);
 
+/** Destination hero content that rides INSIDE the rising sheet. Each element
+ * staggers in (blur + lift) while the sheet travels, so the page's content
+ * visibly arrives with the curtain — by landing, the hero is already there. */
+function FacadeContent({ preview }: { preview: SlidePreview }) {
+  if (preview.theme === "home") {
+    return <div className="h-full w-full bg-black" />;
+  }
+
+  if (preview.theme === "dark") {
+    return (
+      <div className="pb-[10vh] pt-[24vh]">
+        <div className="site-container-xwide">
+          <h1 className="text-[clamp(3rem,5.5vw,5rem)] font-medium leading-[0.98] tracking-tight text-white">
+            <span className="mawt-curtain-item block" style={{ animationDelay: "240ms" }}>
+              {preview.title}{" "}
+              {preview.crossLabel ? (
+                <span className="text-white/15">{preview.crossLabel}</span>
+              ) : null}
+            </span>
+            {preview.tagline ? (
+              <span className="mawt-curtain-item block" style={{ animationDelay: "340ms" }}>
+                {preview.tagline}
+              </span>
+            ) : null}
+          </h1>
+        </div>
+      </div>
+    );
+  }
+
+  // Light facade — an exact structural copy of SubpageHero (same section
+  // heights, paddings and gradient scale), so the title occupies the same
+  // pixels as the real hero it reveals into. No drift, no jump.
+  return (
+    <div className="h-full w-full overflow-hidden bg-[#F6F5F4]">
+      <section className="relative isolate overflow-hidden pt-[132px] pb-14 sm:pt-[150px] md:min-h-[72vh] md:pt-[170px] lg:min-h-[76vh]">
+        <div
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            background:
+              "linear-gradient(180deg, #BFFFE6 0%, #DFFFF4 30%, #F6F5F4 74%, transparent 100%)",
+          }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0 -z-10 opacity-[0.36]"
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(117,218,180,0.18) 0%, transparent 42%, rgba(255,255,255,0.72) 100%)",
+          }}
+        />
+        <div className="site-container-wide relative z-10 flex min-h-[calc(72vh-220px)] flex-col justify-center md:justify-end md:pb-[12vh]">
+          <div className="max-w-[1240px]">
+            {preview.title ? (
+              <h1 className="max-w-[1180px] font-serif text-[clamp(2.55rem,6vw,4.45rem)] font-normal leading-[0.94] tracking-normal text-[#062833] md:max-w-[1240px]">
+                <span className="mawt-curtain-item block" style={{ animationDelay: "220ms" }}>
+                  {preview.title}
+                </span>
+                {preview.subtitle ? (
+                  <span
+                    className="mawt-curtain-item mt-1 block text-[#a7adb7]"
+                    style={{ animationDelay: "320ms" }}
+                  >
+                    {preview.subtitle}
+                  </span>
+                ) : null}
+              </h1>
+            ) : null}
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 export function CurtainTransitionProvider({
   children,
-  servicesPreview,
+  previews = {},
 }: {
   children: ReactNode;
-  servicesPreview?: SlidePreview;
+  /** Localized pathname → facade copy/theme for seamless hero matching */
+  previews?: Record<string, SlidePreview>;
 }) {
   const router = useRouter();
   const shouldReduceMotion = useReducedMotion();
+  const previewsRef = useRef(previews);
+  previewsRef.current = previews;
 
   const pendingRef = useRef(false);
   const landedRef = useRef(false);
   const pageReadyRef = useRef(false);
+  const busyRef = useRef(false);
   const [phase, setPhase] = useState<Phase>("idle");
-  const [risen, setRisen] = useState(false);
+  const [activePreview, setActivePreview] = useState<SlidePreview | null>(null);
 
   const cleanup = useCallback(() => {
     removeSnapshot();
     pendingRef.current = false;
     landedRef.current = false;
     pageReadyRef.current = false;
-    setRisen(false);
+    busyRef.current = false;
+    setActivePreview(null);
     setPhase("idle");
   }, []);
 
-  // Landed + page mounted → drop the snapshot, then fade the facade away
-  // over the real page (identical hero underneath — the swap is seamless).
   const maybeReveal = useCallback(() => {
     if (!landedRef.current || !pageReadyRef.current) return;
-    // Two frames so the page beneath is actually painted before we uncover it.
     requestAnimationFrame(() =>
       requestAnimationFrame(() => {
         removeSnapshot();
@@ -161,31 +311,48 @@ export function CurtainTransitionProvider({
   }, []);
 
   const navigateWithCurtain = useCallback(
-    (href: string) => {
+    (href: string, hint?: PreviewHint) => {
       if (shouldReduceMotion) {
         router.push(href);
         return;
       }
-      // Already there (or a transition is in flight): plain navigation, no
-      // freeze — a same-route push never changes pathname, so the armed
-      // state would only clear via the failsafe.
-      if (typeof window !== "undefined" && window.location.pathname === href) {
+
+      const path = normalizePath(href);
+      if (typeof window !== "undefined") {
+        const current = window.location.pathname.replace(/\/$/, "") || "/";
+        if (current === path) {
+          router.push(href);
+          return;
+        }
+      }
+
+      // Don't stack transitions — fall back to a plain push if one is live.
+      if (busyRef.current) {
         router.push(href);
         return;
       }
+
+      busyRef.current = true;
       pendingRef.current = true;
       landedRef.current = false;
       pageReadyRef.current = false;
+      setActivePreview(resolvePreview(href, previewsRef.current, hint));
       createSnapshot();
-      setRisen(false);
       setPhase("rising");
-      router.push(href);
+      // Push AFTER the sheet's animation is committed to the compositor
+      // (two frames past the render). Otherwise rendering the destination
+      // can block the main thread before the rise ever starts, and the
+      // curtain appears to stall or skip. Prefetch-on-hover makes the
+      // deferred push nearly free.
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          router.push(href);
+        }),
+      );
     },
     [router, shouldReduceMotion],
   );
 
-  // One-shot consumption by PageTransition when the pathname actually
-  // changes — a stale flag never leaks into a later navigation.
   const takePendingSlide = useCallback(() => {
     const pending = pendingRef.current;
     pendingRef.current = false;
@@ -197,94 +364,119 @@ export function CurtainTransitionProvider({
     maybeReveal();
   }, [maybeReveal]);
 
-  // Start the rise right after the facade painted its off-screen position.
-  // At click time the main thread is idle (the heavy page renders later, in
-  // normal flow), so these frames flow and the transition start is never
-  // swallowed. Once started, the transform animates on the compositor even
-  // if hydration blocks the main thread mid-flight.
+  // Site-wide: any internal <a> uses the curtain (nav, footer, cards, CTAs).
   useEffect(() => {
-    if (phase !== "rising" || risen) return;
-    let raf2 = 0;
-    const raf1 = requestAnimationFrame(() => {
-      raf2 = requestAnimationFrame(() => setRisen(true));
-    });
-    return () => {
-      cancelAnimationFrame(raf1);
-      cancelAnimationFrame(raf2);
-    };
-  }, [phase, risen]);
+    if (shouldReduceMotion) return;
 
-  // transitionend backup — landing must never depend on a single DOM event.
+    const onClick = (event: MouseEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const anchor = target.closest("a");
+      if (!(anchor instanceof HTMLAnchorElement)) return;
+
+      const href = shouldInterceptAnchor(anchor, event);
+      if (!href) return;
+
+      event.preventDefault();
+      navigateWithCurtain(href, extractHint(anchor));
+    };
+
+    document.addEventListener("click", onClick, true);
+    return () => document.removeEventListener("click", onClick, true);
+  }, [navigateWithCurtain, shouldReduceMotion]);
+
+  // Warm the destination on intent (hover / touch): the server-rendered
+  // payload — CMS data included — is already in the router cache at click
+  // time, so the real page mounts under the curtain almost instantly.
   useEffect(() => {
-    if (!(phase === "rising" && risen)) return;
+    const prefetched = new Set<string>();
+
+    const warm = (event: Event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const anchor = target.closest("a");
+      if (!(anchor instanceof HTMLAnchorElement)) return;
+      const raw = anchor.getAttribute("href");
+      if (!raw || !raw.startsWith("/")) return;
+      if (raw.startsWith("/studio") || raw.startsWith("/admin")) return;
+      const path = normalizePath(raw);
+      if (prefetched.has(path)) return;
+      prefetched.add(path);
+      router.prefetch(path);
+    };
+
+    document.addEventListener("pointerover", warm, { capture: true, passive: true });
+    document.addEventListener("touchstart", warm, { capture: true, passive: true });
+    return () => {
+      document.removeEventListener("pointerover", warm, { capture: true });
+      document.removeEventListener("touchstart", warm, { capture: true });
+    };
+  }, [router]);
+
+  // animationend backup — landing must never depend on a single DOM event.
+  // Generous margin: if the main thread stalls before the animation commits,
+  // the backup must not reveal the page while the sheet is still mid-rise.
+  useEffect(() => {
+    if (phase !== "rising") return;
     const t = setTimeout(() => {
       landedRef.current = true;
       maybeReveal();
-    }, RISE_MS + 350);
+    }, RISE_MS + 900);
     return () => clearTimeout(t);
-  }, [phase, risen, maybeReveal]);
+  }, [phase, maybeReveal]);
 
-  // Reveal fade backup + final cleanup.
   useEffect(() => {
     if (phase !== "revealing") return;
-    const t = setTimeout(cleanup, REVEAL_MS + 150);
+    const t = setTimeout(cleanup, REVEAL_MS + 160);
     return () => clearTimeout(t);
   }, [phase, cleanup]);
 
-  // Failsafe: a navigation that never lands must not leave the screen frozen.
   useEffect(() => {
     if (phase === "idle") return;
     const t = setTimeout(cleanup, ARM_TIMEOUT_MS);
     return () => clearTimeout(t);
   }, [phase, cleanup]);
 
+  const sheetClass =
+    activePreview?.theme === "dark"
+      ? "rounded-t-[28px] border-t border-white/10 bg-[#161616] shadow-[0_-32px_90px_rgba(0,0,0,0.45)]"
+      : activePreview?.theme === "light"
+        ? "rounded-t-[28px] border-t border-black/5 bg-[#F6F5F4] shadow-[0_-28px_80px_rgba(0,0,0,0.18)]"
+        : "rounded-t-[28px] border-t border-white/10 bg-black shadow-[0_-32px_90px_rgba(0,0,0,0.45)]";
+
   return (
     <CurtainContext.Provider value={{ navigateWithCurtain, takePendingSlide, notifyPageReady }}>
       {children}
-      {phase !== "idle" && (
+      {phase !== "idle" && activePreview && (
         <div
           aria-hidden="true"
-          onTransitionEnd={(e) => {
+          onAnimationEnd={(e) => {
             if (e.target !== e.currentTarget) return;
-            if (e.propertyName === "transform") {
+            if (e.animationName.includes("mawt-curtain-rise")) {
               landedRef.current = true;
               maybeReveal();
-            } else if (e.propertyName === "opacity") {
-              cleanup();
             }
+          }}
+          onTransitionEnd={(e) => {
+            if (e.target !== e.currentTarget) return;
+            if (e.propertyName === "opacity") cleanup();
           }}
           style={{
             top: -SHEET_OVERSHOOT_PX,
-            // Explicit transform (NOT Tailwind translate-y-* utilities:
-            // Tailwind v4 implements those with the standalone `translate`
-            // property, which a `transition: transform` silently ignores —
-            // the sheet would just teleport).
-            transform: risen ? "translateY(0)" : "translateY(100%)",
-            transitionProperty: "transform, opacity",
-            transitionDuration: `${RISE_MS}ms, ${REVEAL_MS}ms`,
-            transitionTimingFunction: "cubic-bezier(0.76, 0, 0.24, 1), ease-out",
+            bottom: -SHEET_OVERSHOOT_PX,
+            transitionProperty: "opacity",
+            transitionDuration: `${REVEAL_MS}ms`,
+            transitionTimingFunction: "ease-out",
           }}
-          className={`fixed inset-x-0 bottom-0 z-[120] overflow-hidden rounded-t-[28px] border-t border-white/10 bg-[#161616] shadow-[0_-32px_90px_rgba(0,0,0,0.45)] will-change-transform ${
+          className={`mawt-curtain-sheet-rise fixed inset-x-0 z-[120] overflow-hidden will-change-transform ${sheetClass} ${
             phase === "revealing" ? "pointer-events-none opacity-0" : "opacity-100"
           }`}
         >
-          {/* Content zone = exactly the viewport once landed (the overshoot
-              strip sits above it), so the facade hero lines up pixel-for-pixel
-              with the real dark page hero it reveals into. */}
-          <div className="absolute inset-x-0 bottom-0" style={{ top: SHEET_OVERSHOOT_PX }}>
-            {servicesPreview && (
-              <div className="pb-[10vh] pt-[24vh]">
-                <div className="site-container-xwide">
-                  <h1 className="text-[clamp(3rem,5.5vw,5rem)] font-medium leading-[0.98] tracking-tight text-white">
-                    <span className="block">
-                      {servicesPreview.title}{" "}
-                      <span className="text-white/15">{servicesPreview.crossLabel}</span>
-                    </span>
-                    <span className="block">{servicesPreview.tagline}</span>
-                  </h1>
-                </div>
-              </div>
-            )}
+          <div
+            className="absolute inset-x-0"
+            style={{ top: SHEET_OVERSHOOT_PX, bottom: SHEET_OVERSHOOT_PX }}
+          >
+            <FacadeContent preview={activePreview} />
           </div>
         </div>
       )}

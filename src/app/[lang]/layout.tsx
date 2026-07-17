@@ -1,10 +1,18 @@
 import { SiteHeader } from "@/components/sections/site-header";
 import { SiteFooter } from "@/components/sections/site-footer";
 import { getDictionary } from "@/get-dictionary";
-import { getHomePageData } from "@/lib/sanity.queries";
+import {
+  getAboutContent,
+  getHomePageData,
+  getMethodPage,
+} from "@/lib/sanity.queries";
 import { i18n, type Locale } from "@/i18n-config";
+import { localizedHref } from "@/lib/routing/url-helpers";
 import { PageTransition } from "@/components/providers/page-transition";
-import { CurtainTransitionProvider } from "@/components/providers/curtain-transition";
+import {
+  CurtainTransitionProvider,
+  type SlidePreview,
+} from "@/components/providers/curtain-transition";
 import { CursorProvider } from "@/components/providers/cursor-provider";
 import { LenisProvider } from "@/components/providers/lenis-provider";
 import { StructuredData } from "@/components/seo/structured-data";
@@ -95,8 +103,93 @@ export default async function LangLayout({
 }) {
   const { lang } = await params;
   const htmlLang = lang === "fr" ? "fr" : "en";
-  const dictionary = await getDictionary(lang as Locale);
-  const data = await getHomePageData(lang);
+  const locale = lang as Locale;
+  const [dictionary, data, about, method] = await Promise.all([
+    getDictionary(locale),
+    getHomePageData(lang),
+    getAboutContent(lang),
+    getMethodPage(lang),
+  ]);
+
+  const isFr = locale === "fr";
+  // Facade copy for every public route — any unmatched path still gets the
+  // light SubpageHero curtain via resolvePreview fallback.
+  const curtainPreviews: Record<string, SlidePreview> = {
+    [`/${locale}`]: { theme: "home" },
+    [localizedHref("services", locale)]: {
+      theme: "dark",
+      title: dictionary.services.hero.title,
+      crossLabel: dictionary.services.hero.crossLabel,
+      tagline: dictionary.services.hero.tagline,
+    },
+    [localizedHref("projets", locale)]: {
+      theme: "light",
+      title: isFr ? "Études de cas" : "Case studies",
+      subtitle: isFr ? "De l'idée au lancement" : "From brief to launch",
+    },
+    [localizedHref("notre-methode", locale)]: {
+      theme: "light",
+      title: method?.heroH1 || (isFr ? "Notre approche" : "Our approach"),
+      subtitle:
+        method?.heroH2 ||
+        (isFr ? "Structuré, transparent, livrable." : "Structured, transparent, deliverable."),
+    },
+    [localizedHref("blog", locale)]: {
+      theme: "light",
+      title: dictionary.insights.headline,
+      subtitle: isFr ? "Notes de terrain sur l'IA." : "Field notes on AI in business.",
+    },
+    [localizedHref("a-propos", locale)]: {
+      theme: "light",
+      title: about?.heroH1 || (isFr ? "À propos" : "About"),
+      subtitle: about?.heroH2 || (isFr ? "Notre histoire" : "Our story"),
+    },
+    [localizedHref("contact", locale)]: {
+      theme: "light",
+      title: dictionary.contact.headline,
+      subtitle: dictionary.contact.subtitle,
+    },
+    [localizedHref("faqs", locale)]: {
+      theme: "light",
+      title: dictionary.faq.headline,
+    },
+    [localizedHref("clients", locale)]: {
+      theme: "light",
+      title: isFr ? "Partenaires MAWT." : "Partner with MAWT.",
+    },
+    [localizedHref("geneve", locale)]: {
+      theme: "light",
+      title: isFr
+        ? "IA et transformation digitale à Genève."
+        : "AI and digital transformation in Geneva.",
+    },
+    [localizedHref("securite", locale)]: {
+      theme: "light",
+      title: isFr ? "Sécurité" : "Security",
+    },
+    [localizedHref("confidentialite", locale)]: {
+      theme: "light",
+      title: isFr
+        ? "Transparence et confiance au cœur de nos opérations."
+        : "Transparency and trust at the core of our operations.",
+    },
+    [localizedHref("mentions-legales", locale)]: {
+      theme: "light",
+      title: isFr ? "Mentions légales" : "Legal Notice",
+    },
+    [localizedHref("conditions-generales", locale)]: {
+      theme: "light",
+      title: isFr
+        ? "Cadre clair pour une collaboration professionnelle."
+        : "Clear operational guidelines for professional collaboration.",
+    },
+    [localizedHref("cookies", locale)]: {
+      theme: "light",
+      title: isFr
+        ? "Transparence sur le suivi et le consentement."
+        : "Clear transparency regarding tracking and consent.",
+    },
+  };
 
   return (
     <html
@@ -107,13 +200,7 @@ export default async function LangLayout({
       <body className="min-h-full bg-black text-white" suppressHydrationWarning>
         <LenisProvider>
           <div className="flex min-h-full flex-col">
-            <CurtainTransitionProvider
-              servicesPreview={{
-                title: dictionary.services.hero.title,
-                crossLabel: dictionary.services.hero.crossLabel,
-                tagline: dictionary.services.hero.tagline,
-              }}
-            >
+            <CurtainTransitionProvider previews={curtainPreviews}>
               <div className="relative bg-white min-h-screen" lang={htmlLang}>
                 {/* Global JSON-LD (Organization + LocalBusiness + WebSite) — SSR */}
                 <StructuredData

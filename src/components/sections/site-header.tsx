@@ -10,7 +10,6 @@ import LogoBlack from "../../../public/logo-black.svg";
 import LogoWhite from "../../../public/logo-white.svg";
 import { translatePath } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/lib/routing/url-map";
-import { useCurtainTransition } from "@/components/providers/curtain-transition";
 import { useBodyScrollLock } from "@/hooks/use-body-scroll-lock";
 
 /**
@@ -30,12 +29,6 @@ type SiteHeaderProps = {
   socialLinks?: { platform: string; url: string }[];
   services?: unknown[];
   mainNav?: { label: string; href: string; hasDropdown?: boolean }[];
-};
-
-type NavItem = {
-  href: string;
-  label: string;
-  hasDropdown?: boolean;
 };
 
 const navItems = [
@@ -70,15 +63,11 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
   const router = useRouter();
   const currentLang = pathname.startsWith("/fr") ? "fr" : "en";
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { navigateWithCurtain } = useCurtainTransition();
   useBodyScrollLock(isMobileMenuOpen);
 
-  // "Services" navigates with the DHNN slide-up transition (no dropdown —
-  // the services page IS the menu).
-  const activeNavItems: NavItem[] = (mainNav && mainNav.length > 0 ? mainNav : navItems).map((item) => ({
-    ...item,
-    hasDropdown: item.href === "/services",
-  }));
+  // Curtain transition is applied site-wide by CurtainTransitionProvider
+  // (capture-phase link interceptor) — nav links stay plain <Link>s.
+  const activeNavItems = mainNav && mainNav.length > 0 ? mainNav : navItems;
 
   const normalizedPath = pathname.replace(/\/$/, "") || "/";
   const isHomePage = ["/", "/en", "/fr", ""].includes(normalizedPath);
@@ -229,14 +218,6 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
                 key={item.href}
                 href={navHref(item.href, currentLang as Locale)}
                 aria-current={pathname === navHref(item.href, currentLang as Locale) ? "page" : undefined}
-                onClick={
-                  item.hasDropdown
-                    ? (e) => {
-                        e.preventDefault();
-                        navigateWithCurtain(navHref(item.href, currentLang as Locale));
-                      }
-                    : undefined
-                }
                 className={`transition-colors ${navHoverClass} ${pathname === navHref(item.href, currentLang as Locale) ? (isDark ? "text-black font-semibold" : "text-white font-semibold") : ""}`}
               >
                 {navLabel(item, currentLang)}
@@ -335,13 +316,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
                   >
                     <Link
                       href={navHref(item.href, currentLang as Locale)}
-                      onClick={(e) => {
-                        setIsMobileMenuOpen(false);
-                        if (item.hasDropdown) {
-                          e.preventDefault();
-                          navigateWithCurtain(navHref(item.href, currentLang as Locale));
-                        }
-                      }}
+                      onClick={() => setIsMobileMenuOpen(false)}
                       className="text-[clamp(2rem,10vw,3.35rem)] font-normal leading-none tracking-tight text-black"
                     >
                       {navLabel(item, currentLang)}

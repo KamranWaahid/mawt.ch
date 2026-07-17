@@ -9,12 +9,11 @@ import { useCurtainTransition } from "@/components/providers/curtain-transition"
 /**
  * Two page-transition modes on one AnimatePresence.
  *
- * "fade" (default, all regular navigations): the classic tiny fade+lift.
- * Never touches layout: no fixed containers, no scroll manipulation beyond
- * the historic scroll reset, no overflow changes. Scroll position never
- * locked, Lenis never stopped.
+ * "fade" (fallback — reduced motion, or navigations that bypass the curtain):
+ * classic tiny fade+lift. Never touches layout beyond the historic scroll
+ * reset. Scroll position never locked, Lenis never stopped.
  *
- * "slide" (opt-in via CurtainTransitionProvider — the Services nav links):
+ * "slide" (default for internal links via CurtainTransitionProvider):
  * the provider froze a snapshot of the old page (z-110) and is rising a
  * lightweight facade sheet (z-120) on the compositor. Here the new page
  * simply mounts in normal flow, invisible under those overlays, resets
@@ -49,11 +48,10 @@ const pageVariants: Variants = {
             ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
           },
         },
-  // Exit is always the plain fade: in slide mode it plays invisibly under
-  // the opaque snapshot, so one exit behavior serves both modes.
+  // Exit plays under the snapshot during slide (invisible). Keep it short.
   exit: {
     opacity: 0,
-    transition: { duration: 0.2 },
+    transition: { duration: 0.15 },
   },
 };
 
@@ -104,7 +102,7 @@ export function PageTransition({ children }: { children: ReactNode }) {
   const variants = shouldReduceMotion ? reducedVariants : pageVariants;
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
+    <AnimatePresence mode={mode === "slide" ? "sync" : "wait"} initial={false}>
       <motion.div
         key={pathname}
         custom={mode}

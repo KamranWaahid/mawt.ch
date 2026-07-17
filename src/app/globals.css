@@ -186,6 +186,51 @@ html.lenis body {
   }
 }
 
+/* Curtain page transition — sheet rise with over-travel + settle, and the
+   destination hero content arriving inside the sheet. Transform/opacity/filter
+   only, so everything runs on the compositor even mid-hydration. */
+@keyframes mawt-curtain-rise {
+  from {
+    transform: translateY(103%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes mawt-curtain-item {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.mawt-curtain-sheet-rise {
+  /* Single decisive rise — fast launch, long deceleration, no bounce (an
+     over-travel settle made the facade title drift past its landing spot). */
+  animation: mawt-curtain-rise 900ms cubic-bezier(0.76, 0, 0.18, 1) both;
+}
+
+.mawt-curtain-item {
+  opacity: 0;
+  animation: mawt-curtain-item 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mawt-curtain-sheet-rise,
+  .mawt-curtain-item {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
 body::after {
   content: "";
   position: fixed;

@@ -9,7 +9,6 @@ import type { SiteSettings } from "@/lib/types";
 import { localizedHref, translatePath } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/lib/routing/url-map";
 import { AsciiWave } from "@/components/ui/ascii-wave";
-import { useCurtainTransition } from "@/components/providers/curtain-transition";
 import { useBodyScrollLock } from "@/hooks/use-body-scroll-lock";
 import { prefersNativeScroll } from "@/lib/scroll-environment";
 
@@ -533,8 +532,6 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
     return localizedHref(route, lang);
   };
 
-  const { navigateWithCurtain } = useCurtainTransition();
-
   // Sanity stores a raw path ("/contact"): localize it, otherwise every CTA
   // click goes through the Accept-Language 307 and can land FR users on /en.
   const ctaHref = translatePath(`/en${settings.ctaHref.startsWith("/") ? settings.ctaHref : `/${settings.ctaHref}`}`, "en", lang);
@@ -898,14 +895,6 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 <Link
                   key={item.route}
                   href={navHref(item.route)}
-                  onClick={
-                    item.route === "services"
-                      ? (e) => {
-                          e.preventDefault();
-                          navigateWithCurtain(navHref(item.route));
-                        }
-                      : undefined
-                  }
                   className="transition-colors"
                 >
                   {navItemLabel(item, lang)}

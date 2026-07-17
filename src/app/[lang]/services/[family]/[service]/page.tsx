@@ -32,6 +32,9 @@ const FAMILY_TAG_MAPPING: Record<string, string[]> = {
   securite: ["ia"],
 };
 
+// defined(_id) drops nulls from broken/deleted references. Without it, a
+// hidden!=true filter keeps nulls (null.hidden is undefined) and later
+// project/service .title access throws during static generation.
 const serviceDetailPageQuery = groq`
 {
   "service": *[_type == "service" && family == $family && slug.current == $serviceSlug && language == $lang][0]{
@@ -54,9 +57,6 @@ const serviceDetailPageQuery = groq`
     comparisonTable{ title, columns, rows[]{ cells } },
     faq[]{ question, answer },
     cta,
-    // defined(_id) drops nulls from broken/deleted references — without it,
-    // `[!(hidden == true)]` keeps nulls (null.hidden is undefined) and later
-    // `.map(p => p.title)` throws during static generation.
     "featuredProjects": featuredProjects[]->{
       _id,
       title,

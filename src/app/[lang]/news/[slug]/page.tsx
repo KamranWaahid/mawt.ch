@@ -207,7 +207,7 @@ export default async function BlogPostPage({
       <JsonLd data={[crumbLd, postLd]} />
 
       <article>
-        <header className="pb-10 pt-[22vh] md:pb-14">
+        <header className="catalogue-hero-pad pb-10 md:pb-14">
           <div className="site-container-xwide">
             <Link
               href={newsHref}

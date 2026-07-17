@@ -214,8 +214,8 @@ export function CinematicHeroSection({ settings, dict }: CinematicHeroSectionPro
           className="absolute inset-0 z-30 pointer-events-auto"
           style={{ y: textY, opacity: textOpacity, filter: textBlur }}
         >
-          <div className="relative h-full w-full flex items-start pt-[85px] lg:pt-[105px] xl:pt-[115px] 2xl:pt-[125px] px-6 sm:px-8 md:px-10 lg:px-12">
-            <div className="relative z-20 mx-auto w-full">
+          <div className="relative flex h-full w-full items-start pt-[85px] lg:pt-[105px] xl:pt-[115px] 2xl:pt-[125px]">
+            <div className="site-container-xwide relative z-20">
               <div className="flex flex-col items-start lg:max-w-[590px] xl:max-w-[650px] 2xl:max-w-[720px]">
                 <GeometricSymbol />
                 
@@ -281,7 +281,7 @@ export function CinematicHeroSection({ settings, dict }: CinematicHeroSectionPro
             className="absolute inset-0 z-40 flex items-start pointer-events-auto pt-[28vh] sm:pt-[29vh] lg:pt-[30vh]"
             style={{ y: statementY, opacity: statementExitOpacity }}
           >
-            <div className="site-container w-full px-6 sm:px-8 md:px-10 lg:px-12 mx-auto">
+            <div className="site-container-xwide w-full">
               <AnimatedTitle
                 as="h2"
                 text="We create strategies, AI automation systems, digital products, brands and experiences for the world's most ambitious thinkers."

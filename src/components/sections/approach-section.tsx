@@ -68,14 +68,14 @@ export function ApproachSection({ dict }: { dict: any }) {
   return (
     <section ref={sectionRef} className="relative h-[250vh] bg-transparent">
       {/* Sticky viewport container */}
-      <div className="sticky top-0 h-[100dvh] flex flex-col justify-center overflow-hidden py-12 sm:py-16 md:py-24 lg:py-32">
-        <div className="site-container-wide w-full" ref={containerRef}>
+      <div className="homepage-process-sticky sticky top-0 flex h-[100dvh] flex-col justify-center overflow-hidden py-12 sm:py-16 md:py-24 lg:py-32">
+        <div className="site-container-xwide w-full" ref={containerRef}>
 
           {/* Horizontal Divider */}
-          <div className="mb-10 h-px w-full bg-white/10" />
+          <div className="mb-6 h-px w-full bg-white/10 sm:mb-10" />
 
           {/* Headline */}
-          <div className="mb-10 sm:mb-14">
+          <div className="mb-6 sm:mb-10 md:mb-14">
             <AnimatedTitle
               as="h2"
               text={dict.headline}
@@ -123,11 +123,11 @@ export function ApproachSection({ dict }: { dict: any }) {
                   <motion.div
                     key={item.id}
                     variants={itemVariants}
-                    className="group relative flex min-h-[460px] w-[calc(100vw-3rem)] shrink-0 flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] px-5 pb-0 pt-8 transition-colors duration-500 ease-out hover:bg-white/[0.06] xs:px-8 sm:min-h-[500px] sm:w-[375px] md:min-h-[520px] md:w-[410px] md:px-10 md:pb-0 md:pt-12"
+                    className="homepage-process-card group relative flex min-h-[460px] w-[min(calc(100vw-2.5rem),22rem)] shrink-0 flex-col justify-between overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] px-5 pb-0 pt-8 transition-colors duration-500 ease-out hover:bg-white/[0.06] xs:px-8 sm:min-h-[500px] sm:w-[375px] md:min-h-[520px] md:w-[410px] md:px-10 md:pb-0 md:pt-12"
                   >
                     {/* Upper Text */}
-                    <div className="space-y-4">
-                      <h3 className="text-xl font-semibold leading-tight tracking-[-0.02em] text-white sm:text-2xl">
+                    <div className="space-y-3 sm:space-y-4">
+                      <h3 className="text-lg font-semibold leading-tight tracking-[-0.02em] text-white sm:text-xl md:text-2xl">
                         {item.title}
                       </h3>
                       <p className="text-sm font-normal leading-[1.6] tracking-[-0.015em] text-white/50">
@@ -137,7 +137,7 @@ export function ApproachSection({ dict }: { dict: any }) {
                     
                     {/* Bottom Centered Image sits flush on bottom edge */}
                     {item.image && (
-                      <div className="relative w-full h-[220px] sm:h-[250px] md:h-[280px] mt-6 flex items-end justify-center pointer-events-none">
+                      <div className="homepage-process-card-image relative mt-6 flex h-[220px] w-full items-end justify-center pointer-events-none sm:h-[250px] md:h-[280px]">
                         <Image
                           src={item.image}
                           alt={item.title}

@@ -1,42 +1,45 @@
-/**
- * BUG-011 fix:
- * - Correct text color: use text-black (white on white was unreadable in light layout).
- * - "Back home" links directly to /en (avoids / → locale redirect hop).
- * - Both EN and FR are offered so the user lands on the right locale.
- * - The 404 page lives outside [lang] layout, so it applies its own contrast/bg.
- */
 import Link from "next/link";
-import { AnimatedTitle } from "@/components/ui/animated-title";
+import { ArrowRight } from "lucide-react";
+import { HeaderTheme } from "@/components/ui/header-theme";
 
 export default function NotFound() {
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col items-center justify-center px-6 text-center bg-white">
-      <p className="text-xs uppercase tracking-[0.22em] text-neutral-400">404</p>
-      <AnimatedTitle
-        as="h1"
-        text="Page not found"
-        className="mt-4 text-2xl font-normal text-black md:text-3xl"
-        splitBy="word"
-        eager={true}
-      />
-      <p className="mt-4 max-w-xl text-neutral-500 font-normal leading-relaxed">
-        The page you&apos;re looking for doesn&apos;t exist or may have moved.
+    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-[#161616] text-center text-white">
+      <HeaderTheme theme="light" />
+      <div className="site-container-xwide flex flex-col items-center">
+      <p className="text-[13px] font-normal tracking-wide text-white/40">404</p>
+      <h1 className="mt-4 max-w-[16ch] text-[clamp(2rem,4vw,3.2rem)] font-medium leading-[1.05] tracking-tight text-white">
+        This page is not here
+      </h1>
+      <p className="mt-5 max-w-xl text-base font-normal leading-relaxed text-white/50">
+        The address may have changed, or the page may never have existed. You can return home and
+        continue from there.
       </p>
-      <div className="mt-10 flex flex-col sm:flex-row items-center gap-4">
-        {/* BUG-011: Direct locale links — no redirect chain via "/" */}
+      <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row">
         <Link
           href="/en"
-          className="rounded-sm border border-black px-8 py-3 text-sm uppercase tracking-[0.16em] text-black transition-colors hover:bg-black hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
+          className="group inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/[0.08] px-6 py-3 text-sm font-normal text-white/90 transition-colors hover:border-white/40 hover:bg-white/[0.14] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
         >
-          Back to home (EN)
+          Return home (EN)
+          <ArrowRight
+            size={14}
+            className="transition-transform duration-300 group-hover:translate-x-0.5"
+            aria-hidden="true"
+          />
         </Link>
         <Link
           href="/fr"
-          className="rounded-sm border border-black/20 px-8 py-3 text-sm uppercase tracking-[0.16em] text-black/60 transition-colors hover:border-black hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
+          className="group inline-flex items-center gap-2 rounded-full border border-white/15 px-6 py-3 text-sm font-normal text-white/60 transition-colors hover:border-white/35 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
         >
           Retour à l&apos;accueil (FR)
+          <ArrowRight
+            size={14}
+            className="transition-transform duration-300 group-hover:translate-x-0.5"
+            aria-hidden="true"
+          />
         </Link>
       </div>
-    </main>
+      </div>
+    </div>
   );
 }

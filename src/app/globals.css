@@ -13,7 +13,10 @@
   --container-max: 1280px;
   --container-wide: 1280px;
   --container-xwide: 1600px;
-  --page-gutter: 1.5rem;
+  --page-gutter: max(1.25rem, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+  --header-clearance: calc(4.5rem + env(safe-area-inset-top, 0px));
+  --catalogue-hero-pt: max(var(--header-clearance), clamp(6.5rem, 22vh, 12rem));
+  --catalogue-hero-pb: clamp(2.5rem, 8vh, 5.5rem);
 
   /* Fluid Typography - Premium System Scale */
   --text-xs: 0.75rem;                                         /* 12px */
@@ -104,13 +107,62 @@ body {
 
 @media (min-width: 640px) {
   :root {
-    --page-gutter: 2.5rem;
+    --page-gutter: max(2rem, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
   }
 }
 
 @media (min-width: 1024px) {
   :root {
-    --page-gutter: 5rem;
+    --page-gutter: max(3.5rem, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --page-gutter: max(4rem, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+  }
+}
+
+/* Short landscape / short laptop: keep catalogue heroes under the fixed header. */
+@media (max-height: 520px) and (orientation: landscape) {
+  :root {
+    --catalogue-hero-pt: max(5.5rem, calc(env(safe-area-inset-top, 0px) + 4.25rem));
+    --catalogue-hero-pb: 1.75rem;
+  }
+}
+
+.catalogue-hero-pad {
+  padding-top: var(--catalogue-hero-pt);
+  padding-bottom: var(--catalogue-hero-pb);
+}
+
+/* Homepage process cards: fit short viewports without changing scroll logic. */
+@media (max-height: 720px) {
+  .homepage-process-sticky {
+    padding-block: 1.5rem !important;
+  }
+
+  .homepage-process-card {
+    min-height: min(420px, calc(100dvh - 11rem)) !important;
+  }
+
+  .homepage-process-card-image {
+    height: min(180px, 28dvh) !important;
+  }
+}
+
+@media (max-height: 520px) {
+  .homepage-process-sticky {
+    padding-block: 0.75rem !important;
+    justify-content: flex-start !important;
+  }
+
+  .homepage-process-card {
+    min-height: min(320px, calc(100dvh - 8rem)) !important;
+  }
+
+  .homepage-process-card-image {
+    height: min(120px, 22dvh) !important;
   }
 }
 
@@ -204,32 +256,12 @@ body::after {
 }
 
 .internal-page-shell {
-  background:
-    linear-gradient(
-      180deg,
-      #F6F5F4 0%,
-      #F8F8F6 78%,
-      #F6F5F4 100%
-    );
+  background: #161616;
+  color: #ffffff;
 }
 
 .internal-page-shell .homepage-flow {
   background: #161616;
-}
-
-.internal-page-shell > div:not(.homepage-flow) section.bg-white,
-.internal-page-shell > div:not(.homepage-flow) section.bg-bg-light,
-.internal-page-shell > div:not(.homepage-flow) section.bg-neutral-50 {
-  background-color: transparent;
-}
-
-.internal-page-shell > div:not(.homepage-flow) .bg-white {
-  background-color: rgba(255, 255, 255, 0.58);
-}
-
-.internal-page-shell > div:not(.homepage-flow) .bg-neutral-50,
-.internal-page-shell > div:not(.homepage-flow) .bg-bg-light {
-  background-color: rgba(255, 255, 255, 0.34);
 }
 
 @keyframes drift {

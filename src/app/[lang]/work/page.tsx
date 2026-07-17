@@ -21,14 +21,14 @@ export async function generateMetadata({ params }: ProjectsPageProps): Promise<M
   return {
     title: lang === "en" ? "Case Studies" : "Études de cas",
     description: lang === "en"
-      ? "AI, automation and custom software case studies from Geneva: real projects, measured results — hours saved, errors cut, teams unblocked."
-      : "Études de cas IA, automatisation et logiciels sur mesure à Genève : des projets réels, des résultats mesurés — heures récupérées, erreurs réduites.",
+      ? "AI, automation and custom software case studies from Geneva: real projects, measured results. Hours saved, errors cut, teams unblocked."
+      : "Études de cas IA, automatisation et logiciels sur mesure à Genève : des projets réels, des résultats mesurés. Heures récupérées, erreurs réduites.",
     alternates: standaloneAlternates("projets", lang),
     openGraph: {
       title: lang === "en" ? "Case Studies | MAWT" : "Études de cas | MAWT",
       description: lang === "en"
-        ? "Real AI and automation projects with measured results."
-        : "Des projets IA et automatisation réels, aux résultats mesurés.",
+        ? "Selected AI and automation projects from MAWT in Geneva."
+        : "Projets IA et automatisation sélectionnés par MAWT à Genève.",
       url: `https://mawt.ch/${lang}/${lang === "fr" ? "projets" : "work"}`,
     },
   };
@@ -66,7 +66,7 @@ export default async function ProjectsPage({ params }: ProjectsPageProps) {
       <JsonLd data={projectItems.length ? [crumbLd, catalogLd] : [crumbLd]} />
 
       {/* Hero — mirrors /services: giant lowercase wordmark + grey cross-link */}
-      <section className="pb-[10vh] pt-[24vh]">
+      <section className="catalogue-hero-pad">
         <div className="site-container-xwide">
           <h1 className="text-[clamp(3rem,5.5vw,5rem)] font-medium leading-[0.98] tracking-tight text-white">
             <span className="block">

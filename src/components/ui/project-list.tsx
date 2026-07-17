@@ -70,7 +70,7 @@ export function ProjectList({ projects, lang, labels, variant = "light" }: Proje
                   isDark ? "text-white/85 group-hover:text-white" : "text-black"
                 }`}
               >
-                <span>{project.title || "—"}</span>
+                <span>{project.title || "-"}</span>
                 {isDark ? (
                   <ArrowUpRight
                     size={14}
@@ -84,11 +84,11 @@ export function ProjectList({ projects, lang, labels, variant = "light" }: Proje
                   isDark ? "text-white/45" : "text-neutral-500"
                 }`}
               >
-                <span>{project.workType || "—"}</span>
+                <span>{project.workType || "-"}</span>
                 <span className={isDark ? "text-white/20" : "text-neutral-300"}>•</span>
-                <span>{project.industry || "—"}</span>
+                <span>{project.industry || "-"}</span>
                 <span className={isDark ? "text-white/20" : "text-neutral-300"}>•</span>
-                <span>{project.year || "—"}</span>
+                <span>{project.year || "-"}</span>
               </div>
 
               <div
@@ -97,7 +97,7 @@ export function ProjectList({ projects, lang, labels, variant = "light" }: Proje
                 }`}
               >
                 {isDark ? <BriefcaseBusiness size={14} strokeWidth={1.5} className="shrink-0 text-white/30" aria-hidden="true" /> : null}
-                {project.workType || "—"}
+                {project.workType || "-"}
               </div>
               <div
                 className={`hidden md:flex col-span-3 items-center gap-3 text-sm-fluid ${
@@ -105,7 +105,7 @@ export function ProjectList({ projects, lang, labels, variant = "light" }: Proje
                 }`}
               >
                 {isDark ? <Factory size={14} strokeWidth={1.5} className="shrink-0 text-white/30" aria-hidden="true" /> : null}
-                {project.industry || "—"}
+                {project.industry || "-"}
               </div>
               <div
                 className={`hidden md:flex col-span-2 items-center justify-between text-sm-fluid ${
@@ -114,7 +114,7 @@ export function ProjectList({ projects, lang, labels, variant = "light" }: Proje
               >
                 <span className="inline-flex items-center gap-3">
                   {isDark ? <Calendar size={14} strokeWidth={1.5} className="shrink-0 text-white/30" aria-hidden="true" /> : null}
-                  {project.year || "—"}
+                  {project.year || "-"}
                 </span>
                 {isDark ? (
                   <ArrowUpRight

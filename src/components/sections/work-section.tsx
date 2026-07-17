@@ -52,7 +52,7 @@ export function WorkSection({ dict, projects }: { dict: any; projects: Project[]
       id="work"
       className="bg-[#161616] py-12 sm:py-14 md:py-18 lg:py-24"
     >
-      <div className="site-container-wide">
+      <div className="site-container-xwide">
         <div className="mb-8 flex flex-col items-start gap-5 sm:mb-10 sm:flex-row sm:justify-between sm:gap-6">
           <AnimatedTitle
             as="h2"

@@ -4,7 +4,10 @@ import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion, type Variants } from "motion/react";
 import { ReactNode, useEffect, useRef, createContext, useContext } from "react";
 import { useLenis } from "lenis/react";
-import { useCurtainTransition } from "@/components/providers/curtain-transition";
+import {
+  slideDestinationForHref,
+  useCurtainTransition,
+} from "@/components/providers/curtain-transition";
 
 /**
  * Two page-transition modes on one AnimatePresence.
@@ -96,8 +99,15 @@ export function PageTransition({ children }: { children: ReactNode }) {
   const modeRef = useRef<Mode>("fade");
   if (pathname !== lastPathRef.current) {
     lastPathRef.current = pathname;
+    // Only treat as slide when the pending arm matches a catalogue destination.
+    // Avoids keeping slide mode if a non-curtain route somehow lands while a
+    // facade is still up (failsafe + notifyPageReady still clear it).
+    const curtainStillOwnsRoute =
+      isCurtainActive && Boolean(slideDestinationForHref(pathname));
     modeRef.current =
-      !shouldReduceMotion && (takePendingSlide() || isCurtainActive) ? "slide" : "fade";
+      !shouldReduceMotion && (takePendingSlide() || curtainStillOwnsRoute)
+        ? "slide"
+        : "fade";
   }
   const mode = modeRef.current;
 

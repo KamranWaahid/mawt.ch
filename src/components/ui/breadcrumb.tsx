@@ -23,7 +23,7 @@ export function Breadcrumb({ items, lang, tone = "light" }: BreadcrumbProps) {
       className={
         isDark
           ? "site-container-xwide pt-28 pb-2 md:pt-32"
-          : "site-container-wide pt-32 pb-4"
+          : "site-container-xwide pt-32 pb-4"
       }
     >
       <ol

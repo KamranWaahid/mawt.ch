@@ -17,7 +17,7 @@ export function VisionSection({ dict, services }: { dict: any; services?: any[] 
     // 100vh screen and fades out over its last 15%, leaving the bottom half
     // empty — this section climbs into that void instead of waiting below it.
     <section className="relative -mt-[12vh] bg-[#161616] pb-8 pt-4 md:-mt-[16vh] md:pb-10 md:pt-6 lg:pb-12 lg:pt-8">
-      <div className="site-container">
+      <div className="site-container-xwide">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
           {/* Left Column: Statement + its divider line. Sticky at ALL
               breakpoints: from the horizontal line down, this block pins while

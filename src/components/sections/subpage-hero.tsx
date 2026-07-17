@@ -164,8 +164,8 @@ export function SubpageHero({
       <div
         className={
           compact
-            ? "site-container-wide relative z-10"
-            : "site-container-wide relative z-10 flex min-h-[calc(72vh-220px)] flex-col justify-center md:justify-end md:pb-[12vh]"
+            ? "site-container-xwide relative z-10"
+            : "site-container-xwide relative z-10 flex min-h-[calc(72vh-220px)] flex-col justify-center md:justify-end md:pb-[12vh]"
         }
       >
         <div className="max-w-[1240px]">

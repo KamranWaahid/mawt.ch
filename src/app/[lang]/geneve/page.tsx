@@ -41,19 +41,19 @@ const COPY = {
     badge: "Genève, Suisse romande",
     wordmark: "genève",
     crossLabel: "/services",
-    title: "IA et transformation digitale à Genève.",
+    title: "Systèmes IA et automatisation pour les entreprises genevoises.",
     intro:
-      "MAWT est l’agence IA des entreprises genevoises. Stratégie IA, automatisation, développement sur mesure et renfort d’équipe, livrés par une équipe senior basée à Genève. De la première séance au déploiement, vous parlez à ceux qui construisent.",
-    localH2: "Pourquoi MAWT pour une entreprise genevoise",
+      "MAWT accompagne les équipes de Genève et de Suisse romande : stratégie IA, automatisation, développement sur mesure et renfort. Une équipe senior sur place. De la première séance à la production, vous parlez à ceux qui construisent.",
+    localH2: "Pourquoi travailler avec un studio à Genève",
     local: [
       { t: "Proximité genevoise", d: "Une équipe sur place, disponible pour des séances en personne à Genève et en Suisse romande. Pas de décalage horaire, pas d’intermédiaire." },
       { t: "Conformité nLPD", d: "Données hébergées en Suisse, conformité nLPD et RGPD pensée dès la conception. Vos informations clients restent sous votre contrôle." },
-      { t: "Secteurs clés du bassin", d: "Nous comprenons les enjeux de la finance et de la banque privée, du négoce, de l’horlogerie et du luxe, de la medtech et des entreprises commerciales en croissance." },
-      { t: "Exécution senior", d: "Un interlocuteur unique, du cadrage à la production. Pas de juniors envoyés en rotation, pas de PowerPoint d’agence. Du concret, livré vite." },
+      { t: "Secteurs du bassin", d: "Nous connaissons les réalités de la finance et de la banque privée, du négoce, de l’horlogerie et du luxe, de la medtech et des entreprises commerciales en croissance." },
+      { t: "Exécution senior", d: "Un interlocuteur unique, du cadrage à la production. Pas de juniors en rotation, pas de deck d’agence. Du travail concret, livré vite." },
     ],
-    expectH2: "Travailler avec une agence IA à Genève : à quoi s’attendre",
+    expectH2: "Travailler avec MAWT à Genève : à quoi s’attendre",
     expectBody:
-      "Un projet type démarre par une séance de cadrage, en personne à Genève ou en visioconférence, pour identifier les processus qui coûtent le plus d’heures à vos équipes. Nous livrons ensuite une proposition courte : périmètre, budget et délai — la plupart des automatisations et assistants IA passent en production en quelques semaines, pas en plusieurs mois. Le développement avance par itérations testables : vous voyez le système fonctionner sur vos données réelles avant le déploiement complet. Les données restent hébergées en Suisse, la conformité nLPD est intégrée dès la conception, et une IA locale — sur vos serveurs ou dans un cloud privé suisse — est proposée quand la confidentialité l’exige. Après la mise en production, l’équipe qui a construit votre système en assure le suivi : pas de hotline anonyme, un interlocuteur unique qui connaît votre dossier.",
+      "Un projet type commence par une séance de cadrage, en personne à Genève ou en visioconférence, pour repérer les processus qui coûtent le plus d’heures. Nous livrons ensuite une proposition courte : périmètre, budget et délai. La plupart des automatisations et assistants IA passent en production en quelques semaines, pas en plusieurs mois. Le développement avance par itérations testables : vous voyez le système sur vos données réelles avant le déploiement complet. Les données restent hébergées en Suisse, la conformité nLPD est intégrée dès la conception, et une IA locale (sur vos serveurs ou dans un cloud privé suisse) est proposée quand la confidentialité l’exige. Après la mise en production, l’équipe qui a construit le système en assure le suivi : pas de hotline anonyme, un interlocuteur qui connaît votre dossier.",
     hqH2: "Notre siège à Carouge",
     hqBody:
       "MAWT est installée Rue de la Fontenette 23 à Carouge (1227), à quelques minutes du centre de Genève. Nous nous déplaçons chez nos clients dans tout le canton et travaillons à distance avec des entreprises de toute la Suisse romande.",
@@ -65,7 +65,7 @@ const COPY = {
     familyBlurb: {
       "sites-et-branding": "E-commerce, branding, audits UX/SEO, référencement IA (GEO) et refontes.",
       "solutions-ia": "CRM intelligent, agents IA, RAG, IA générative, automatisation et IA locale.",
-      "conseil-ia": "Stratégie IA, audit opérationnel et transformation, par des gens qui construisent aussi.",
+      "conseil-ia": "Stratégie IA et audit opérationnel, par des gens qui construisent aussi.",
       "renfort-equipe": "Développeurs, CTO, tech leads et experts IA intégrés à votre équipe.",
       "formation-ia": "Formation ChatGPT, ateliers IA par métier et coaching des décideurs.",
       "developpement-logiciel": "Du MVP au système critique : web, mobile, desktop, API, bases de données.",
@@ -76,19 +76,19 @@ const COPY = {
     badge: "Geneva, Switzerland",
     wordmark: "geneva",
     crossLabel: "/services",
-    title: "AI and digital transformation in Geneva.",
+    title: "AI systems and automation for Geneva businesses.",
     intro:
-      "MAWT is the AI agency for Geneva businesses. AI strategy, automation, custom development and team augmentation, delivered by a senior team based in Geneva. From the first session to production, you talk to the people who build.",
-    localH2: "Why MAWT for a Geneva business",
+      "MAWT works with teams in Geneva and French-speaking Switzerland: AI strategy, automation, custom development, and embedded specialists. A senior studio on the ground. From the first session to production, you talk to the people who build.",
+    localH2: "Why work with a Geneva studio",
     local: [
-      { t: "Geneva proximity", d: "A team on the ground, available for in person sessions in Geneva and French speaking Switzerland. No time zone gap, no middleman." },
-      { t: "nFADP compliance", d: "Data hosted in Switzerland, nFADP and GDPR compliance designed in from the start. Your client information stays under your control." },
-      { t: "Key local sectors", d: "We understand finance and private banking, commodity trading, watchmaking and luxury, medtech, and growing commercial companies." },
-      { t: "Senior execution", d: "One point of contact, from scoping to production. No rotating juniors, no agency slide decks. Concrete work, shipped fast." },
+      { t: "Geneva proximity", d: "A team on the ground, available for in-person sessions in Geneva and French-speaking Switzerland. No time-zone gap, no middleman." },
+      { t: "nFADP compliance", d: "Data hosted in Switzerland, nFADP and GDPR designed in from the start. Your client information stays under your control." },
+      { t: "Local sectors", d: "We know the realities of finance and private banking, commodity trading, watchmaking and luxury, medtech, and growing commercial companies." },
+      { t: "Senior execution", d: "One point of contact, from scoping to production. No rotating juniors, no agency slide decks. Concrete work, shipped quickly." },
     ],
-    expectH2: "Working with an AI agency in Geneva: what to expect",
+    expectH2: "Working with MAWT in Geneva: what to expect",
     expectBody:
-      "A typical project starts with a scoping session, in person in Geneva or over video, to identify the processes that cost your teams the most hours. We then deliver a short proposal: scope, budget and timeline — most automations and AI assistants reach production in weeks, not months. Development moves in testable iterations: you see the system running on your real data before full rollout. Data stays hosted in Switzerland, nFADP compliance is designed in from the start, and local AI — on your own servers or in a Swiss private cloud — is proposed whenever confidentiality demands it. After go-live, the team that built your system keeps supporting it: no anonymous hotline, one point of contact who knows your file.",
+      "A typical project starts with a scoping session, in person in Geneva or over video, to find the processes that cost your teams the most hours. We then deliver a short proposal: scope, budget, and timeline. Most automations and AI assistants reach production in weeks, not months. Development moves in testable iterations: you see the system on your real data before full rollout. Data stays hosted in Switzerland, nFADP compliance is designed in from the start, and local AI (on your servers or in a Swiss private cloud) is proposed when confidentiality demands it. After go-live, the team that built the system keeps supporting it: no anonymous hotline, one contact who knows your file.",
     hqH2: "Our Carouge headquarters",
     hqBody:
       "MAWT is based at Rue de la Fontenette 23 in Carouge (1227), minutes from central Geneva. We travel to clients across the canton and work remotely with companies throughout French speaking Switzerland.",
@@ -100,7 +100,7 @@ const COPY = {
     familyBlurb: {
       "sites-et-branding": "E-commerce, branding, UX/SEO audits, AI search optimization (GEO) and redesigns.",
       "solutions-ia": "Smart CRM, AI agents, RAG, generative AI, automation and local AI.",
-      "conseil-ia": "AI strategy, operational audit and transformation, by people who also build.",
+      "conseil-ia": "AI strategy and operational audit, by people who also build.",
       "renfort-equipe": "Developers, CTOs, tech leads and AI experts embedded in your team.",
       "formation-ia": "ChatGPT training, AI workshops per function and leadership coaching.",
       "developpement-logiciel": "From MVP to mission-critical: web, mobile, desktop, API, databases.",
@@ -114,12 +114,12 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: Loc
   const c = COPY[lang] ?? COPY.en;
   const title =
     lang === "fr"
-      ? "IA et transformation digitale à Genève"
-      : "AI and digital transformation in Geneva";
+      ? "Systèmes IA et automatisation à Genève"
+      : "AI systems and automation in Geneva";
   const description =
     lang === "fr"
       ? "MAWT accompagne les entreprises genevoises : solutions IA, automatisation et logiciels sur mesure, avec conformité nLPD et hébergement suisse."
-      : "MAWT helps Geneva businesses adopt AI: custom solutions, process automation and tailored software, with Swiss hosting and nFADP compliance.";
+      : "MAWT helps Geneva businesses with AI systems, process automation, and custom software. Swiss hosting and nFADP compliance designed in.";
   const url = `${SITE_URL}${localizedHref("geneve", lang)}`;
   return {
     title,

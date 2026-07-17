@@ -105,7 +105,7 @@ export function InsightsSection({ dict, posts }: { dict: InsightsDict; posts?: B
 
   return (
     <section className="border-t border-white/10 bg-[#1d1d1d] py-12 md:py-18 lg:py-24">
-      <div className="site-container">
+      <div className="site-container-xwide">
         <div className="mb-8 md:mb-10 lg:mb-14">
           <AnimatedTitle
             as="h2"

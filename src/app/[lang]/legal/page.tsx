@@ -51,7 +51,7 @@ export default async function LegalPage({ params }: { params: Promise<{ lang: Lo
         wordmark={legal.privacyWordmark}
         crossHref={localizedHref("contact", lang)}
         crossLabel={legal.crossLabel}
-        title={page?.heroH1 || "Transparency and trust at the core of our operations."}
+        title={page?.heroH1 || "How we handle personal data."}
       />
       <SlidePageBody>
         <LegalContent sections={sections} contentsLabel={legal.contents} />

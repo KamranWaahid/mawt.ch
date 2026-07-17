@@ -19,7 +19,7 @@ interface BlogPageProps {
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
   const { lang } = await params;
   return {
-    title: lang === "en" ? "Insights — AI & automation blog" : "Blog — IA et automatisation en entreprise",
+    title: lang === "en" ? "Insights | AI & automation blog" : "Blog | IA et automatisation en entreprise",
     description: lang === "en"
       ? "Field notes on AI in business, automation and custom tools, written by the team that builds them."
       : "Retours de terrain sur l'IA en entreprise, l'automatisation et les outils sur mesure, écrits par l'équipe qui les construit.",
@@ -66,7 +66,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
       <JsonLd data={postItems.length ? [crumbLd, catalogLd] : [crumbLd]} />
 
       {/* Hero — same scale and structure as /services and /work */}
-      <section className="pb-[10vh] pt-[24vh]">
+      <section className="catalogue-hero-pad">
         <div className="site-container-xwide">
           <h1 className="text-[clamp(3rem,5.5vw,5rem)] font-medium leading-[0.98] tracking-tight text-white">
             <span className="block">

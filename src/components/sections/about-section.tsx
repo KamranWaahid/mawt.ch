@@ -9,7 +9,7 @@ type AboutSectionProps = {
 export function AboutSection({ about }: AboutSectionProps) {
   return (
     <section id="about" className="py-20">
-      <div className="site-container">
+      <div className="site-container-xwide">
         <SectionReveal className="grid gap-10 border-y border-white/10 py-12 md:grid-cols-[1fr_1.4fr]">
           <h2 className="text-sm uppercase tracking-[0.24em] text-neutral-400">About</h2>
           <div>

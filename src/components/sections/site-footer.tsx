@@ -94,9 +94,16 @@ export function SiteFooter({
 
   const toggleLanguage = () => {
     const nextLang = currentLang === "en" ? "fr" : "en";
-    const newPath = pathname
-      ? translatePath(pathname, currentLang, nextLang as Locale)
-      : `/${nextLang}`;
+    // Prefer the page's hreflang alternate (covers Sanity twin slugs);
+    // fall back to segment translation for static routes.
+    const alt = document.querySelector<HTMLLinkElement>(
+      `link[rel="alternate"][hreflang="${nextLang}"]`,
+    );
+    const newPath =
+      alt?.getAttribute("href") ||
+      (pathname
+        ? translatePath(pathname, currentLang, nextLang as Locale)
+        : `/${nextLang}`);
 
     try {
       const url = new URL(newPath, window.location.origin);
@@ -123,7 +130,7 @@ export function SiteFooter({
         lang={currentLang}
       />
 
-      <footer className="mt-auto bg-[#161616] text-white">
+      <footer className="mt-auto bg-[#161616] pb-[env(safe-area-inset-bottom)] text-white">
         {/* Closing invitation — skipped on Contact where the form already closes the page. */}
         {!isContactPage && dict.cta && (
           <section className="border-b border-white/10">
@@ -181,7 +188,7 @@ export function SiteFooter({
               {/* NAP — visible on every page for local SEO corroboration. */}
               {dict.address && (
                 <address className="not-italic space-y-1.5 text-[13px] font-normal leading-relaxed text-white/45">
-                  <p>MAWT — {dict.address}</p>
+                  <p>MAWT, {dict.address}</p>
                   {dict.phoneDisplay && phoneHref && (
                     <p>
                       <a

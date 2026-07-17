@@ -20,44 +20,44 @@
   },
   "problem": {
     "story": [
-      "Tout le monde vous dit que l'IA va tout changer.",
-      "Mais pour la plupart des entreprises, la réalité se résume à des outils déconnectés et des processus manuels.",
-      "Les audits s'accumulent, mais la capacité technique pour transformer ces idées en logiciels fait défaut.",
-      "Car l'IA n'est qu'une promesse. Votre entreprise a besoin de systèmes.",
-      "La vraie valeur n'est créée que lorsque la technologie est intégrée au cœur même de vos opérations."
+      "Tout le monde dit que l'IA va tout changer.",
+      "Dans la plupart des entreprises, le quotidien reste fait d'outils déconnectés et de travail manuel.",
+      "Les plans s'accumulent. La couche qui les transforme en logiciel manque souvent.",
+      "L'IA seule reste une promesse. Les opérations ont besoin de systèmes.",
+      "La valeur apparaît quand la technologie s'inscrit dans le travail réel des équipes."
     ]
   },
   "vision": {
     "badge": "Services",
-    "statement": "Nous transformons les opérations dispersées en systèmes connectés, plus simples à piloter, mesurer et faire évoluer.",
+    "statement": "Nous aidons les organisations à remplacer outils dispersés et relais manuels par des systèmes plus clairs à piloter et plus simples à améliorer.",
     "cta": "Voir tous les services",
     "items": [
       {
         "title": "Solutions IA",
-        "description": "CRM intelligent, agents IA, RAG, IA générative et automatisations intégrés à vos outils quotidiens."
+        "description": "Assistants, recherche documentaire et automatisations branchés sur les outils déjà ouverts chaque matin."
       },
       {
         "title": "Développement logiciel",
-        "description": "Web, mobile, desktop, APIs et bases de données — du MVP au système critique."
+        "description": "Web, mobile, APIs et bases de données, d'une première version utile jusqu'au logiciel qui ne doit pas tomber."
       },
       {
         "title": "Conseil & formation",
-        "description": "Stratégie IA, audits, sécurité et formation concrète des équipes, par des gens qui construisent aussi."
+        "description": "Stratégie, audits, sécurité et formation concrète, par des gens qui livrent aussi le code."
       }
     ]
   },
   "work": {
     "badge": "Réalisations",
-    "headline": "Nos projets, du pétale à la planète",
-    "seeAll": "Voir tout",
+    "headline": "Projets choisis",
+    "seeAll": "Voir tous les projets",
     "hero": {
       "title": "projets",
       "crossLabel": "/services",
-      "tagline": "de l'idée à la sortie."
+      "tagline": "conçus pour tourner en production."
     },
-    "statement": "Des projets réels, des résultats mesurés. Des systèmes conçus pour tourner en production.",
-    "statementCta": "Lancer un projet",
-    "projectMore": "Voir l'étude de cas",
+    "statement": "Des projets que nous pouvons montrer : mesurés là où ça compte, honnêtes sur ce qui a été difficile.",
+    "statementCta": "Engager la conversation",
+    "projectMore": "Voir le projet",
     "filterAll": "Tout",
     "listLabels": {
       "client": "Projet",
@@ -68,20 +68,20 @@
     "projects": [
       {
         "id": "crm",
-        "category": "Système CRM et automatisation",
-        "title": "Prise en charge des clients, création de transactions et flux de travail internes structurés dans un système connecté avec automatisation et visibilité complètes.",
+        "category": "CRM et automatisation",
+        "title": "Prise en charge, affaires et suivi interne réunis dans un système où l'équipe voit ce qui avance.",
         "image": "/crm_automation_dashboard_1778762266170.png"
       },
       {
         "id": "ecommerce",
-        "category": "Plateforme d'e-commerce et d'opérations",
-        "title": "Plateforme personnalisée avec gestion des produits, flux de commandes et systèmes de back-office conçus pour soutenir les opérations quotidiennes.",
+        "category": "Opérations commerce",
+        "title": "Produits, commandes et back-office dans une plateforme pensée pour le travail du jour.",
         "image": "/ecommerce_ops_platform_1778762308624.png"
       },
       {
         "id": "business",
-        "category": "Système d'entreprise personnalisé",
-        "title": "Système de bout en bout combinant conception d'interface, développement, intégrations et reporting adaptés au fonctionnement de l'entreprise.",
+        "category": "Système métier",
+        "title": "Interface, intégrations et reporting conçus autour de la façon dont l'organisation décide vraiment.",
         "image": "/custom_business_system_1778762352424.png"
       }
     ]
@@ -92,14 +92,14 @@
     "page": {
       "wordmark": "méthode",
       "crossLabel": "/services",
-      "stepsLabel": "Les cinq étapes",
+      "stepsLabel": "Cinq étapes",
       "differentiatorsLabel": "Ce qui nous distingue",
-      "comingSoonTitle": "Bientôt disponible.",
-      "comingSoonBody": "Cette page sera bientôt disponible.",
+      "comingSoonTitle": "Cette page arrive bientôt.",
+      "comingSoonBody": "Nous finalisons cette section. En attendant, les cartes du processus sur l'accueil décrivent notre façon de travailler.",
       "ctaFallback": {
-        "headline": "Discutons de votre projet",
-        "body": "30 minutes pour comprendre votre besoin. Pas de devis bâclé, pas de pression. Juste un échange direct avec ceux qui vont construire.",
-        "label": "Démarrer"
+        "headline": "Parlez-nous du travail à venir",
+        "body": "Trente minutes pour comprendre votre contexte. Pas de devis bâclé. Un échange direct avec ceux qui construiraient.",
+        "label": "Nous écrire"
       }
     },
     "items": [
@@ -131,19 +131,19 @@
   },
   "insights": {
     "badge": "Aperçus",
-    "headline": "Dernières nouvelles de l'équipe",
+    "headline": "Notes du studio",
     "fallbackCategory": "Aperçu",
     "recentLabel": "Récent",
     "readTimeUnit": "min de lecture",
-    "fallbackExcerpt": "Notes de terrain sur l'IA en entreprise, l'automatisation et les systèmes qui améliorent les opérations.",
+    "fallbackExcerpt": "Notes concrètes sur l'IA en opérations, l'automatisation et les systèmes qui allègent le quotidien.",
     "hero": {
       "title": "actualités",
       "crossLabel": "/projets",
-      "tagline": "notes de terrain de l'équipe."
+      "tagline": "notes du studio."
     },
-    "statement": "Idées, méthodes et notes issues de la construction de systèmes IA à Genève.",
-    "statementCta": "Lancer un projet",
-    "readArticle": "Lire l'article",
+    "statement": "Ce que nous apprenons en construisant des systèmes IA à Genève.",
+    "statementCta": "Engager la conversation",
+    "readArticle": "Lire la suite",
     "backToInsights": "Retour aux actualités",
     "writtenBy": "Écrit par",
     "teamFallback": "Équipe MAWT",
@@ -151,46 +151,46 @@
     "featuredLabel": "À la une",
     "articles": [
       {
-        "category": "Design UI/UX",
-        "title": "Concevoir des interfaces qui stimulent la croissance des entreprises",
+        "category": "Produit",
+        "title": "Des interfaces qui méritent leur place",
         "date": "10 avr. 2026",
         "readTime": "5 min de lecture",
-        "excerpt": "Un excellent design d'interface va au-delà du visuel, il façonne la manière dont les utilisateurs interagissent avec votre entreprise. Découvrez comment..."
+        "excerpt": "Un écran est utile quand il raccourcit une décision. Notes sur la mise en page, le langage et les habitudes qui font revenir."
       },
       {
-        "category": "Technologie",
-        "title": "Construire des systèmes évolutifs avec une infrastructure moderne",
-        "date": "08 avr. 2026",
+        "category": "Ingénierie",
+        "title": "Des systèmes qui grandissent sans drame",
+        "date": "8 avr. 2026",
         "readTime": "8 min de lecture",
-        "excerpt": "L'évolutivité est le fondement de la croissance. Nous explorons les dernières tendances en architecture cloud et leur impact sur vos résultats..."
+        "excerpt": "Comment penser l'infrastructure quand la charge de l'année prochaine reste une estimation."
       },
       {
         "category": "Stratégie",
-        "title": "Comment combler l'écart entre la vision et l'exécution",
-        "date": "05 avr. 2026",
+        "title": "Quand le plan et la semaine ne s'accordent pas",
+        "date": "5 avr. 2026",
         "readTime": "6 min de lecture",
-        "excerpt": "Beaucoup d'entreprises ont une vision, mais peu peuvent l'exécuter. Découvrez notre cadre pour transformer les objectifs stratégiques en réalité opérationnelle..."
+        "excerpt": "Transformer une direction en travail que l'on peut finir et mesurer, sans un atelier de plus."
       },
       {
         "category": "Automatisation",
-        "title": "L'avenir de l'IA dans les flux de travail opérationnels",
-        "date": "01 avr. 2026",
+        "title": "Où l'IA a sa place dans un flux",
+        "date": "1 avr. 2026",
         "readTime": "10 min de lecture",
-        "excerpt": "L'intelligence artificielle n'est plus un luxe. C'est une nécessité pour les équipes performantes cherchant à automatiser les tâches répétitives..."
+        "excerpt": "Toute tâche répétitive n'a pas besoin d'un modèle. Une vue plus claire de quand l'automatisation se paie."
       },
       {
-        "category": "Design UI/UX",
-        "title": "Le rôle des micro-interactions dans la fidélisation des utilisateurs",
+        "category": "Produit",
+        "title": "Petits retours, habitudes durables",
         "date": "28 mars 2026",
         "readTime": "4 min de lecture",
-        "excerpt": "Les petits détails font une grande différence. Découvrez comment les animations subtiles et les boucles de rétroaction maintiennent l'engagement..."
+        "excerpt": "Des micro-interactions qui confirment une action sans devenir du bruit."
       },
       {
-        "category": "Conception de Systèmes",
-        "title": "Optimiser la performance pour les applications à fort trafic",
+        "category": "Ingénierie",
+        "title": "Garder les apps critiques réactives",
         "date": "25 mars 2026",
         "readTime": "7 min de lecture",
-        "excerpt": "La vitesse est un avantage concurrentiel. Nous partageons nos techniques pour réduire la latence et améliorer les temps de réponse..."
+        "excerpt": "La latence devient de la frustration bien avant d'apparaître dans un graphique. Pratiques sous pression."
       }
     ]
   },
@@ -202,9 +202,9 @@
     "regions": "Régions",
     "geneva": "Genève",
     "cta": {
-      "headline": "Construisons ce qui vous fait avancer.",
-      "body": "30 minutes ensemble pour qu'on se comprenne. Si ça matche, on enchaîne. Si non, on vous oriente vers ceux qui peuvent vous aider.",
-      "label": "Discutons"
+      "headline": "Dites-nous ce qui bloque.",
+      "body": "Trente minutes pour faire connaissance. Si ça matche, on propose une suite. Sinon, on vous oriente.",
+      "label": "Écrire à l'équipe"
     },
     "columns": [
       {
@@ -270,6 +270,10 @@
             "href": "/cookies"
           },
           {
+            "label": "Mentions légales",
+            "href": "/legal-notice"
+          },
+          {
             "label": "Sécurité",
             "href": "/security"
           }
@@ -278,70 +282,70 @@
     ],
     "newsletter": {
       "title": "Newsletter",
-      "description": "Recevez nos retours de terrain sur l'IA en entreprise et l'automatisation. Du concret, pas de la théorie.",
+      "description": "Quelques notes sur l'IA et les opérations : concrètes, courtes, sans remplissage.",
       "placeholder": "Adresse e-mail",
-      "success": "Merci de vous être abonné."
+      "success": "Vous êtes inscrit. Merci."
     }
   },
   "solution": {
-    "badge": "Notre apport",
-    "headline_1": "Nous développons des logiciels",
-    "headline_2": "adaptés à vos opérations.",
+    "badge": "Focus",
+    "headline_1": "Nous développons des logiciels adaptés",
+    "headline_2": "à la façon dont vous travaillez déjà.",
     "items": [
       {
-        "title": "Intégrations IA sur mesure",
-        "description": "Systèmes RAG, agents intelligents et recherche interne entraînés sur vos documents et bases de connaissances privées."
+        "title": "L'IA sur vos données",
+        "description": "Recherche, assistants et systèmes de retrieval entraînés sur vos documents, pas un chatbot générique."
       },
       {
-        "title": "Automatisation de flux",
-        "description": "Connexion de vos outils métier et flux automatisés, de la capture de leads au reporting automatique."
+        "title": "Des flux qui avancent seuls",
+        "description": "Des pipelines qui capturent, classent et rapportent pour que moins de temps parte dans les tableurs."
       },
       {
-        "title": "Applications personnalisées",
-        "description": "Plateformes Next.js et portails web développés pour répondre aux cas d'usage où les SaaS standards échouent."
+        "title": "Des applications quand le SaaS s'arrête",
+        "description": "Plateformes et portails pour des opérations qui ne rentrent pas dans un produit standard."
       },
       {
-        "title": "Suivi en production",
-        "description": "Nous assurons le déploiement, les tests d'intégration et l'optimisation continue. Nous livrons et nous maintenons."
+        "title": "Rester après le lancement",
+        "description": "Nous restons pour le déploiement, l'intégration et le travail discret de garder les choses saines."
       }
     ]
   },
   "services": {
     "badge": "Expertises",
-    "headline": "Des systèmes conçus pour connecter, automatiser et durer.",
+    "headline": "Des systèmes qui relient les outils que vous utilisez déjà, et enlèvent le travail entre eux.",
     "pillars": [
       {
         "title": "Solutions IA",
-        "description": "CRM intelligent, agents IA, RAG d'entreprise, IA générative, automatisation et IA locale — intégrés à vos outils."
+        "description": "CRM intelligents, agents, recherche documentaire, outils génératifs et automatisations dans le logiciel du quotidien."
       },
       {
         "title": "Conseil IA",
-        "description": "Stratégie IA, audits opérationnels et transformation, conseillés par des gens qui construisent aussi."
+        "description": "Stratégie et audits opérationnels par des gens qui écrivent aussi le logiciel."
       },
       {
         "title": "Développement logiciel",
-        "description": "Du MVP au système critique : web, mobile, desktop, APIs, bases de données et modernisation."
+        "description": "Web, mobile, desktop, APIs et bases de données, de la première version aux systèmes qui doivent rester debout."
       },
       {
         "title": "Sécurité",
-        "description": "Cybersécurité pragmatique, conformité nLPD et tests d'intrusion pour PME."
+        "description": "Cybersécurité pragmatique, conformité et tests adaptés aux PME."
       },
       {
-        "title": "Sites & Branding",
-        "description": "E-commerce, identité de marque, audits UX/SEO, référencement IA (GEO) et refontes."
+        "title": "Sites & branding",
+        "description": "E-commerce, identité, audits UX/SEO, préparation au référencement IA et refontes."
       },
       {
         "title": "Renfort d'équipe",
-        "description": "Développeurs seniors, experts IA, CTO et tech leads à temps partiel intégrés à votre équipe."
+        "description": "Développeurs seniors, spécialistes IA et leads fractionnaires intégrés à votre équipe."
       },
       {
         "title": "Formation IA",
-        "description": "Formation ChatGPT, ateliers IA par métier et coaching des décideurs."
+        "description": "Ateliers et coaching pour équipes et dirigeants qui veulent utiliser l'IA avec discernement."
       }
     ],
     "technologies": {
       "title": "Technologies",
-      "intro": "Les langages, plateformes et domaines avec lesquels nous construisons.",
+      "intro": "Langages et plateformes que nous utilisons quand ils conviennent au problème.",
       "groups": [
         {
           "title": "Langages & frameworks",
@@ -358,25 +362,23 @@
           ]
         },
         {
-          "title": "Données & intelligence artificielle",
+          "title": "Données & IA",
           "items": [
-            "Intelligence artificielle",
-            "IA générative",
             "Machine learning",
-            "Data science",
-            "Big data",
+            "IA générative",
+            "Recherche documentaire (RAG)",
+            "Pipelines de données",
             "Analyse d'images"
           ]
         },
         {
-          "title": "Plateformes & environnements",
+          "title": "Plateformes",
           "items": [
             "Cloud",
-            "SaaS",
+            "Intégrations SaaS",
             "Applications mobiles",
-            "Internet des objets (IoT)",
-            "Blockchain",
-            "Réalité virtuelle & augmentée"
+            "APIs",
+            "On-premise et hébergement suisse"
           ]
         }
       ]
@@ -384,20 +386,20 @@
     "hero": {
       "title": "services",
       "crossLabel": "/projets",
-      "tagline": "voilà ce qu'on fait de mieux.",
-      "familyMore": "Voir tout"
+      "tagline": "ce que nous construisons.",
+      "familyMore": "Voir la famille"
     }
   },
   "contact": {
-    "badge": "Contactez-nous",
-    "headline": "Discutons de ce que l'IA et l'automatisation peuvent changer dans votre entreprise.",
-    "subtitle": "N'hésitez pas à nous contacter pour toute question !",
+    "badge": "Contact",
+    "headline": "Une conversation sur le travail qui vous ralentit.",
+    "subtitle": "Projet clair, question précoce, ou idée encore floue. Écrivez-nous.",
     "hero": {
       "title": "contact",
       "crossLabel": "/a-propos",
-      "tagline": "parlons-en."
+      "tagline": "dites bonjour."
     },
-    "formTitle": "Commencer une conversation",
+    "formTitle": "Envoyer un message",
     "hqLabel": "Siège",
     "inquiries": "Demandes",
     "address": "Adresse",
@@ -408,14 +410,14 @@
       "name": "Nom",
       "email": "E-mail",
       "message": "Message",
-      "submit": "Envoyer le message",
-      "success": "Message envoyé avec succès.",
-      "error": "Une erreur est survenue. Veuillez réessayer.",
-      "successBody": "Nous avons bien reçu votre demande et vous répondrons rapidement.",
+      "submit": "Envoyer",
+      "success": "Message reçu.",
+      "error": "L'envoi a échoué. Vos réponses sont encore là. Réessayez.",
+      "successBody": "Nous le lirons et vous répondrons bientôt.",
       "reset": "Envoyer un autre message",
-      "stepBasics": "Commençons par les bases",
-      "stepProject": "Que recherchez-vous ?",
-      "stepDetails": "Autre chose à nous préciser ?",
+      "stepBasics": "Quelques détails",
+      "stepProject": "De quel type d'aide avez-vous besoin ?",
+      "stepDetails": "Autre chose à savoir ?",
       "service": "Service",
       "timeline": "Calendrier",
       "serviceOptions": [
@@ -453,51 +455,51 @@
       "placeholders": {
         "name": "Votre nom",
         "email": "bonjour@entreprise.com",
-        "message": "Parlez-nous de vos enjeux..."
+        "message": "Qu'est-ce qui bloque, et à quoi ressemblerait mieux ?"
       },
       "validation": {
-        "name": "Veuillez saisir votre nom complet (au moins 2 caractères).",
-        "email": "Veuillez saisir une adresse e-mail valide.",
-        "message": "Veuillez décrire votre projet (au moins 10 caractères)."
+        "name": "Indiquez votre nom (au moins 2 caractères).",
+        "email": "Saisissez un e-mail au format nom@exemple.com.",
+        "message": "Ajoutez quelques mots sur votre besoin (au moins 10 caractères)."
       },
       "back": "Retour",
       "continue": "Continuer",
-      "sending": "Envoi..."
+      "sending": "Envoi…"
     }
   },
   "faq": {
-    "badge": "Support",
+    "badge": "Questions",
     "wordmark": "faqs",
     "crossLabel": "/contact",
-    "headline": "Tout ce que vous devez savoir sur le travail avec MAWT.",
-    "noFaqs": "Aucune FAQ disponible pour le moment.",
-    "stillQuestions": "Vous avez encore des questions ?",
-    "contactDesc": "Notre équipe est là pour vous aider. Contactez-nous directement pour toute demande spécifique.",
-    "contactBtn": "Contacter le support"
+    "headline": "Questions fréquentes sur le travail avec MAWT.",
+    "noFaqs": "Aucune question publiée pour le moment.",
+    "stillQuestions": "Encore un doute ?",
+    "contactDesc": "Écrivez-nous avec le contexte que vous avez. Une question à moitié formée suffit pour commencer.",
+    "contactBtn": "Contacter l'équipe"
   },
   "partners": {
-    "badge": "Programmes partenaires",
+    "badge": "Réseau",
     "wordmark": "partenaires",
     "crossLabel": "/contact",
-    "headline": "Amplifiez votre impact grâce à l'écosystème partenaire MAWT.",
+    "headline": "Les personnes et organisations avec qui nous travaillons.",
     "partnersSuffix": "Partenaires",
     "tiers": [
       {
-        "title": "Partenaires solutions",
-        "description": "Agences et cabinets qui intègrent la technologie MAWT dans les workflows opérationnels de leurs clients."
+        "title": "Agences & cabinets",
+        "description": "Des équipes qui nous font intervenir quand un client a besoin de logiciel et d'automatisation dans le réel."
       },
       {
-        "title": "Partenaires technologiques",
-        "description": "Plateformes logicielles qui construisent des intégrations profondes avec le moteur d'exécution et l'infrastructure MAWT."
+        "title": "Plateformes technologiques",
+        "description": "Des outils que nous intégrons pour que votre stack reste connectée."
       },
       {
-        "title": "Partenaires de recommandation",
-        "description": "Personnes et entreprises qui recommandent MAWT à leur réseau et sont récompensées pour les collaborations réussies."
+        "title": "Apporteurs",
+        "description": "Conseillers et opérateurs qui nous envoient des organisations qui ont besoin d'ingénierie soignée, pas d'un pitch."
       }
     ],
-    "ctaHeadline": "Devenez partenaire.",
-    "ctaBody": "Nous collaborons avec un groupe sélectionné de partenaires qui partagent notre exigence d'excellence technique et de vitesse opérationnelle. Rejoignez le programme pour accéder à des ressources, formations et supports exclusifs.",
-    "ctaLabel": "Candidater au programme"
+    "ctaHeadline": "Envie de collaborer ?",
+    "ctaBody": "Si vous partagez le goût d'un périmètre clair et de systèmes qui tiennent en production, dites-nous comment vous travaillez. Nous gardons le cercle volontairement petit.",
+    "ctaLabel": "Nous écrire"
   },
   "legalPages": {
     "contents": "Sommaire",
@@ -508,31 +510,31 @@
   },
   "results": {
     "badge": "Résultats",
-    "headline": "Impact mesurable sur l'efficacité opérationnelle et l'échelle.",
+    "headline": "Ce que nous regardons après la mise en production.",
     "metrics": [
       {
-        "label": "Vitesse d'Exécution",
-        "value": "3x",
-        "description": "Augmentation moyenne de la vitesse de livraison des projets stratégiques."
+        "label": "Temps jusqu'à une version utile",
+        "value": "Semaines",
+        "description": "La plupart des automatisations et assistants atteignent un état utilisable en semaines, pas en trimestres."
       },
       {
-        "label": "Efficacité Opérationnelle",
-        "value": "40%",
-        "description": "Réduction des tâches manuelles grâce à l'automatisation des systèmes."
+        "label": "Travail manuel retiré",
+        "value": "Moins de relais",
+        "description": "Nous mesurons le succès aux tâches que les gens n'ont plus à courir après."
       },
       {
-        "label": "Capacité de l'Équipe",
-        "value": "+250h",
-        "description": "Heures économisées par mois pour les équipes internes."
+        "label": "Attention des équipes",
+        "value": "Heures récupérées",
+        "description": "De la capacité rendue au jugement, aux clients, et au travail qui demande encore un humain."
       },
       {
-        "label": "Disponibilité du Système",
-        "value": "99.99%",
-        "description": "Disponibilité garantie pour l'infrastructure commerciale critique."
+        "label": "Fiabilité",
+        "value": "Production d'abord",
+        "description": "Nous concevons pour les jours où personne n'a le temps de surveiller un outil fragile."
       }
     ],
-    "footerHeadline": "Succès prouvé à grande échelle.",
-    "footerDesc": "Nos résultats ne sont pas seulement des chiffres ; ils sont le fondement de nos partenariats à long terme."
+    "footerHeadline": "Des preuves plutôt que des slogans.",
+    "footerDesc": "Nous préférons des résultats visibles dans la semaine : moins de tickets, des flux plus clairs, moins de ressaisie. Pas les phrases qui iraient dans n'importe quelle brochure."
   },
   "login": {
     "title": "Centre de Commande",

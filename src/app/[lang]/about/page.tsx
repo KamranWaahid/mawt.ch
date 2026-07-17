@@ -91,7 +91,7 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: Lo
       <JsonLd data={[crumbLd, aboutLd]} />
 
       {/* Hero — same dark catalogue scale as /services, /work and /news. */}
-      <section className="pb-[10vh] pt-[24vh]">
+      <section className="catalogue-hero-pad">
         <div className="site-container-xwide">
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
             <div className="lg:col-span-9">

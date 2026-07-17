@@ -15,8 +15,8 @@ interface ComplianceMatrixProps {
 
 export function ComplianceMatrix({ items }: ComplianceMatrixProps) {
   return (
-    <section className="bg-white px-6 py-24 sm:px-8 md:px-10 lg:px-12">
-      <div className="site-container-wide">
+    <section className="bg-white py-24">
+      <div className="site-container-xwide">
         <h2 className={`${sectionTitleClass} mb-12`}>Compliance & Certifications</h2>
         <div className="grid gap-px bg-black/5 border border-black/5 overflow-hidden">
           {items.map((item, index) => (

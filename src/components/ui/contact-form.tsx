@@ -282,7 +282,7 @@ export function ContactForm({ dict, lang = "en", theme = "light" }: ContactFormP
         ))}
       </div>
 
-      <form action={formAction} className="relative min-h-[320px] overflow-hidden">
+      <form action={formAction} className="relative min-h-[280px] overflow-x-clip sm:min-h-[320px]">
         <AnimatePresence mode="wait" custom={step}>
           <motion.div
             key={step}

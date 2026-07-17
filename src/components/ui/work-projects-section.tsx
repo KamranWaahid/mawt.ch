@@ -75,7 +75,7 @@ export function WorkProjectsSection({ projects, lang, dict }: WorkProjectsSectio
         <div className="flex items-center gap-x-5 gap-y-3 overflow-x-auto pb-1 text-[clamp(0.95rem,1.6vw,1.15rem)] font-normal leading-none md:flex-wrap md:overflow-visible md:pb-0">
           {workTypes.map((type, index) => (
             <span key={type} className="flex shrink-0 items-center gap-5">
-              {index > 0 && <span className="text-white/20">—</span>}
+              {index > 0 && <span className="text-white/20">·</span>}
               <button
                 type="button"
                 onClick={() => setActiveType(type)}
@@ -181,7 +181,7 @@ export function WorkProjectsSection({ projects, lang, dict }: WorkProjectsSectio
 
                   <h2 className="mt-8 max-w-[18ch] text-[clamp(1.6rem,2.8vw,2.4rem)] font-semibold leading-[1.08] tracking-tight text-white">
                     <Link href={href} className="transition-colors hover:text-white/80">
-                      {project.title || "—"}
+                      {project.title || "-"}
                     </Link>
                   </h2>
 

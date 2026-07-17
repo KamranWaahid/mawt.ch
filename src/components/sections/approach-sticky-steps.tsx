@@ -625,13 +625,13 @@ export function ApproachStickySteps({
       <>
         <section
           ref={containerRef}
-          className="relative z-10 hidden h-[100vh] w-full overflow-hidden bg-[#161616] lg:block"
+          className="relative z-10 hidden h-[100dvh] w-full overflow-hidden bg-[#161616] lg:block"
           aria-label="Approach steps (desktop)"
         >
-          <div ref={panelRef} className="absolute inset-0 h-[100vh] overflow-hidden bg-[#161616]">
+          <div ref={panelRef} className="absolute inset-0 h-[100dvh] overflow-hidden bg-[#161616]">
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute left-[-2vw] right-[-2vw] top-0 z-0 h-[520vh] w-[104vw]"
+              className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[520vh] w-full"
               style={{ background: DARK_GRADIENT }}
             />
             <div className="pointer-events-none absolute inset-0 z-30 flex flex-col justify-center">
@@ -695,16 +695,17 @@ export function ApproachStickySteps({
         style={{ height: `${Math.max(totalSteps * 55, 240)}vh` }}
         aria-label="Approach steps (mobile)"
       >
-        <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#161616]">
+        <div className="sticky top-0 h-[100dvh] w-full overflow-hidden bg-[#161616] max-[520px]:overflow-y-auto max-[520px]:overscroll-contain">
           <motion.div
             aria-hidden="true"
-            className="pointer-events-none absolute left-[-2vw] right-[-2vw] top-0 z-0 h-[520vh] w-[104vw]"
+            className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[520vh] w-full"
             animate={{ y: getGradientOffset(activeIndex) }}
             transition={{ duration: animDuration, ease: animEase }}
             style={{ background: DARK_GRADIENT }}
           />
 
-          <div className="pointer-events-none absolute inset-x-0 top-0 z-40 px-6 pt-28 sm:px-8">
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-40 pt-[max(5.5rem,calc(env(safe-area-inset-top)+4.5rem))] sm:pt-28">
+            <div className="site-container-xwide">
             <div className="flex items-center gap-2">
               {safeSteps.map((step, index) => (
                 <span
@@ -720,9 +721,11 @@ export function ApproachStickySteps({
                 {stepsLabel}
               </p>
             )}
+            </div>
           </div>
 
-          <div className="pointer-events-none absolute inset-0 z-30 flex flex-col justify-center px-6 sm:px-8">
+          <div className="pointer-events-none absolute inset-0 z-30 flex flex-col justify-center max-[520px]:relative max-[520px]:min-h-[100dvh] max-[520px]:justify-start max-[520px]:pt-36 max-[520px]:pb-10">
+            <div className="site-container-xwide">
             <div className="mx-auto w-full max-w-xl">
               <motion.div
                 key={activeIndex}
@@ -740,6 +743,7 @@ export function ApproachStickySteps({
                 />
               </motion.div>
             </div>
+            </div>
           </div>
         </div>
       </section>
@@ -749,13 +753,13 @@ export function ApproachStickySteps({
   return (
     <section
       ref={containerRef}
-      className="relative z-10 block h-[100vh] w-full overflow-hidden bg-[#161616]"
+      className="relative z-10 block h-[100dvh] w-full overflow-hidden bg-[#161616]"
       aria-label="Approach steps (desktop)"
     >
-      <div ref={panelRef} className="absolute inset-0 h-[100vh] overflow-hidden bg-[#161616]">
+      <div ref={panelRef} className="absolute inset-0 h-[100dvh] overflow-hidden bg-[#161616]">
         <motion.div
           aria-hidden="true"
-          className="pointer-events-none absolute left-[-2vw] right-[-2vw] top-0 z-0 h-[520vh] w-[104vw]"
+          className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[520vh] w-full"
           animate={{ y: getGradientOffset(activeIndex) }}
           transition={{ duration: animDuration, ease: animEase }}
           style={{ background: DARK_GRADIENT }}

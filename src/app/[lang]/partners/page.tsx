@@ -15,10 +15,10 @@ import { ArrowRight } from "lucide-react";
 export async function generateMetadata({ params }: { params: Promise<{ lang: string }> }): Promise<Metadata> {
   const { lang } = await params;
   return {
-    title: lang === "en" ? "Partners | MAWT Network" : "Partenaires | Réseau MAWT",
+    title: lang === "en" ? "Clients & partners | MAWT" : "Clients & partenaires | MAWT",
     description: lang === "en"
-      ? "Our ecosystem of technical and strategic partners."
-      : "Notre écosystème de partenaires techniques et stratégiques.",
+      ? "Organisations and collaborators MAWT works alongside in Geneva and beyond."
+      : "Organisations et collaborateurs avec lesquels MAWT travaille à Genève et ailleurs.",
     alternates: standaloneAlternates("clients", lang as Locale),
   };
 }

@@ -73,7 +73,7 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
       className="relative overflow-hidden bg-[#161616] pt-8 pb-10 md:pt-10 md:pb-12 lg:pt-12 lg:pb-14"
       style={{ backgroundColor: "#161616" }}
     >
-      <div className="site-container relative z-10">
+      <div className="site-container-xwide relative z-10">
         <motion.h2
           initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
           whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}

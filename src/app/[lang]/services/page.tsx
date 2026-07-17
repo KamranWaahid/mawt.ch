@@ -48,7 +48,7 @@ interface ServicesPageProps {
 
 export async function generateMetadata({ params }: ServicesPageProps): Promise<Metadata> {
   const { lang } = await params;
-  const title = lang === "fr" ? "Services — agence IA à Genève" : "Services — AI agency in Geneva";
+  const title = lang === "fr" ? "Services | agence IA à Genève" : "Services | AI agency in Geneva";
   const description =
     lang === "fr"
       ? "Solutions IA, automatisation, sites, conseil, renfort d'équipe et formation. Ce que MAWT construit pour les PME de Suisse romande."
@@ -128,7 +128,7 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
 
       {/* Hero — giant lowercase wordmark + tagline, with the greyed cross-link
           to the sibling section, mirroring the services/industries pairing. */}
-      <section className="pb-[10vh] pt-[24vh]">
+      <section className="catalogue-hero-pad">
         <div className="site-container-xwide">
           <h1 className="text-[clamp(3rem,5.5vw,5rem)] font-medium leading-[0.98] tracking-tight text-white">
             <span className="block">
@@ -190,23 +190,22 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
         </div>
       </section>
 
-      {/* Light band — the statement scrubs from grey to black as you scroll
-          (site-wide ScrubWord effect), then a methodology link. */}
-      <div className="bg-[#F6F5F4] text-black">
+      {/* Tonal statement band — stays in the dark catalogue world. */}
+      <div className="border-y border-white/10 bg-[#1d1d1d] text-white">
         <section className="py-20 md:py-28 lg:py-36">
           <div className="site-container-xwide">
             <ScrubTitle
               text={lang === "en"
-                ? "We don't just build tools. We build the systems that run your business."
-                : "Nous ne construisons pas seulement des outils. Nous construisons les systèmes qui font tourner votre entreprise."}
-              className="max-w-[24ch] text-[clamp(2rem,4vw,3.6rem)] font-medium leading-[1.12] tracking-tight text-neutral-900"
+                ? "Tools come and go. What lasts is how work moves through your organisation."
+                : "Les outils passent. Ce qui reste, c'est la façon dont le travail circule dans votre organisation."}
+              className="max-w-[24ch] text-[clamp(2rem,4vw,3.6rem)] font-medium leading-[1.12] tracking-tight text-white"
             />
             <div className="mt-12">
               <Link
                 href={lang === "en" ? `/${lang}/our-process` : `/${lang}/notre-methode`}
-                className="group flex w-fit items-center gap-2 border border-black px-8 py-4 text-sm font-normal text-black transition-all duration-300 hover:bg-black hover:text-white"
+                className="group flex w-fit items-center gap-2 border border-white/20 px-8 py-4 text-sm font-normal text-white/85 transition-colors duration-300 hover:border-white hover:bg-white hover:text-black"
               >
-                {lang === "en" ? "Explore our methodology" : "Explorer notre méthodologie"}
+                {lang === "en" ? "Read our approach" : "Lire notre approche"}
                 <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
               </Link>
             </div>

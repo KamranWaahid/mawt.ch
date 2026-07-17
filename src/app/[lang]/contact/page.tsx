@@ -16,16 +16,16 @@ import type { Metadata } from "next";
 export async function generateMetadata({ params }: { params: Promise<{ lang: Locale }> }): Promise<Metadata> {
   const { lang } = await params;
   return {
-    title: lang === "en" ? "Contact — AI agency in Geneva" : "Contact — agence IA à Genève",
+    title: lang === "en" ? "Contact | MAWT, Geneva" : "Contact | MAWT, Genève",
     description: lang === "en"
-      ? "Talk to MAWT, an AI agency in Geneva. AI integration, process automation and custom tools for SMEs across French-speaking Switzerland."
-      : "Contactez MAWT, agence IA à Genève. Intégration d'IA, automatisation des processus et outils sur mesure pour les PME de Suisse romande.",
+      ? "Write to MAWT in Geneva about AI systems, automation, or custom software. A clear project or an early question is enough to start."
+      : "Écrivez à MAWT à Genève au sujet de systèmes IA, d'automatisation ou de logiciels sur mesure. Un projet clair ou une question précoce suffit.",
     alternates: standaloneAlternates("contact", lang),
     openGraph: {
       title: lang === "en" ? "Contact MAWT" : "Contacter MAWT",
       description: lang === "en"
-        ? "Let's talk about what AI and automation can change in your business."
-        : "Discutons de ce que l'IA et l'automatisation peuvent changer dans votre entreprise.",
+        ? "A conversation about the work that is slowing you down."
+        : "Une conversation sur le travail qui vous ralentit.",
       url: `https://mawt.ch/${lang}/contact`,
     },
   };
@@ -63,7 +63,7 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
       <JsonLd data={[crumbLd]} />
 
       {/* Hero — same catalogue scale as /services, /work, /news, /about. */}
-      <section className="pb-[8vh] pt-[24vh]">
+      <section className="catalogue-hero-pad">
         <div className="site-container-xwide">
           <div className="grid gap-12 lg:grid-cols-12 lg:gap-16 lg:items-end">
             <div className="lg:col-span-7">
@@ -125,7 +125,8 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
                           </span>
                           <ArrowUpRight
                             size={14}
-                            className="shrink-0 text-white/0 transition-opacity duration-300 group-hover:text-white/55"
+                            className="shrink-0 text-white/35 transition-opacity duration-300 [@media(hover:hover)]:text-white/0 [@media(hover:hover)]:group-hover:text-white/55"
+                            aria-hidden="true"
                           />
                         </a>
                       </li>
@@ -142,7 +143,8 @@ export default async function ContactPage({ params }: { params: Promise<{ lang: 
                           </span>
                           <ArrowUpRight
                             size={14}
-                            className="shrink-0 text-white/0 transition-opacity duration-300 group-hover:text-white/55"
+                            className="shrink-0 text-white/35 transition-opacity duration-300 [@media(hover:hover)]:text-white/0 [@media(hover:hover)]:group-hover:text-white/55"
+                            aria-hidden="true"
                           />
                         </a>
                       </li>

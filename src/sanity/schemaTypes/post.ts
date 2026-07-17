@@ -46,7 +46,7 @@ export const postType = defineType({
       type: "reference",
       to: [{ type: "post" }],
       description:
-        "If this post is a translation of an existing post in the other language, reference it here (one side is enough — the pairing is resolved in both directions). Used to emit hreflang between the two versions.",
+        "If this post is a translation of an existing post in the other language, reference it here (one side is enough; the pairing is resolved in both directions). Used to emit hreflang between the two versions.",
       options: {
         // Only offer posts in the OTHER language as candidates.
         filter: ({ document }) => ({

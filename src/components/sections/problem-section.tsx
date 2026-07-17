@@ -161,7 +161,7 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
     >
       <section className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
         <motion.div
-          className="site-container relative z-10 w-full"
+          className="site-container-xwide relative z-10 w-full"
           style={{ opacity: blockOpacity, y: blockY }}
         >
           <h2 className="max-w-[1280px] select-text text-[clamp(1.85rem,3.15vw,3rem)] font-medium leading-[1.04] tracking-tight text-white">

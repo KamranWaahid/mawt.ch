@@ -48,7 +48,7 @@ export default async function TermsPage({ params }: { params: Promise<{ lang: Lo
         wordmark={legal.termsWordmark}
         crossHref={localizedHref("contact", lang)}
         crossLabel={legal.crossLabel}
-        title={page?.heroH1 || "Clear operational guidelines for professional collaboration."}
+        title={page?.heroH1 || "Terms that frame how we work together."}
       />
       <SlidePageBody>
         <LegalContent sections={sections} contentsLabel={legal.contents} />

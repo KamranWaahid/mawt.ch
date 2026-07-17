@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { Cookie, X } from "lucide-react";
 import { DarkPageIcon } from "@/components/ui/dark-page-icon";
+import { useBodyScrollLock } from "@/hooks/use-body-scroll-lock";
 
 const COOKIE_CONSENT_KEY = "mawt-cookie-consent";
 
@@ -19,34 +21,36 @@ const TEXT = {
   en: {
     title: "Cookie Settings",
     description:
-      "We use cookies to improve your experience on our website. Essential cookies are required for the site to function correctly. Analytics cookies help us understand how visitors use the site.",
+      "We use cookies so the site works correctly. Essential cookies cannot be turned off. Analytics cookies help us understand how people use the pages. You can decline them.",
     essential: "Essential Cookies",
     essentialDesc: "Required for the website to function. Cannot be disabled.",
     analytics: "Analytics Cookies",
     analyticsDesc: "Help us understand how visitors interact with our site.",
     acceptAll: "Accept All",
-    essentialOnly: "Essential Only",
-    saveChoice: "Save my choice",
+    essentialOnly: "Reject non-essential",
+    saveChoice: "Save choices",
     saved: "Preferences saved.",
     close: "Close cookie settings",
     alwaysOn: "Always on",
     optional: "Optional",
+    policy: "Cookie policy",
   },
   fr: {
     title: "Paramètres des cookies",
     description:
-      "Nous utilisons des cookies pour améliorer votre expérience sur notre site. Les cookies essentiels sont nécessaires au bon fonctionnement du site. Les cookies analytiques nous aident à comprendre comment les visiteurs utilisent le site.",
+      "Nous utilisons des cookies pour que le site fonctionne correctement. Les cookies essentiels ne peuvent pas être désactivés. Les cookies analytiques nous aident à comprendre l'usage des pages. Vous pouvez les refuser.",
     essential: "Cookies essentiels",
     essentialDesc: "Nécessaires au fonctionnement du site. Ils ne peuvent pas être désactivés.",
     analytics: "Cookies analytiques",
     analyticsDesc: "Nous aident à comprendre comment les visiteurs interagissent avec notre site.",
     acceptAll: "Tout accepter",
-    essentialOnly: "Essentiels uniquement",
-    saveChoice: "Enregistrer mon choix",
+    essentialOnly: "Refuser les non essentiels",
+    saveChoice: "Enregistrer mes choix",
     saved: "Préférences enregistrées.",
     close: "Fermer les paramètres des cookies",
     alwaysOn: "Toujours actifs",
     optional: "Optionnels",
+    policy: "Politique relative aux cookies",
   },
 };
 
@@ -55,6 +59,7 @@ export function CookieConsentModal({ isOpen, onClose, lang = "en" }: CookieConse
   const [saved, setSaved] = useState(false);
   const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
   const reduceMotion = useReducedMotion();
+  useBodyScrollLock(isOpen);
 
   useEffect(() => {
     if (!isOpen || typeof window === "undefined") return;
@@ -113,7 +118,8 @@ export function CookieConsentModal({ isOpen, onClose, lang = "en" }: CookieConse
             animate={{ opacity: 1, y: 0 }}
             exit={reduceMotion ? undefined : { opacity: 0, y: 12 }}
             transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-5 left-5 right-5 z-[201] max-h-[calc(100dvh-2.5rem)] overflow-y-auto border border-white/10 bg-[#161616] p-7 text-white shadow-2xl md:bottom-8 md:left-auto md:right-8 md:max-w-md md:p-8"
+            data-lenis-prevent
+            className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] left-[max(1.25rem,env(safe-area-inset-left))] right-[max(1.25rem,env(safe-area-inset-right))] z-[201] max-h-[calc(100dvh-2.5rem)] overflow-y-auto overscroll-contain border border-white/10 bg-[#161616] p-6 text-white shadow-2xl sm:p-7 md:bottom-[max(2rem,env(safe-area-inset-bottom))] md:left-auto md:right-[max(2rem,env(safe-area-inset-right))] md:max-w-md md:p-8"
           >
             <div className="mb-6 flex items-start justify-between gap-4">
               <div className="flex items-center gap-3">
@@ -129,14 +135,21 @@ export function CookieConsentModal({ isOpen, onClose, lang = "en" }: CookieConse
                 type="button"
                 onClick={onClose}
                 aria-label={t.close}
-                className="flex h-9 w-9 items-center justify-center text-white/40 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
+                className="flex h-11 w-11 shrink-0 items-center justify-center text-white/40 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
               >
                 <X size={16} />
               </button>
             </div>
 
             <p className="mb-7 text-[14px] font-normal leading-relaxed text-white/55">
-              {t.description}
+              {t.description}{" "}
+              <Link
+                href={`/${lang}/cookies`}
+                onClick={onClose}
+                className="text-white/80 underline decoration-white/25 underline-offset-4 transition-colors hover:text-white hover:decoration-white/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
+              >
+                {t.policy}
+              </Link>
             </p>
 
             <div className="mb-8 space-y-3">
@@ -190,21 +203,21 @@ export function CookieConsentModal({ isOpen, onClose, lang = "en" }: CookieConse
                 <button
                   type="button"
                   onClick={() => persistChoice("all")}
-                  className="w-full border border-white bg-white py-3 text-[13px] font-normal text-black transition-colors hover:bg-transparent hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
+                  className="min-h-11 w-full border border-white bg-white py-3 text-[13px] font-normal text-black transition-colors hover:bg-transparent hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
                 >
                   {t.acceptAll}
                 </button>
                 <button
                   type="button"
                   onClick={() => persistChoice("essential")}
-                  className="w-full border border-white/20 py-3 text-[13px] font-normal text-white/80 transition-colors hover:border-white/45 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
+                  className="min-h-11 w-full border border-white/20 py-3 text-[13px] font-normal text-white/80 transition-colors hover:border-white/45 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
                 >
                   {t.essentialOnly}
                 </button>
                 <button
                   type="button"
                   onClick={handleSaveCustom}
-                  className="w-full py-2 text-[12px] font-normal text-white/40 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
+                  className="min-h-11 w-full py-2 text-[12px] font-normal text-white/40 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
                 >
                   {t.saveChoice}
                 </button>

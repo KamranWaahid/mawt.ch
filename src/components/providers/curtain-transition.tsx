@@ -35,6 +35,8 @@ import { useReducedMotion } from "motion/react";
  *
  * Failsafes: arming auto-expires (never a stuck frozen screen), reduced
  * motion gets a plain navigation, same-route clicks skip the effect.
+ * Re-entry while a transition is in flight is ignored so rapid clicks cannot
+ * stack overlays or leave stale rAF callbacks uncovering the wrong page.
  */
 
 const SNAPSHOT_ID = "mawt-slide-snapshot";
@@ -63,16 +65,21 @@ export type SlideDestination = "services" | "work" | "news" | "about" | "contact
 
 function createSnapshot() {
   const main = document.querySelector("main");
-  if (!main || document.getElementById(SNAPSHOT_ID)) return;
+  if (!main) return;
+
+  // Always replace — a second arm must never keep the previous freeze.
+  removeSnapshot();
 
   const holder = document.createElement("div");
   holder.id = SNAPSHOT_ID;
   holder.setAttribute("aria-hidden", "true");
+  // Capture pointer/wheel so rapid re-nav and Lenis scroll cannot pierce the
+  // freeze while the facade rises. Dark ground matches the catalogue shell.
   holder.style.cssText =
-    "position:fixed;inset:0;z-index:110;overflow:hidden;background:#F6F5F4;pointer-events:none;";
+    "position:fixed;inset:0;z-index:110;overflow:hidden;background:#161616;pointer-events:auto;";
 
   const clone = main.cloneNode(true) as HTMLElement;
-  clone.style.cssText = `position:absolute;left:0;right:0;top:${-window.scrollY}px;margin:0;`;
+  clone.style.cssText = `position:absolute;left:0;right:0;top:${-window.scrollY}px;margin:0;pointer-events:none;`;
   clone.removeAttribute("id");
 
   // Canvases clone blank — copy their pixels so animated backgrounds
@@ -174,13 +181,27 @@ export function CurtainTransitionProvider({
   const landedRef = useRef(false);
   const pageReadyRef = useRef(false);
   const sheetRef = useRef<HTMLDivElement | null>(null);
+  /** Bumped on every arm / cleanup so stale rAFs and timers become no-ops. */
+  const genRef = useRef(0);
+  const revealRafRef = useRef(0);
+  const revealRaf2Ref = useRef(0);
   const [phase, setPhase] = useState<Phase>("idle");
+  const [armId, setArmId] = useState(0);
   const [risen, setRisen] = useState(false);
   /** React-owned transform pose so re-renders cannot wipe WAAPI / settle(). */
   const [sheetPose, setSheetPose] = useState<"down" | "up">("down");
   const [destination, setDestination] = useState<SlideDestination | null>(null);
 
+  const cancelRevealRafs = useCallback(() => {
+    if (revealRafRef.current) cancelAnimationFrame(revealRafRef.current);
+    if (revealRaf2Ref.current) cancelAnimationFrame(revealRaf2Ref.current);
+    revealRafRef.current = 0;
+    revealRaf2Ref.current = 0;
+  }, []);
+
   const cleanup = useCallback(() => {
+    genRef.current += 1;
+    cancelRevealRafs();
     removeSnapshot();
     pendingRef.current = false;
     landedRef.current = false;
@@ -189,20 +210,23 @@ export function CurtainTransitionProvider({
     setSheetPose("down");
     setDestination(null);
     setPhase("idle");
-  }, []);
+  }, [cancelRevealRafs]);
 
   // Landed + page mounted → drop the snapshot, then fade the facade away
   // over the real page (identical hero underneath — the swap is seamless).
   const maybeReveal = useCallback(() => {
     if (!landedRef.current || !pageReadyRef.current) return;
+    const gen = genRef.current;
+    cancelRevealRafs();
     // Two frames so the page beneath is actually painted before we uncover it.
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() => {
+    revealRafRef.current = requestAnimationFrame(() => {
+      revealRaf2Ref.current = requestAnimationFrame(() => {
+        if (gen !== genRef.current) return;
         removeSnapshot();
         setPhase((p) => (p === "rising" ? "revealing" : p));
-      }),
-    );
-  }, []);
+      });
+    });
+  }, [cancelRevealRafs]);
 
   const navigateWithCurtain = useCallback(
     (href: string) => {
@@ -210,14 +234,26 @@ export function CurtainTransitionProvider({
         router.push(href);
         return;
       }
-      // Already there (or a transition is in flight): plain navigation, no
-      // freeze — a same-route push never changes pathname, so the armed
-      // state would only clear via the failsafe.
+      // Already there: plain navigation, no freeze — a same-route push never
+      // changes pathname, so the armed state would only clear via the failsafe.
       if (typeof window !== "undefined" && window.location.pathname === href) {
         router.push(href);
         return;
       }
-      const dest = slideDestinationForHref(href) ?? "services";
+      // Transition in flight: ignore re-entry. Competing arms left stale
+      // snapshots, uncancellable rAFs, and a non-reset 8s failsafe.
+      if (phase !== "idle") {
+        return;
+      }
+
+      const dest = slideDestinationForHref(href);
+      if (!dest) {
+        router.push(href);
+        return;
+      }
+
+      genRef.current += 1;
+      cancelRevealRafs();
       pendingRef.current = true;
       landedRef.current = false;
       pageReadyRef.current = false;
@@ -225,10 +261,11 @@ export function CurtainTransitionProvider({
       createSnapshot();
       setRisen(false);
       setSheetPose("down");
+      setArmId((id) => id + 1);
       setPhase("rising");
       router.push(href);
     },
-    [router, shouldReduceMotion],
+    [router, shouldReduceMotion, phase, cancelRevealRafs],
   );
 
   // One-shot consumption by PageTransition when the pathname actually
@@ -244,6 +281,16 @@ export function CurtainTransitionProvider({
     maybeReveal();
   }, [maybeReveal]);
 
+  // Tear down imperative DOM + async work if the provider unmounts mid-flight
+  // (locale layout change, bfcache edge cases).
+  useEffect(() => {
+    return () => {
+      genRef.current += 1;
+      cancelRevealRafs();
+      removeSnapshot();
+    };
+  }, [cancelRevealRafs]);
+
   // Start the rise right after the facade painted its off-screen position.
   // Web Animations API owns the transform — avoids CSS/inline-style fights
   // and React re-renders restarting a class-based animation mid-flight.
@@ -257,13 +304,15 @@ export function CurtainTransitionProvider({
       cancelAnimationFrame(raf1);
       cancelAnimationFrame(raf2);
     };
-  }, [phase, risen]);
+  }, [phase, risen, armId]);
 
   useEffect(() => {
     if (!(phase === "rising" && risen)) return;
     const el = sheetRef.current;
+    const gen = genRef.current;
     if (!el || typeof el.animate !== "function") {
       const t = setTimeout(() => {
+        if (gen !== genRef.current) return;
         landedRef.current = true;
         maybeReveal();
       }, RISE_MS);
@@ -272,7 +321,7 @@ export function CurtainTransitionProvider({
 
     let settled = false;
     const settle = () => {
-      if (settled) return;
+      if (settled || gen !== genRef.current) return;
       settled = true;
       // Sync DOM pose immediately so anim.cancel() on effect teardown cannot
       // flash the sheet back to translateY(100%) before React commits state.
@@ -310,21 +359,30 @@ export function CurtainTransitionProvider({
         el.style.transform = "translate3d(0, 0%, 0)";
       }
     };
-  }, [phase, risen, maybeReveal]);
+  }, [phase, risen, maybeReveal, armId]);
 
   // Reveal fade backup + final cleanup.
   useEffect(() => {
     if (phase !== "revealing") return;
-    const t = setTimeout(cleanup, REVEAL_MS + 150);
+    const gen = genRef.current;
+    const t = setTimeout(() => {
+      if (gen !== genRef.current) return;
+      cleanup();
+    }, REVEAL_MS + 150);
     return () => clearTimeout(t);
-  }, [phase, cleanup]);
+  }, [phase, cleanup, armId]);
 
   // Failsafe: a navigation that never lands must not leave the screen frozen.
+  // Keyed on armId so every new arm restarts the clock.
   useEffect(() => {
     if (phase === "idle") return;
-    const t = setTimeout(cleanup, ARM_TIMEOUT_MS);
+    const gen = genRef.current;
+    const t = setTimeout(() => {
+      if (gen !== genRef.current) return;
+      cleanup();
+    }, ARM_TIMEOUT_MS);
     return () => clearTimeout(t);
-  }, [phase, cleanup]);
+  }, [phase, cleanup, armId]);
 
   const activePreview =
     destination === "work"
@@ -380,7 +438,7 @@ export function CurtainTransitionProvider({
               with the real dark page hero it reveals into. */}
           <div className="absolute inset-x-0 bottom-0" style={{ top: SHEET_OVERSHOOT_PX }}>
             {activePreview && (
-              <div className="pb-[10vh] pt-[24vh]">
+              <div className="catalogue-hero-pad">
                 <div className="site-container-xwide">
                   {activePreview.layout === "statement" ? (
                     <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">

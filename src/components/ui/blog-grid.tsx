@@ -21,8 +21,8 @@ export function BlogGrid({ articles }: BlogGridProps) {
   const currentLang = (params?.lang as string) || "en";
 
   return (
-    <section className="bg-white px-6 py-16 sm:px-8 md:px-10 lg:px-12">
-      <div className="site-container-wide">
+    <section className="bg-white py-16">
+      <div className="site-container-xwide">
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
           {articles.map((article, index) => (
             <motion.article

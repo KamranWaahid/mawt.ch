@@ -76,7 +76,8 @@ export function LegalContent({
             <aside className="lg:col-span-3">
               <nav
                 aria-label={contentsLabel}
-                className="lg:sticky lg:top-28"
+                className="lg:sticky lg:top-28 lg:max-h-[calc(100dvh-8rem)] lg:overflow-y-auto lg:overscroll-contain"
+                data-lenis-prevent
               >
                 <p className="mb-5 text-[12px] font-normal tracking-wide text-white/35">
                   {contentsLabel}

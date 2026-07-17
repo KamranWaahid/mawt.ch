@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArrowRight } from "lucide-react";
@@ -6,6 +5,9 @@ import { ArrowRight } from "lucide-react";
 import { SectionReveal } from "@/components/ui/section-reveal";
 import { getProjectBySlug } from "@/lib/sanity.queries";
 import { AnimatedTitle } from "@/components/ui/animated-title";
+import { CurtainLink } from "@/components/ui/curtain-link";
+import { HeaderTheme } from "@/components/ui/header-theme";
+import { SlidePageBody } from "@/components/ui/slide-page-body";
 import { urlForImage } from "@/lib/sanity.image";
 import { hreflangAlternates } from "@/lib/routing/url-helpers";
 import { JsonLd, breadcrumbLd, SITE_URL, ORG_ID } from "@/components/seo/structured-data";
@@ -33,7 +35,7 @@ export async function generateMetadata({
 
   return {
     // No "| MAWT" here: the layout title template appends the brand suffix.
-    title: `${project.title} — ${lang === "fr" ? "projet" : "case study"}`,
+    title: `${project.title} | ${lang === "fr" ? "projet" : "case study"}`,
     description: project.excerpt,
     // Canonical + hreflang: FR/EN twins share the slug, only the section
     // segment differs (/fr/projets vs /en/work) — translatePath handles it.
@@ -115,87 +117,82 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   };
 
   return (
-    <main className="w-full text-black min-h-screen">
+    <div className="min-h-screen w-full bg-[#161616] text-white">
+      <HeaderTheme theme="light" />
       <JsonLd data={[crumbLd, articleLd]} />
-      {/* Top Navigation Bar */}
 
-
-      {/* Main Split Container */}
-      <div className="site-container-wide pt-32 md:pt-40 pb-12 md:pb-16 grid grid-cols-1 lg:grid-cols-[7fr_3fr] gap-8 lg:gap-12 items-start">
-        
-        {/* IMAGES COLUMN: Visual Assets Only (Left Side) */}
+      <div className="site-container-xwide grid grid-cols-1 items-start gap-8 pb-12 pt-32 md:gap-12 md:pb-16 md:pt-40 lg:grid-cols-[7fr_3fr]">
         <div className="space-y-4 lg:space-y-6">
-          
-          {/* Main Hero Image */}
-          <SectionReveal className="w-full relative overflow-hidden rounded-2xl bg-white/45">
+          <SectionReveal className="relative w-full overflow-hidden border border-white/10 bg-white/[0.03]">
             {heroImage ? (
               /* eslint-disable-next-line @next/next/no-img-element */
               <img
                 src={heroImage}
                 alt={project.coverImage?.alt ?? project.title}
-                className="w-full h-auto object-contain"
+                className="h-auto w-full object-contain"
               />
             ) : null}
           </SectionReveal>
 
-          {/* Problem Image */}
           {problemImage && (
-            <SectionReveal className="w-full relative overflow-hidden">
+            <SectionReveal className="relative w-full overflow-hidden border border-white/10 bg-white/[0.03]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={problemImage}
                 alt="Problem visualization"
-                className="w-full h-auto object-contain"
+                className="h-auto w-full object-contain"
               />
             </SectionReveal>
           )}
 
-          {/* Solution Image */}
           {solutionImage && (
-            <SectionReveal className="w-full relative overflow-hidden">
+            <SectionReveal className="relative w-full overflow-hidden border border-white/10 bg-white/[0.03]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={solutionImage}
                 alt="Solution visualization"
-                className="w-full h-auto object-contain"
+                className="h-auto w-full object-contain"
               />
             </SectionReveal>
           )}
 
-          {/* Project Gallery Images */}
           {galleryImages.length > 0 && (
             <>
               {galleryImages.map(({ image, idx, src }) => (
-                <SectionReveal key={idx} className="w-full relative overflow-hidden rounded-2xl bg-white/45">
+                <SectionReveal
+                  key={idx}
+                  className="relative w-full overflow-hidden border border-white/10 bg-white/[0.03]"
+                >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={src}
                     alt={image.alt || `Gallery image ${idx}`}
-                    className="w-full h-auto object-contain"
+                    className="h-auto w-full object-contain"
                   />
                 </SectionReveal>
               ))}
             </>
           )}
-
         </div>
 
-        {/* TEXT COLUMN: Sticky Details (Right Side) */}
-        <div 
-          className="lg:sticky pb-12 self-start flex flex-col gap-6"
-          style={{ top: 'min(8rem, calc(100vh - 100% - 2rem))' }}
+        <div
+          className="flex flex-col gap-6 self-start pb-12 lg:sticky"
+          style={{ top: "min(8rem, calc(100vh - 100% - 2rem))" }}
         >
           <div className="space-y-3">
             <AnimatedTitle
               as="h1"
               text={project.title}
-              className="text-2xl md:text-3xl font-medium tracking-tight text-black leading-tight"
+              className="text-2xl font-medium leading-tight tracking-tight text-white md:text-3xl"
               splitBy="word"
               eager={true}
             />
             <div className="flex flex-wrap gap-2">
               {project.tags?.map((tag) => (
-                <span key={tag} className="px-2.5 py-1 bg-neutral-100 text-neutral-500 text-xs font-medium">
+                <span
+                  key={tag}
+                  className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-xs font-medium text-white/55"
+                >
                   {tag}
                 </span>
               ))}
@@ -204,28 +201,28 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
           {project.problemStatement && (
             <SectionReveal delay={0.1} className="space-y-2">
-              <h2 className="text-sm text-neutral-400 font-normal">Problem statement</h2>
-              <p className="text-sm text-black font-normal leading-relaxed whitespace-pre-line">
+              <h2 className="text-sm font-normal text-white/40">Problem statement</h2>
+              <p className="whitespace-pre-line text-sm font-normal leading-relaxed text-white/80">
                 {project.problemStatement}
               </p>
             </SectionReveal>
           )}
 
           {project.solution && (
-            <SectionReveal delay={0.2} className="pt-6 border-t border-neutral-200 space-y-2">
-              <h2 className="text-sm text-neutral-400 font-normal">TII solution</h2>
-              <p className="text-sm text-black font-normal leading-relaxed whitespace-pre-line">
+            <SectionReveal delay={0.2} className="space-y-2 border-t border-white/10 pt-6">
+              <h2 className="text-sm font-normal text-white/40">TII solution</h2>
+              <p className="whitespace-pre-line text-sm font-normal leading-relaxed text-white/80">
                 {project.solution}
               </p>
             </SectionReveal>
           )}
 
           {project.deliverables && project.deliverables.length > 0 && (
-            <SectionReveal delay={0.3} className="pt-6 border-t border-neutral-200 space-y-2">
-              <h2 className="text-sm text-neutral-400 font-normal">Deliverables</h2>
+            <SectionReveal delay={0.3} className="space-y-2 border-t border-white/10 pt-6">
+              <h2 className="text-sm font-normal text-white/40">Deliverables</h2>
               <ul className="space-y-1.5">
                 {project.deliverables.map((item, idx) => (
-                  <li key={idx} className="text-sm text-black font-normal leading-relaxed">
+                  <li key={idx} className="text-sm font-normal leading-relaxed text-white/80">
                     {item}
                   </li>
                 ))}
@@ -235,36 +232,44 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         </div>
       </div>
 
-      {/* Global Footer CTA */}
-      <section className="py-20 md:py-28 lg:py-36 text-center bg-neutral-50 border-t border-black/5 mt-16 md:mt-24">
-        <div className="max-w-3xl mx-auto space-y-8">
-          <h2 className="text-2xl md:text-3xl font-normal tracking-tight text-black text-balance">
-            <AnimatedTitle
-              as="span"
-              text="Ready to build"
-              className="inline"
-              splitBy="word"
-            />{" "}
-            <AnimatedTitle
-              as="span"
-              text="something exceptional?"
-              className="text-[#75DAB4] underline decoration-2 underline-offset-8 inline"
-              splitBy="word"
-              delay={0.12}
-            />
-          </h2>
-          <p className="text-neutral-500 font-light text-lg">
-            Let&apos;s discuss how MAWT can elevate your digital infrastructure.
-          </p>
-          <Link 
-            href={`/${lang}/contact`}
-            className="inline-flex items-center gap-4 bg-black text-white px-10 py-5 rounded-full font-normal hover:bg-[#75DAB4] hover:text-black transition-colors"
-          >
-            Start a Conversation
-            <ArrowRight size={20} />
-          </Link>
-        </div>
-      </section>
-    </main>
+      <SlidePageBody>
+        <section className="mt-16 border-y border-white/10 bg-[#1d1d1d] py-20 text-center md:mt-24 md:py-28 lg:py-36">
+          <div className="site-container-xwide space-y-8">
+            <div className="mx-auto max-w-3xl space-y-8">
+            <h2 className="text-balance text-2xl font-normal tracking-tight text-white md:text-3xl">
+              <AnimatedTitle
+                as="span"
+                text={lang === "fr" ? "Un projet similaire" : "A similar project"}
+                className="inline"
+                splitBy="word"
+              />{" "}
+              <AnimatedTitle
+                as="span"
+                text={lang === "fr" ? "en tête ?" : "on your mind?"}
+                className="inline text-[#75DAB4] underline decoration-2 underline-offset-8"
+                splitBy="word"
+                delay={0.12}
+              />
+            </h2>
+            <p className="text-lg font-light text-white/50">
+              {lang === "fr"
+                ? "Écrivez-nous. Nous vous dirons si nous pouvons aider, et comment commencer."
+                : "Write to us. We will tell you if we can help, and how to begin."}
+            </p>
+            <CurtainLink
+              href={`/${lang}/contact`}
+              className="group inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/[0.08] px-8 py-4 text-sm font-normal text-white/90 transition-colors hover:border-white/40 hover:bg-white/[0.14] hover:text-white"
+            >
+              {lang === "fr" ? "Écrire à l'équipe" : "Write to the team"}
+              <ArrowRight
+                size={16}
+                className="transition-transform duration-300 group-hover:translate-x-0.5"
+              />
+            </CurtainLink>
+            </div>
+          </div>
+        </section>
+      </SlidePageBody>
+    </div>
   );
 }

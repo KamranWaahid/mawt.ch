@@ -9,7 +9,7 @@ type ServicesSectionProps = {
 export function ServicesSection({ services }: ServicesSectionProps) {
   return (
     <section id="services" className="py-20">
-      <div className="site-container">
+      <div className="site-container-xwide">
         <SectionReveal>
           <h2 className={sectionTitleDarkClass}>
             Services & Skills

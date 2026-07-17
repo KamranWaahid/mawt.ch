@@ -44,7 +44,7 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
 
   return (
     <section className="relative overflow-hidden bg-bg-light py-16 md:py-24 lg:py-32 flex items-center justify-center border-t border-black/5">
-      <div className="site-container flex items-center justify-center h-full">
+      <div className="site-container-xwide flex items-center justify-center h-full">
         {/* Testimonial Card */}
         <div className="relative w-full max-w-[420px] h-auto min-h-[450px] xs:aspect-[3/4] md:max-w-[460px] md:aspect-[3/4] bg-neutral-900 rounded-none overflow-hidden flex flex-col justify-between p-8 md:p-10 text-white">
           

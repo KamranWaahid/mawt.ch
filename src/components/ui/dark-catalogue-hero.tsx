@@ -20,11 +20,11 @@ export function DarkCatalogueHero({
   crossLabel,
 }: DarkCatalogueHeroProps) {
   return (
-    <section className="pb-[8vh] pt-[24vh]">
+    <section className="catalogue-hero-pad">
       <div className="site-container-xwide">
-        <div className="grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-16">
+        <div className="grid gap-8 md:gap-10 lg:grid-cols-12 lg:items-end lg:gap-16">
           <div className="lg:col-span-8">
-            <h1 className="text-[clamp(3rem,5.5vw,5rem)] font-medium leading-[0.98] tracking-tight text-white">
+            <h1 className="text-[clamp(2.4rem,8vw,5rem)] font-medium leading-[0.98] tracking-tight text-white break-words">
               <span className="block">
                 {wordmark}
                 {crossHref && crossLabel ? (
@@ -32,14 +32,14 @@ export function DarkCatalogueHero({
                     {" "}
                     <CurtainLink
                       href={crossHref}
-                      className="text-white/15 transition-colors hover:text-white/40"
+                      className="text-white/40 underline decoration-white/15 underline-offset-4 transition-colors hover:text-white/55 [@media(hover:hover)]:text-white/15 [@media(hover:hover)]:no-underline [@media(hover:hover)]:hover:text-white/40"
                     >
                       {crossLabel}
                     </CurtainLink>
                   </>
                 ) : null}
               </span>
-              <span className="mt-4 block max-w-[18ch] text-[clamp(1.7rem,3.2vw,2.8rem)] font-medium leading-[1.08] text-white/88">
+              <span className="mt-3 block max-w-[18ch] text-[clamp(1.45rem,4.5vw,2.8rem)] font-medium leading-[1.08] text-white/88 sm:mt-4">
                 {title}
               </span>
             </h1>

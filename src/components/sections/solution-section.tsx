@@ -33,7 +33,7 @@ export function SolutionSection({ dict }: { dict: any }) {
       aria-labelledby="solution-section-heading"
       className="relative overflow-hidden bg-[#161616] py-12 sm:py-16 md:py-24 lg:py-32"
     >
-      <div className="site-container-wide">
+      <div className="site-container-xwide">
         <div className="sticky top-[71px] z-10 mb-10 w-full bg-gradient-to-b from-[#161616] from-75% to-transparent pb-16 pt-4 sm:mb-14 md:relative md:top-auto md:z-auto md:bg-none md:pb-0 md:pt-0">
           <div className="mb-4 h-px w-full bg-white/10 md:mb-10" />
 

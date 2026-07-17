@@ -10,7 +10,7 @@ export function DescriptionSection({ dict }: { dict: any }) {
       style={{ backgroundColor: "#161616" }}
     >
       <SectionReveal>
-        <div className="site-container">
+        <div className="site-container-xwide">
           <div className="space-y-8 border-t border-white/10 pt-10 md:pl-[10%] lg:pl-[20%]">
             {dict.paragraphs.map((paragraph: string) => (
               <p

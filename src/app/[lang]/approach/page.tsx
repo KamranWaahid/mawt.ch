@@ -73,7 +73,7 @@ export default async function OurProcessPage({ params }: ProcessPageProps) {
       <div className="min-h-screen bg-[#161616] text-white">
         <HeaderTheme theme="light" />
         <JsonLd data={[crumbLd]} />
-        <section className="pb-[10vh] pt-[24vh]">
+        <section className="catalogue-hero-pad">
           <div className="site-container-xwide">
             <h1 className="text-[clamp(3rem,5.5vw,5rem)] font-medium leading-[0.98] tracking-tight text-white">
               <span className="block">
@@ -106,7 +106,7 @@ export default async function OurProcessPage({ params }: ProcessPageProps) {
       <JsonLd data={[crumbLd]} />
 
       {/* Hero — Services-scale wordmark + CMS headline. */}
-      <section className="pb-[8vh] pt-[24vh]">
+      <section className="catalogue-hero-pad">
         <div className="site-container-xwide">
           <div className="grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-16">
             <div className="lg:col-span-8">

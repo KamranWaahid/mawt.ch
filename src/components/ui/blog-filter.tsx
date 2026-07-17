@@ -95,7 +95,7 @@ export function BlogFilter({ posts, dict, lang }: BlogFilterProps) {
         <div className="flex items-center gap-x-5 gap-y-3 overflow-x-auto pb-1 text-[clamp(0.95rem,1.6vw,1.15rem)] font-normal leading-none md:flex-wrap md:overflow-visible md:pb-0">
           {categories.map((category, index) => (
             <span key={category} className="flex shrink-0 items-center gap-5">
-              {index > 0 && <span className="text-white/20">—</span>}
+              {index > 0 && <span className="text-white/20">·</span>}
               <button
                 type="button"
                 onClick={() => setActiveCategory(category)}

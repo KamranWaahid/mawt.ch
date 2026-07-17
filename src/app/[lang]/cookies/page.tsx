@@ -48,7 +48,7 @@ export default async function CookiesPage({ params }: { params: Promise<{ lang: 
         wordmark={legal.cookiesWordmark}
         crossHref={localizedHref("contact", lang)}
         crossLabel={legal.crossLabel}
-        title={page?.heroH1 || "Clear transparency regarding tracking and consent."}
+        title={page?.heroH1 || "How cookies are used on this site."}
       />
       <SlidePageBody>
         <LegalContent sections={sections} contentsLabel={legal.contents} />

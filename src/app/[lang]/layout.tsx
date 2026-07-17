@@ -10,8 +10,14 @@ import { CursorProvider } from "@/components/providers/cursor-provider";
 import { LenisProvider } from "@/components/providers/lenis-provider";
 import { StructuredData } from "@/components/seo/structured-data";
 import { Inter, Instrument_Serif } from "next/font/google";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "../globals.css";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
 
 const inter = Inter({
   variable: "--font-inter",
@@ -134,7 +140,7 @@ export default async function LangLayout({
                 tagline: dictionary.contact.hero.tagline,
               }}
             >
-              <div className="relative bg-white min-h-screen" lang={htmlLang}>
+              <div className="relative min-h-screen bg-[#161616] text-white" lang={htmlLang}>
                 {/* Global JSON-LD (Organization + LocalBusiness + WebSite) — SSR */}
                 <StructuredData
                   lang={lang as Locale}
@@ -144,7 +150,7 @@ export default async function LangLayout({
                 />
                 <a
                   href="#main-content"
-                  className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-white focus:text-black focus:px-6 focus:py-3 focus:border focus:border-black/10"
+                  className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:border focus:border-white/20 focus:bg-[#161616] focus:px-6 focus:py-3 focus:text-white"
                 >
                   Skip to content
                 </a>

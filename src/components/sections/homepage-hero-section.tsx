@@ -10,6 +10,7 @@ import { localizedHref, translatePath } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/lib/routing/url-map";
 import { AsciiWave } from "@/components/ui/ascii-wave";
 import { useCurtainTransition } from "@/components/providers/curtain-transition";
+import { useBodyScrollLock } from "@/hooks/use-body-scroll-lock";
 
 type HomepageHeroCopy = {
   statement: string;
@@ -210,16 +211,13 @@ function HeroGradientStatement({
   className?: string;
 }) {
   const words = text.split(" ");
-  // Text transitions to dark when white background reaches it, then fades out
-  // only at the very end of the pinned track: fading at 0.95-0.98 left ~2% of
-  // scroll on an empty beige background before the section unpinned.
+  // Fades out at the end of the pinned track as the catalogue dark band arrives.
   const exitOpacity = useTransform(progress, [0.975, 0.998], [1, 0]);
-  const textColor = useTransform(progress, [0.86, 0.95], ["#F6F5F4", "#000000"]);
 
   return (
     <motion.h2
-      className={`max-w-[1040px] select-text font-serif text-[clamp(2.1rem,4.05vw,3.7rem)] font-normal leading-[1.01] tracking-normal ${className}`}
-      style={{ opacity: exitOpacity, color: textColor }}
+      className={`max-w-[1040px] select-text text-[clamp(2.1rem,4.05vw,3.7rem)] font-medium leading-[1.01] tracking-tight text-white ${className}`}
+      style={{ opacity: exitOpacity }}
     >
       {words.map((word, index) => (
         <StatementWord
@@ -243,6 +241,16 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   const [isAsciiVideoReady, setIsAsciiVideoReady] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const shouldReduceMotion = useReducedMotion();
+  useBodyScrollLock(isHeroMobileMenuOpen);
+
+  useEffect(() => {
+    if (!isHeroMobileMenuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsHeroMobileMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isHeroMobileMenuOpen]);
   const params = useParams();
   const lang = (params?.lang === "fr" ? "fr" : "en") as Locale;
   const { scrollYProgress } = useScroll({
@@ -450,15 +458,12 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   const heroContentOpacity = useTransform(smoothProgress, [0.04, 0.10], [1, 0]);
   const scrollIndicatorOpacity = useTransform(smoothProgress, [0.45, 0.50], [1, 0]);
   
-  const isHomeNavLight = scrollProgress >= 0.90;
-  const homeNavTextClass = isHomeNavLight ? "text-black/70" : "text-white/72";
-  const homeNavDividerClass = isHomeNavLight ? "text-black/25" : "text-white/25";
-  const homeNavSlashClass = isHomeNavLight ? "text-black/45" : "text-white/45";
-  const isTransitionTextDark = scrollProgress >= 0.90;
-  const transitionCtaClass = isTransitionTextDark
-    ? "border-black/12 bg-black/[0.04] text-black/92"
-    : "border-white/14 bg-white/[0.10] text-white/92";
-    
+  // Gradient ends on catalogue dark (#161616), so nav/CTA stay light throughout.
+  const homeNavTextClass = "text-white/80";
+  const homeNavDividerClass = "text-white/30";
+  const homeNavSlashClass = "text-white/50";
+  const transitionCtaClass = "border-white/20 bg-white/[0.08] text-white/85";
+
 
   const desktopContentY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
   const compactContentY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
@@ -497,7 +502,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
           style={{
             y: transitionGradientY,
             background:
-              "linear-gradient(180deg, #000000 0%, #000000 10%, #001015 20%, #002B36 30%, #28725F 45%, #75DAB4 58%, #D5FFEF 66%, #F6F5F4 75%, #F6F5F4 100%)",
+              "linear-gradient(180deg, #000000 0%, #000000 10%, #001015 20%, #002B36 30%, #28725F 45%, #75DAB4 58%, #1a3d35 68%, #161616 78%, #161616 100%)",
           }}
         />
 
@@ -695,11 +700,11 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
             <motion.div className="absolute left-[2.5vw] top-[62%]" style={{ y: desktopContentY }}>
               <GeometricSymbol className="h-[4.35cqw] w-[7.03cqw] max-h-[56px] max-w-[90px] text-white" />
             </motion.div>
-            <motion.p className="absolute left-[2.5vw] top-[74%] w-[43%] text-[2.45cqw] font-normal leading-[1.16] tracking-[-0.02em] text-white" style={{ y: desktopContentY }}>
+            <motion.p className="absolute left-[2.5vw] top-[74%] w-[43%] text-[2.45cqw] font-medium leading-[1.16] tracking-tight text-white" style={{ y: desktopContentY }}>
               {dict.statement}
             </motion.p>
             <motion.div className="absolute left-[2.5vw] bottom-[6%]" style={{ y: desktopContentY }}>
-              <Link href={ctaHref} className="pointer-events-auto inline-flex items-center text-[1.17cqw] font-normal leading-none text-white">
+              <Link href={ctaHref} className="pointer-events-auto inline-flex items-center text-[1.17cqw] font-normal leading-none text-white/85 transition-colors hover:text-white">
                 <span aria-hidden="true" className="mr-[0.46875cqw]">→</span>
                 {dict.cta}
               </Link>
@@ -708,8 +713,8 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 per responsive hero variant) — only the portrait/mobile copy
                 (mobile-first indexing) stays extractable, so snippets and AI
                 answers read the SEO paragraph exactly once. */}
-            <motion.p data-nosnippet className="absolute right-[2.5vw] bottom-[6%] w-[30.5%] text-[1.17cqw] font-normal leading-[1.35] tracking-[-0.01em] text-white/74" style={{ y: desktopContentY }}>
-              <span className="text-white">{lang === "fr" ? "MAWT est une" : "MAWT is a"}</span> <SwissMark label={lang === "fr" ? undefined : "Swiss"} /> {dict.description}
+            <motion.p data-nosnippet className="absolute right-[2.5vw] bottom-[6%] w-[30.5%] text-[1.17cqw] font-normal leading-[1.35] tracking-tight text-white/55" style={{ y: desktopContentY }}>
+              <span className="text-white/85">{lang === "fr" ? "MAWT est une" : "MAWT is a"}</span> <SwissMark label={lang === "fr" ? undefined : "Swiss"} /> {dict.description}
             </motion.p>
           </div>
 
@@ -719,17 +724,17 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
               <motion.div className="absolute left-[2%] top-[56%]" style={{ y: compactContentY }}>
                 <GeometricSymbol className="h-7 w-[45px] text-white" />
               </motion.div>
-              <motion.p className="absolute left-[2%] top-[65%] w-[48%] text-[clamp(1.2rem,3vw,1.55rem)] font-normal leading-[1.06] tracking-[-0.02em] text-white" style={{ y: compactContentY }}>
+              <motion.p className="absolute left-[2%] top-[65%] w-[48%] text-[clamp(1.2rem,3vw,1.55rem)] font-medium leading-[1.06] tracking-tight text-white" style={{ y: compactContentY }}>
                 {dict.statement}
               </motion.p>
               <motion.div className="absolute left-[6.5%] bottom-[10%]" style={{ y: compactContentY }}>
-                <Link href={ctaHref} className="pointer-events-auto inline-flex items-center text-[0.8125rem] font-normal leading-none text-white">
+                <Link href={ctaHref} className="pointer-events-auto inline-flex items-center text-[0.8125rem] font-normal leading-none text-white/85 transition-colors hover:text-white">
                   <span aria-hidden="true" className="mr-1.5">→</span>
                   {dict.cta}
                 </Link>
               </motion.div>
-              <motion.p data-nosnippet className="absolute left-[59%] bottom-[10%] w-[38%] text-[0.8125rem] font-normal leading-[1.32] tracking-[-0.01em] text-white/74" style={{ y: compactContentY }}>
-                <span className="text-white">{lang === "fr" ? "MAWT est une" : "MAWT is a"}</span> <SwissMark label={lang === "fr" ? undefined : "Swiss"} /> {dict.description}
+              <motion.p data-nosnippet className="absolute left-[59%] bottom-[10%] w-[38%] text-[0.8125rem] font-normal leading-[1.32] tracking-tight text-white/55" style={{ y: compactContentY }}>
+                <span className="text-white/85">{lang === "fr" ? "MAWT est une" : "MAWT is a"}</span> <SwissMark label={lang === "fr" ? undefined : "Swiss"} /> {dict.description}
               </motion.p>
             </div>
           </div>
@@ -743,11 +748,11 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
               </div>
               <div className="grid gap-[clamp(1rem,3svh,1.75rem)] md:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.8fr)] md:items-end md:gap-10">
                 <div>
-                  <p className="text-[clamp(1.35rem,7vw,2.25rem)] font-normal leading-[1.14] tracking-[-0.02em] text-white md:text-[clamp(1.75rem,4vw,2.4rem)]">
+                  <p className="text-[clamp(1.35rem,7vw,2.25rem)] font-medium leading-[1.14] tracking-tight text-white md:text-[clamp(1.75rem,4vw,2.4rem)]">
                     {dict.statement}
                   </p>
                   <div className="mt-[clamp(1rem,3svh,1.6rem)] inline-flex items-center">
-                    <Link href={ctaHref} className="pointer-events-auto text-[0.875rem] font-normal leading-none text-white sm:text-[0.9375rem]">
+                    <Link href={ctaHref} className="pointer-events-auto text-[0.875rem] font-normal leading-none text-white/85 transition-colors hover:text-white sm:text-[0.9375rem]">
                       <span aria-hidden="true" className="mr-1.5">→</span>
                       {dict.cta}
                     </Link>
@@ -756,8 +761,8 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 <div className="flex flex-col gap-[clamp(1rem,3svh,1.5rem)] md:items-start">
                   {/* Canonical (extractable) instance of the SEO paragraph —
                       the desktop/landscape twins carry data-nosnippet. */}
-                  <p className="max-w-[26rem] text-[0.8125rem] font-normal leading-[1.35] tracking-[-0.01em] text-white/74 sm:text-[0.9375rem] md:max-w-none">
-                    <span className="text-white">{lang === "fr" ? "MAWT est une" : "MAWT is a"}</span> <SwissMark label={lang === "fr" ? undefined : "Swiss"} /> {dict.description}
+                  <p className="max-w-[26rem] text-[0.8125rem] font-normal leading-[1.35] tracking-tight text-white/55 sm:text-[0.9375rem] md:max-w-none">
+                    <span className="text-white/85">{lang === "fr" ? "MAWT est une" : "MAWT is a"}</span> <SwissMark label={lang === "fr" ? undefined : "Swiss"} /> {dict.description}
                   </p>
                 </div>
               </div>
@@ -770,15 +775,15 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
           className="absolute bottom-[8vh] left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 pointer-events-none z-25 animate-bounce"
           style={{ opacity: scrollIndicatorOpacity }}
         >
-          <span className="text-[10px] uppercase tracking-[0.2em] text-white/60">Scroll</span>
-          <div className="w-[1px] h-10 bg-gradient-to-b from-white/40 to-transparent" />
+          <span className="text-[10px] font-normal tracking-wide text-white/45">Scroll</span>
+          <div className="h-10 w-[1px] bg-gradient-to-b from-white/30 to-transparent" />
         </motion.div>
 
         {/* Z-30: GRADIENT TRANSITION TEXTS */}
         <motion.div
-          className="pointer-events-none absolute inset-x-0 top-0 z-30 hidden px-5 sm:px-7 md:px-9 lg:block lg:px-[2.5vw]"
+          className="pointer-events-none absolute inset-x-0 top-0 z-30 hidden lg:block"
         >
-          <div className="mx-auto w-full max-w-[1760px] pt-[28vh]">
+          <div className="site-container-xwide pt-[28vh]">
             <HeroGradientStatement text={transitionDict.statement} progress={smoothProgress} />
             <motion.div
               initial={{ opacity: 0, visibility: "hidden" }}
@@ -796,9 +801,10 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
         </motion.div>
 
         <motion.div
-          className="pointer-events-none absolute inset-x-0 top-0 z-30 px-5 sm:px-7 md:px-9 lg:hidden"
+          className="pointer-events-none absolute inset-x-0 top-0 z-30 lg:hidden"
         >
-          <div className="mx-auto w-full max-w-[48rem] pt-[28vh]">
+          <div className="site-container-xwide pt-[28vh]">
+            <div className="max-w-[48rem]">
             <HeroGradientStatement
               text={transitionDict.statement}
               progress={smoothProgress}
@@ -816,18 +822,19 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 {transitionDict.cta}
               </Link>
             </motion.div>
+            </div>
           </div>
         </motion.div>
 
         {/* Z-50: NAVIGATION */}
         <motion.nav
           aria-label="Homepage transition navigation"
-          className="absolute left-0 right-0 top-0 z-50 h-[71px] border-b border-transparent bg-transparent px-5 sm:px-7 md:px-9 lg:px-[2.5vw]"
+          className="absolute left-0 right-0 top-0 z-50 h-[71px] border-b border-transparent bg-transparent"
         >
-          <div className="mx-auto flex h-full w-full max-w-[1760px] items-center justify-between gap-5 md:gap-8">
+          <div className="site-container-xwide flex h-full items-center justify-between gap-5 md:gap-8">
             <motion.div style={{ opacity: navLogoOpacity }} className="shrink-0">
               <Link href={`/${lang}`} aria-label="MAWT home" className="block w-[98px]">
-                <MawatLogo className="h-auto w-full" tone={isHomeNavLight ? "dark" : "light"} />
+                <MawatLogo className="h-auto w-full" tone="light" />
               </Link>
             </motion.div>
 
@@ -855,12 +862,12 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                   {navItemLabel(item, lang)}
                 </Link>
               ))}
-              <span className={homeNavDividerClass}>—</span>
-              <Link href="/fr" className={`transition-colors ${lang === "fr" ? (isHomeNavLight ? "text-black" : "text-white") : ""}`}>
+              <span className={homeNavDividerClass}>·</span>
+              <Link href="/fr" className={`transition-colors ${lang === "fr" ? "text-white" : ""}`}>
                 FR
               </Link>
               <span className={homeNavSlashClass}>/</span>
-              <Link href="/en" className={`transition-colors ${lang === "en" ? (isHomeNavLight ? "text-black" : "text-white") : ""}`}>
+              <Link href="/en" className={`transition-colors ${lang === "en" ? "text-white" : ""}`}>
                 EN
               </Link>
             </motion.div>
@@ -868,11 +875,11 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
             <motion.div
               className={`ml-auto flex items-center gap-3 text-[13px] font-normal leading-none transition-colors duration-300 md:hidden ${homeNavTextClass}`}
             >
-              <Link href="/fr" className={`transition-colors ${lang === "fr" ? (isHomeNavLight ? "text-black" : "text-white") : ""}`}>
+              <Link href="/fr" className={`transition-colors ${lang === "fr" ? "text-white" : ""}`}>
                 FR
               </Link>
               <span className={homeNavSlashClass}>/</span>
-              <Link href="/en" className={`transition-colors ${lang === "en" ? (isHomeNavLight ? "text-black" : "text-white") : ""}`}>
+              <Link href="/en" className={`transition-colors ${lang === "en" ? "text-white" : ""}`}>
                 EN
               </Link>
               <button
@@ -880,7 +887,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 aria-label={isHeroMobileMenuOpen ? "Close menu" : "Open menu"}
                 aria-expanded={isHeroMobileMenuOpen}
                 onClick={() => setIsHeroMobileMenuOpen((open) => !open)}
-                className={`ml-1 inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors ${isHomeNavLight ? "bg-black/5 text-black" : "bg-white/10 text-white"}`}
+                className="ml-1 inline-flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors"
               >
                 {isHeroMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
               </button>
@@ -890,12 +897,16 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
 
         {isHeroMobileMenuOpen && (
           <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Primary"
             initial={{ opacity: 0, y: -8, filter: "blur(10px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             exit={{ opacity: 0, y: -8, filter: "blur(10px)" }}
-            className="fixed inset-0 z-[49] bg-black/94 px-6 pb-10 pt-[calc(env(safe-area-inset-top)+6rem)] text-white md:hidden"
+            data-lenis-prevent
+            className="fixed inset-0 z-[49] overflow-y-auto overscroll-contain bg-[#161616]/97 pb-[max(2.5rem,env(safe-area-inset-bottom))] pt-[calc(env(safe-area-inset-top)+6rem)] text-white lg:hidden"
           >
-            <div className="flex flex-col gap-7">
+            <div className="site-container-xwide flex flex-col gap-7">
               {navItems.map((item) => (
                 <Link
                   key={item.route}
@@ -913,7 +924,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                       navigateWithCurtain(navHref(item.route));
                     }
                   }}
-                  className="text-[clamp(2rem,10vw,3.35rem)] font-normal leading-none tracking-tight text-white"
+                  className="text-[clamp(2rem,10vw,3.35rem)] font-medium leading-none tracking-tight text-white"
                 >
                   {navItemLabel(item, lang)}
                 </Link>

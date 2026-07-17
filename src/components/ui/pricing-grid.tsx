@@ -23,8 +23,8 @@ export function PricingGrid({ plans }: PricingGridProps) {
   const currentLang = (params?.lang as string) || "en";
 
   return (
-    <section className="bg-white px-6 py-24 sm:px-8 md:px-10 lg:px-12">
-      <div className="site-container-wide grid gap-8 md:grid-cols-3">
+    <section className="bg-white py-24">
+      <div className="site-container-xwide grid gap-8 md:grid-cols-3">
         {plans.map((plan, index) => (
           <motion.div
             key={plan.name}

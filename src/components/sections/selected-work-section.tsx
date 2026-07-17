@@ -13,7 +13,7 @@ type SelectedWorkSectionProps = {
 export function SelectedWorkSection({ projects }: SelectedWorkSectionProps) {
   return (
     <section id="work" className="py-16 md:py-24 lg:py-32">
-      <div className="site-container">
+      <div className="site-container-xwide">
         <SectionReveal>
           <div className="mb-12 flex items-end justify-between gap-4">
             <h2 className={sectionTitleDarkClass}>

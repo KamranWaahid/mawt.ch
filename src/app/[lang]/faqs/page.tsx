@@ -1,12 +1,16 @@
-import { SubpageHero } from "@/components/sections/subpage-hero";
+import { DarkCatalogueHero } from "@/components/ui/dark-catalogue-hero";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
+import { HeaderTheme } from "@/components/ui/header-theme";
+import { SlidePageBody } from "@/components/ui/slide-page-body";
+import { SectionReveal } from "@/components/ui/section-reveal";
+import { CurtainLink } from "@/components/ui/curtain-link";
 import { getFAQs } from "@/lib/sanity.queries";
 import { getDictionary } from "@/get-dictionary";
 import { standaloneAlternates, localizedHref } from "@/lib/routing/url-helpers";
 import { JsonLd, faqPageLd, breadcrumbLd, SITE_URL } from "@/components/seo/structured-data";
 import type { Locale } from "@/i18n-config";
 import type { Metadata } from "next";
-import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 interface FAQsPageProps {
   params: Promise<{ lang: Locale }>;
@@ -49,31 +53,50 @@ export default async function FAQsPage({ params }: FAQsPageProps) {
   ]);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-[#161616] text-white">
+      <HeaderTheme theme="light" />
       <JsonLd data={faqLd ? [crumbLd, faqLd] : [crumbLd]} />
-      <SubpageHero
-        badge={dict.faq.badge}
+
+      <DarkCatalogueHero
+        wordmark={dict.faq.wordmark}
+        crossHref={localizedHref("contact", lang)}
+        crossLabel={dict.faq.crossLabel}
         title={dict.faq.headline}
       />
-      {faqs.length > 0 ? (
-        <FAQAccordion items={faqs} />
-      ) : (
-        <section className="px-6 py-24 sm:px-8 md:px-10 lg:px-12 text-center">
-          <p className="text-neutral-500 font-normal italic">{dict.faq.noFaqs}</p>
+
+      <SlidePageBody>
+        {faqs.length > 0 ? (
+          <FAQAccordion items={faqs} tone="dark" />
+        ) : (
+          <section className="pb-20">
+            <div className="site-container-xwide">
+              <p className="text-white/45 font-normal italic">{dict.faq.noFaqs}</p>
+            </div>
+          </section>
+        )}
+
+        <section className="border-t border-white/10 py-20 md:py-28 lg:py-36">
+          <div className="site-container-xwide">
+            <SectionReveal>
+              <h2 className="max-w-[16ch] text-[clamp(2rem,4vw,3.6rem)] font-medium leading-[1.05] tracking-tight text-white">
+                {dict.faq.stillQuestions}
+              </h2>
+              <p className="mt-6 max-w-[48ch] text-[15px] font-normal leading-relaxed text-white/55">
+                {dict.faq.contactDesc}
+              </p>
+              <CurtainLink
+                href={localizedHref("contact", lang)}
+                className="mt-10 inline-flex items-center gap-3 rounded-full bg-white/[0.08] py-[13px] pl-6 pr-4 text-[13px] font-normal text-white/85 transition-colors hover:bg-white/[0.16] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#161616]"
+              >
+                {dict.faq.contactBtn}
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10">
+                  <ArrowRight size={13} aria-hidden="true" />
+                </span>
+              </CurtainLink>
+            </SectionReveal>
+          </div>
         </section>
-      )}
-      
-      <section className="py-20 md:py-28 lg:py-36 border-t border-black/5">
-        <div className="site-container-wide text-center">
-          <h2 className="text-3xl font-normal tracking-tighter text-black mb-6">{dict.faq.stillQuestions}</h2>
-          <p className="text-lg text-neutral-500 font-normal mb-10 max-w-2xl mx-auto">
-            {dict.faq.contactDesc}
-          </p>
-          <Link href={`/${lang}/contact`} className="inline-flex px-10 py-4 bg-black text-white text-sm font-normal uppercase tracking-widest hover:bg-neutral-800 transition-all duration-300">
-            {dict.faq.contactBtn}
-          </Link>
-        </div>
-      </section>
+      </SlidePageBody>
     </div>
   );
 }

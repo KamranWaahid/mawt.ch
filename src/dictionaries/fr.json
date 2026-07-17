@@ -464,11 +464,44 @@
   },
   "faq": {
     "badge": "Support",
+    "wordmark": "faqs",
+    "crossLabel": "/contact",
     "headline": "Tout ce que vous devez savoir sur le travail avec MAWT.",
     "noFaqs": "Aucune FAQ disponible pour le moment.",
     "stillQuestions": "Vous avez encore des questions ?",
     "contactDesc": "Notre équipe est là pour vous aider. Contactez-nous directement pour toute demande spécifique.",
     "contactBtn": "Contacter le support"
+  },
+  "partners": {
+    "badge": "Programmes partenaires",
+    "wordmark": "partenaires",
+    "crossLabel": "/contact",
+    "headline": "Amplifiez votre impact grâce à l'écosystème partenaire MAWT.",
+    "partnersSuffix": "Partenaires",
+    "tiers": [
+      {
+        "title": "Partenaires solutions",
+        "description": "Agences et cabinets qui intègrent la technologie MAWT dans les workflows opérationnels de leurs clients."
+      },
+      {
+        "title": "Partenaires technologiques",
+        "description": "Plateformes logicielles qui construisent des intégrations profondes avec le moteur d'exécution et l'infrastructure MAWT."
+      },
+      {
+        "title": "Partenaires de recommandation",
+        "description": "Personnes et entreprises qui recommandent MAWT à leur réseau et sont récompensées pour les collaborations réussies."
+      }
+    ],
+    "ctaHeadline": "Devenez partenaire.",
+    "ctaBody": "Nous collaborons avec un groupe sélectionné de partenaires qui partagent notre exigence d'excellence technique et de vitesse opérationnelle. Rejoignez le programme pour accéder à des ressources, formations et supports exclusifs.",
+    "ctaLabel": "Candidater au programme"
+  },
+  "legalPages": {
+    "contents": "Sommaire",
+    "privacyWordmark": "confidentialité",
+    "termsWordmark": "conditions",
+    "cookiesWordmark": "cookies",
+    "crossLabel": "/contact"
   },
   "results": {
     "badge": "Résultats",

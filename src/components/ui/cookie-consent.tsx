@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { X, Cookie } from "lucide-react";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
+import { Cookie, X } from "lucide-react";
+import { DarkPageIcon } from "@/components/ui/dark-page-icon";
 
 const COOKIE_CONSENT_KEY = "mawt-cookie-consent";
 
@@ -25,7 +26,11 @@ const TEXT = {
     analyticsDesc: "Help us understand how visitors interact with our site.",
     acceptAll: "Accept All",
     essentialOnly: "Essential Only",
+    saveChoice: "Save my choice",
     saved: "Preferences saved.",
+    close: "Close cookie settings",
+    alwaysOn: "Always on",
+    optional: "Optional",
   },
   fr: {
     title: "Paramètres des cookies",
@@ -37,34 +42,47 @@ const TEXT = {
     analyticsDesc: "Nous aident à comprendre comment les visiteurs interagissent avec notre site.",
     acceptAll: "Tout accepter",
     essentialOnly: "Essentiels uniquement",
+    saveChoice: "Enregistrer mon choix",
     saved: "Préférences enregistrées.",
+    close: "Fermer les paramètres des cookies",
+    alwaysOn: "Toujours actifs",
+    optional: "Optionnels",
   },
 };
 
 export function CookieConsentModal({ isOpen, onClose, lang = "en" }: CookieConsentModalProps) {
   const t = lang === "fr" ? TEXT.fr : TEXT.en;
   const [saved, setSaved] = useState(false);
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
+  const reduceMotion = useReducedMotion();
 
-  const handleChoice = useCallback(
-    (choice: ConsentChoice) => {
-      if (choice) {
-        localStorage.setItem(COOKIE_CONSENT_KEY, choice);
-        // Remove analytics cookies if user chose essential only
-        if (choice === "essential") {
-          document.cookie = "_ga=; Max-Age=0; path=/";
-          document.cookie = "_gid=; Max-Age=0; path=/";
-        }
+  useEffect(() => {
+    if (!isOpen || typeof window === "undefined") return;
+    const current = localStorage.getItem(COOKIE_CONSENT_KEY);
+    setAnalyticsEnabled(current === "all");
+    setSaved(false);
+  }, [isOpen]);
+
+  const persistChoice = useCallback(
+    (choice: Exclude<ConsentChoice, null>) => {
+      localStorage.setItem(COOKIE_CONSENT_KEY, choice);
+      if (choice === "essential") {
+        document.cookie = "_ga=; Max-Age=0; path=/";
+        document.cookie = "_gid=; Max-Age=0; path=/";
       }
       setSaved(true);
       setTimeout(() => {
         setSaved(false);
         onClose();
-      }, 1000);
+      }, 900);
     },
-    [onClose]
+    [onClose],
   );
 
-  // Trap focus inside modal when open
+  const handleSaveCustom = () => {
+    persistChoice(analyticsEnabled ? "all" : "essential");
+  };
+
   useEffect(() => {
     if (!isOpen) return;
     const handleKey = (e: KeyboardEvent) => {
@@ -78,81 +96,117 @@ export function CookieConsentModal({ isOpen, onClose, lang = "en" }: CookieConse
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 z-[200] backdrop-blur-sm"
+            transition={{ duration: reduceMotion ? 0.01 : 0.2 }}
+            className="fixed inset-0 z-[200] bg-black/70 backdrop-blur-[2px]"
             onClick={onClose}
             aria-hidden="true"
           />
-          {/* Modal */}
           <motion.div
             role="dialog"
             aria-modal="true"
             aria-labelledby="cookie-modal-title"
-            initial={{ opacity: 0, y: 20, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.98 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed bottom-6 left-6 right-6 md:left-auto md:right-6 md:max-w-sm z-[201] bg-white border border-black/10 shadow-2xl p-8 max-h-[calc(100dvh-3rem)] overflow-y-auto"
+            initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? undefined : { opacity: 0, y: 12 }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed bottom-5 left-5 right-5 z-[201] max-h-[calc(100dvh-2.5rem)] overflow-y-auto border border-white/10 bg-[#161616] p-7 text-white shadow-2xl md:bottom-8 md:left-auto md:right-8 md:max-w-md md:p-8"
           >
-            <div className="flex items-start justify-between mb-6">
+            <div className="mb-6 flex items-start justify-between gap-4">
               <div className="flex items-center gap-3">
-                <Cookie size={18} className="text-[#75DAB4]" />
-                <h2 id="cookie-modal-title" className="text-lg font-normal tracking-tight text-black">
+                <DarkPageIcon icon={Cookie} />
+                <h2
+                  id="cookie-modal-title"
+                  className="text-[18px] font-medium tracking-tight text-white"
+                >
                   {t.title}
                 </h2>
               </div>
               <button
                 type="button"
                 onClick={onClose}
-                aria-label="Close cookie settings"
-                className="text-neutral-400 hover:text-black transition-colors"
+                aria-label={t.close}
+                className="flex h-9 w-9 items-center justify-center text-white/40 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
               >
-                <X size={18} />
+                <X size={16} />
               </button>
             </div>
 
-            <p className="text-sm text-neutral-500 font-normal leading-relaxed mb-6">
+            <p className="mb-7 text-[14px] font-normal leading-relaxed text-white/55">
               {t.description}
             </p>
 
-            <div className="space-y-4 mb-8">
-              <div className="flex items-start gap-3 p-3 bg-neutral-50 rounded-sm">
-                <div className="w-4 h-4 rounded-sm bg-black flex-shrink-0 mt-0.5" aria-hidden="true" />
+            <div className="mb-8 space-y-3">
+              <div className="flex items-start justify-between gap-4 border border-white/10 bg-white/[0.03] p-4">
                 <div>
-                  <p className="text-sm font-medium text-black">{t.essential}</p>
-                  <p className="text-xs text-neutral-400 font-normal mt-0.5">{t.essentialDesc}</p>
+                  <p className="text-[14px] font-normal text-white">{t.essential}</p>
+                  <p className="mt-1 text-[12px] font-normal leading-relaxed text-white/40">
+                    {t.essentialDesc}
+                  </p>
                 </div>
+                <span className="shrink-0 rounded-full border border-white/15 px-2.5 py-1 text-[10px] font-normal tracking-wide text-white/45">
+                  {t.alwaysOn}
+                </span>
               </div>
-              <div className="flex items-start gap-3 p-3 bg-neutral-50 rounded-sm">
-                <div className="w-4 h-4 rounded-sm border border-black/20 flex-shrink-0 mt-0.5" aria-hidden="true" />
-                <div>
-                  <p className="text-sm font-medium text-black">{t.analytics}</p>
-                  <p className="text-xs text-neutral-400 font-normal mt-0.5">{t.analyticsDesc}</p>
+
+              <div className="flex items-start justify-between gap-4 border border-white/10 bg-white/[0.03] p-4">
+                <div className="pr-2">
+                  <p className="text-[14px] font-normal text-white">{t.analytics}</p>
+                  <p className="mt-1 text-[12px] font-normal leading-relaxed text-white/40">
+                    {t.analyticsDesc}
+                  </p>
+                  <p className="mt-2 text-[11px] font-normal text-white/30">{t.optional}</p>
                 </div>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={analyticsEnabled}
+                  aria-label={t.analytics}
+                  onClick={() => setAnalyticsEnabled((value) => !value)}
+                  className={`relative mt-0.5 h-7 w-12 shrink-0 rounded-full border transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35 ${
+                    analyticsEnabled
+                      ? "border-[#75DAB4]/50 bg-[#75DAB4]/25"
+                      : "border-white/20 bg-white/[0.06]"
+                  }`}
+                >
+                  <span
+                    className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform duration-300 ${
+                      analyticsEnabled ? "translate-x-6" : "translate-x-0.5"
+                    }`}
+                  />
+                </button>
               </div>
             </div>
 
             {saved ? (
-              <p className="text-sm text-[#75DAB4] font-normal text-center py-2">{t.saved}</p>
+              <p className="py-2 text-center text-[13px] font-normal text-[#75DAB4]">
+                {t.saved}
+              </p>
             ) : (
               <div className="flex flex-col gap-3">
                 <button
                   type="button"
-                  onClick={() => handleChoice("all")}
-                  className="w-full py-2.5 bg-black text-white text-sm font-medium tracking-tight hover:bg-neutral-800 transition-colors"
+                  onClick={() => persistChoice("all")}
+                  className="w-full border border-white bg-white py-3 text-[13px] font-normal text-black transition-colors hover:bg-transparent hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
                 >
                   {t.acceptAll}
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleChoice("essential")}
-                  className="w-full py-2.5 border border-black/10 text-black text-sm font-medium tracking-tight hover:bg-neutral-50 hover:border-black transition-colors"
+                  onClick={() => persistChoice("essential")}
+                  className="w-full border border-white/20 py-3 text-[13px] font-normal text-white/80 transition-colors hover:border-white/45 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
                 >
                   {t.essentialOnly}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveCustom}
+                  className="w-full py-2 text-[12px] font-normal text-white/40 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/35"
+                >
+                  {t.saveChoice}
                 </button>
               </div>
             )}
@@ -170,7 +224,6 @@ export function useCookieConsent() {
   const openModal = useCallback(() => setShowModal(true), []);
   const closeModal = useCallback(() => setShowModal(false), []);
 
-  /** Returns the current consent choice or null if not set */
   const getConsent = useCallback((): ConsentChoice => {
     if (typeof window === "undefined") return null;
     return (localStorage.getItem(COOKIE_CONSENT_KEY) as ConsentChoice) || null;

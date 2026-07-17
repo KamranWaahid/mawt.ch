@@ -5,6 +5,7 @@ import { getHomePageData } from "@/lib/sanity.queries";
 import { i18n, type Locale } from "@/i18n-config";
 import { PageTransition } from "@/components/providers/page-transition";
 import { CurtainTransitionProvider } from "@/components/providers/curtain-transition";
+import { ABOUT_COPY } from "@/content/about-copy";
 import { CursorProvider } from "@/components/providers/cursor-provider";
 import { LenisProvider } from "@/components/providers/lenis-provider";
 import { StructuredData } from "@/components/seo/structured-data";
@@ -112,6 +113,25 @@ export default async function LangLayout({
                 title: dictionary.services.hero.title,
                 crossLabel: dictionary.services.hero.crossLabel,
                 tagline: dictionary.services.hero.tagline,
+              }}
+              workPreview={{
+                title: dictionary.work.hero.title,
+                crossLabel: dictionary.work.hero.crossLabel,
+                tagline: dictionary.work.hero.tagline,
+              }}
+              newsPreview={{
+                title: dictionary.insights.hero.title,
+                crossLabel: dictionary.insights.hero.crossLabel,
+                tagline: dictionary.insights.hero.tagline,
+              }}
+              aboutPreview={{
+                title: ABOUT_COPY[lang as Locale].hero.h1,
+                layout: "statement",
+              }}
+              contactPreview={{
+                title: dictionary.contact.hero.title,
+                crossLabel: dictionary.contact.hero.crossLabel,
+                tagline: dictionary.contact.hero.tagline,
               }}
             >
               <div className="relative bg-white min-h-screen" lang={htmlLang}>

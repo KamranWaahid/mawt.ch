@@ -204,6 +204,7 @@ export const allProjectsQuery = groq`
   _id,
   title,
   "slug": slug.current,
+  excerpt,
   workType,
   industry,
   year,

@@ -30,6 +30,8 @@ import {
 } from "lucide-react";
 import { ScrubTitle } from "@/components/ui/scrub-title";
 import { HeaderTheme } from "@/components/ui/header-theme";
+import { CurtainLink } from "@/components/ui/curtain-link";
+import { SlidePageBody } from "@/components/ui/slide-page-body";
 import { STACK_LOGOS } from "@/content/stack-logos";
 
 // Discreet Lucide glyphs for the domain groups (no official logos exist for
@@ -131,18 +133,19 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
           <h1 className="text-[clamp(3rem,5.5vw,5rem)] font-medium leading-[0.98] tracking-tight text-white">
             <span className="block">
               {hero.title}{" "}
-              <Link
+              <CurtainLink
                 href={localizedHref("projets", lang)}
                 className="text-white/15 transition-colors hover:text-white/40"
               >
                 {hero.crossLabel}
-              </Link>
+              </CurtainLink>
             </span>
             <span className="block">{hero.tagline}</span>
           </h1>
         </div>
       </section>
 
+      <SlidePageBody>
       {/* Family blocks — two-column masonry: big title, short pitch, one
           hairline row per service, then a pill to the family page. */}
       <section className="pb-[14vh]">
@@ -278,6 +281,7 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
           </section>
         </div>
       ) : null}
+      </SlidePageBody>
     </div>
   );
 }

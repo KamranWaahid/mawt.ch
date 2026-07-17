@@ -839,7 +839,11 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                   key={item.route}
                   href={navHref(item.route)}
                   onClick={
-                    item.route === "services"
+                    item.route === "services" ||
+                    item.route === "projets" ||
+                    item.route === "news" ||
+                    item.route === "a-propos" ||
+                    item.route === "contact"
                       ? (e) => {
                           e.preventDefault();
                           navigateWithCurtain(navHref(item.route));
@@ -896,7 +900,19 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 <Link
                   key={item.route}
                   href={navHref(item.route)}
-                  onClick={() => setIsHeroMobileMenuOpen(false)}
+                  onClick={(e) => {
+                    setIsHeroMobileMenuOpen(false);
+                    if (
+                      item.route === "services" ||
+                      item.route === "projets" ||
+                      item.route === "news" ||
+                      item.route === "a-propos" ||
+                      item.route === "contact"
+                    ) {
+                      e.preventDefault();
+                      navigateWithCurtain(navHref(item.route));
+                    }
+                  }}
                   className="text-[clamp(2rem,10vw,3.35rem)] font-normal leading-none tracking-tight text-white"
                 >
                   {navItemLabel(item, lang)}

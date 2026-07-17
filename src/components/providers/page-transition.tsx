@@ -85,21 +85,37 @@ export function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const shouldReduceMotion = useReducedMotion();
   const lenis = useLenis();
-  const { takePendingSlide } = useCurtainTransition();
+  const { takePendingSlide, isCurtainActive, notifyPageReady } = useCurtainTransition();
 
   // Decide the mode ONCE per pathname change, synchronously during render.
   // Refs only — they mutate reliably even inside a transition render.
+  // Fall back to slide when the curtain is already rising but the pending
+  // flag was consumed elsewhere (redirect / double render) — otherwise the
+  // facade title can stick until the failsafe timeout.
   const lastPathRef = useRef(pathname);
   const modeRef = useRef<Mode>("fade");
   if (pathname !== lastPathRef.current) {
     lastPathRef.current = pathname;
-    modeRef.current = !shouldReduceMotion && takePendingSlide() ? "slide" : "fade";
+    modeRef.current =
+      !shouldReduceMotion && (takePendingSlide() || isCurtainActive) ? "slide" : "fade";
   }
   const mode = modeRef.current;
 
   useEffect(() => {
     isInitialLoad = false;
   }, []);
+
+  // Backup unlock: if the curtain is waiting but this navigation landed in
+  // fade mode (pending flag already consumed), still signal readiness so the
+  // facade title never sticks alone. Slide mode is handled by SlideMountSignal.
+  // Pathname-only dep: must not run when the curtain first arms on the old page.
+  useEffect(() => {
+    if (!isCurtainActive || mode === "slide") return;
+    if (lenis) lenis.scrollTo(0, { immediate: true });
+    else window.scrollTo({ top: 0 });
+    notifyPageReady();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   const variants = shouldReduceMotion ? reducedVariants : pageVariants;
 

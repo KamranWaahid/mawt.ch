@@ -2,7 +2,7 @@ export const ABOUT_COPY = {
   fr: {
     hero: {
       h1: "Une équipe à taille humaine, basée à Genève.",
-      h2: "MAWT est une agence IA à Genève. On construit des systèmes IA-natifs, on conseille sur l'adoption de l'IA et on met des experts dédiés au service de votre boîte. Une agence qui construit elle-même. Pas d'intermédiaires, pas de couches.",
+      h2: "MAWT construit des systèmes IA-natifs, conseille sur l'adoption de l'IA et intègre des experts dédiés dans votre organisation. Pas une agence. Un studio.",
     },
     story: {
       h2: "Pourquoi MAWT",
@@ -44,7 +44,7 @@ export const ABOUT_COPY = {
       body: "Plus de 50 missions choisies avec soin.",
     },
     bottomCta: {
-      h2: "Parlons de votre projet",
+      h2: "Construisons ce qui vous fait avancer.",
       body: "30 minutes ensemble pour qu'on se comprenne. Si ça matche, on enchaîne. Si non, on vous oriente vers ceux qui peuvent vous aider.",
       ctaPrimary: { label: "Discutons", href: "contact" },
       ctaSecondary: { label: "Voir nos projets", href: "projets" },
@@ -58,25 +58,25 @@ export const ABOUT_COPY = {
   en: {
     hero: {
       h1: "A senior human team, based in Geneva.",
-      h2: "MAWT is an AI agency in Geneva. We build AI-native systems, advise on AI adoption, and embed dedicated experts into your organization. An agency that builds things itself. No middlemen, no layers.",
+      h2: "MAWT builds AI-native systems, advises on AI adoption, and embeds dedicated experts into your organization. Not an agency. A studio.",
     },
     story: {
       h2: "Why MAWT",
       p1: "At MAWT, we always think further for you. Beyond the brief, beyond the deliverable. We look for what will actually move you forward.",
-      p2: "We become an extension of your team. We propose, we find, we build. Including what wasn't in the initial brief. That's our signature : continuous partnership, not one-shot delivery.",
-      p3: "Our conviction : there are no problems, only solutions. We hunt them with you, not next to you. And we build what actually solves, not what ticks boxes.",
+      p2: "We become an extension of your team. We propose, we find, we build—including what wasn't in the initial brief. That's our signature: continuous partnership, not one-shot delivery.",
+      p3: "Our conviction: there are no problems, only solutions. We hunt for them with you, not next to you. And we build what actually solves the problem, not what simply ticks boxes.",
     },
     team: {
       h2: "The team",
-      body: "Several profiles, one shared vision. Each one expert in their domain, all passionate about what they do. That complementarity is what lets us combine consulting AND execution, marketing AND tech, strategy AND AI. Always in partnership with you.",
+      body: "Several profiles, one shared vision. Each one is an expert in their domain, and all are passionate about what they do. That complementarity is what allows us to combine consulting and execution, marketing and technology, strategy and AI—always in partnership with you.",
     },
     howWeWork: {
-      h2: "How we work",
+      h2: "Our principles",
       principles: [
         {
           emoji: "🤝",
           title: "An extension of your team",
-          description: "We team up with you. We think, we build, we stay by your side.",
+          description: "We team up with you. We think, we build, and we stay by your side.",
         },
         {
           emoji: "🧠",
@@ -91,7 +91,7 @@ export const ABOUT_COPY = {
         {
           emoji: "⚡",
           title: "AI-native",
-          description: "AI is woven into the solution from day one, to serve your business daily.",
+          description: "AI is woven into the solution from day one, serving your business every day.",
         },
       ],
     },
@@ -100,7 +100,7 @@ export const ABOUT_COPY = {
       body: "Over 50 missions, picked with care.",
     },
     bottomCta: {
-      h2: "Let's talk about your project",
+      h2: "Let's build what moves you forward.",
       body: "30 minutes together to get to know each other. If it clicks, we move forward. If not, we point you to those who can help.",
       ctaPrimary: { label: "Get in touch", href: "contact" },
       ctaSecondary: { label: "See our work", href: "projets" },

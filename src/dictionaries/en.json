@@ -50,6 +50,21 @@
     "badge": "Work",
     "headline": "Our work, from petal to planet",
     "seeAll": "See all",
+    "hero": {
+      "title": "work",
+      "crossLabel": "/services",
+      "tagline": "from idea to exit."
+    },
+    "statement": "Real projects, measured results. Systems built to run in production.",
+    "statementCta": "Start a project",
+    "projectMore": "View case study",
+    "filterAll": "All",
+    "listLabels": {
+      "client": "Project",
+      "workType": "Work type",
+      "industry": "Industry",
+      "date": "Year"
+    },
     "projects": [
       {
         "id": "crm",
@@ -108,6 +123,16 @@
     "recentLabel": "Recent",
     "readTimeUnit": "min read",
     "fallbackExcerpt": "Field notes on AI in business, automation, and the systems behind better operations.",
+    "hero": {
+      "title": "news",
+      "crossLabel": "/work",
+      "tagline": "field notes from the team."
+    },
+    "statement": "Ideas, methods and notes from building AI systems in Geneva.",
+    "statementCta": "Start a project",
+    "readArticle": "Read article",
+    "filterAll": "All",
+    "featuredLabel": "Featured",
     "articles": [
       {
         "category": "UI/UX Design",
@@ -344,6 +369,13 @@
     "badge": "Contact Us",
     "headline": "Let's talk about what AI and automation can change in your business.",
     "subtitle": "Get in touch with us with any question!",
+    "hero": {
+      "title": "contact",
+      "crossLabel": "/about",
+      "tagline": "let's talk."
+    },
+    "formTitle": "Start a conversation",
+    "hqLabel": "HQ",
     "inquiries": "Inquiries",
     "address": "Address",
     "presence": "Our presence",

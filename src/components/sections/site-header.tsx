@@ -34,7 +34,7 @@ type SiteHeaderProps = {
 type NavItem = {
   href: string;
   label: string;
-  hasDropdown?: boolean;
+  usesCurtain?: boolean;
 };
 
 const navItems = [
@@ -71,11 +71,11 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { navigateWithCurtain } = useCurtainTransition();
 
-  // "Services" navigates with the DHNN slide-up transition (no dropdown —
-  // the services page IS the menu).
+  // Dark catalogue pages use the DHNN slide-up curtain.
+  const curtainHrefs = new Set(["/services", "/work", "/news", "/about", "/contact"]);
   const activeNavItems: NavItem[] = (mainNav && mainNav.length > 0 ? mainNav : navItems).map((item) => ({
     ...item,
-    hasDropdown: item.href === "/services",
+    usesCurtain: curtainHrefs.has(item.href),
   }));
 
   const normalizedPath = pathname.replace(/\/$/, "") || "/";
@@ -228,7 +228,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
                 href={navHref(item.href, currentLang as Locale)}
                 aria-current={pathname === navHref(item.href, currentLang as Locale) ? "page" : undefined}
                 onClick={
-                  item.hasDropdown
+                  item.usesCurtain
                     ? (e) => {
                         e.preventDefault();
                         navigateWithCurtain(navHref(item.href, currentLang as Locale));
@@ -335,7 +335,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
                       href={navHref(item.href, currentLang as Locale)}
                       onClick={(e) => {
                         setIsMobileMenuOpen(false);
-                        if (item.hasDropdown) {
+                        if (item.usesCurtain) {
                           e.preventDefault();
                           navigateWithCurtain(navHref(item.href, currentLang as Locale));
                         }

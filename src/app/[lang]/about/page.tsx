@@ -1,55 +1,73 @@
-import { SubpageHero } from "@/components/sections/subpage-hero";
 import { getAboutContent } from "@/lib/sanity.queries";
 import { standaloneAlternates, localizedHref } from "@/lib/routing/url-helpers";
 import { JsonLd, breadcrumbLd, ORG_ID, SITE_URL } from "@/components/seo/structured-data";
+import { HeaderTheme } from "@/components/ui/header-theme";
+import { SectionReveal } from "@/components/ui/section-reveal";
+import { SlidePageBody } from "@/components/ui/slide-page-body";
+import { DarkPageIcon } from "@/components/ui/dark-page-icon";
+import { ABOUT_COPY } from "@/content/about-copy";
 import type { Locale } from "@/i18n-config";
 import type { Metadata } from "next";
-import Link from "next/link";
-import Image from "next/image";
-import { AnimatedTitle } from "@/components/ui/animated-title";
-import { sectionTitleClass } from "@/components/ui/section-title-style";
-import { Handshake, Brain, Target, Zap } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  BrainCircuit,
+  CircleDot,
+  Puzzle,
+  Sparkles,
+  Target,
+  UsersRound,
+  Workflow,
+} from "lucide-react";
+import { CurtainLink } from "@/components/ui/curtain-link";
 
-const principleIcons = [Handshake, Brain, Target, Zap];
+const WHY_HIGHLIGHTS = {
+  en: [
+    "Beyond the brief",
+    "An extension of your team",
+    "Continuous partnership",
+    "Not one-shot delivery",
+    "There are no problems, only solutions",
+  ],
+  fr: [
+    "Au-delà du brief",
+    "Une extension de votre équipe",
+    "Accompagnement continu",
+    "Pas une prestation one-shot",
+    "Il n'y a pas de problème, il n'y a que des solutions",
+  ],
+} as const;
+
+const TEAM_LINES = {
+  en: ["Consulting and execution", "Marketing and technology", "Strategy and AI"],
+  fr: ["Conseil et exécution", "Marketing et technologie", "Stratégie et IA"],
+} as const;
+
+const TEAM_ICONS = [Workflow, Sparkles, BrainCircuit] as const;
+const PRINCIPLE_ICONS = [UsersRound, Target, Puzzle, BrainCircuit] as const;
+
+const STUDIO_LINE = {
+  en: "Not an agency. A studio.",
+  fr: "Pas une agence. Un studio.",
+} as const;
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: Locale }> }): Promise<Metadata> {
   const { lang } = await params;
   const doc = await getAboutContent(lang);
-  // Sanity metaTitle already contains the brand ("… | MAWT, …") — mark it
-  // absolute so the layout template does not append a second "| MAWT".
-  // Fallbacks carry no brand: the template adds it exactly once.
-  const title: Metadata["title"] = doc?.seo?.metaTitle
-    ? { absolute: doc.seo.metaTitle }
-    : lang === "fr"
-      ? "À propos"
-      : "About";
-  const description =
-    doc?.seo?.metaDescription ||
-    (lang === "fr"
-      ? "MAWT, agence IA à taille humaine basée à Genève. Intelligence artificielle, automatisation et outils sur mesure."
-      : "MAWT, a human scale AI agency based in Geneva. Artificial intelligence, automation and custom tools.");
-  const url = `${SITE_URL}${localizedHref("a-propos", lang)}`;
+  const copy = ABOUT_COPY[lang];
+
   return {
-    title,
-    description,
+    title: doc?.seo?.metaTitle || copy.seo.title,
+    description: doc?.seo?.metaDescription || copy.seo.description,
     alternates: standaloneAlternates("a-propos", lang),
-    openGraph: {
-      title: doc?.seo?.metaTitle || (lang === "fr" ? "À propos de MAWT" : "About MAWT"),
-      description,
-      url,
-      locale: lang === "fr" ? "fr_CH" : "en_US",
-    },
-    twitter: {
-      title: doc?.seo?.metaTitle || (lang === "fr" ? "À propos de MAWT" : "About MAWT"),
-      description,
-    },
   };
 }
 
 export default async function AboutPage({ params }: { params: Promise<{ lang: Locale }> }) {
   const { lang } = await params;
-  const doc = await getAboutContent(lang);
-  const badge = lang === "fr" ? "À propos" : "About MAWT";
+  const copy = ABOUT_COPY[lang];
+  const principles = copy.howWeWork.principles;
+  const contactHref = localizedHref("contact", lang);
 
   const aboutUrl = `${SITE_URL}${localizedHref("a-propos", lang)}`;
   const crumbLd = breadcrumbLd([
@@ -65,240 +83,222 @@ export default async function AboutPage({ params }: { params: Promise<{ lang: Lo
     mainEntity: { "@id": ORG_ID },
   };
 
-  if (!doc?.heroH1) {
-    return (
-      <div className="min-h-screen">
-        <JsonLd data={[crumbLd, aboutLd]} />
-        <SubpageHero
-          eyebrow={badge}
-          title={lang === "fr" ? "Bientôt disponible." : "Coming soon."}
-        />
-        <section className="px-6 py-24 sm:px-8 md:px-10 lg:px-12 text-center">
-          <p className="text-neutral-500 font-normal italic">
-            {lang === "fr" ? "Cette page sera bientôt disponible." : "This page will be available soon."}
-          </p>
-        </section>
-      </div>
-    );
-  }
-
-  const storyParas = [doc.storyP1, doc.storyP2, doc.storyP3].filter(Boolean);
+  const heroIntro = copy.hero.h2.replace(STUDIO_LINE[lang], "").trim();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#161616] text-white">
+      <HeaderTheme theme="light" />
       <JsonLd data={[crumbLd, aboutLd]} />
-      <SubpageHero
-        eyebrow={badge}
-        title={doc.heroH1}
-        subtitle={doc.heroH2 || (lang === "fr" ? "Notre histoire" : "Our story")}
-      />
 
-      {/* Story */}
-      {(doc.storyH2 || storyParas.length > 0) && (
-        <section className="relative py-12 md:py-18 lg:py-24">
-          <div className="site-container">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-              {/* Left Column */}
-              <div className="lg:col-span-5 self-start w-full">
-                <div className="mb-4 h-px w-full bg-black/10" />
-                {doc.storyH2 && (
-                  <AnimatedTitle
-                    as="h2"
-                    text={doc.storyH2}
-                    className={`${sectionTitleClass} text-balance`}
-                    splitBy="word"
-                  />
-                )}
-              </div>
-              {/* Right Column */}
-              <div className="lg:col-span-7 flex flex-col pt-2 lg:pt-0">
-                <div className="space-y-6">
-                  {storyParas.map((p: string, i: number) => (
-                    <p key={i} className="text-base font-normal leading-relaxed text-neutral-500 max-w-[55ch]">
-                      {p}
-                    </p>
-                  ))}
-                </div>
-              </div>
+      {/* Hero — same dark catalogue scale as /services, /work and /news. */}
+      <section className="pb-[10vh] pt-[24vh]">
+        <div className="site-container-xwide">
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
+            <div className="lg:col-span-9">
+              <h1 className="max-w-[12ch] text-[clamp(3rem,6vw,5.8rem)] font-medium leading-[0.98] tracking-tight text-white">
+                {copy.hero.h1}
+              </h1>
+            </div>
+            <div className="lg:col-span-5 lg:col-start-8 lg:self-end">
+              <p className="max-w-[52ch] text-[16px] font-normal leading-relaxed text-white/58 md:text-[18px]">
+                {heroIntro}{" "}
+                <span className="text-white">{STUDIO_LINE[lang]}</span>
+              </p>
             </div>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
-      {/* Team */}
-      {(doc.teamH2 || doc.teamBody) && (
-        <section className="relative py-12 md:py-18 lg:py-24">
-          <div className="site-container">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-              {/* Left Column */}
-              <div className="lg:col-span-5 self-start w-full">
-                <div className="mb-4 h-px w-full bg-black/10" />
-                {doc.teamH2 && (
-                  <AnimatedTitle
-                    as="h2"
-                    text={doc.teamH2}
-                    className={`${sectionTitleClass} text-balance`}
-                    splitBy="word"
-                  />
-                )}
-              </div>
-              {/* Right Column */}
-              <div className="lg:col-span-7 flex flex-col pt-2 lg:pt-0">
-                {doc.teamBody && (
-                  <p className="text-base font-normal leading-relaxed text-neutral-500 max-w-[55ch]">
-                    {doc.teamBody}
+      <SlidePageBody>
+        {/* Why MAWT */}
+        <section className="pb-[14vh]">
+          <div className="site-container-xwide">
+            <div className="grid gap-12 border-t border-white/10 pt-10 lg:grid-cols-12 lg:gap-16">
+              <SectionReveal className="lg:col-span-3">
+                <p className="text-[13px] font-normal text-white/40">{copy.story.h2}</p>
+              </SectionReveal>
+
+              <div className="space-y-12 lg:col-span-8 lg:col-start-5">
+                <SectionReveal>
+                  <DarkPageIcon icon={CircleDot} className="mb-8" />
+                  <p className="max-w-[20ch] text-[clamp(2rem,4vw,3.6rem)] font-medium leading-[1.12] tracking-tight text-white">
+                    {lang === "fr"
+                      ? "Au-delà du brief, nous cherchons ce qui vous fait vraiment avancer."
+                      : "Beyond the brief, we look for what actually moves you forward."}
                   </p>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
+                </SectionReveal>
 
-      {/* Principles */}
-      {doc.principles?.length > 0 && (
-        <section className="relative py-12 md:py-18 lg:py-24">
-          <div className="site-container">
-            <div className="mb-10 sm:mb-14 w-full">
-              <div className="mb-4 h-px w-full bg-black/10 md:mb-10" />
-              <h2 className={`${sectionTitleClass} text-balance`}>
-                {lang === "fr" ? "Nos principes" : "Our principles"}
-              </h2>
-            </div>
-            
-            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-              {doc.principles.map((p: { emoji?: string; title?: string; description?: string }, index: number) => {
-                const IconComponent = principleIcons[index % principleIcons.length];
-                return (
-                  <article
-                    key={index}
-                    className="group relative flex min-h-[240px] flex-col justify-between overflow-hidden rounded-2xl border border-black/[0.02] bg-[#EDEDED]/50 px-5 py-7 transition-all duration-500 ease-out hover:bg-[#E3EAE6]/70 xs:px-8 sm:min-h-[280px] md:min-h-[300px] md:px-8 md:py-8"
-                  >
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between text-sm font-normal leading-none text-black/35">
-                        <span>{String(index + 1).padStart(2, "0")}</span>
-                        {IconComponent && (
-                          <IconComponent 
-                            size={18} 
-                            className="text-[#1D7A65]/70 transition-all duration-300 group-hover:scale-110 group-hover:text-[#1D7A65]" 
-                          />
-                        )}
+                <div className="grid gap-8 md:grid-cols-[1fr_1.2fr]">
+                  <SectionReveal className="space-y-4" delay={0.04}>
+                    {WHY_HIGHLIGHTS[lang].map((item) => (
+                      <div
+                        key={item}
+                        className="group flex items-center gap-3 border-b border-white/10 py-[13px] text-[14px] font-normal text-white/62 transition-colors hover:text-white"
+                      >
+                        <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-white/25 transition-opacity group-hover:opacity-100" aria-hidden="true" />
+                        {item}
                       </div>
-                    {p.title && (
-                      <h3 className="max-w-[18ch] text-xl font-semibold leading-tight tracking-[-0.02em] text-neutral-900 transition-colors duration-300 group-hover:text-[#1D7A65]">
-                        {p.title}
-                      </h3>
-                    )}
-                  </div>
-                  {p.description && (
-                    <p className="mt-8 max-w-[42ch] text-sm font-normal leading-[1.6] tracking-[-0.015em] text-black/50">
-                      {p.description}
-                    </p>
-                  )}
-                </article>
-              ); })}
-            </div>
-          </div>
-        </section>
-      )}
+                    ))}
+                  </SectionReveal>
 
-      {/* Track record */}
-      {(doc.trackRecordH2 || doc.trackRecordBody) && (
-        <section className="relative py-12 md:py-18 lg:py-24">
-          <div className="site-container">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-              {/* Left Column */}
-              <div className="lg:col-span-5 self-start w-full">
-                <div className="mb-4 h-px w-full bg-black/10" />
-                {doc.trackRecordH2 && (
-                  <AnimatedTitle
-                    as="h2"
-                    text={doc.trackRecordH2}
-                    className={`${sectionTitleClass} text-balance`}
-                    splitBy="word"
-                  />
-                )}
-              </div>
-              {/* Right Column */}
-              <div className="lg:col-span-7 flex flex-col pt-2 lg:pt-0">
-                {doc.trackRecordBody && (
-                  <p className="text-base font-normal leading-relaxed text-neutral-500 max-w-[55ch]">
-                    {doc.trackRecordBody}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Locations */}
-      {doc.locations?.length > 0 && (
-        <section className="relative py-12 md:py-18 lg:py-24">
-          <div className="site-container">
-            <div className="mb-10 sm:mb-14 w-full">
-              <div className="mb-4 h-px w-full bg-black/10 md:mb-10" />
-              <h2 className={`${sectionTitleClass} text-balance`}>
-                {lang === "fr" ? "Nos bureaux" : "Our locations"}
-              </h2>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-              {doc.locations.map((loc: { city?: string; description?: string }, i: number) => (
-                <div key={i} className="flex flex-col border-t border-black/10 pt-6">
-                  {loc.city && (
-                    <h3 className="text-lg font-semibold leading-tight tracking-tight text-neutral-900 mb-2">
-                      {loc.city}
-                    </h3>
-                  )}
-                  {loc.description && (
-                    <p className="text-sm font-normal leading-relaxed text-neutral-500 max-w-[32ch]">
-                      {loc.description}
-                    </p>
-                  )}
+                  <SectionReveal className="space-y-6" delay={0.08}>
+                    {[copy.story.p1, copy.story.p2, copy.story.p3].map((paragraph) => (
+                      <p
+                        key={paragraph}
+                        className="max-w-[58ch] text-[15px] font-normal leading-relaxed text-white/55"
+                      >
+                        {paragraph}
+                      </p>
+                    ))}
+                  </SectionReveal>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Team */}
+        <section className="pb-[14vh]">
+          <div className="site-container-xwide">
+            <div className="grid gap-12 border-t border-white/10 pt-10 lg:grid-cols-12 lg:gap-16">
+              <SectionReveal className="lg:col-span-3">
+                <p className="text-[13px] font-normal text-white/40">{copy.team.h2}</p>
+              </SectionReveal>
+
+              <div className="lg:col-span-8 lg:col-start-5">
+                <SectionReveal>
+                  <h2 className="max-w-[16ch] text-[clamp(2rem,4vw,3.6rem)] font-medium leading-[1.12] tracking-tight text-white">
+                    {lang === "fr" ? "Plusieurs profils, une seule vision." : "Several profiles, one shared vision."}
+                  </h2>
+                </SectionReveal>
+
+                <div className="mt-10 grid gap-10 md:grid-cols-[1.2fr_1fr]">
+                  <SectionReveal delay={0.04}>
+                    <p className="max-w-[58ch] text-[15px] font-normal leading-relaxed text-white/55">
+                      {copy.team.body}
+                    </p>
+                  </SectionReveal>
+
+                  <SectionReveal delay={0.08}>
+                    <ul className="space-y-0">
+                      {TEAM_LINES[lang].map((line, index) => {
+                        const Icon = TEAM_ICONS[index];
+                        return (
+                        <li
+                          key={line}
+                          className="group flex items-center justify-between gap-6 border-b border-white/10 py-[15px] text-[14px] font-normal text-white/70 transition-colors hover:text-white"
+                        >
+                          <span className="inline-flex items-center gap-3">
+                            <Icon size={15} strokeWidth={1.5} className="shrink-0 text-white/35 transition-colors group-hover:text-white/60" aria-hidden="true" />
+                            {line}
+                          </span>
+                          <ArrowUpRight
+                            size={14}
+                            className="shrink-0 text-white/0 transition-all duration-300 group-hover:text-white/60"
+                          />
+                        </li>
+                      );
+                      })}
+                    </ul>
+                  </SectionReveal>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Principles */}
+        <section className="pb-[14vh]">
+          <div className="site-container-xwide">
+            <SectionReveal className="mb-12 border-t border-white/10 pt-10 md:mb-16">
+              <p className="text-[13px] font-normal text-white/40">{copy.howWeWork.h2}</p>
+            </SectionReveal>
+
+            <div>
+              {principles.map((principle, index) => (
+                <SectionReveal key={principle.title} delay={index * 0.03}>
+                  <article className="group grid gap-6 border-b border-white/10 py-8 transition-colors hover:border-white/20 md:grid-cols-12 md:items-start md:gap-10 md:py-10">
+                    <div className="flex items-center gap-5 md:col-span-3">
+                      <DarkPageIcon icon={PRINCIPLE_ICONS[index] || CircleDot} />
+                      <span className="text-[clamp(2.8rem,6vw,5rem)] font-medium leading-none tracking-tight text-white/14 transition-colors group-hover:text-white/24">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                    </div>
+                    <div className="md:col-span-4">
+                      <h3 className="max-w-[18ch] text-[clamp(1.45rem,2.6vw,2.4rem)] font-semibold leading-[1.05] tracking-tight text-white">
+                        {principle.title}
+                      </h3>
+                    </div>
+                    <div className="md:col-span-5">
+                      <p className="max-w-[42ch] text-[15px] font-normal leading-relaxed text-white/55">
+                        {principle.description}
+                      </p>
+                    </div>
+                  </article>
+                </SectionReveal>
               ))}
             </div>
           </div>
         </section>
-      )}
 
-      {/* Bottom CTA */}
-      {doc.bottomCtaH2 && (
-        <section className="relative overflow-hidden bg-black text-white py-20 md:py-28 lg:py-36 text-center">
-          <div className="absolute inset-0 pointer-events-none select-none opacity-20 z-0">
-            <Image
-              src="/about-us-leaf.png"
-              alt=""
-              fill
-              sizes="100vw"
-              className="object-cover"
-              priority
-            />
-          </div>
-          <div className="relative z-10 max-w-3xl mx-auto space-y-8 px-5 sm:px-8">
-            <AnimatedTitle
-              as="h2"
-              text={doc.bottomCtaH2}
-              className="text-4xl-fluid font-medium tracking-tighter text-white max-w-3xl mx-auto"
-              splitBy="word"
-            />
-            {doc.bottomCtaBody && (
-              <p className="text-base-fluid text-neutral-400 leading-relaxed font-normal max-w-[55ch] mx-auto">
-                {doc.bottomCtaBody}
-              </p>
-            )}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-4">
-              <Link
-                href={`/${lang}/contact`}
-                className="px-8 py-4 bg-[#75DAB4] text-black hover:bg-white transition-colors duration-300 text-sm font-normal uppercase tracking-widest rounded-sm w-full sm:w-auto text-center"
-              >
-                {lang === "fr" ? "Discutons" : "Let's talk"}
-              </Link>
+        {/* Since 2021 */}
+        <div className="border-y border-white/10 bg-[linear-gradient(135deg,#101010_0%,#1f1f1f_48%,#161616_100%)] text-white">
+          <section className="py-20 md:py-28 lg:py-36">
+            <div className="site-container-xwide">
+              <SectionReveal className="grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-16">
+                <div className="lg:col-span-5">
+                  <DarkPageIcon icon={Target} className="mb-8" />
+                  <p className="text-[13px] font-normal text-white/42">{copy.trackRecord.h2}</p>
+                  <div className="mt-6 flex items-end gap-4">
+                    <span className="text-[clamp(6rem,16vw,13rem)] font-medium leading-[0.78] tracking-tight text-white">
+                      50+
+                    </span>
+                    <span className="pb-2 text-[clamp(1.2rem,2vw,1.75rem)] font-medium leading-none text-white/52">
+                      missions
+                    </span>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-6 lg:col-start-7">
+                  <p className="max-w-[16ch] text-[clamp(2rem,4vw,3.6rem)] font-medium leading-[1.12] tracking-tight text-white">
+                    {copy.trackRecord.body}
+                  </p>
+                  <div className="mt-10 grid grid-cols-3 gap-3 border-t border-white/10 pt-6">
+                    {[0, 1, 2].map((item) => (
+                      <span key={item} className="h-px bg-white/10" aria-hidden="true" />
+                    ))}
+                  </div>
+                </div>
+              </SectionReveal>
             </div>
+          </section>
+        </div>
+
+        {/* Closing CTA */}
+        <section className="py-20 md:py-28 lg:py-36">
+          <div className="site-container-xwide">
+            <SectionReveal>
+              <h2 className="max-w-[16ch] text-[clamp(2.4rem,5vw,4.6rem)] font-medium leading-[1.02] tracking-tight text-white">
+                {copy.bottomCta.h2}
+              </h2>
+              {copy.bottomCta.body && (
+                <p className="mt-6 max-w-[52ch] text-[15px] font-normal leading-relaxed text-white/55">
+                  {copy.bottomCta.body}
+                </p>
+              )}
+              <CurtainLink
+                href={contactHref}
+                className="mt-10 inline-flex items-center gap-3 rounded-full bg-white/[0.08] py-[13px] pl-6 pr-4 text-[13px] font-normal text-white/85 transition-colors hover:bg-white/[0.16] hover:text-white"
+              >
+                {copy.bottomCta.ctaPrimary.label}
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10">
+                  <ArrowRight size={13} />
+                </span>
+              </CurtainLink>
+            </SectionReveal>
           </div>
         </section>
-      )}
+      </SlidePageBody>
     </div>
   );
 }

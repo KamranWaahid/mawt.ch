@@ -16,28 +16,30 @@ interface CookieConsentModalProps {
 
 const TEXT = {
   en: {
-    title: "Cookie Settings",
+    title: "Cookie settings",
     description:
-      "We use cookies to improve your experience on our website. Essential cookies are required for the site to function correctly. Analytics cookies help us understand how visitors use the site.",
-    essential: "Essential Cookies",
-    essentialDesc: "Required for the website to function. Cannot be disabled.",
-    analytics: "Analytics Cookies",
-    analyticsDesc: "Help us understand how visitors interact with our site.",
-    acceptAll: "Accept All",
-    essentialOnly: "Essential Only",
+      "We use cookies to make this site work properly. Essential cookies are always on. Analytics cookies help us understand how visitors use the site, but only if you allow them.",
+    essential: "Essential cookies",
+    essentialDesc: "Required for the site to work. These can't be turned off.",
+    analytics: "Analytics cookies",
+    analyticsDesc: "Help us understand how visitors use our site.",
+    acceptAll: "Accept all",
+    essentialOnly: "Reject non-essential cookies",
     saved: "Preferences saved.",
+    close: "Close cookie settings",
   },
   fr: {
     title: "Paramètres des cookies",
     description:
-      "Nous utilisons des cookies pour améliorer votre expérience sur notre site. Les cookies essentiels sont nécessaires au bon fonctionnement du site. Les cookies analytiques nous aident à comprendre comment les visiteurs utilisent le site.",
+      "Nous utilisons des cookies pour que ce site fonctionne correctement. Les cookies essentiels sont toujours actifs. Les cookies analytiques nous aident à comprendre comment les visiteurs utilisent le site, mais seulement si vous les acceptez.",
     essential: "Cookies essentiels",
     essentialDesc: "Nécessaires au fonctionnement du site. Ils ne peuvent pas être désactivés.",
     analytics: "Cookies analytiques",
-    analyticsDesc: "Nous aident à comprendre comment les visiteurs interagissent avec notre site.",
+    analyticsDesc: "Nous aident à comprendre comment les visiteurs utilisent notre site.",
     acceptAll: "Tout accepter",
-    essentialOnly: "Essentiels uniquement",
+    essentialOnly: "Refuser les cookies non essentiels",
     saved: "Préférences enregistrées.",
+    close: "Fermer les paramètres des cookies",
   },
 };
 
@@ -108,7 +110,7 @@ export function CookieConsentModal({ isOpen, onClose, lang = "en" }: CookieConse
               <button
                 type="button"
                 onClick={onClose}
-                aria-label="Close cookie settings"
+                aria-label={t.close}
                 className="text-neutral-400 hover:text-black transition-colors"
               >
                 <X size={18} />

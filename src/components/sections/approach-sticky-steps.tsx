@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import type Lenis from "lenis";
 import { useLenis } from "lenis/react";
 import { useEffect, useRef, useState } from "react";
+import { prefersNativeScroll } from "@/lib/scroll-environment";
 
 type ApproachStep = {
   id: string;
@@ -94,7 +95,9 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 1024);
+      // Native-scroll devices must never enter the desktop lock/hijack path —
+      // even at ≥1024px (iPad landscape).
+      setIsMobile(window.innerWidth < 1024 || prefersNativeScroll());
     };
     handleResize();
     window.addEventListener("resize", handleResize, { passive: true });
@@ -163,33 +166,43 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     setLockState(state);
   };
 
-  // Monitor positions via useLenis when scrolling naturally (idle state)
-  useLenis((lenis) => {
-    if (!isMounted) return;
+  // Mobile / native-scroll progress (works without Lenis).
+  useEffect(() => {
+    if (!isMounted || !isMobile) return;
 
-    lenisRef.current = lenis;
-
-    if (!containerRef.current) return;
-
-    if (isMobile) {
+    const updateFromScroll = () => {
+      if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       const scrollableHeight = rect.height - window.innerHeight;
       if (scrollableHeight <= 0) return;
 
       const progress = Math.max(0, Math.min(1, -rect.top / scrollableHeight));
       const nextIndex = Math.min(
-        Math.floor(progress * totalSteps),
-        totalSteps - 1
+        Math.floor(progress * totalStepsRef.current),
+        Math.max(totalStepsRef.current - 1, 0),
       );
       if (nextIndex !== activeIndexRef.current) {
         setNavigationDirection(nextIndex > activeIndexRef.current ? 1 : -1);
         activeIndexRef.current = nextIndex;
         setActiveIndex(nextIndex);
       }
-      return;
-    }
+    };
 
-    if (isLockedRef.current) return;
+    updateFromScroll();
+    window.addEventListener("scroll", updateFromScroll, { passive: true });
+    window.addEventListener("resize", updateFromScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", updateFromScroll);
+      window.removeEventListener("resize", updateFromScroll);
+    };
+  }, [isMounted, isMobile]);
+
+  // Desktop + Lenis only: track lock thresholds while idle.
+  useLenis((lenis) => {
+    if (!isMounted || isMobile) return;
+
+    lenisRef.current = lenis;
+    if (!containerRef.current || isLockedRef.current) return;
 
     const rect = containerRef.current.getBoundingClientRect();
     const isScrollingDown = lenis.direction === 1;
@@ -613,7 +626,10 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
         style={{ height: `${totalSteps * 40}vh` }}
         aria-label="Approach steps (mobile)"
       >
-        <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#F6F5F4]">
+        {/* Keep overflow hidden — never nest a second scrollport here.
+            Nested overflow-y on small phones fought the document scroll and
+            froze momentum mid-gesture. */}
+        <div className="sticky top-0 h-[100dvh] w-full overflow-hidden bg-[#F6F5F4]">
           {/* Plateau Linear Gradient Background */}
           <motion.div
             aria-hidden="true"

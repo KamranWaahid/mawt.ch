@@ -41,10 +41,10 @@ export default async function LoginPage({ params }: LoginPageProps) {
         <LoginForm dict={dict.login} lang={lang} />
       </div>
 
-      {/* Security Footer */}
+      {/* Footer */}
       <div className="w-full max-w-[1440px] px-8 pb-4 flex justify-between items-center text-[10px] text-black/20 font-normal uppercase tracking-[0.3em] mt-auto">
-         <span>Node: MAWT-CH-01</span>
-         <span>Security Level: Enterprise</span>
+         <span>MAWT</span>
+         <span>{lang === "fr" ? "Connexion chiffrée" : "Encrypted connection"}</span>
       </div>
     </main>
   );

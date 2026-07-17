@@ -129,7 +129,12 @@ export function SubpageHero({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
-  useMotionValueEvent(scrollYProgress, "change", setScrollProgress);
+  // Quantize progress so React does not re-render every scroll frame
+  // (word color scrub still looks continuous; mobile stays smooth).
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    const quantized = Math.round(latest * 40) / 40;
+    setScrollProgress((prev) => (prev === quantized ? prev : quantized));
+  });
 
   return (
     <section

@@ -14,12 +14,12 @@ export async function generateMetadata({ params }: ProjectsPageProps): Promise<M
   const { lang } = await params;
   const title =
     lang === "en"
-      ? "Case studies — AI & automation projects in Geneva"
-      : "Études de cas — projets IA et automatisation à Genève";
+      ? "Case studies - AI & automation projects in Geneva"
+      : "Études de cas - projets IA et automatisation à Genève";
   const description =
     lang === "en"
-      ? "AI, automation and custom software case studies from Geneva: real projects, measured results — hours saved, errors cut, teams unblocked."
-      : "Études de cas IA, automatisation et logiciels sur mesure à Genève : des projets réels, des résultats mesurés — heures récupérées, erreurs réduites.";
+      ? "AI, automation and custom software case studies from Geneva: real projects, measured results. Hours saved, errors cut, teams unblocked."
+      : "Études de cas IA, automatisation et logiciels sur mesure à Genève : des projets réels, des résultats mesurés. Heures récupérées, erreurs réduites.";
   return {
     title,
     description,
@@ -78,8 +78,8 @@ export default async function ProjectsPage({ params }: ProjectsPageProps) {
       <JsonLd data={[crumbLd, collectionLd]} />
       <SubpageHero
         eyebrow={lang === "fr" ? "Nos projets" : "Our work"}
-        title={lang === "fr" ? "Notre travail" : "Our work"}
-        subtitle={lang === "fr" ? "De l'idée à la sortie" : "From idea to exit"}
+        title={lang === "fr" ? "Études de cas" : "Case studies"}
+        subtitle={lang === "fr" ? "De l'idée au lancement" : "From brief to launch"}
       />
 
       <WorkProjectsSection projects={fetchedProjects} lang={lang} />

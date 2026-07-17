@@ -168,24 +168,24 @@ export default async function FamilyPillarPage({ params }: Props) {
   const labels = {
     fr: {
       breadServices: "Services",
-      methodH2: "Notre Méthode",
-      methodPitch: "Nous croyons en un process transparent et structuré : Audit, Construction, Déploiement et Optimisation continue.",
+      methodH2: "Notre méthode",
+      methodPitch: "Un process clair, en quatre étapes : cadrage, construction, déploiement, puis amélioration continue.",
       methodCta: "Explorer notre méthodologie",
       viewCaseStudy: "Voir l'étude de cas",
     },
     en: {
       breadServices: "Services",
-      methodH2: "Our Process",
-      methodPitch: "We believe in a transparent and structured lifecycle : Audit, Build, Deploy, and Continuous Optimization.",
+      methodH2: "Our process",
+      methodPitch: "A clear process, in four steps: scope, build, deploy, then keep improving.",
       methodCta: "Explore our methodology",
-      viewCaseStudy: "View Case Study",
+      viewCaseStudy: "View case study",
     },
   }[lang as "fr" | "en"] || {
     breadServices: "Services",
-    methodH2: "Our Process",
-    methodPitch: "We believe in a transparent and structured lifecycle : Audit, Build, Deploy, and Continuous Optimization.",
+    methodH2: "Our process",
+    methodPitch: "A clear process, in four steps: scope, build, deploy, then keep improving.",
     methodCta: "Explore our methodology",
-    viewCaseStudy: "View Case Study",
+    viewCaseStudy: "View case study",
   };
 
   const familyTitle = getFamilyTitle(canonicalFamily, lang as Locale);
@@ -303,7 +303,7 @@ export default async function FamilyPillarPage({ params }: Props) {
           <div className="site-container-wide">
             <div className="mb-16">
               <span className="text-xs-fluid font-medium text-neutral-400 uppercase tracking-label mb-4 block">
-                Proof of Excellence
+                {lang === "fr" ? "Projets récents" : "Recent work"}
               </span>
               <AnimatedTitle
                 as="h2"

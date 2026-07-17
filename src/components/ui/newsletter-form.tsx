@@ -13,9 +13,10 @@ interface NewsletterFormProps {
     placeholder: string;
     success: string;
   };
+  lang?: "en" | "fr";
 }
 
-export function NewsletterForm({ dict }: NewsletterFormProps) {
+export function NewsletterForm({ dict, lang = "en" }: NewsletterFormProps) {
   // BUG-023: Typed action state
   const [state, formAction, isPending] = useActionState<NewsletterFormState, FormData>(
     subscribeNewsletter,
@@ -25,12 +26,14 @@ export function NewsletterForm({ dict }: NewsletterFormProps) {
   // BUG-015: Track success locally to reset without page reload
   const [localSuccess, setLocalSuccess] = useState(false);
 
+  const isFr = lang === "fr";
   const labels = dict || {
     title: "Newsletter",
-    description:
-      "Get our field notes on AI in business and automation. Practical, not theoretical.",
-    placeholder: "Email address",
-    success: "Thank you for subscribing.",
+    description: isFr
+      ? "Nos notes de terrain sur l'IA en entreprise et l'automatisation. Concret, pas théorique."
+      : "Get our field notes on AI in business and automation. Practical, not theoretical.",
+    placeholder: isFr ? "Adresse e-mail" : "Email address",
+    success: isFr ? "Merci de votre inscription." : "Thank you for subscribing.",
   };
 
   const isSuccess = state?.success || localSuccess;
@@ -74,7 +77,7 @@ export function NewsletterForm({ dict }: NewsletterFormProps) {
                 onClick={handleReset}
                 className="ml-auto text-[11px] text-black/40 hover:text-black tracking-wide transition-colors"
               >
-                Reset
+                {isFr ? "Réinitialiser" : "Reset"}
               </button>
             </motion.div>
           ) : (
@@ -86,6 +89,7 @@ export function NewsletterForm({ dict }: NewsletterFormProps) {
               action={formAction}
               className="relative flex flex-col gap-3"
             >
+              <input type="hidden" name="lang" value={lang} />
               <div className="relative">
                 {/* BUG-012: Visually-hidden label for screen readers */}
                 <label htmlFor="newsletter-email" className="sr-only">
@@ -106,13 +110,13 @@ export function NewsletterForm({ dict }: NewsletterFormProps) {
                 <button
                   type="submit"
                   disabled={status === "submitting"}
-                  aria-label="Subscribe to newsletter"
+                  aria-label={isFr ? "S'inscrire à la newsletter" : "Subscribe to newsletter"}
                   className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center bg-black text-white rounded-sm hover:bg-neutral-800 transition-all disabled:bg-neutral-400 group"
                 >
                   {status === "submitting" ? (
                     <div
                       className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin"
-                      aria-label="Sending..."
+                      aria-label={isFr ? "Envoi en cours…" : "Sending…"}
                     />
                   ) : (
                     <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />

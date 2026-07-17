@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState, useEffect } from "react";
+import { useId, useRef, useState, useEffect, useLayoutEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform, useSpring, MotionValue } from "motion/react";
@@ -10,6 +10,8 @@ import { localizedHref, translatePath } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/lib/routing/url-map";
 import { AsciiWave } from "@/components/ui/ascii-wave";
 import { useCurtainTransition } from "@/components/providers/curtain-transition";
+import { useBodyScrollLock } from "@/hooks/use-body-scroll-lock";
+import { prefersNativeScroll } from "@/lib/scroll-environment";
 
 type HomepageHeroCopy = {
   statement: string;
@@ -39,6 +41,15 @@ const VIDEO_SCRUB_START = 0.04;
 // a fully visible but frozen frame reads as a bug.
 const VIDEO_OPEN_PROGRESS = 0.18;
 const VIDEO_SCRUB_SECONDS = 3;
+
+const HERO_VIDEO_DESKTOP = "/MotionMAWT.mp4";
+const HERO_VIDEO_MOBILE = "/MotionMAWTMobile.mp4";
+
+/** Portrait phones / narrow vertical viewports get the 9:16 mobile cut. */
+function shouldUseMobileHeroVideo() {
+  if (typeof window === "undefined") return false;
+  return window.innerWidth < 768 && window.innerHeight > window.innerWidth;
+}
 
 const navItems = [
   { label: "Work", labelFr: "Projets", route: "projets" },
@@ -238,25 +249,54 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   const sectionRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const videoWarmedRef = useRef(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  // Discrete UI flags only — never store continuous scroll in React state
+  // (that re-rendered the whole hero every frame and janked mobile scroll).
+  const [heroUi, setHeroUi] = useState({
+    logoInteractive: true,
+    asciiActive: true,
+    navLight: false,
+  });
   const [isHeroMobileMenuOpen, setIsHeroMobileMenuOpen] = useState(false);
   const [isAsciiVideoReady, setIsAsciiVideoReady] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [useMobileHeroVideo, setUseMobileHeroVideo] = useState(false);
+  const [nativeScroll, setNativeScroll] = useState(false);
   const shouldReduceMotion = useReducedMotion();
+  useBodyScrollLock(isHeroMobileMenuOpen);
+  const heroVideoSrc = useMobileHeroVideo ? HERO_VIDEO_MOBILE : HERO_VIDEO_DESKTOP;
   const params = useParams();
   const lang = (params?.lang === "fr" ? "fr" : "en") as Locale;
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
   });
-  
-  // Lenis already smooths the scroll itself, so the spring only needs a light
-  // touch: at 80/25 the two smoothings stacked into a near-second of visible
-  // lag on the first scroll. 120/26 halves the settle time, still overdamped.
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 120, damping: 26, restDelta: 0.0001 });
+
+  // Lenis already smooths desktop wheel scroll, so the spring only needs a
+  // light touch. On native/touch devices skip the spring entirely — stacked
+  // smoothing reads as lag and breaks momentum feel.
+  const springProgress = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 26,
+    restDelta: 0.0001,
+  });
+  const smoothProgress = nativeScroll ? scrollYProgress : springProgress;
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    setScrollProgress(latest);
+    setHeroUi((prev) => {
+      const next = {
+        logoInteractive: latest < 0.03,
+        asciiActive: latest < 0.63,
+        navLight: latest >= 0.9,
+      };
+      if (
+        prev.logoInteractive === next.logoInteractive &&
+        prev.asciiActive === next.asciiActive &&
+        prev.navLight === next.navLight
+      ) {
+        return prev;
+      }
+      return next;
+    });
 
     const video = videoRef.current;
     if (video) {
@@ -324,15 +364,22 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   // measured value; afterwards it tracks normally.
   useEffect(() => {
     const sync = (v: number) => {
-      smoothProgress.jump(v);
-      setScrollProgress(v);
+      // Jump the spring only when it is actually driving visuals (desktop).
+      if (!prefersNativeScroll()) {
+        springProgress.jump(v);
+      }
+      setHeroUi({
+        logoInteractive: v < 0.03,
+        asciiActive: v < 0.63,
+        navLight: v >= 0.9,
+      });
       // Refreshing straight into the cinema phase must also start the film.
       const video = videoRef.current;
       if (video && v >= VIDEO_OPEN_PROGRESS && video.paused) {
         video.play().catch(() => {});
       }
     };
-    if (Math.abs(scrollYProgress.get() - smoothProgress.get()) > 0.001) {
+    if (Math.abs(scrollYProgress.get() - springProgress.get()) > 0.001) {
       sync(scrollYProgress.get());
       return;
     }
@@ -352,9 +399,22 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useLayoutEffect(() => {
+    setNativeScroll(prefersNativeScroll());
+  }, []);
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 1024);
+      setNativeScroll(prefersNativeScroll());
+      const nextUseMobile = shouldUseMobileHeroVideo();
+      setUseMobileHeroVideo((prev) => {
+        if (prev !== nextUseMobile) {
+          // Source swap remounts decode state — allow the iOS warm-up again.
+          videoWarmedRef.current = false;
+        }
+        return nextUseMobile;
+      });
     };
     handleResize();
     window.addEventListener("resize", handleResize, { passive: true });
@@ -439,22 +499,17 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   // flickering (AsciiWave's `active` prop), so the wave shows as a still.
   // The field stays behind everything while scrolling and only fades once the
   // gradient transition sweeps up to cover it (~0.55 on the scroll track).
-  const asciiLayerOpacity = !isAsciiVideoReady
-    ? 0
-    : scrollProgress <= 0.52
-      ? 1
-      : scrollProgress >= 0.62
-        ? 0
-        : 1 - (scrollProgress - 0.52) / 0.1;
-  const asciiLayerVisibility = isAsciiVideoReady && scrollProgress < 0.63 ? "visible" : "hidden";
+  const asciiFadeOpacity = useTransform(smoothProgress, [0.52, 0.62], [1, 0]);
+  const asciiLayerOpacity = isAsciiVideoReady ? asciiFadeOpacity : 0;
+  const asciiLayerVisibility = isAsciiVideoReady && heroUi.asciiActive ? "visible" : "hidden";
   const heroContentOpacity = useTransform(smoothProgress, [0.04, 0.10], [1, 0]);
   const scrollIndicatorOpacity = useTransform(smoothProgress, [0.45, 0.50], [1, 0]);
-  
-  const isHomeNavLight = scrollProgress >= 0.90;
+
+  const isHomeNavLight = heroUi.navLight;
   const homeNavTextClass = isHomeNavLight ? "text-black/70" : "text-white/72";
   const homeNavDividerClass = isHomeNavLight ? "text-black/25" : "text-white/25";
   const homeNavSlashClass = isHomeNavLight ? "text-black/45" : "text-white/45";
-  const isTransitionTextDark = scrollProgress >= 0.90;
+  const isTransitionTextDark = heroUi.navLight;
   const transitionCtaClass = isTransitionTextDark
     ? "border-black/12 bg-black/[0.04] text-black/92"
     : "border-white/14 bg-white/[0.10] text-white/92";
@@ -514,9 +569,14 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
               scaling the container would shrink the full-screen dim overlay
               and leave undimmed bands at the screen edges. */}
           <motion.video
+            key={heroVideoSrc}
             ref={videoRef}
-            src="/MotionMAWT.mp4"
-            className="home-hero-top-video relative w-[82vw] max-w-[820px] aspect-video object-cover shadow-2xl"
+            src={heroVideoSrc}
+            className={
+              useMobileHeroVideo
+                ? "home-hero-top-video relative h-[72dvh] max-h-[720px] w-auto max-w-[86vw] aspect-[9/16] object-cover shadow-2xl"
+                : "home-hero-top-video relative w-[82vw] max-w-[820px] aspect-video object-cover shadow-2xl"
+            }
             style={{ scale: videoScale }}
             playsInline
             muted
@@ -540,7 +600,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
           <div className="ascii-wave-viewport">
             <AsciiWave
               src="/hero-ascii-map.jpg"
-              active={scrollProgress < 0.63}
+              active={heroUi.asciiActive}
               focusX={isMobile ? 0.35 : 0.5}
               focusY={isMobile ? 0.6 : 0.68}
               className="ascii-wave-canvas"
@@ -567,7 +627,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                   href={`/${lang}`}
                   aria-label="MAWT home"
                   className="block"
-                  style={{ pointerEvents: scrollProgress < 0.03 ? "auto" : "none" }}
+                  style={{ pointerEvents: heroUi.logoInteractive ? "auto" : "none" }}
                 >
                   <MawatLogo className="h-auto w-full" tone="light" />
                 </a>
@@ -590,7 +650,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                   href={`/${lang}`}
                   aria-label="MAWT home"
                   className="block"
-                  style={{ pointerEvents: scrollProgress < 0.03 ? "auto" : "none" }}
+                  style={{ pointerEvents: heroUi.logoInteractive ? "auto" : "none" }}
                 >
                   <MawatLogo className="h-auto w-full" tone="light" />
                 </a>
@@ -613,7 +673,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                   href={`/${lang}`}
                   aria-label="MAWT home"
                   className="block"
-                  style={{ pointerEvents: scrollProgress < 0.03 ? "auto" : "none" }}
+                  style={{ pointerEvents: heroUi.logoInteractive ? "auto" : "none" }}
                 >
                   <MawatLogo className="h-auto w-full" tone="light" />
                 </a>

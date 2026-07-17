@@ -173,6 +173,19 @@ html.lenis body {
   pointer-events: none;
 }
 
+/* Touch / tablet: keep document scrolling native. Avoid nested scroll traps
+   and let iOS/Android momentum run uninterrupted. */
+@media (hover: none) and (pointer: coarse) {
+  html {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: none;
+  }
+
+  body {
+    overscroll-behavior-y: none;
+  }
+}
+
 body::after {
   content: "";
   position: fixed;

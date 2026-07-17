@@ -25,22 +25,22 @@ export type NewsletterFormState = {
 
 const contactMessages = {
   en: {
-    name: "Name must be at least 2 characters.",
+    name: "Please enter your name (at least 2 characters).",
     email: "Please enter a valid email address.",
-    messageMin: "Message must be at least 10 characters.",
-    messageMax: "Message must be under 2000 characters.",
-    rateLimit: "Too many requests. Please try again in an hour.",
+    messageMin: "Please add a few more words to your message (at least 10 characters).",
+    messageMax: "Your message is a little long. Please keep it under 2000 characters.",
+    rateLimit: "You have sent a few requests already. Please try again in an hour.",
     fixErrors: "Please fix the errors below.",
-    submitFailed: "Failed to submit. Please try again later.",
+    submitFailed: "We could not send your message. Please try again in a moment.",
   },
   fr: {
-    name: "Le nom doit contenir au moins 2 caractères.",
+    name: "Veuillez indiquer votre nom (2 caractères minimum).",
     email: "Veuillez saisir une adresse e-mail valide.",
-    messageMin: "Le message doit contenir au moins 10 caractères.",
-    messageMax: "Le message doit contenir moins de 2000 caractères.",
-    rateLimit: "Trop de demandes. Veuillez réessayer dans une heure.",
+    messageMin: "Votre message est un peu court (10 caractères minimum).",
+    messageMax: "Votre message est un peu long. Merci de rester sous 2000 caractères.",
+    rateLimit: "Vous avez déjà envoyé plusieurs demandes. Veuillez réessayer dans une heure.",
     fixErrors: "Veuillez corriger les erreurs ci-dessous.",
-    submitFailed: "L'envoi a échoué. Veuillez réessayer plus tard.",
+    submitFailed: "Nous n'avons pas pu envoyer votre message. Veuillez réessayer dans un instant.",
   },
 };
 
@@ -56,9 +56,27 @@ const getContactSchema = (lang: "en" | "fr") => {
   });
 };
 
-const NewsletterSchema = z.object({
-  email: z.string().trim().email({ message: "Please enter a valid email address." }).toLowerCase(),
-});
+const newsletterMessages = {
+  en: {
+    invalidEmail: "Please enter a valid email address.",
+    rateLimit: "You have sent a few requests already. Please wait a minute.",
+    alreadySubscribed: "You're already on the list. Welcome back.",
+    unavailable: "The newsletter service is temporarily unavailable. Please try again later.",
+    submitFailed: "We could not subscribe you. Please try again later.",
+  },
+  fr: {
+    invalidEmail: "Veuillez saisir une adresse e-mail valide.",
+    rateLimit: "Vous avez déjà envoyé plusieurs demandes. Veuillez patienter une minute.",
+    alreadySubscribed: "Vous êtes déjà inscrit. Bon retour.",
+    unavailable: "Le service de newsletter est momentanément indisponible. Veuillez réessayer plus tard.",
+    submitFailed: "Nous n'avons pas pu vous inscrire. Veuillez réessayer plus tard.",
+  },
+};
+
+const getNewsletterSchema = (lang: "en" | "fr") =>
+  z.object({
+    email: z.string().trim().email({ message: newsletterMessages[lang].invalidEmail }).toLowerCase(),
+  });
 
 export async function submitContactForm(
   prevState: ContactFormState,
@@ -132,17 +150,20 @@ export async function subscribeNewsletter(
   prevState: NewsletterFormState,
   formData: FormData
 ): Promise<NewsletterFormState> {
+  const lang = formData.get("lang") === "fr" ? "fr" : "en";
+  const messages = newsletterMessages[lang];
+
   // Rate Limit: 3 subscriptions per minute per IP (BUG-004: seconds not ms)
   const limiter = await rateLimit("newsletter", 3, 60);
   if (!limiter.success) {
-    return { error: "Too many attempts. Please wait a minute." };
+    return { error: messages.rateLimit };
   }
 
   const email = formData.get("email") as string;
-  const validated = NewsletterSchema.safeParse({ email });
+  const validated = getNewsletterSchema(lang).safeParse({ email });
 
   if (!validated.success) {
-    return { error: "Invalid email address." };
+    return { error: messages.invalidEmail };
   }
 
   try {
@@ -150,9 +171,9 @@ export async function subscribeNewsletter(
 
     if (!marketingResult.success) {
       if (marketingResult.error === "ALREADY_SUBSCRIBED") {
-        return { error: "You're already on the list! Welcome back." };
+        return { error: messages.alreadySubscribed };
       }
-      return { error: "Newsletter service is temporarily unavailable." };
+      return { error: messages.unavailable };
     }
 
     const client = getSanityWriteClient();
@@ -173,6 +194,6 @@ export async function subscribeNewsletter(
     return { success: true };
   } catch (err) {
     logger.error("Newsletter subscription error", err, { email });
-    return { error: "Failed to subscribe. Please try again later." };
+    return { error: messages.submitFailed };
   }
 }

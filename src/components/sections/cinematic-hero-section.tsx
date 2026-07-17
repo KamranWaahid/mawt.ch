@@ -87,25 +87,30 @@ export function CinematicHeroSection({ settings, dict }: CinematicHeroSectionPro
   }, [heroState, updateScrollProgress]);
 
   useEffect(() => {
-    if (heroState === 'videoPlaying') {
-      if (lenisRef.current) lenisRef.current.stop();
-      document.body.style.overflow = 'hidden';
-      
+    if (heroState === "videoPlaying") {
+      // Pause page scroll only while the film occupies the viewport.
+      // Always clear overflow on exit/unmount so mobile never stays locked.
+      lenisRef.current?.stop();
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+
       if (videoRef.current) {
         if (videoRef.current.currentTime === 0 || videoRef.current.ended) {
           videoRef.current.currentTime = 0;
         }
-        videoRef.current.play().catch(e => console.error("Autoplay failed:", e));
+        videoRef.current.play().catch((e) => console.error("Autoplay failed:", e));
       }
-    } else if (heroState === 'videoComplete' || heroState === 'gradient') {
-      if (lenisRef.current) lenisRef.current.start();
-      document.body.style.overflow = '';
+
+      return () => {
+        document.body.style.overflow = prevOverflow;
+        lenisRef.current?.start();
+      };
     }
-    
-    return () => {
-      document.body.style.overflow = '';
-      if (lenisRef.current) lenisRef.current.start();
-    };
+
+    if (heroState === "videoComplete" || heroState === "gradient") {
+      lenisRef.current?.start();
+      document.body.style.overflow = "";
+    }
   }, [heroState]);
 
   const handleVideoEnded = () => {

@@ -105,7 +105,7 @@ export function SiteFooter({
                   tel: is RFC 3966 (no separators); the label stays formatted. */}
               {dict.address && (
                 <address className="not-italic text-xs-fluid text-black/60 space-y-1">
-                  <p>MAWT — {dict.address}</p>
+                  <p>MAWT, {dict.address}</p>
                   {dict.phoneDisplay && (
                     <p>
                       <a

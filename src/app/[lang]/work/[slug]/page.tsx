@@ -23,7 +23,7 @@ export async function generateMetadata({
 
   if (!project) {
     return {
-      title: "Project Not Found",
+      title: "Project not found",
     };
   }
 
@@ -33,7 +33,7 @@ export async function generateMetadata({
 
   return {
     // No "| MAWT" here: the layout title template appends the brand suffix.
-    title: `${project.title} — ${lang === "fr" ? "projet" : "case study"}`,
+    title: `${project.title} - ${lang === "fr" ? "projet" : "case study"}`,
     description: project.excerpt,
     // Canonical + hreflang: FR/EN twins share the slug, only the section
     // segment differs (/fr/projets vs /en/work) — translatePath handles it.
@@ -213,7 +213,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
 
           {project.solution && (
             <SectionReveal delay={0.2} className="pt-6 border-t border-neutral-200 space-y-2">
-              <h2 className="text-sm text-neutral-400 font-normal">TII solution</h2>
+              <h2 className="text-sm text-neutral-400 font-normal">Our solution</h2>
               <p className="text-sm text-black font-normal leading-relaxed whitespace-pre-line">
                 {project.solution}
               </p>
@@ -241,26 +241,26 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <h2 className="text-2xl md:text-3xl font-normal tracking-tight text-black text-balance">
             <AnimatedTitle
               as="span"
-              text="Ready to build"
+              text="Have a project"
               className="inline"
               splitBy="word"
             />{" "}
             <AnimatedTitle
               as="span"
-              text="something exceptional?"
+              text="in mind?"
               className="text-[#75DAB4] underline decoration-2 underline-offset-8 inline"
               splitBy="word"
               delay={0.12}
             />
           </h2>
           <p className="text-neutral-500 font-light text-lg">
-            Let&apos;s discuss how MAWT can elevate your digital infrastructure.
+            Tell us what you&apos;re building. We&apos;ll tell you if we&apos;re the right team for it.
           </p>
           <Link 
             href={`/${lang}/contact`}
             className="inline-flex items-center gap-4 bg-black text-white px-10 py-5 rounded-full font-normal hover:bg-[#75DAB4] hover:text-black transition-colors"
           >
-            Start a Conversation
+            Start a conversation
             <ArrowRight size={20} />
           </Link>
         </div>

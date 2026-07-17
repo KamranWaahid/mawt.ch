@@ -1,72 +1,72 @@
 {
   "hero": {
-    "kicker": "AI Systems & Workflow Automation · Geneva",
+    "kicker": "AI systems and workflow automation · Geneva",
     "title_1": "We build AI systems",
     "title_2": "that run your business.",
-    "description": "Geneva-based AI and engineering agency building custom automation systems for SMEs and growing companies in Switzerland.",
-    "summary": "MAWT is a Geneva-based AI and engineering agency. We design and build custom systems that automate operational workflows for SMEs and growing companies in Switzerland. We write the code that connects your data to production-ready AI.",
-    "cta": "Let's talk",
+    "description": "A Geneva studio for AI and engineering. We build custom automation for SMEs and growing companies in Switzerland.",
+    "summary": "MAWT is a Geneva-based AI and engineering studio. We design and build systems that automate the work behind how companies operate, connecting your data to software that holds up in production.",
+    "cta": "Start a conversation",
     "statement": "We create experiences for the world's most ambitious thinkers."
   },
   "heroTransition": {
-    "statement": "We design the strategies, AI automation systems, digital products, brands and experiences that turn potential into production.",
+    "statement": "We create strategies, AI automation systems, digital products, brands and experiences for the world's most ambitious thinkers.",
     "cta": "About us"
   },
   "clients": {
-    "title": "Trusted by teams in Geneva & Switzerland"
+    "title": "Trusted by teams in Geneva and Switzerland"
   },
   "description": {
     "paragraphs": []
   },
   "problem": {
     "story": [
-      "Everyone tells you AI will change everything.",
-      "But for most businesses, the reality is a mess of disconnected tools and manual workflows.",
-      "Slide decks pile up, but the execution layer to turn concepts into software is missing.",
-      "Because AI is only a promise. Your business requires systems.",
-      "Value is only created when technology is built deep into the core of how you operate."
+      "Everyone says AI will change everything.",
+      "For most companies, what you actually have is a pile of tools that do not talk to each other, and people still doing the work by hand.",
+      "Decks and audits accumulate. The layer that turns those ideas into working software is often missing.",
+      "AI alone is a promise. Your business needs systems.",
+      "Value appears when technology sits inside the way you already operate, not beside it."
     ]
   },
   "vision": {
     "badge": "Services",
-    "statement": "We turn scattered operations into connected systems that are easier to run, measure, and scale.",
-    "cta": "View all services",
+    "statement": "We turn scattered operations into connected systems that are easier to run, measure, and grow.",
+    "cta": "See all services",
     "items": [
       {
         "title": "AI Solutions",
-        "description": "Smart CRMs, AI agents, RAG, generative AI and automation built into your daily tools."
+        "description": "Smart CRMs, AI agents, RAG, generative AI and automation built into the tools your team already uses."
       },
       {
         "title": "Software Development",
-        "description": "Web, mobile, desktop, APIs and databases — from MVP to mission-critical systems."
+        "description": "Web, mobile, desktop, APIs and databases, from early products to systems that cannot go down."
       },
       {
-        "title": "Consulting & Training",
-        "description": "AI strategy, audits, security and hands-on team training, by people who also build."
+        "title": "Consulting and training",
+        "description": "AI strategy, audits, security and hands-on training, by people who also ship the work."
       }
     ]
   },
   "work": {
     "badge": "Work",
-    "headline": "Our work, from petal to planet",
-    "seeAll": "See all",
+    "headline": "Selected projects",
+    "seeAll": "See all work",
     "projects": [
       {
         "id": "crm",
-        "category": "CRM and automation system",
-        "title": "Client intake, deal creation, and internal workflows structured into one connected system with full automation and visibility.",
+        "category": "CRM and automation",
+        "title": "Client intake, deal creation, and internal workflows brought into one system with clear automation and visibility.",
         "image": "/crm_automation_dashboard_1778762266170.png"
       },
       {
         "id": "ecommerce",
-        "category": "E-commerce and operations platform",
-        "title": "Custom platform with product management, order flows, and back-office systems built to support daily operations.",
+        "category": "E-commerce and operations",
+        "title": "A custom platform for products, orders, and back-office work built around how the team actually runs day to day.",
         "image": "/ecommerce_ops_platform_1778762308624.png"
       },
       {
         "id": "business",
         "category": "Custom business system",
-        "title": "End-to-end system combining interface design, development, integrations, and reporting tailored to how the business operates.",
+        "title": "Interface, development, integrations, and reporting shaped around how the business already works.",
         "image": "/custom_business_system_1778762352424.png"
       }
     ]
@@ -103,59 +103,59 @@
   },
   "insights": {
     "badge": "Insights",
-    "headline": "Latest from the team",
+    "headline": "Notes from the team",
     "fallbackCategory": "Insight",
     "recentLabel": "Recent",
     "readTimeUnit": "min read",
-    "fallbackExcerpt": "Field notes on AI in business, automation, and the systems behind better operations.",
+    "fallbackExcerpt": "Field notes on AI in business, automation, and the systems behind clearer operations.",
     "articles": [
       {
         "category": "UI/UX Design",
-        "title": "Designing Interfaces That Drive Business Growth",
+        "title": "Interfaces that help people get work done",
         "date": "Apr 10, 2026",
         "readTime": "5 min read",
-        "excerpt": "Great interface design goes beyond visuals, it shapes how users interact with your business. Learn how intuitive layouts and user-centered design can increase engagement and conversions..."
+        "excerpt": "A clear interface is not decoration. It shapes how people move through a product, and how quickly they trust it."
       },
       {
         "category": "Technology",
-        "title": "Building Scalable Systems with Modern Infrastructure",
+        "title": "Building systems that can grow without breaking",
         "date": "Apr 08, 2026",
         "readTime": "8 min read",
-        "excerpt": "Scalability is the foundation of growth. We explore the latest trends in cloud architecture and how they impact your bottom line..."
+        "excerpt": "Growth puts pressure on architecture. We look at what holds when traffic, data, and teams all increase at once."
       },
       {
         "category": "Strategy",
-        "title": "How to Bridge the Gap Between Vision and Execution",
+        "title": "When vision outruns the operating model",
         "date": "Apr 05, 2026",
         "readTime": "6 min read",
-        "excerpt": "Many companies have a vision, but few can execute it. Discover our framework for turning strategic goals into operational reality..."
+        "excerpt": "Many organisations know where they want to go. Fewer have the systems and habits that make that direction daily practice."
       },
       {
         "category": "Automation",
-        "title": "The Future of AI in Operational Workflows",
+        "title": "Where AI belongs in operational work",
         "date": "Apr 01, 2026",
         "readTime": "10 min read",
-        "excerpt": "Artificial Intelligence is no longer a luxury. It's a necessity for high-performing teams looking to automate repetitive tasks..."
+        "excerpt": "The useful question is not whether to use AI. It is which repetitive work should leave people's desks first."
       },
       {
         "category": "UI/UX Design",
-        "title": "The Role of Micro-interactions in User Retention",
+        "title": "Small interactions, lasting habits",
         "date": "Mar 28, 2026",
         "readTime": "4 min read",
-        "excerpt": "Small details make a big difference. Learn how subtle animations and feedback loops keep users engaged with your digital products..."
+        "excerpt": "Tiny responses in an interface teach people what is safe, what is done, and what comes next."
       },
       {
         "category": "Systems Design",
-        "title": "Optimizing Performance for High-Traffic Applications",
+        "title": "Performance when the stakes are high",
         "date": "Mar 25, 2026",
         "readTime": "7 min read",
-        "excerpt": "Speed is a competitive advantage. We share our techniques for reducing latency and improving response times in critical business systems..."
+        "excerpt": "Speed is not a vanity metric when a delay costs trust, revenue, or a team's afternoon."
       }
     ]
   },
   "footer": {
-    "rights": "©2026 MAWT. All Rights Reserved.",
-    "cookieSettings": "Cookie Settings",
+    "rights": "©2026 MAWT. All rights reserved.",
+    "cookieSettings": "Cookie settings",
     "address": "Rue de la Fontenette 23, 1227 Carouge (Geneva)",
     "phoneDisplay": "+41 76 636 33 33",
     "columns": [
@@ -171,7 +171,7 @@
             "href": "/contact"
           },
           {
-            "label": "Clients & partners",
+            "label": "Clients and partners",
             "href": "/partners"
           }
         ]
@@ -197,7 +197,7 @@
         "title": "Resources",
         "links": [
           {
-            "label": "Blog",
+            "label": "News",
             "href": "/news"
           },
           {
@@ -230,73 +230,73 @@
     ],
     "newsletter": {
       "title": "Newsletter",
-      "description": "Get our field notes on AI in business and automation. Practical, not theoretical.",
+      "description": "Field notes on AI in business and automation. Practical, and short.",
       "placeholder": "Email address",
-      "success": "Thank you for subscribing."
+      "success": "You are subscribed. Thank you."
     }
   },
   "solution": {
     "badge": "Our focus",
     "headline_1": "We build operational software",
-    "headline_2": "tailored to how you operate.",
+    "headline_2": "around how you already work.",
     "items": [
       {
-        "title": "Custom AI Integrations",
-        "description": "RAG systems, intelligent agents, and internal search tools trained on your document stores and proprietary data."
+        "title": "Custom AI integrations",
+        "description": "RAG systems, agents, and internal search trained on your documents and private knowledge."
       },
       {
-        "title": "Workflow Automation",
-        "description": "Connected database pipelines that handle entry, categorization, and reporting automatically."
+        "title": "Workflow automation",
+        "description": "Pipelines that take care of entry, categorisation, and reporting so teams stop copying data by hand."
       },
       {
-        "title": "Custom Applications",
-        "description": "Next.js platforms and web portals built to solve complex operations where standard SaaS fall short."
+        "title": "Custom applications",
+        "description": "Web platforms and portals for the cases where off-the-shelf software leaves gaps."
       },
       {
-        "title": "Production Continuity",
-        "description": "We stay through deployment, integration testing, and long-term optimization. We ship and maintain."
+        "title": "Production continuity",
+        "description": "We stay through deployment, integration testing, and the quieter work of keeping systems healthy."
       }
     ]
   },
   "services": {
     "badge": "Capabilities",
-    "headline": "Engineering systems that connect, automate, and scale.",
+    "headline": "Systems that connect your tools, automate the busywork, and hold up as you grow.",
     "pillars": [
       {
         "title": "AI Solutions",
-        "description": "Smart CRMs, AI agents, enterprise RAG, generative AI, automation and local AI — built into your tools."
+        "description": "Smart CRMs, AI agents, enterprise RAG, generative AI, automation and local AI, built into your tools."
       },
       {
         "title": "AI Consulting",
-        "description": "AI strategy, business audits and transformation, advised by people who also build."
+        "description": "AI strategy and operational audits, advised by people who also build the systems."
       },
       {
         "title": "Software Development",
-        "description": "From MVP to mission-critical: web, mobile, desktop, APIs, databases and modernization."
+        "description": "From first release to systems that cannot fail: web, mobile, desktop, APIs, databases and modernization."
       },
       {
         "title": "Security",
-        "description": "Pragmatic cybersecurity, compliance and penetration testing for SMEs."
+        "description": "Practical cybersecurity, compliance support and penetration testing for SMEs."
       },
       {
-        "title": "Sites & Branding",
-        "description": "E-commerce, brand identity, UX/SEO audits, AI search optimization (GEO) and redesigns."
+        "title": "Sites and branding",
+        "description": "E-commerce, brand identity, UX and SEO audits, AI search readiness (GEO) and redesigns."
       },
       {
-        "title": "Team Augmentation",
-        "description": "Senior developers, AI experts, fractional CTOs and tech leads embedded in your team."
+        "title": "Team augmentation",
+        "description": "Senior developers, AI specialists, fractional CTOs and tech leads who join your team for a stretch of work."
       },
       {
         "title": "AI Training",
-        "description": "ChatGPT for teams, AI workshops by business function and leadership coaching."
+        "description": "ChatGPT for teams, workshops by function, and coaching for people who need to decide, not just experiment."
       }
     ],
     "technologies": {
       "title": "Technologies",
-      "intro": "The languages, platforms and domains we build with.",
+      "intro": "The languages, platforms and domains we work with.",
       "groups": [
         {
-          "title": "Languages & frameworks",
+          "title": "Languages and frameworks",
           "items": [
             ".NET",
             "Java",
@@ -310,7 +310,7 @@
           ]
         },
         {
-          "title": "Data & artificial intelligence",
+          "title": "Data and artificial intelligence",
           "items": [
             "Artificial intelligence",
             "Generative AI",
@@ -321,14 +321,14 @@
           ]
         },
         {
-          "title": "Platforms & environments",
+          "title": "Platforms and environments",
           "items": [
             "Cloud",
             "SaaS",
             "Mobile apps",
             "Internet of Things (IoT)",
             "Blockchain",
-            "Virtual & augmented reality"
+            "Virtual and augmented reality"
           ]
         }
       ]
@@ -336,30 +336,30 @@
     "hero": {
       "title": "services",
       "crossLabel": "/work",
-      "tagline": "this is what we do best.",
+      "tagline": "what we spend our days building.",
       "familyMore": "See more"
     }
   },
   "contact": {
-    "badge": "Contact Us",
-    "headline": "Let's talk about what AI and automation can change in your business.",
-    "subtitle": "Get in touch with us with any question!",
+    "badge": "Contact",
+    "headline": "Tell us what you are trying to change.",
+    "subtitle": "A clear brief helps. An early question is welcome too.",
     "inquiries": "Inquiries",
     "address": "Address",
-    "presence": "Our presence",
+    "presence": "Where we are",
     "mapLabel": "View on map",
     "social": "Social",
     "form": {
       "name": "Name",
       "email": "Email",
       "message": "Message",
-      "submit": "Send Message",
-      "success": "Message sent successfully.",
-      "error": "Something went wrong. Please try again.",
-      "successBody": "We've received your request and will reach out shortly.",
+      "submit": "Send enquiry",
+      "success": "Message sent.",
+      "error": "We could not send the form. Your answers are still here, so you can try again.",
+      "successBody": "We have your message and will reply soon.",
       "reset": "Send another message",
-      "stepBasics": "Let's start with the basics",
-      "stepProject": "What are you looking for?",
+      "stepBasics": "A few details to begin",
+      "stepProject": "What kind of help are you looking for?",
       "stepDetails": "Anything else we should know?",
       "service": "Service",
       "timeline": "Timeline",
@@ -397,13 +397,13 @@
       ],
       "placeholders": {
         "name": "Your name",
-        "email": "hello@company.com",
-        "message": "Tell us about your project challenges..."
+        "email": "name@company.com",
+        "message": "What are you working on, and where are you stuck?"
       },
       "validation": {
-        "name": "Please enter your full name (at least 2 characters).",
-        "email": "Please enter a valid email address.",
-        "message": "Please describe your project (at least 10 characters)."
+        "name": "Please enter your name (at least 2 characters).",
+        "email": "Enter an email address in the format name@example.com.",
+        "message": "Please share a little more about your project (at least 10 characters)."
       },
       "back": "Go back",
       "continue": "Continue",
@@ -411,48 +411,48 @@
     }
   },
   "faq": {
-    "badge": "Support",
-    "headline": "Everything you need to know about working with MAWT.",
-    "noFaqs": "No FAQs available at the moment.",
-    "stillQuestions": "Still have questions?",
-    "contactDesc": "Our team is here to help. Contact us directly for any specific inquiries or to discuss how we can help your business.",
-    "contactBtn": "Contact Support"
+    "badge": "FAQs",
+    "headline": "Answers to the questions people ask before we work together.",
+    "noFaqs": "No FAQs are published here yet.",
+    "stillQuestions": "Still wondering about something?",
+    "contactDesc": "Write to us with the detail you have. We will point you to the right person or next step.",
+    "contactBtn": "Start a conversation"
   },
   "results": {
-    "badge": "Results",
-    "headline": "Measurable impact on operational efficiency and scale.",
+    "badge": "Outcomes",
+    "headline": "What we look for when the work is done.",
     "metrics": [
       {
-        "label": "Execution Speed",
-        "value": "3x",
-        "description": "Average increase in strategic project delivery speed."
+        "label": "Fewer handoffs",
+        "value": "Less friction",
+        "description": "Tools that talk to each other so people stop re-entering the same information."
       },
       {
-        "label": "Operational Efficiency",
-        "value": "40%",
-        "description": "Reduction in manual tasks through system automation."
+        "label": "Clearer ownership",
+        "value": "Visible work",
+        "description": "Statuses and responsibilities that teams can see without chasing updates."
       },
       {
-        "label": "Team Capacity",
-        "value": "+250h",
-        "description": "Hours saved per month for internal teams."
+        "label": "Time returned",
+        "value": "To the team",
+        "description": "Hours freed from repetitive tasks and put back into judgement and craft."
       },
       {
-        "label": "System Uptime",
-        "value": "99.99%",
-        "description": "Guaranteed availability for critical business infrastructure."
+        "label": "Dependable systems",
+        "value": "In production",
+        "description": "Software that stays available for the work that cannot wait."
       }
     ],
-    "footerHeadline": "Proven success at scale.",
-    "footerDesc": "Our results are not just numbers; they are the foundation of our long-term partnerships. We focus on clear, measurable outcomes."
+    "footerHeadline": "We prefer evidence over slogans.",
+    "footerDesc": "When we share numbers, they come from the work itself. Ask us for the story behind a project."
   },
   "login": {
-    "title": "Command Center",
-    "subtitle": "Secure entry for MAWT administrators.",
-    "fieldLabel": "Access Key",
-    "placeholder": "Enter your security key",
-    "button": "Enter Command Center",
-    "error": "Invalid access key. Please try again.",
-    "success": "Access granted. Redirecting..."
+    "title": "Admin sign-in",
+    "subtitle": "For MAWT administrators.",
+    "fieldLabel": "Access key",
+    "placeholder": "Enter your access key",
+    "button": "Sign in",
+    "error": "That access key was not recognised. Please try again.",
+    "success": "Signed in. Redirecting..."
   }
 }

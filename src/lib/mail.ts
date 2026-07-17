@@ -95,7 +95,7 @@ export async function sendLeadNotification(lead: Lead) {
     await deliver({
       to,
       replyTo: lead.email,
-      subject: `Nouveau lead — ${lead.name}${lead.service ? ` (${lead.service})` : ""}`,
+      subject: `Nouveau lead : ${lead.name}${lead.service ? ` (${lead.service})` : ""}`,
       text: [
         `Nom : ${lead.name}`,
         `Email : ${lead.email}`,
@@ -104,7 +104,7 @@ export async function sendLeadNotification(lead: Lead) {
         "",
         lead.message,
         "",
-        "— Formulaire de contact mawt.ch (lead aussi enregistré dans Sanity)",
+        "Formulaire de contact mawt.ch (lead aussi enregistré dans Sanity)",
       ]
         .filter((l): l is string => l !== null)
         .join("\n"),
@@ -119,14 +119,14 @@ export async function sendLeadThankYou(lead: Lead, lang: "en" | "fr") {
   const firstName = lead.name.trim().split(/\s+/)[0] || lead.name;
   const subject =
     lang === "fr"
-      ? "Nous avons bien reçu votre message — MAWT"
-      : "We received your message — MAWT";
+      ? "Nous avons bien reçu votre message"
+      : "We received your message";
   const text =
     lang === "fr"
       ? [
           `Bonjour ${firstName},`,
           "",
-          "Merci pour votre message — il est bien arrivé.",
+          "Merci pour votre message, il est bien arrivé.",
           "Nous revenons vers vous sous un jour ouvré pour en discuter concrètement.",
           "",
           "En attendant, vous pouvez répondre directement à cet email si vous souhaitez ajouter un détail ou une pièce jointe.",
@@ -134,14 +134,14 @@ export async function sendLeadThankYou(lead: Lead, lang: "en" | "fr") {
           "À très vite,",
           "L'équipe MAWT",
           "",
-          "MAWT — agence IA à Genève",
+          "MAWT, agence IA à Genève",
           "Rue de la Fontenette 23, 1227 Carouge",
           "+41 76 636 33 33 · mawt.ch",
         ].join("\n")
       : [
           `Hello ${firstName},`,
           "",
-          "Thanks for your message — it reached us.",
+          "Thanks for your message, it reached us.",
           "We will get back to you within one business day to discuss the details.",
           "",
           "In the meantime, feel free to reply directly to this email if you want to add anything.",
@@ -149,7 +149,7 @@ export async function sendLeadThankYou(lead: Lead, lang: "en" | "fr") {
           "Talk soon,",
           "The MAWT team",
           "",
-          "MAWT — AI agency in Geneva",
+          "MAWT, AI agency in Geneva",
           "Rue de la Fontenette 23, 1227 Carouge",
           "+41 76 636 33 33 · mawt.ch",
         ].join("\n");

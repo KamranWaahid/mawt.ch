@@ -11,6 +11,7 @@ import LogoWhite from "../../../public/logo-white.svg";
 import { translatePath } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/lib/routing/url-map";
 import { useCurtainTransition } from "@/components/providers/curtain-transition";
+import { useBodyScrollLock } from "@/hooks/use-body-scroll-lock";
 
 /**
  * Localize a nav href (authored as an EN-canonical path like "/about") to the
@@ -70,6 +71,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
   const currentLang = pathname.startsWith("/fr") ? "fr" : "en";
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { navigateWithCurtain } = useCurtainTransition();
+  useBodyScrollLock(isMobileMenuOpen);
 
   // "Services" navigates with the DHNN slide-up transition (no dropdown —
   // the services page IS the menu).

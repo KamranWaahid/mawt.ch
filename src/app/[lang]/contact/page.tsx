@@ -12,7 +12,7 @@ import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: Locale }> }): Promise<Metadata> {
   const { lang } = await params;
-  const title = lang === "en" ? "Contact — AI agency in Geneva" : "Contact — agence IA à Genève";
+  const title = lang === "en" ? "Contact - AI agency in Geneva" : "Contact - agence IA à Genève";
   const description = lang === "en"
     ? "Talk to MAWT, an AI agency in Geneva. AI integration, process automation and custom tools for SMEs across French-speaking Switzerland."
     : "Contactez MAWT, agence IA à Genève. Intégration d'IA, automatisation des processus et outils sur mesure pour les PME de Suisse romande.";

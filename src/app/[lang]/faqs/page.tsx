@@ -14,7 +14,7 @@ interface FAQsPageProps {
 
 export async function generateMetadata({ params }: FAQsPageProps): Promise<Metadata> {
   const { lang } = await params;
-  const title = lang === "en" ? "FAQ — AI, automation and pricing" : "FAQ — IA, automatisation et tarifs";
+  const title = lang === "en" ? "FAQ - AI, automation and pricing" : "FAQ - IA, automatisation et tarifs";
   const description = lang === "en"
     ? "Answers to the questions companies ask before working with an AI agency: costs, timelines, data security, which AI tools, local AI and more."
     : "Réponses aux questions que les entreprises se posent avant de travailler avec une agence IA : coûts, délais, sécurité des données, choix des outils, IA locale.";

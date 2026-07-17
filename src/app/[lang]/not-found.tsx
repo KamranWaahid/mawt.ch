@@ -20,15 +20,17 @@ export default function NotFound() {
         eager={true}
       />
       <p className="mt-4 max-w-xl text-neutral-500 font-normal leading-relaxed">
-        The page you&apos;re looking for doesn&apos;t exist or may have moved.
+        This page doesn&apos;t exist, or it has moved.
+        <br className="hidden sm:block" />
+        Cette page n&apos;existe pas, ou elle a été déplacée.
       </p>
       <div className="mt-10 flex flex-col sm:flex-row items-center gap-4">
-        {/* BUG-011: Direct locale links — no redirect chain via "/" */}
+        {/* Direct locale links: no redirect chain via "/" */}
         <Link
           href="/en"
           className="rounded-sm border border-black px-8 py-3 text-sm uppercase tracking-[0.16em] text-black transition-colors hover:bg-black hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
         >
-          Back to home (EN)
+          Return home (EN)
         </Link>
         <Link
           href="/fr"

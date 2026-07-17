@@ -46,7 +46,7 @@ interface ServicesPageProps {
 
 export async function generateMetadata({ params }: ServicesPageProps): Promise<Metadata> {
   const { lang } = await params;
-  const title = lang === "fr" ? "Services — agence IA à Genève" : "Services — AI agency in Geneva";
+  const title = lang === "fr" ? "Services - agence IA à Genève" : "Services - AI agency in Geneva";
   const description =
     lang === "fr"
       ? "Solutions IA, automatisation, sites, conseil, renfort d'équipe et formation. Ce que MAWT construit pour les PME de Suisse romande."

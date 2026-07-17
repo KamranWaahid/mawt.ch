@@ -13,7 +13,7 @@ interface BlogPageProps {
 
 export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
   const { lang } = await params;
-  const title = lang === "en" ? "Insights — AI & automation blog" : "Blog — IA et automatisation en entreprise";
+  const title = lang === "en" ? "Insights - AI & automation blog" : "Blog - IA et automatisation en entreprise";
   const description = lang === "en"
     ? "Field notes on AI in business, process automation and custom software, written by the Geneva team that designs and ships these systems."
     : "Retours de terrain sur l'IA en entreprise, l'automatisation et les outils sur mesure, écrits par l'équipe genevoise qui les construit.";

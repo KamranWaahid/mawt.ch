@@ -166,8 +166,8 @@ export default async function HomePage({
           primary keyword phrase to crawlers as a visually-hidden h1. */}
       <h1 className="sr-only">
         {lang === "fr"
-          ? "MAWT — agence IA à Genève : systèmes IA, automatisation et logiciels sur mesure pour PME"
-          : "MAWT — AI agency in Geneva: AI systems, workflow automation and custom software for SMEs"}
+          ? "MAWT, agence IA à Genève : systèmes IA, automatisation et logiciels sur mesure pour PME"
+          : "MAWT, AI agency in Geneva: AI systems, workflow automation and custom software for SMEs"}
       </h1>
       <HomepageHeroSection
         settings={data.settings}

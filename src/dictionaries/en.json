@@ -89,6 +89,19 @@
   "approach": {
     "badge": "Approach",
     "headline": "Our process, crafted through decades of shared experience",
+    "page": {
+      "wordmark": "process",
+      "crossLabel": "/services",
+      "stepsLabel": "The five steps",
+      "differentiatorsLabel": "What sets us apart",
+      "comingSoonTitle": "Coming soon.",
+      "comingSoonBody": "This page will be available soon.",
+      "ctaFallback": {
+        "headline": "Let's talk about your project",
+        "body": "30 minutes to understand your needs. No rushed quote, no pressure. Just a direct conversation with the people who will build it.",
+        "label": "Get started"
+      }
+    },
     "items": [
       {
         "id": "01",

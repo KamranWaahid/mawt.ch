@@ -1,9 +1,18 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import type Lenis from "lenis";
 import { useLenis } from "lenis/react";
+import {
+  Binary,
+  Compass,
+  Layers3,
+  Rocket,
+  ScanSearch,
+  type LucideIcon,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { DarkPageIcon } from "@/components/ui/dark-page-icon";
 
 type ApproachStep = {
   id: string;
@@ -13,38 +22,44 @@ type ApproachStep = {
 
 type ApproachStickyStepsProps = {
   steps: ApproachStep[];
+  stepsLabel?: string;
 };
 
 type LockState = "idle" | "animating" | "ready" | "readyToRelease";
+
+const STEP_ICONS: LucideIcon[] = [ScanSearch, Compass, Layers3, Binary, Rocket];
 
 function AnimatedWords({
   text,
   className,
   delay = 0,
   isReversing = false,
-  textColor,
+  reduceMotion = false,
 }: {
   text: string;
   className?: string;
   delay?: number;
   isReversing?: boolean;
-  textColor: string;
+  reduceMotion?: boolean;
 }) {
   const words = text.split(" ").filter(Boolean);
+
+  if (reduceMotion) {
+    return <span className={className}>{text}</span>;
+  }
 
   return (
     <span className={className}>
       {words.map((word, index) => (
         <span key={`${word}-${index}`} className="inline">
           <motion.span
-            className="inline-block will-change-[transform,opacity,filter]"
-            initial={{ opacity: 0, y: 14, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)", color: textColor }}
+            className="inline-block will-change-[transform,opacity]"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{
-              duration: isReversing ? 0.25 : 0.65,
-              delay: isReversing ? index * 0.008 : delay + index * 0.025,
-              ease: [0.16, 1, 0.3, 1],
-              color: { duration: 0.4 }
+              duration: isReversing ? 0.2 : 0.45,
+              delay: isReversing ? index * 0.006 : delay + index * 0.018,
+              ease: [0.22, 1, 0.36, 1],
             }}
           >
             {word}
@@ -61,31 +76,149 @@ function getStepAnimationDuration(step: ApproachStep, isReversing: boolean) {
   const wordsB = step.body.split(" ").filter(Boolean).length;
   const maxWords = Math.max(wordsT, wordsB);
   if (isReversing) {
-    return Math.min(300, (maxWords * 0.008 + 0.15) * 1000);
-  } else {
-    const durationT = 0.02 + wordsT * 0.015 + 0.35;
-    const durationB = 0.16 + wordsB * 0.015 + 0.35;
-    return Math.min(750, Math.max(durationT, durationB) * 1000);
+    return Math.min(260, (maxWords * 0.006 + 0.12) * 1000);
   }
+  const durationT = 0.02 + wordsT * 0.012 + 0.28;
+  const durationB = 0.12 + wordsB * 0.012 + 0.28;
+  return Math.min(620, Math.max(durationT, durationB) * 1000);
 }
 
-// Map the active state index to custom offset values in vh units
+/** Map active step index → vertical offset for the dark tonal gradient. */
 function getGradientOffset(index: number): string {
   switch (index) {
-    case 0: return "-100vh"; // Step 1 (Understand)
-    case 1: return "-180vh"; // Step 2 (Frame)
-    case 2: return "-260vh"; // Step 3 (Design)
-    case 3: return "-340vh"; // Step 4 (Build)
-    case 4: return "-520vh"; // Step 5 (Launch)
-    case 5: return "-740vh"; // Exit Final (fully solid white)
-    default: return "-100vh";
+    case 0:
+      return "0vh";
+    case 1:
+      return "-80vh";
+    case 2:
+      return "-160vh";
+    case 3:
+      return "-240vh";
+    case 4:
+      return "-320vh";
+    default:
+      return "0vh";
   }
 }
 
-export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
+const DARK_GRADIENT =
+  "linear-gradient(180deg, #161616 0vh, #161616 80vh, #1a1a1a 140vh, #1d1d1d 200vh, #1a2220 260vh, #162422 320vh, #141c1b 380vh, #161616 440vh, #161616 520vh)";
+
+function StepContent({
+  step,
+  totalSteps,
+  stepIndex,
+  navigationDirection,
+  reduceMotion,
+  compact = false,
+}: {
+  step: ApproachStep;
+  totalSteps: number;
+  stepIndex: number;
+  navigationDirection: 1 | -1;
+  reduceMotion: boolean | null;
+  compact?: boolean;
+}) {
+  const Icon = STEP_ICONS[stepIndex] || STEP_ICONS[0];
+
+  return (
+    <div className={compact ? "w-full max-w-xl" : "max-w-[920px]"}>
+      <div className="mb-7 flex items-center gap-4">
+        <DarkPageIcon icon={Icon} />
+        <span className="text-[12px] font-normal tracking-wide text-white/40">
+          {step.id} / {String(totalSteps).padStart(2, "0")}
+        </span>
+      </div>
+
+      <h2
+        className={
+          compact
+            ? "select-text text-[clamp(1.8rem,6vw,2.6rem)] font-medium leading-[1.08] tracking-tight text-white"
+            : "select-text text-[clamp(2.1rem,4vw,3.6rem)] font-medium leading-[1.05] tracking-tight text-white"
+        }
+      >
+        <AnimatedWords
+          text={step.title}
+          delay={0.02}
+          isReversing={navigationDirection < 0}
+          reduceMotion={Boolean(reduceMotion)}
+        />
+      </h2>
+
+      <p
+        className={
+          compact
+            ? "mt-5 text-[15px] font-normal leading-relaxed text-white/55 sm:text-[16px]"
+            : "mt-6 max-w-[54ch] text-[clamp(1rem,1.35vw,1.2rem)] font-normal leading-relaxed text-white/55"
+        }
+      >
+        <AnimatedWords
+          text={step.body}
+          delay={0.1}
+          isReversing={navigationDirection < 0}
+          reduceMotion={Boolean(reduceMotion)}
+        />
+      </p>
+    </div>
+  );
+}
+
+function StepRail({
+  steps,
+  activeIndex,
+  label,
+}: {
+  steps: ApproachStep[];
+  activeIndex: number;
+  label?: string;
+}) {
+  return (
+    <div className="pointer-events-none absolute inset-y-0 right-0 z-40 hidden w-[140px] items-center pr-[2.5vw] lg:flex xl:w-[180px]">
+      <div className="w-full">
+        {label && (
+          <p className="mb-5 text-[11px] font-normal tracking-wide text-white/30">
+            {label}
+          </p>
+        )}
+        <ol className="space-y-3" aria-hidden="true">
+          {steps.map((step, index) => {
+            const active = index === activeIndex;
+            const passed = index < activeIndex;
+            return (
+              <li key={step.id} className="flex items-center gap-3">
+                <span
+                  className={`h-px transition-[transform,opacity,background-color] duration-300 ${
+                    active
+                      ? "w-8 bg-white opacity-100"
+                      : passed
+                        ? "w-5 bg-white/35 opacity-100"
+                        : "w-3 bg-white/15 opacity-70"
+                  }`}
+                />
+                <span
+                  className={`text-[12px] font-normal tabular-nums transition-colors duration-300 ${
+                    active ? "text-white" : passed ? "text-white/45" : "text-white/22"
+                  }`}
+                >
+                  {step.id}
+                </span>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+    </div>
+  );
+}
+
+export function ApproachStickySteps({
+  steps,
+  stepsLabel,
+}: ApproachStickyStepsProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const lenisRef = useRef<Lenis | null>(null);
+  const reduceMotion = useReducedMotion();
 
   const [isMounted, setIsMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -103,43 +236,33 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [navigationDirection, setNavigationDirection] = useState<1 | -1>(1);
-  
-  // State machine values
   const [lockState, setLockState] = useState<LockState>("idle");
 
-  // Refs for tracking state synchronously in persistent handlers
   const activeIndexRef = useRef(0);
   const lockStateRef = useRef<LockState>("idle");
   const isLockedRef = useRef(false);
   const isAnimatingRef = useRef(false);
   const totalStepsRef = useRef(0);
-
-  // Queue scroll intents for requestAnimationFrame processor
   const pendingDirectionRef = useRef<1 | -1 | null>(null);
 
-  const [isCompletedDown, setIsCompletedDown] = useState(false);
-  const [isCompletedUp, setIsCompletedUp] = useState(true);
+  const [, setIsCompletedDown] = useState(false);
+  const [, setIsCompletedUp] = useState(true);
   const isCompletedDownRef = useRef(false);
   const isCompletedUpRef = useRef(true);
 
-  // Refs for gesture momentum and safety locks
   const hasReleasedScrollRef = useRef(true);
-  const safetyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const safetyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const safeSteps = steps.filter((step) => step.title && step.body);
   const totalSteps = safeSteps.length;
-  
+
   useEffect(() => {
     totalStepsRef.current = totalSteps;
-  }, [totalSteps, totalStepsRef]);
+  }, [totalSteps]);
 
-  const totalStates = totalSteps; // 5 actual steps (indices 0 to 4)
-  
-  // The current step content to display (safe indices are 0 to 4 in safeSteps)
-  const stepIndex = Math.min(activeIndex, totalSteps - 1);
+  const stepIndex = Math.min(activeIndex, Math.max(totalSteps - 1, 0));
   const currentStep = safeSteps[stepIndex] || safeSteps[0];
 
-  // Initialize completed flags based on scroll position on mount
   useEffect(() => {
     if (!isMounted || isMobile) return;
     if (!containerRef.current) return;
@@ -163,12 +286,10 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     setLockState(state);
   };
 
-  // Monitor positions via useLenis when scrolling naturally (idle state)
   useLenis((lenis) => {
     if (!isMounted) return;
 
     lenisRef.current = lenis;
-
     if (!containerRef.current) return;
 
     if (isMobile) {
@@ -179,7 +300,7 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
       const progress = Math.max(0, Math.min(1, -rect.top / scrollableHeight));
       const nextIndex = Math.min(
         Math.floor(progress * totalSteps),
-        totalSteps - 1
+        totalSteps - 1,
       );
       if (nextIndex !== activeIndexRef.current) {
         setNavigationDirection(nextIndex > activeIndexRef.current ? 1 : -1);
@@ -195,7 +316,6 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     const isScrollingDown = lenis.direction === 1;
     const isScrollingUp = lenis.direction === -1;
 
-    // Reset completed flags when we scroll slightly away from the lock threshold
     if (isScrollingDown && rect.top < -200) {
       if (isCompletedUpRef.current) {
         isCompletedUpRef.current = false;
@@ -213,9 +333,11 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     if (lockStateRef.current !== "animating") return;
 
     const currentTotalStates = totalStepsRef.current;
-    const isBoundary = activeIndexRef.current === 0 || activeIndexRef.current === currentTotalStates - 1;
+    const isBoundary =
+      activeIndexRef.current === 0 ||
+      activeIndexRef.current === currentTotalStates - 1;
     updateLockState(isBoundary ? "readyToRelease" : "ready");
-    
+
     isAnimatingRef.current = false;
     hasReleasedScrollRef.current = true;
 
@@ -229,12 +351,13 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     if (safetyTimeoutRef.current) clearTimeout(safetyTimeoutRef.current);
 
     const targetStep = step || safeSteps[safeSteps.length - 1];
-    const duration = getStepAnimationDuration(targetStep, isReversing);
-    
-    // Add extra duration buffer for the 1.5s visual gradient transition timing
+    const duration = reduceMotion
+      ? 120
+      : getStepAnimationDuration(targetStep, isReversing);
+
     safetyTimeoutRef.current = setTimeout(() => {
       handleAnimationComplete();
-    }, duration + 100);
+    }, duration + 80);
   };
 
   const lockSection = (startIndex: number, direction: 1 | -1) => {
@@ -245,13 +368,12 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     setNavigationDirection(direction);
     hasReleasedScrollRef.current = true;
 
-    // Snap section to the top of viewport natively
     if (containerRef.current) {
-      const targetScroll = window.scrollY + containerRef.current.getBoundingClientRect().top;
+      const targetScroll =
+        window.scrollY + containerRef.current.getBoundingClientRect().top;
       window.scrollTo(0, targetScroll);
     }
 
-    // Stop Lenis immediately
     lenisRef.current?.stop();
 
     const targetStepIndex = Math.min(startIndex, totalSteps - 1);
@@ -269,51 +391,40 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
         setNavigationDirection(1);
         activeIndexRef.current = nextIndex;
         setActiveIndex(nextIndex);
-        
+
         isAnimatingRef.current = true;
         updateLockState("animating");
         const targetStepIndex = Math.min(nextIndex, totalStepsRef.current - 1);
         startLockTimeout(safeSteps[targetStepIndex], false);
+      } else if (lockStateRef.current === "readyToRelease") {
+        isLockedRef.current = false;
+        isCompletedDownRef.current = true;
+        updateLockState("idle");
+        setIsCompletedDown(true);
+        lenisRef.current?.start();
       } else {
-        // One final scroll to release down the page
-        if (lockStateRef.current === "readyToRelease") {
-          isLockedRef.current = false;
-          isCompletedDownRef.current = true;
-          updateLockState("idle");
-          setIsCompletedDown(true);
-          // Restore Lenis on exit
-          lenisRef.current?.start();
-        } else {
-          updateLockState("readyToRelease");
-        }
+        updateLockState("readyToRelease");
       }
+    } else if (nextIndex >= 0) {
+      setNavigationDirection(-1);
+      activeIndexRef.current = nextIndex;
+      setActiveIndex(nextIndex);
+
+      isAnimatingRef.current = true;
+      updateLockState("animating");
+      const targetStepIndex = Math.min(nextIndex, totalStepsRef.current - 1);
+      startLockTimeout(safeSteps[targetStepIndex], true);
+    } else if (lockStateRef.current === "readyToRelease") {
+      isLockedRef.current = false;
+      isCompletedUpRef.current = true;
+      updateLockState("idle");
+      setIsCompletedUp(true);
+      lenisRef.current?.start();
     } else {
-      if (nextIndex >= 0) {
-        setNavigationDirection(-1);
-        activeIndexRef.current = nextIndex;
-        setActiveIndex(nextIndex);
-        
-        isAnimatingRef.current = true;
-        updateLockState("animating");
-        const targetStepIndex = Math.min(nextIndex, totalStepsRef.current - 1);
-        startLockTimeout(safeSteps[targetStepIndex], true);
-      } else {
-        // One final scroll to release up the page
-        if (lockStateRef.current === "readyToRelease") {
-          isLockedRef.current = false;
-          isCompletedUpRef.current = true;
-          updateLockState("idle");
-          setIsCompletedUp(true);
-          // Restore Lenis on exit
-          lenisRef.current?.start();
-        } else {
-          updateLockState("readyToRelease");
-        }
-      }
+      updateLockState("readyToRelease");
     }
   };
 
-  // Manage body scroll overflow (CSS overflow is hidden while locked)
   useEffect(() => {
     if (!isMounted || isMobile) return;
 
@@ -331,7 +442,6 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     };
   }, [isMounted, isMobile, lockState]);
 
-  // Continuously running requestAnimationFrame processor loop
   useEffect(() => {
     if (!isMounted || isMobile) return;
 
@@ -355,32 +465,26 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     return () => {
       cancelAnimationFrame(rafId);
     };
+    // Intentionally stable: stepByDirection closes over refs.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMounted, isMobile]);
 
-  // Intercept wheel, touch, and keyboard inputs persistently on window
   useEffect(() => {
     if (!isMounted || isMobile) return;
 
     const handleWheel = (event: WheelEvent) => {
-      // 1. If locked: prevent default and delegate to step transition
       if (lockStateRef.current !== "idle") {
         if (event.cancelable) event.preventDefault();
 
         const absDeltaY = Math.abs(event.deltaY);
 
-        // Reset lock release if delta drops to near-zero (indicating swipe release)
         if (absDeltaY < 3) {
           hasReleasedScrollRef.current = true;
           return;
         }
 
         if (isAnimatingRef.current) return;
-
-        if (!hasReleasedScrollRef.current) {
-          return;
-        }
-
-        // Accept gesture only if delta exceeds a physical scroll threshold
+        if (!hasReleasedScrollRef.current) return;
         if (absDeltaY < 12) return;
 
         const direction = event.deltaY > 0 ? 1 : -1;
@@ -389,7 +493,6 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
         return;
       }
 
-      // 2. If idle: check locking conditions synchronously
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       const isScrollingDown = event.deltaY > 0;
@@ -400,8 +503,7 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
         lockSection(0, 1);
       } else if (isScrollingUp && !isCompletedUpRef.current && rect.top >= -120) {
         if (event.cancelable) event.preventDefault();
-        const currentTotalStates = totalStepsRef.current;
-        lockSection(currentTotalStates - 1, -1);
+        lockSection(totalStepsRef.current - 1, -1);
       }
     };
 
@@ -414,15 +516,11 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
       const currentY = event.touches[0]?.clientY ?? 0;
       const deltaY = touchStartY - currentY;
 
-      // 1. If locked: always prevent default and delegate to step transition
       if (lockStateRef.current !== "idle") {
         if (event.cancelable) event.preventDefault();
 
         if (Math.abs(deltaY) < 10) return;
-
-        if (!hasReleasedScrollRef.current || isAnimatingRef.current) {
-          return;
-        }
+        if (!hasReleasedScrollRef.current || isAnimatingRef.current) return;
 
         if (Math.abs(deltaY) > 30) {
           const direction = deltaY > 0 ? 1 : -1;
@@ -433,7 +531,6 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
         return;
       }
 
-      // 2. If idle: check locking conditions synchronously
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       const isScrollingDown = deltaY > 0;
@@ -446,8 +543,7 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
         lockSection(0, 1);
       } else if (isScrollingUp && !isCompletedUpRef.current && rect.top >= -120) {
         if (event.cancelable) event.preventDefault();
-        const currentTotalStates = totalStepsRef.current;
-        lockSection(currentTotalStates - 1, -1);
+        lockSection(totalStepsRef.current - 1, -1);
       }
     };
 
@@ -459,16 +555,30 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
       if (lockStateRef.current === "idle") return;
 
       if (lockStateRef.current === "animating") {
-        if (["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(event.key)) {
+        if (
+          ["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "].includes(
+            event.key,
+          )
+        ) {
           if (event.cancelable) event.preventDefault();
         }
         return;
       }
 
       let direction: 1 | -1 | null = null;
-      if (event.key === "ArrowDown" || event.key === "PageDown" || (event.key === " " && !event.shiftKey) || event.key === "End") {
+      if (
+        event.key === "ArrowDown" ||
+        event.key === "PageDown" ||
+        (event.key === " " && !event.shiftKey) ||
+        event.key === "End"
+      ) {
         direction = 1;
-      } else if (event.key === "ArrowUp" || event.key === "PageUp" || (event.key === " " && event.shiftKey) || event.key === "Home") {
+      } else if (
+        event.key === "ArrowUp" ||
+        event.key === "PageUp" ||
+        (event.key === " " && event.shiftKey) ||
+        event.key === "Home"
+      ) {
         direction = -1;
       }
 
@@ -493,111 +603,83 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
       window.removeEventListener("touchcancel", handleTouchEnd);
       window.removeEventListener("keydown", handleKeyDown);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMounted, isMobile]);
 
-  // Handle Dynamic Header Theme Overrides
-  useEffect(() => {
-    if (!isMounted) return;
-
-    if (!isMobile && lockState === "idle") {
-      window.dispatchEvent(new CustomEvent("mawt-header-theme", { detail: { theme: null } }));
-      return;
-    }
-
-    if (totalSteps <= 1) {
-      window.dispatchEvent(new CustomEvent("mawt-header-theme", { detail: { theme: null } }));
-      return;
-    }
-
-    const theme = (activeIndex <= 1 || activeIndex >= 5) ? "dark" : "light";
-    window.dispatchEvent(new CustomEvent("mawt-header-theme", { detail: { theme } }));
-
-    return () => {
-      window.dispatchEvent(new CustomEvent("mawt-header-theme", { detail: { theme: null } }));
-    };
-  }, [isMounted, isMobile, lockState, activeIndex, totalSteps]);
-
-  // Clean up timers and restart Lenis on unmount to prevent stuck scroll on page change
   useEffect(() => {
     return () => {
       if (safetyTimeoutRef.current) clearTimeout(safetyTimeoutRef.current);
-      if (lenisRef.current) {
-        lenisRef.current.start();
-      }
+      lenisRef.current?.start();
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
     };
   }, []);
 
   if (totalSteps === 0) return null;
 
-  // Only indices 0, 1 and 5 are light backgrounds. All others are dark.
-  const isLightBg = activeIndex <= 1 || activeIndex >= 5;
-  const textColor = isLightBg ? "#000000" : "#F6F5F4";
-  const badgeColor = isLightBg ? "rgba(0,0,0,0.6)" : "rgba(246,245,244,0.6)";
-  const bodyColor = isLightBg ? "rgba(0,0,0,0.8)" : "rgba(246,245,244,0.8)";
-
-  // Easing transition specifications (1.5s duration, custom cubic-bezier)
-  const animDuration = 1.5;
+  const animDuration = reduceMotion ? 0.01 : 0.55;
   const animEase = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
   if (!isMounted) {
     return (
       <>
-        {/* Desktop Sticky Scroll Layout (hidden on mobile via CSS) */}
         <section
           ref={containerRef}
-          className="relative z-10 -mt-[1px] hidden lg:block h-[100vh] w-full overflow-hidden bg-[#F6F5F4]"
+          className="relative z-10 hidden h-[100vh] w-full overflow-hidden bg-[#161616] lg:block"
           aria-label="Approach steps (desktop)"
         >
-          <div ref={panelRef} className="absolute inset-0 h-[100vh] overflow-hidden bg-[#F6F5F4]">
+          <div ref={panelRef} className="absolute inset-0 h-[100vh] overflow-hidden bg-[#161616]">
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute left-[-2vw] right-[-2vw] top-0 z-0 h-[840vh] w-[104vw]"
-              style={{
-                background:
-                  "linear-gradient(180deg, #f6f5f4 0vh, #f6f5f4 120vh, #f0f3f2 160vh, #dce5e3 220vh, #baccca 280vh, #819fa0 340vh, #426a70 400vh, #002b36 460vh, #17645f 520vh, #17645f 570vh, #baccca 600vh, #f6f5f4 620vh, #f6f5f4 840vh)",
-              }}
+              className="pointer-events-none absolute left-[-2vw] right-[-2vw] top-0 z-0 h-[520vh] w-[104vw]"
+              style={{ background: DARK_GRADIENT }}
             />
-            <div className="pointer-events-none absolute inset-0 z-30 flex flex-col justify-center px-5 sm:px-7 md:px-9 lg:px-[2.5vw]">
-              <div className="mx-auto w-full max-w-[1760px] pt-[120px] pb-[80px]">
-                <div className="max-w-[1040px]">
-                  <span className="text-[13px] font-normal tracking-[0.2em] uppercase mb-6 block text-neutral-400">
-                    01 / {String(totalSteps).padStart(2, "0")}
-                  </span>
-                  <h2 className="font-serif text-[clamp(2.1rem,4.05vw,3.7rem)] font-normal leading-[1.01] tracking-normal text-neutral-900">
-                    {safeSteps[0]?.title}
-                  </h2>
-                  <p className="mt-6 max-w-[760px] text-[clamp(1.1rem,1.8vw,1.5rem)] font-normal leading-[1.4] text-neutral-800 opacity-80">
-                    {safeSteps[0]?.body}
-                  </p>
-                </div>
+            <div className="pointer-events-none absolute inset-0 z-30 flex flex-col justify-center">
+              <div className="site-container-xwide pt-[120px] pb-[80px]">
+                <StepContent
+                  step={safeSteps[0]}
+                  totalSteps={totalSteps}
+                  stepIndex={0}
+                  navigationDirection={1}
+                  reduceMotion
+                />
               </div>
             </div>
+            <StepRail steps={safeSteps} activeIndex={0} label={stepsLabel} />
           </div>
         </section>
 
-        {/* Mobile Responsive Vertical Steps List (hidden on desktop via CSS) */}
-        <section 
-          className="relative z-10 block lg:hidden bg-[#F6F5F4] py-16 md:py-24 border-t border-black/5"
+        <section
+          className="relative z-10 block border-t border-white/10 bg-[#161616] py-16 md:py-24 lg:hidden"
           aria-label="Approach steps (mobile)"
         >
-          <div className="site-container max-w-3xl">
+          <div className="site-container-xwide">
+            {stepsLabel && (
+              <p className="mb-10 text-[13px] font-normal text-white/40">{stepsLabel}</p>
+            )}
             <div className="flex flex-col gap-12 sm:gap-16">
-              {safeSteps.map((step) => (
-                <div 
-                  key={step.id} 
-                  className="flex flex-col border-b border-black/5 pb-10 sm:pb-12 last:border-b-0 last:pb-0 last:mb-0"
-                >
-                  <span className="text-[11px] sm:text-[12px] font-normal tracking-[0.2em] text-neutral-500 uppercase mb-3 block">
-                    {step.id} / {String(totalSteps).padStart(2, "0")}
-                  </span>
-                  <h3 className="font-serif text-2xl sm:text-3xl font-normal leading-tight text-[#002B36] text-balance">
-                    {step.title}
-                  </h3>
-                  <p className="mt-4 text-base sm:text-lg font-normal leading-relaxed text-neutral-600">
-                    {step.body}
-                  </p>
-                </div>
-              ))}
+              {safeSteps.map((step, index) => {
+                const Icon = STEP_ICONS[index] || STEP_ICONS[0];
+                return (
+                  <div
+                    key={step.id}
+                    className="flex flex-col border-b border-white/10 pb-10 sm:pb-12 last:border-b-0 last:pb-0"
+                  >
+                    <div className="mb-5 flex items-center gap-3">
+                      <DarkPageIcon icon={Icon} />
+                      <span className="text-[12px] font-normal tracking-wide text-white/40">
+                        {step.id} / {String(totalSteps).padStart(2, "0")}
+                      </span>
+                    </div>
+                    <h3 className="text-[clamp(1.6rem,5vw,2.2rem)] font-medium leading-tight tracking-tight text-white">
+                      {step.title}
+                    </h3>
+                    <p className="mt-4 text-[15px] font-normal leading-relaxed text-white/55 sm:text-[16px]">
+                      {step.body}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -609,61 +691,53 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     return (
       <section
         ref={containerRef}
-        className="relative z-10 block w-full bg-[#F6F5F4]"
-        style={{ height: `${totalSteps * 40}vh` }}
+        className="relative z-10 block w-full bg-[#161616]"
+        style={{ height: `${Math.max(totalSteps * 55, 240)}vh` }}
         aria-label="Approach steps (mobile)"
       >
-        <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#F6F5F4]">
-          {/* Plateau Linear Gradient Background */}
+        <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#161616]">
           <motion.div
             aria-hidden="true"
-            className="pointer-events-none absolute left-[-2vw] right-[-2vw] top-0 z-0 h-[840vh] w-[104vw]"
-            animate={{
-              y: getGradientOffset(activeIndex),
-            }}
-            transition={{
-              duration: animDuration,
-              ease: animEase,
-            }}
-            style={{
-              background:
-                "linear-gradient(180deg, #f6f5f4 0vh, #f6f5f4 120vh, #f0f3f2 160vh, #dce5e3 220vh, #baccca 280vh, #819fa0 340vh, #426a70 400vh, #002b36 460vh, #17645f 520vh, #17645f 570vh, #baccca 600vh, #f6f5f4 620vh, #f6f5f4 840vh)",
-            }}
+            className="pointer-events-none absolute left-[-2vw] right-[-2vw] top-0 z-0 h-[520vh] w-[104vw]"
+            animate={{ y: getGradientOffset(activeIndex) }}
+            transition={{ duration: animDuration, ease: animEase }}
+            style={{ background: DARK_GRADIENT }}
           />
 
-          {/* Content overlay */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-40 px-6 pt-28 sm:px-8">
+            <div className="flex items-center gap-2">
+              {safeSteps.map((step, index) => (
+                <span
+                  key={step.id}
+                  className={`h-px flex-1 transition-colors duration-300 ${
+                    index <= activeIndex ? "bg-white/70" : "bg-white/15"
+                  }`}
+                />
+              ))}
+            </div>
+            {stepsLabel && (
+              <p className="mt-4 text-[11px] font-normal tracking-wide text-white/35">
+                {stepsLabel}
+              </p>
+            )}
+          </div>
+
           <div className="pointer-events-none absolute inset-0 z-30 flex flex-col justify-center px-6 sm:px-8">
             <div className="mx-auto w-full max-w-xl">
               <motion.div
                 key={activeIndex}
-                initial={{ opacity: 0 }}
+                initial={reduceMotion ? false : { opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.25 }}
-                className="w-full"
+                transition={{ duration: reduceMotion ? 0 : 0.2 }}
               >
-                <motion.span
-                  className="text-[11px] sm:text-[12px] font-normal tracking-[0.2em] uppercase mb-4 block"
-                  animate={{ color: badgeColor }}
-                  transition={{ duration: 0.4 }}
-                >
-                  {currentStep.id} / {String(totalSteps).padStart(2, "0")}
-                </motion.span>
-                <h2 className="select-text font-serif text-3xl sm:text-4xl font-normal leading-tight">
-                  <AnimatedWords
-                    text={currentStep.title}
-                    delay={0.02}
-                    isReversing={navigationDirection < 0}
-                    textColor={textColor}
-                  />
-                </h2>
-                <p className="mt-4 text-base sm:text-lg font-normal leading-relaxed opacity-80">
-                  <AnimatedWords
-                    text={currentStep.body}
-                    delay={0.16}
-                    isReversing={navigationDirection < 0}
-                    textColor={bodyColor}
-                  />
-                </p>
+                <StepContent
+                  step={currentStep}
+                  totalSteps={totalSteps}
+                  stepIndex={stepIndex}
+                  navigationDirection={navigationDirection}
+                  reduceMotion={reduceMotion}
+                  compact
+                />
               </motion.div>
             </div>
           </div>
@@ -672,81 +746,54 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     );
   }
 
-  // Desktop render (after hydration, only on viewport >= 1024px)
   return (
     <section
       ref={containerRef}
-      className="relative z-10 -mt-[1px] block h-[100vh] w-full overflow-hidden bg-[#F6F5F4]"
+      className="relative z-10 block h-[100vh] w-full overflow-hidden bg-[#161616]"
       aria-label="Approach steps (desktop)"
     >
-      <div ref={panelRef} className="absolute inset-0 h-[100vh] overflow-hidden bg-[#F6F5F4]">
-        {/* Plateau Linear Gradient Background */}
+      <div ref={panelRef} className="absolute inset-0 h-[100vh] overflow-hidden bg-[#161616]">
         <motion.div
           aria-hidden="true"
-          className="pointer-events-none absolute left-[-2vw] right-[-2vw] top-0 z-0 h-[840vh] w-[104vw]"
-          animate={{
-            y: getGradientOffset(activeIndex),
-          }}
-          transition={{
-            duration: animDuration,
-            ease: animEase,
-          }}
-          style={{
-            background:
-              "linear-gradient(180deg, #f6f5f4 0vh, #f6f5f4 120vh, #f0f3f2 160vh, #dce5e3 220vh, #baccca 280vh, #819fa0 340vh, #426a70 400vh, #002b36 460vh, #17645f 520vh, #17645f 570vh, #baccca 600vh, #f6f5f4 620vh, #f6f5f4 840vh)",
-          }}
+          className="pointer-events-none absolute left-[-2vw] right-[-2vw] top-0 z-0 h-[520vh] w-[104vw]"
+          animate={{ y: getGradientOffset(activeIndex) }}
+          transition={{ duration: animDuration, ease: animEase }}
+          style={{ background: DARK_GRADIENT }}
         />
 
-        {/* Dummy animation to drive parent animation complete callback */}
         {lockState === "animating" && (
           <motion.div
             key={`dummy-${activeIndex}`}
-            initial={{ scale: 0.999 }}
-            animate={{ scale: 1 }}
+            initial={{ opacity: 0.999 }}
+            animate={{ opacity: 1 }}
             transition={{
-              duration: navigationDirection < 0 ? 0.35 : 0.85,
-              ease: "linear"
+              duration: navigationDirection < 0 ? 0.28 : 0.55,
+              ease: "linear",
             }}
             onAnimationComplete={handleAnimationComplete}
           />
         )}
 
-        {/* Desktop layout content */}
-        <div className="pointer-events-none absolute inset-0 z-30 flex flex-col justify-center px-5 sm:px-7 md:px-9 lg:px-[2.5vw]">
-          <div className="mx-auto w-full max-w-[1760px] pt-[120px] pb-[80px]">
+        <div className="pointer-events-none absolute inset-0 z-30 flex flex-col justify-center">
+          <div className="site-container-xwide pt-[120px] pb-[80px] pr-[160px] xl:pr-[200px]">
             <motion.div
               key={activeIndex}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: activeIndex >= 5 ? 0 : 1 }}
-              transition={{ duration: 0.25 }}
-              className="max-w-[1040px]"
+              initial={reduceMotion ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: reduceMotion ? 0 : 0.2 }}
             >
-              <motion.span
-                className="text-[13px] font-normal tracking-[0.2em] uppercase mb-6 block"
-                animate={{ color: badgeColor }}
-                transition={{ duration: 0.4 }}
-              >
-                {currentStep.id} / {String(totalSteps).padStart(2, "0")}
-              </motion.span>
-              <h2 className="select-text font-serif text-[clamp(2.1rem,4.05vw,3.7rem)] font-normal leading-[1.01] tracking-normal">
-                <AnimatedWords
-                  text={currentStep.title}
-                  delay={0.02}
-                  isReversing={navigationDirection < 0}
-                  textColor={textColor}
-                />
-              </h2>
-              <p className="mt-6 max-w-[760px] text-[clamp(1.1rem,1.8vw,1.5rem)] font-normal leading-[1.4] opacity-80">
-                <AnimatedWords
-                  text={currentStep.body}
-                  delay={0.16}
-                  isReversing={navigationDirection < 0}
-                  textColor={bodyColor}
-                />
-              </p>
+              <StepContent
+                step={currentStep}
+                totalSteps={totalSteps}
+                stepIndex={stepIndex}
+                navigationDirection={navigationDirection}
+                reduceMotion={reduceMotion}
+              />
             </motion.div>
           </div>
         </div>
+
+        <StepRail steps={safeSteps} activeIndex={stepIndex} label={stepsLabel} />
       </div>
     </section>
   );

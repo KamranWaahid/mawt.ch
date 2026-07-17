@@ -89,6 +89,19 @@
   "approach": {
     "badge": "Approche",
     "headline": "Notre processus, forgé par des décennies d'expérience partagée",
+    "page": {
+      "wordmark": "méthode",
+      "crossLabel": "/services",
+      "stepsLabel": "Les cinq étapes",
+      "differentiatorsLabel": "Ce qui nous distingue",
+      "comingSoonTitle": "Bientôt disponible.",
+      "comingSoonBody": "Cette page sera bientôt disponible.",
+      "ctaFallback": {
+        "headline": "Discutons de votre projet",
+        "body": "30 minutes pour comprendre votre besoin. Pas de devis bâclé, pas de pression. Juste un échange direct avec ceux qui vont construire.",
+        "label": "Démarrer"
+      }
+    },
     "items": [
       {
         "id": "01",

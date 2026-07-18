@@ -386,7 +386,9 @@ export const serviceBySlugQuery = groq`
   icon,
   longDescription,
   features,
-  "featuredProjects": featuredProjects[]->{
+  // Parenthesized so the trailing [...] filters the ARRAY — unparenthesized,
+  // GROQ maps it over each element (object[bool] -> null) and nulls them all.
+  "featuredProjects": (featuredProjects[]->{
     _id,
     title,
     "slug": slug.current,
@@ -394,7 +396,7 @@ export const serviceBySlugQuery = groq`
     tags,
     year,
     hidden
-  }[!(hidden == true)],
+  })[defined(_id) && !(hidden == true)],
   seo
 }
 `;

@@ -54,7 +54,11 @@ const serviceDetailPageQuery = groq`
     comparisonTable{ title, columns, rows[]{ cells } },
     faq[]{ question, answer },
     cta,
-    "featuredProjects": featuredProjects[]->{
+    // Parentheses close the []-> traversal so the trailing [...] is a real
+    // ARRAY filter. Without them GROQ maps the subscript over each element
+    // (object[bool] -> null), nulling every entry — that broke the build.
+    // defined(_id) also drops dangling references.
+    "featuredProjects": (featuredProjects[]->{
       _id,
       title,
       "slug": slug.current,
@@ -63,15 +67,15 @@ const serviceDetailPageQuery = groq`
       year,
       tags,
       hidden
-    }[!(hidden == true)],
-    relatedServices[]->{
+    })[defined(_id) && !(hidden == true)],
+    "relatedServices": (relatedServices[]->{
       _id,
       title,
       "slug": slug.current,
       family,
       description,
       icon
-    },
+    })[defined(_id)],
     seo
   },
   "siblingServices": *[_type == "service" && family == $family && slug.current != $serviceSlug && language == $lang && displayAsCard == true] | order(tier asc)[0..2]{
@@ -550,7 +554,7 @@ export default async function ServiceDetailPage({ params }: Props) {
             <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
               {labels.projectsH2}
             </div>
-            <div className="md:col-span-9 lg:col-span-8 space-y-8" id="projects">
+            <div className="md:col-span-9 lg:col-span-8 space-y-8 scroll-mt-24" id="projects">
               {svc.featuredProjects.map((project: any) => (
                 <div key={project._id} className="space-y-2 group">
                   <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">

@@ -258,10 +258,16 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     setNavigationDirection(direction);
     hasReleasedScrollRef.current = true;
 
-    // Snap section to the top of viewport natively
+    // Snap section to the top of viewport. Through Lenis when it runs:
+    // writing window.scrollTo under a live Lenis makes it resync and derive
+    // a parasite velocity from the jump (visible kick on lock entry).
     if (containerRef.current) {
       const targetScroll = window.scrollY + containerRef.current.getBoundingClientRect().top;
-      window.scrollTo(0, targetScroll);
+      if (lenisRef.current) {
+        lenisRef.current.scrollTo(targetScroll, { immediate: true, force: true });
+      } else {
+        window.scrollTo(0, targetScroll);
+      }
     }
 
     // Stop Lenis immediately
@@ -326,21 +332,30 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     }
   };
 
-  // Manage body scroll overflow (CSS overflow is hidden while locked)
+  // Manage body scroll overflow (CSS overflow is hidden while locked).
+  // Compensate for the disappearing scrollbar: on browsers with a classic
+  // scrollbar (Windows), hiding overflow otherwise widens the page ~17px and
+  // every centered element visibly shifts on lock entry and exit.
   useEffect(() => {
     if (!isMounted || isMobile) return;
 
     if (lockState !== "idle") {
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = "hidden";
       document.documentElement.style.overflow = "hidden";
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+      }
     } else {
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
+      document.body.style.paddingRight = "";
     }
 
     return () => {
       document.body.style.overflow = "";
       document.documentElement.style.overflow = "";
+      document.body.style.paddingRight = "";
     };
   }, [isMounted, isMobile, lockState]);
 
@@ -402,16 +417,20 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
         return;
       }
 
-      // 2. If idle: check locking conditions synchronously
+      // 2. If idle: check locking conditions synchronously.
+      // Both bounds matter: without the lower bound, a wheel event fired
+      // while the section is already far above the viewport (fast Lenis
+      // glide) re-locked it and teleported the page backwards.
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       const isScrollingDown = event.deltaY > 0;
       const isScrollingUp = event.deltaY < 0;
+      const nearViewport = rect.top <= 120 && rect.top >= -120;
 
-      if (isScrollingDown && !isCompletedDownRef.current && rect.top <= 120) {
+      if (isScrollingDown && !isCompletedDownRef.current && nearViewport) {
         if (event.cancelable) event.preventDefault();
         lockSection(0, 1);
-      } else if (isScrollingUp && !isCompletedUpRef.current && rect.top >= -120) {
+      } else if (isScrollingUp && !isCompletedUpRef.current && nearViewport) {
         if (event.cancelable) event.preventDefault();
         const currentTotalStates = totalStepsRef.current;
         lockSection(currentTotalStates - 1, -1);
@@ -446,18 +465,20 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
         return;
       }
 
-      // 2. If idle: check locking conditions synchronously
+      // 2. If idle: check locking conditions synchronously (same proximity
+      // band as the wheel path — never lock from far away).
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
       const isScrollingDown = deltaY > 0;
       const isScrollingUp = deltaY < 0;
+      const nearViewport = rect.top <= 120 && rect.top >= -120;
 
       if (Math.abs(deltaY) < 5) return;
 
-      if (isScrollingDown && !isCompletedDownRef.current && rect.top <= 120) {
+      if (isScrollingDown && !isCompletedDownRef.current && nearViewport) {
         if (event.cancelable) event.preventDefault();
         lockSection(0, 1);
-      } else if (isScrollingUp && !isCompletedUpRef.current && rect.top >= -120) {
+      } else if (isScrollingUp && !isCompletedUpRef.current && nearViewport) {
         if (event.cancelable) event.preventDefault();
         const currentTotalStates = totalStepsRef.current;
         lockSection(currentTotalStates - 1, -1);

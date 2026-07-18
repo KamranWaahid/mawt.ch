@@ -118,7 +118,10 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
       } else {
         if (typeof window !== "undefined") {
           const vh = window.innerHeight;
-          const past = window.scrollY > 3.9 * vh;
+          // Same hysteresis band as the scroll handler — inside the band the
+          // current state holds, so the two never fight at the boundary.
+          const past =
+            window.scrollY > 3.9 * vh ? true : window.scrollY < 3.78 * vh ? false : isPastHero;
           if (isPastHero !== past) {
             setIsPastHero(past);
           }
@@ -132,9 +135,15 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
   useMotionValueEvent(scrollY, "change", (latest) => {
     if (isHomePage && typeof window !== "undefined") {
       // The hero section is 400svh, and sticky container is 100svh.
-      // We reveal the sticky header right after the hero finishes (around 3.9 * vh).
+      // We reveal the sticky header right after the hero finishes (~3.9 * vh).
+      // Hysteresis: show and hide thresholds differ so scroll jitter exactly
+      // at the boundary cannot make the header flicker in and out.
       const vh = window.innerHeight;
-      setIsPastHero(latest > 3.9 * vh);
+      if (latest > 3.9 * vh) {
+        setIsPastHero(true);
+      } else if (latest < 3.78 * vh) {
+        setIsPastHero(false);
+      }
     }
   });
 

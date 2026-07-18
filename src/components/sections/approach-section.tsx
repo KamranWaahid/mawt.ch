@@ -34,51 +34,69 @@ export function ApproachSection({ dict }: { dict: any }) {
   const [scrollRange, setScrollRange] = useState(0);
   const [showLeftBlur, setShowLeftBlur] = useState(false);
   const [showRightBlur, setShowRightBlur] = useState(true);
-  // Touch / narrow: free horizontal swipe. Desktop keeps the pinned scrub.
+  // Touch / reduced-motion: free horizontal swipe.
+  // Fine-pointer desktops (any width): pinned vertical scroll → horizontal slide.
   const [nativeCarousel, setNativeCarousel] = useState(false);
 
   useEffect(() => {
     const sync = () => {
-      setNativeCarousel(prefersNativeScroll() || window.innerWidth < 1024);
+      setNativeCarousel(prefersNativeScroll());
     };
     sync();
+    const media = window.matchMedia(
+      "(hover: none) and (pointer: coarse), (prefers-reduced-motion: reduce)",
+    );
+    media.addEventListener("change", sync);
     window.addEventListener("resize", sync, { passive: true });
-    return () => window.removeEventListener("resize", sync);
+    return () => {
+      media.removeEventListener("change", sync);
+      window.removeEventListener("resize", sync);
+    };
   }, []);
 
-  // Measure the scrollable range of the cards container (desktop scrub only)
+  // Measure how far the deck must travel to reveal the last card.
   useEffect(() => {
     if (nativeCarousel) return;
 
     const calculateScrollRange = () => {
       if (cardsRef.current && containerRef.current) {
-        const range = cardsRef.current.scrollWidth - containerRef.current.clientWidth;
+        const range =
+          cardsRef.current.scrollWidth - containerRef.current.clientWidth;
         setScrollRange(Math.max(0, range));
       }
     };
 
+    // Measure after layout — images / fonts can widen cards one frame later.
     calculateScrollRange();
+    const raf = requestAnimationFrame(calculateScrollRange);
 
     const resizeObserver = new ResizeObserver(() => calculateScrollRange());
     if (containerRef.current) resizeObserver.observe(containerRef.current);
     if (cardsRef.current) resizeObserver.observe(cardsRef.current);
 
-    return () => resizeObserver.disconnect();
+    return () => {
+      cancelAnimationFrame(raf);
+      resizeObserver.disconnect();
+    };
   }, [dict?.items, nativeCarousel]);
 
-  // Desktop scrub only. When the native carousel is active, sectionRef is
-  // unused — keep the hook call unconditional (Rules of Hooks) but ignore it.
+  // Desktop scrub. Hooks stay unconditional (Rules of Hooks); ignored when
+  // the native carousel is active.
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end end"],
   });
 
-  const x = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
+  // Direct 1:1 scrub — deck slides WITH vertical scroll. Keyframed so the
+  // last card is fully reached at 88% of the pin, then rests before unpin.
+  // Array form (not a closure) so when scrollRange updates from 0 → measured,
+  // the transform rebuilds and the deck actually moves.
+  const x = useTransform(scrollYProgress, [0, 0.88, 1], [0, -scrollRange, -scrollRange]);
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     if (nativeCarousel) return;
     setShowLeftBlur(latest > 0.01);
-    setShowRightBlur(latest < 0.99);
+    setShowRightBlur(latest < 0.86);
   });
 
   useEffect(() => {
@@ -196,7 +214,7 @@ export function ApproachSection({ dict }: { dict: any }) {
   }
 
   return (
-    <section ref={sectionRef} className="relative h-[250vh] bg-transparent">
+    <section ref={sectionRef} className="relative h-[280vh] bg-transparent">
       <div className="sticky top-0 h-[100dvh] flex flex-col justify-center overflow-hidden py-12 sm:py-16 md:py-24 lg:py-32">
         <div className="site-container-wide w-full" ref={containerRef}>
           <div className="mb-10 h-px w-full bg-black/10" />
@@ -217,7 +235,7 @@ export function ApproachSection({ dict }: { dict: any }) {
               <motion.div
                 ref={cardsRef}
                 style={{ x }}
-                className="flex gap-3"
+                className="flex w-max gap-3 will-change-transform"
                 variants={containerVariants}
                 initial="hidden"
                 whileInView="visible"

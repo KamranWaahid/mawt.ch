@@ -564,7 +564,8 @@ export default async function ServiceDetailPage({ params }: Props) {
             <div className="md:col-span-3 text-sm text-neutral-400 font-normal">
               {labels.projectsH2}
             </div>
-            <div className="md:col-span-9 lg:col-span-8 space-y-8" id="projects">
+            {/* scroll-mt clears the 71px fixed header on #projects anchor jumps */}
+            <div className="md:col-span-9 lg:col-span-8 space-y-8 scroll-mt-24" id="projects">
               {featuredProjects.map((project: any) => (
                 <div key={project._id} className="space-y-2 group">
                   <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">

@@ -31,9 +31,17 @@ export function useBodyScrollLock(locked: boolean) {
     const prevBodyWidth = body.style.width;
     const prevBodyLeft = body.style.left;
     const prevBodyRight = body.style.right;
+    const prevBodyPaddingRight = body.style.paddingRight;
+
+    // Keep page width stable when the scrollbar disappears (classic
+    // scrollbars on Windows): otherwise content shifts ~17px on lock/unlock.
+    const scrollbarWidth = window.innerWidth - html.clientWidth;
 
     html.style.overflow = "hidden";
     body.style.overflow = "hidden";
+    if (!useFixedFreeze && scrollbarWidth > 0) {
+      body.style.paddingRight = `${scrollbarWidth}px`;
+    }
 
     if (useFixedFreeze) {
       body.style.position = "fixed";
@@ -48,6 +56,7 @@ export function useBodyScrollLock(locked: boolean) {
     return () => {
       html.style.overflow = prevHtmlOverflow;
       body.style.overflow = prevBodyOverflow;
+      body.style.paddingRight = prevBodyPaddingRight;
 
       if (useFixedFreeze) {
         body.style.position = prevBodyPosition;

@@ -6,7 +6,7 @@ import { ArrowRight } from "lucide-react";
 import { SectionReveal } from "@/components/ui/section-reveal";
 import { getProjectBySlug } from "@/lib/sanity.queries";
 import { AnimatedTitle } from "@/components/ui/animated-title";
-import { urlForImage } from "@/lib/sanity.image";
+import { urlForImage, imageDimensions } from "@/lib/sanity.image";
 import { hreflangAlternates } from "@/lib/routing/url-helpers";
 import { JsonLd, breadcrumbLd, SITE_URL, ORG_ID } from "@/components/seo/structured-data";
 import type { Locale } from "@/i18n-config";
@@ -72,19 +72,27 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const problemImage = project.problemImage
     ? urlForImage(project.problemImage)?.width(1600).url()
     : null;
+  const problemDims = imageDimensions(project.problemImage);
   const solutionImage = project.solutionImage
     ? urlForImage(project.solutionImage)?.width(1600).url()
     : null;
+  const solutionDims = imageDimensions(project.solutionImage);
   const galleryImages =
     project.gallery
       ?.map((image, idx) => {
         const src = urlForImage(image)?.width(1600).url();
 
-        return src ? { image, idx, src } : null;
+        return src ? { image, idx, src, dims: imageDimensions(image) } : null;
       })
       .filter(
-        (item): item is { image: NonNullable<typeof project.gallery>[number]; idx: number; src: string } =>
-          Boolean(item),
+        (
+          item,
+        ): item is {
+          image: NonNullable<typeof project.gallery>[number];
+          idx: number;
+          src: string;
+          dims: { width: number; height: number } | null;
+        } => Boolean(item),
       ) ?? [];
 
   // JSON-LD: case studies are the agency's #1 "Experience" (E-E-A-T) proof —
@@ -133,6 +141,9 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               <img
                 src={heroImage}
                 alt={project.coverImage?.alt ?? project.title}
+                width={2400}
+                height={1200}
+                fetchPriority="high"
                 className="w-full h-auto object-contain"
               />
             ) : null}
@@ -145,6 +156,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               <img
                 src={problemImage}
                 alt="Problem visualization"
+                width={problemDims?.width}
+                height={problemDims?.height}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-auto object-contain"
               />
             </SectionReveal>
@@ -157,6 +172,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               <img
                 src={solutionImage}
                 alt="Solution visualization"
+                width={solutionDims?.width}
+                height={solutionDims?.height}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-auto object-contain"
               />
             </SectionReveal>
@@ -165,12 +184,16 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           {/* Project Gallery Images */}
           {galleryImages.length > 0 && (
             <>
-              {galleryImages.map(({ image, idx, src }) => (
+              {galleryImages.map(({ image, idx, src, dims }) => (
                 <SectionReveal key={idx} className="w-full relative overflow-hidden rounded-2xl bg-white/45">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={src}
                     alt={image.alt || `Gallery image ${idx}`}
+                    width={dims?.width}
+                    height={dims?.height}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-auto object-contain"
                   />
                 </SectionReveal>

@@ -211,7 +211,7 @@ export function CinematicHeroSection({ settings, dict }: CinematicHeroSectionPro
           style={{ scale: logoScale, opacity: logoOpacity, transformOrigin: 'center center' }}
         >
            {/* We center the logo, but adjust origin so we zoom into a black gap. */}
-           <img src="/mawt-logo-white.svg" alt="MAWT Logo" className="w-[80vw] max-w-[800px] object-contain" />
+           <img src="/mawt-logo-white.svg" alt="MAWT Logo" width={696} height={160} className="w-[80vw] max-w-[800px] object-contain" />
         </motion.div>
 
         {/* Hero Content (Phase 1) */}

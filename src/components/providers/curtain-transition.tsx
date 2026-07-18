@@ -9,7 +9,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useReducedMotion } from "motion/react";
 
 /**
@@ -32,8 +32,8 @@ import { useReducedMotion } from "motion/react";
 
 const SNAPSHOT_ID = "mawt-slide-snapshot";
 const ARM_TIMEOUT_MS = 8000;
-const RISE_MS = 900;
-const REVEAL_MS = 340;
+const RISE_MS = 800;
+const REVEAL_MS = 320;
 // Overshoot on BOTH ends: top hides the rounded corners once landed, bottom
 // covers the keyframe over-travel (the sheet briefly rises past 0 and settles).
 const SHEET_OVERSHOOT_PX = 28;
@@ -91,7 +91,10 @@ function extractHint(anchor: HTMLAnchorElement): PreviewHint | undefined {
   return undefined;
 }
 
-function createSnapshot() {
+/** Freeze the current screen. Idempotent: if a frozen frame already exists
+ * (rapid re-navigation mid-transition) it is kept — it still shows the last
+ * thing the user actually saw, and re-cloning would be wasted work. */
+function ensureSnapshot() {
   const body = document.body;
   if (document.getElementById(SNAPSHOT_ID)) return;
 
@@ -113,6 +116,9 @@ function createSnapshot() {
   // the curtain rises over the real screen — no hard-cut, no flash.
   const clone = body.cloneNode(true) as HTMLElement;
   clone.removeAttribute("id");
+  // Never freeze a copy of the curtain itself (possible when a new
+  // navigation starts while the previous sheet is still fading out).
+  clone.querySelectorAll("[data-curtain-sheet]").forEach((n) => n.remove());
   // Neutralize scroll-lock inline styles; the top offset reproduces the
   // visual scroll. Fixed descendants ignore this offset — they anchor to
   // the transformed stage below, which matches the viewport.
@@ -139,14 +145,14 @@ function createSnapshot() {
   const stage = document.createElement("div");
   stage.style.cssText =
     "position:absolute;inset:0;transform:translateY(0) scale(1);transform-origin:50% 18%;" +
-    `transition:transform ${900}ms cubic-bezier(0.6,0.05,0.14,0.99);will-change:transform;`;
+    `transition:transform ${RISE_MS}ms cubic-bezier(0.6,0.05,0.14,0.99);will-change:transform;`;
   stage.appendChild(clone);
 
   // Dim the frozen page so the rising sheet always reads clearly
   // (dark-on-dark and light-on-light both need separation).
   const dim = document.createElement("div");
   dim.style.cssText =
-    "position:absolute;inset:0;background:#000;opacity:0;transition:opacity 900ms cubic-bezier(0.6,0.05,0.14,0.99);pointer-events:none;";
+    `position:absolute;inset:0;background:#000;opacity:0;transition:opacity ${RISE_MS}ms cubic-bezier(0.6,0.05,0.14,0.99);pointer-events:none;`;
   stage.appendChild(dim);
 
   holder.appendChild(stage);
@@ -292,14 +298,25 @@ export function CurtainTransitionProvider({
   previews?: Record<string, SlidePreview>;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const shouldReduceMotion = useReducedMotion();
   const previewsRef = useRef(previews);
-  previewsRef.current = previews;
+  useEffect(() => {
+    previewsRef.current = previews;
+  });
 
   const pendingRef = useRef(false);
   const landedRef = useRef(false);
   const pageReadyRef = useRef(false);
   const busyRef = useRef(false);
+  /** Normalized path this transition is travelling to. */
+  const targetRef = useRef<string | null>(null);
+  /** Monotonic navigation token. Every navigation — including one that
+   * interrupts a live transition — starts a new run. Timers and rAF
+   * callbacks capture their run id and no-op if a newer run took over,
+   * so rapid click bursts can never interleave stale callbacks. */
+  const runRef = useRef(0);
+  const [run, setRun] = useState(0);
   const [phase, setPhase] = useState<Phase>("idle");
   const [activePreview, setActivePreview] = useState<SlidePreview | null>(null);
 
@@ -309,19 +326,29 @@ export function CurtainTransitionProvider({
     landedRef.current = false;
     pageReadyRef.current = false;
     busyRef.current = false;
+    targetRef.current = null;
     setActivePreview(null);
     setPhase("idle");
   }, []);
 
+  const performReveal = useCallback((id: number) => {
+    // Re-check at fire time: a newer navigation may have reset the run.
+    if (id !== runRef.current) return;
+    if (!landedRef.current || !pageReadyRef.current) return;
+    removeSnapshot();
+    setPhase((p) => (p === "rising" ? "revealing" : p));
+  }, []);
+
   const maybeReveal = useCallback(() => {
     if (!landedRef.current || !pageReadyRef.current) return;
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() => {
-        removeSnapshot();
-        setPhase((p) => (p === "rising" ? "revealing" : p));
-      }),
-    );
-  }, []);
+    const id = runRef.current;
+    // Double-rAF aligns the swap with a fresh paint of the mounted page.
+    // The timeout is the guarantee: rAF never fires in throttled/background
+    // tabs, and the reveal must not depend on the tab being visible.
+    // performReveal is idempotent, so whichever fires first wins.
+    requestAnimationFrame(() => requestAnimationFrame(() => performReveal(id)));
+    setTimeout(() => performReveal(id), 160);
+  }, [performReveal]);
 
   const navigateWithCurtain = useCallback(
     (href: string, hint?: PreviewHint) => {
@@ -331,26 +358,29 @@ export function CurtainTransitionProvider({
       }
 
       const path = normalizePath(href);
-      if (typeof window !== "undefined") {
-        const current = window.location.pathname.replace(/\/$/, "") || "/";
-        if (current === path) {
-          router.push(href);
-          return;
-        }
-      }
+      const current = window.location.pathname.replace(/\/$/, "") || "/";
 
-      // Don't stack transitions — fall back to a plain push if one is live.
-      if (busyRef.current) {
+      // Re-click of the destination already in flight: the push already
+      // happened, the curtain is already rising — nothing to do.
+      if (busyRef.current && targetRef.current === path) return;
+      // Same page and no transition running: plain push (hash/query cases).
+      if (!busyRef.current && current === path) {
         router.push(href);
         return;
       }
 
+      // Begin — or retarget a live transition. Retargeting reuses the frozen
+      // frame (still the last thing the user saw), swaps the facade to the
+      // new destination and restarts the rise via the keyed sheet below.
       busyRef.current = true;
       pendingRef.current = true;
       landedRef.current = false;
       pageReadyRef.current = false;
+      targetRef.current = path;
+      runRef.current += 1;
+      setRun(runRef.current);
       setActivePreview(resolvePreview(href, previewsRef.current, hint));
-      createSnapshot();
+      ensureSnapshot();
       setPhase("rising");
       // Immediate push — rAF-deferred pushes hang in throttled/background
       // tabs (rAF never fires). The rise is a CSS animation on the
@@ -367,9 +397,49 @@ export function CurtainTransitionProvider({
   }, []);
 
   const notifyPageReady = useCallback(() => {
+    // Only the page this transition is travelling TO counts as ready — a
+    // superseded destination mounting late must not trigger the reveal.
+    if (targetRef.current) {
+      const current = window.location.pathname.replace(/\/$/, "") || "/";
+      if (current !== targetRef.current) return;
+    }
     pageReadyRef.current = true;
     maybeReveal();
   }, [maybeReveal]);
+
+  // Pathname backup for readiness: covers routes that mount outside the
+  // PageTransition wrapper (e.g. not-found) so the reveal never waits on
+  // a signal that will not come.
+  useEffect(() => {
+    if (!busyRef.current || !targetRef.current) return;
+    const current = pathname.replace(/\/$/, "") || "/";
+    if (current === targetRef.current) {
+      pageReadyRef.current = true;
+      maybeReveal();
+    }
+  }, [pathname, maybeReveal]);
+
+  // Browser back/forward (and bfcache restores) bypass the interceptor —
+  // any live transition is stale the moment they happen. Tear it down
+  // instantly so overlays never linger over history navigation.
+  useEffect(() => {
+    const abort = () => {
+      runRef.current += 1;
+      cleanup();
+    };
+    const onPageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) abort();
+    };
+    window.addEventListener("popstate", abort);
+    window.addEventListener("pageshow", onPageShow);
+    return () => {
+      window.removeEventListener("popstate", abort);
+      window.removeEventListener("pageshow", onPageShow);
+    };
+  }, [cleanup]);
+
+  // Last-resort cleanup if the provider itself ever unmounts mid-flight.
+  useEffect(() => removeSnapshot, []);
 
   // Site-wide: any internal <a> uses the curtain (nav, footer, cards, CTAs).
   useEffect(() => {
@@ -426,6 +496,8 @@ export function CurtainTransitionProvider({
   // animationend backup — landing must never depend on a single DOM event.
   // Generous margin: if the main thread stalls before the animation commits,
   // the backup must not reveal the page while the sheet is still mid-rise.
+  // `run` in the deps restarts every timer when a navigation retargets a
+  // live transition, so no timer from a superseded run survives.
   useEffect(() => {
     if (phase !== "rising") return;
     const t = setTimeout(() => {
@@ -433,19 +505,19 @@ export function CurtainTransitionProvider({
       maybeReveal();
     }, RISE_MS + 900);
     return () => clearTimeout(t);
-  }, [phase, maybeReveal]);
+  }, [phase, run, maybeReveal]);
 
   useEffect(() => {
     if (phase !== "revealing") return;
     const t = setTimeout(cleanup, REVEAL_MS + 160);
     return () => clearTimeout(t);
-  }, [phase, cleanup]);
+  }, [phase, run, cleanup]);
 
   useEffect(() => {
     if (phase === "idle") return;
     const t = setTimeout(cleanup, ARM_TIMEOUT_MS);
     return () => clearTimeout(t);
-  }, [phase, cleanup]);
+  }, [phase, run, cleanup]);
 
   const sheetClass =
     activePreview?.theme === "dark"
@@ -459,6 +531,8 @@ export function CurtainTransitionProvider({
       {children}
       {phase !== "idle" && activePreview && (
         <div
+          key={run}
+          data-curtain-sheet=""
           aria-hidden="true"
           onAnimationEnd={(e) => {
             if (e.target !== e.currentTarget) return;

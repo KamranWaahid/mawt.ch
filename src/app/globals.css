@@ -213,8 +213,9 @@ html.lenis body {
 
 .mawt-curtain-sheet-rise {
   /* Single decisive rise — fast launch, long deceleration, no bounce (an
-     over-travel settle made the facade title drift past its landing spot). */
-  animation: mawt-curtain-rise 900ms cubic-bezier(0.76, 0, 0.18, 1) both;
+     over-travel settle made the facade title drift past its landing spot).
+     Keep in sync with RISE_MS in curtain-transition.tsx. */
+  animation: mawt-curtain-rise 800ms cubic-bezier(0.76, 0, 0.18, 1) both;
 }
 
 .mawt-curtain-item {

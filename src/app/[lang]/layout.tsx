@@ -116,11 +116,12 @@ export default async function LangLayout({
   // light SubpageHero curtain via resolvePreview fallback.
   const curtainPreviews: Record<string, SlidePreview> = {
     [`/${locale}`]: { theme: "home" },
+    // Light SubpageHero — matches the restored services page (not the dark
+    // DHNN facade, which flashed as a "new design" during the curtain rise).
     [localizedHref("services", locale)]: {
-      theme: "dark",
-      title: dictionary.services.hero.title,
-      crossLabel: dictionary.services.hero.crossLabel,
-      tagline: dictionary.services.hero.tagline,
+      theme: "light",
+      title: dictionary.services.headline,
+      subtitle: isFr ? "Cinq piliers d'expertise." : "Five pillars of expertise.",
     },
     [localizedHref("projets", locale)]: {
       theme: "light",

@@ -54,8 +54,8 @@ export function FAQAccordion({ items, noWrapper = false }: FAQAccordionProps) {
               className="overflow-hidden"
               aria-hidden={openIndex !== index}
             >
-              <div className="pb-8">
-                <p className="text-[16px] leading-relaxed text-neutral-500 font-normal">
+              <div className="px-5 pb-8 sm:px-8">
+                <p className="pr-10 text-[16px] leading-relaxed text-neutral-500 font-normal sm:pr-12">
                   {item.answer}
                 </p>
               </div>

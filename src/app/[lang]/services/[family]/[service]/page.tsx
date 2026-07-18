@@ -32,9 +32,11 @@ const FAMILY_TAG_MAPPING: Record<string, string[]> = {
   securite: ["ia"],
 };
 
-// defined(_id) drops nulls from broken/deleted references. Without it, a
-// hidden!=true filter keeps nulls (null.hidden is undefined) and later
-// project/service .title access throws during static generation.
+// defined(_id) drops nulls from broken/deleted references. The filters MUST
+// be parenthesized: after an []-> traversal GROQ maps a trailing [cond] over
+// each ELEMENT (object[bool] -> null), so the unparenthesized form nulled
+// every entry — verified against live data. Parenthesizing closes the
+// traversal so [cond] filters the array.
 const serviceDetailPageQuery = groq`
 {
   "service": *[_type == "service" && family == $family && slug.current == $serviceSlug && language == $lang][0]{
@@ -57,7 +59,7 @@ const serviceDetailPageQuery = groq`
     comparisonTable{ title, columns, rows[]{ cells } },
     faq[]{ question, answer },
     cta,
-    "featuredProjects": featuredProjects[]->{
+    "featuredProjects": (featuredProjects[]->{
       _id,
       title,
       "slug": slug.current,
@@ -66,15 +68,15 @@ const serviceDetailPageQuery = groq`
       year,
       tags,
       hidden
-    }[defined(_id) && !(hidden == true)],
-    "relatedServices": relatedServices[]->{
+    })[defined(_id) && !(hidden == true)],
+    "relatedServices": (relatedServices[]->{
       _id,
       title,
       "slug": slug.current,
       family,
       description,
       icon
-    }[defined(_id) && defined(title) && defined(slug)],
+    })[defined(_id) && defined(title) && defined(slug)],
     seo
   },
   "siblingServices": *[_type == "service" && family == $family && slug.current != $serviceSlug && language == $lang && displayAsCard == true] | order(tier asc)[0..2]{

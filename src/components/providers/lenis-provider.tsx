@@ -48,20 +48,20 @@ export function LenisProvider({ children }: LenisProviderProps) {
     <ReactLenis
       root
       options={{
-        // Smooth but connected: the previous tuning (lerp 0.035, wheel ×0.45)
-        // made the page visibly drag behind the wheel and feel stuck. These
-        // values keep the composed glide while the page answers input
-        // immediately and direction changes register without lag.
-        duration: 1.4,
+        // APPROVED FEEL — do not retune without explicit user validation.
+        // The heavy, floaty glide (slow wheel, long settle) IS the intended
+        // design; a "snappier" pass (duration 1.4, wheel ×0.8, lerp 0.09)
+        // was rejected as feeling notchy/saccadé on content sections.
+        duration: 2.2,
         // Soft exponential ease similar to Framer-style scroll smoothing.
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
         // Touch stays native even if a desktop user briefly uses a touchscreen.
         syncTouch: false,
-        wheelMultiplier: 0.8,
-        touchMultiplier: 1,
-        // lerp governs when set: high enough to track input, low enough to glide.
-        lerp: 0.09,
+        wheelMultiplier: 0.45,
+        touchMultiplier: 0.95,
+        // Lower lerp adds a smoother, more composed glide without feeling stuck.
+        lerp: 0.035,
         // Route in-page #hash links through Lenis and land clear of the
         // fixed header instead of the native jump underneath it.
         anchors: { offset: -96 },

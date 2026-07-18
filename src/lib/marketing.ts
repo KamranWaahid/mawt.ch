@@ -2,6 +2,8 @@
  * Marketing Service
  * Handles interaction with external providers like Mailchimp, Resend, or Buttondown.
  */
+import { logger } from "./logger";
+import { redactEmail } from "./text-sanitize";
 
 export type NewsletterResponse = {
   success: boolean;
@@ -13,21 +15,27 @@ export async function subscribeToNewsletter(email: string): Promise<NewsletterRe
   const apiKey = process.env.NEWSLETTER_API_KEY;
 
   if (!provider || !apiKey) {
-    console.log("Newsletter provider credentials missing. Mocking success for:", email);
+    // Never mock success in production: the visitor would be told "you're
+    // subscribed" while their address goes nowhere.
+    if (process.env.NODE_ENV === "production") {
+      logger.error("Newsletter provider not configured in production — refusing subscription");
+      return { success: false, error: "API_ERROR" };
+    }
+    logger.info(`Newsletter provider missing — mocking success for ${redactEmail(email)} (dev only)`);
     return { success: true };
   }
 
   try {
     // Example logic for a generic provider
-    console.log(`Sending ${email} to ${provider}...`);
-    
+    logger.info(`Subscribing ${redactEmail(email)} via ${provider}`);
+
     // Simulating an external API call
     // In a real implementation, you would use fetch() here
     // const response = await fetch('...', { ... })
-    
+
     return { success: true };
   } catch (err) {
-    console.error("Marketing Service Error:", err);
+    logger.error("Marketing Service Error:", err);
     return { success: false, error: "API_ERROR" };
   }
 }

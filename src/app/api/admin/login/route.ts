@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { createAdminSession, SESSION_COOKIE, SESSION_DURATION_SECONDS } from "@/lib/session";
+import { rateLimit } from "@/lib/rate-limit";
+import { secureEqual } from "@/lib/secure-compare";
 
 /**
  * Admin login endpoint.
@@ -9,6 +11,16 @@ import { createAdminSession, SESSION_COOKIE, SESSION_DURATION_SECONDS } from "@/
  * BUG-002 fix: cookie stores a signed JWT, not the raw secret.
  */
 export async function POST(request: Request) {
+  // Brute-force protection: 5 attempts per 15 minutes per IP, fail-closed —
+  // an unprotected admin login must refuse rather than run unlimited.
+  const limiter = await rateLimit("admin-login", 5, 15 * 60, { failClosed: true });
+  if (!limiter.success) {
+    return NextResponse.json(
+      { error: "Too many attempts. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   // BUG-001: No hardcoded fallback. Server misconfiguration → 500.
   const adminSecret = process.env.ADMIN_SECRET?.trim();
   if (!adminSecret) {
@@ -37,14 +49,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid request." }, { status: 400 });
     }
 
-    // Constant-time string comparison to prevent timing attacks.
-    const provided = Buffer.from(normalizedKey);
-    const expected = Buffer.from(adminSecret);
-    const match =
-      provided.length === expected.length &&
-      Buffer.compare(provided, expected) === 0;
-
-    if (!match) {
+    // Constant-time comparison over fixed-length digests: the old
+    // length-check + Buffer.compare leaked both length and prefix timing.
+    if (!secureEqual(normalizedKey, adminSecret)) {
       return NextResponse.json({ error: "Invalid credentials." }, { status: 401 });
     }
 

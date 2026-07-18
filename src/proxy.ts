@@ -66,10 +66,12 @@ export async function proxy(request: NextRequest) {
       return NextResponse.next();
     }
 
+    // No exception: the login page lives at /<locale>/login, never under
+    // /studio or /admin. The old `pathname.includes("/login")` check let any
+    // path like /studio/login fall through and serve the Studio bundle
+    // unauthenticated.
     const locale = getLocale(request) || i18n.defaultLocale;
-    if (!pathname.includes("/login")) {
-      return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
-    }
+    return NextResponse.redirect(new URL(`/${locale}/login`, request.url));
   }
 
   // 2. Ignore public assets from locale redirection.

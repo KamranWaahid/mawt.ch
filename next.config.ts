@@ -32,6 +32,10 @@ const nextConfig: NextConfig = {
           // `curl -sI https://mawt.ch/en` after deploy.
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          // The site never uses these device APIs; deny them outright so
+          // embedded/injected scripts can't request them either.
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=()" },
+          { key: "X-DNS-Prefetch-Control", value: "on" },
           // frame-ancestors 'self' keeps Sanity Studio previews working while
           // blocking third-party framing (clickjacking).
           { key: "Content-Security-Policy", value: "frame-ancestors 'self'" },

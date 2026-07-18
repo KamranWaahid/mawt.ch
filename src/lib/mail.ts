@@ -1,6 +1,7 @@
 import "server-only";
 import nodemailer from "nodemailer";
 import { logger } from "./logger";
+import { sanitizeHeaderValue } from "./text-sanitize";
 
 /**
  * Lead emails, sent through the existing info@mawt.ch mailbox over SMTP
@@ -95,7 +96,11 @@ export async function sendLeadNotification(lead: Lead) {
     await deliver({
       to,
       replyTo: lead.email,
-      subject: `Nouveau lead : ${lead.name}${lead.service ? ` (${lead.service})` : ""}`,
+      // User-controlled values interpolated into a header MUST be sanitized:
+      // a name containing \r\n could inject extra headers (Bcc, etc.).
+      subject: sanitizeHeaderValue(
+        `Nouveau lead : ${lead.name}${lead.service ? ` (${lead.service})` : ""}`,
+      ),
       text: [
         `Nom : ${lead.name}`,
         `Email : ${lead.email}`,

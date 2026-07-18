@@ -19,7 +19,7 @@ export async function generateMetadata({
   params,
 }: ProjectPageProps): Promise<Metadata> {
   const { slug, lang } = await params;
-  const project = await getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug, lang);
 
   if (!project) {
     return {
@@ -60,7 +60,7 @@ export async function generateMetadata({
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { slug, lang } = await params;
-  const project = await getProjectBySlug(slug);
+  const project = await getProjectBySlug(slug, lang);
 
   if (!project) {
     notFound();

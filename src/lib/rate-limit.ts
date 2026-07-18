@@ -20,6 +20,16 @@ import { headers } from "next/headers";
 
 type RateLimitResult = { success: boolean; remaining: number };
 
+type RateLimitOptions = {
+  /**
+   * Fail CLOSED when the limiter can't do its job (Redis down, or no store
+   * configured in production). Use for auth-critical endpoints (admin login,
+   * revalidate webhook) where "no limiter" must mean "no access", not
+   * "unlimited access". Default false: public forms degrade gracefully.
+   */
+  failClosed?: boolean;
+};
+
 async function upstashPost(pipeline: string[][]): Promise<unknown[]> {
   const res = await fetch(`${UPSTASH_URL}/pipeline`, {
     method: "POST",
@@ -68,7 +78,8 @@ async function getCallerIp(): Promise<string> {
 export async function rateLimit(
   key: string,
   limit: number,
-  windowSeconds: number
+  windowSeconds: number,
+  options: RateLimitOptions = {}
 ): Promise<RateLimitResult> {
   const ip = await getCallerIp();
   const identifier = `rl:${key}:${ip}`;
@@ -77,18 +88,26 @@ export async function rateLimit(
     try {
       return await upstashRateLimit(identifier, limit, windowSeconds);
     } catch (err) {
-      // If Redis is temporarily unavailable, allow the request but log the error.
+      if (options.failClosed) {
+        console.error("[RateLimit] Upstash Redis error — DENYING request (failClosed):", err);
+        return { success: false, remaining: 0 };
+      }
+      // Public forms: if Redis is temporarily unavailable, allow but log.
       console.error("[RateLimit] Upstash Redis error — allowing request:", err);
       return { success: true, remaining: 0 };
     }
   }
 
-  // No persistent store configured: warn in production, allow in dev.
+  // No persistent store configured.
   if (process.env.NODE_ENV === "production") {
     console.warn(
       "[RateLimit] UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN not set. " +
       "Rate limiting is DISABLED in production. Set these env vars to enable it."
     );
+    if (options.failClosed) {
+      // Auth-critical callers must not run unprotected in production.
+      return { success: false, remaining: 0 };
+    }
   }
   return { success: true, remaining: limit - 1 };
 }

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, Stack, Text, Grid, Button, Heading, Inline, Badge, Spinner } from "@sanity/ui";
 import { MessageSquare, Users, RefreshCw, CheckCircle } from "lucide-react";
 import { useClient } from "sanity";
+import { triggerHomeRevalidate } from "@/lib/studio-actions";
 
 export function DashboardView() {
   const client = useClient({ apiVersion: "2023-01-01" });
@@ -27,10 +28,13 @@ export function DashboardView() {
   const handleRevalidate = async () => {
     setRevalidating(true);
     try {
-      // Manual revalidation trigger
-      const res = await fetch("/api/revalidate?tag=home&token=" + process.env.NEXT_PUBLIC_SANITY_REVALIDATE_SECRET);
-      if (res.ok) {
+      // Server Action authorized by the admin JWT cookie — no secret in the
+      // client bundle (the old NEXT_PUBLIC_ token was shipping to browsers).
+      const result = await triggerHomeRevalidate();
+      if (result.ok) {
         alert("Revalidation triggered successfully!");
+      } else {
+        alert(`Failed to revalidate: ${result.error ?? "unknown error"}`);
       }
     } catch {
       alert("Failed to revalidate.");

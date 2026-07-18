@@ -10,6 +10,7 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
+    "test": "tsx --test tests/*.test.ts",
     "typecheck": "tsc --noEmit",
     "deploy": "sanity deploy"
   },

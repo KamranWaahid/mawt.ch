@@ -1,4 +1,5 @@
 import { getSanityClient } from "@/lib/sanity.client";
+import { getSanityPrivateReadClient } from "@/lib/sanity.private-client";
 import { Activity, Users, MessageSquare, ShieldCheck, Globe } from "lucide-react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -27,18 +28,20 @@ export default async function AdminPage({
   }
   // ─────────────────────────────────────────────────────────────────────────
 
-  const client = getSanityClient();
-
   // Basic Health Check
-  const isSanityUp = !!client;
+  const isSanityUp = !!getSanityClient();
 
-  // Fetch high-level stats (server-side) — only after auth is confirmed.
+  // Lead/subscriber counts are PII-adjacent: fetch them with the
+  // authenticated private read client (server-only token), never the
+  // public/CDN client — the dataset ACL for these types will be locked to
+  // token access.
+  const privateClient = getSanityPrivateReadClient();
   let leadCount = 0;
   let subscriberCount = 0;
 
-  if (client) {
-    leadCount = await client.fetch('count(*[_type == "contactLead"])');
-    subscriberCount = await client.fetch('count(*[_type == "newsletterSubscriber"])');
+  if (privateClient) {
+    leadCount = await privateClient.fetch('count(*[_type == "contactLead"])');
+    subscriberCount = await privateClient.fetch('count(*[_type == "newsletterSubscriber"])');
   }
 
   return (

@@ -90,6 +90,18 @@ export function NewsletterForm({ dict, lang = "en" }: NewsletterFormProps) {
               className="relative flex flex-col gap-3"
             >
               <input type="hidden" name="lang" value={lang} />
+              {/* Honeypot: humans never see or fill this; bots do. The server
+                  action drops any submission where it has a value. */}
+              <div aria-hidden="true" className="absolute -left-[9999px] top-0 h-px w-px overflow-hidden">
+                <label htmlFor="newsletter-company">Company</label>
+                <input
+                  id="newsletter-company"
+                  type="text"
+                  name="company"
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+              </div>
               <div className="relative">
                 {/* BUG-012: Visually-hidden label for screen readers */}
                 <label htmlFor="newsletter-email" className="sr-only">

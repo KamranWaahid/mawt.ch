@@ -7,6 +7,7 @@ import { subscribeToNewsletter } from "./marketing";
 import { rateLimit } from "./rate-limit";
 import { trackConversion } from "./analytics";
 import { logger } from "./logger";
+import { redactEmail } from "./text-sanitize";
 
 // ── Typed Action State (BUG-023) ─────────────────────────────────────────────
 export interface ContactFormStateObj {
@@ -137,11 +138,11 @@ export async function submitContactForm(
     await sendLeadNotification(validated.data);
     await sendLeadThankYou(validated.data, lang);
     await trackConversion({ type: "lead", email: validated.data.email, metadata: { service: validated.data.service } });
-    logger.info("New lead captured", { email: validated.data.email });
+    logger.info("New lead captured", { email: redactEmail(validated.data.email) });
 
     return { success: true };
   } catch (err) {
-    logger.error("Contact submission error", err, { email: rawData.email });
+    logger.error("Contact submission error", err, { email: redactEmail(rawData.email) });
     return { error: messages.submitFailed };
   }
 }
@@ -152,6 +153,14 @@ export async function subscribeNewsletter(
 ): Promise<NewsletterFormState> {
   const lang = formData.get("lang") === "fr" ? "fr" : "en";
   const messages = newsletterMessages[lang];
+
+  // Honeypot (same pattern as the contact form): off-screen "company" field
+  // humans never fill. A value means a bot — pretend success, store nothing.
+  const honeypot = formData.get("company");
+  if (typeof honeypot === "string" && honeypot.trim() !== "") {
+    logger.warn("Newsletter honeypot triggered — submission dropped");
+    return { success: true };
+  }
 
   // Rate Limit: 3 subscriptions per minute per IP (BUG-004: seconds not ms)
   const limiter = await rateLimit("newsletter", 3, 60);
@@ -189,11 +198,11 @@ export async function subscribeNewsletter(
     }
 
     await trackConversion({ type: "newsletter", email: validated.data.email });
-    logger.info("New newsletter subscriber", { email: validated.data.email });
+    logger.info("New newsletter subscriber", { email: redactEmail(validated.data.email) });
 
     return { success: true };
   } catch (err) {
-    logger.error("Newsletter subscription error", err, { email });
+    logger.error("Newsletter subscription error", err, { email: redactEmail(email) });
     return { error: messages.submitFailed };
   }
 }

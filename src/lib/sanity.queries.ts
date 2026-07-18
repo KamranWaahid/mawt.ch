@@ -76,8 +76,10 @@ const homeQuery = groq`
 // !(hidden == true): unfinished/hidden projects must not exist ANYWHERE on
 // the site — the listing already filters them, and without this guard the
 // detail URL kept rendering 200 (reachable, indexable) for hidden projects.
+// language == $lang: FR/EN twin projects can share a slug — without the
+// filter, [0] returned an arbitrary language's document.
 const projectBySlugQuery = groq`
-*[_type == "project" && slug.current == $slug && !(hidden == true)][0]{
+*[_type == "project" && slug.current == $slug && language == $lang && !(hidden == true)][0]{
   _id,
   _createdAt,
   _updatedAt,
@@ -219,10 +221,10 @@ export async function getAllProjects(lang: string): Promise<Partial<Project>[]> 
   });
 }
 
-export async function getProjectBySlug(slug: string): Promise<Project | null> {
+export async function getProjectBySlug(slug: string, lang: string = "en"): Promise<Project | null> {
   const sanityClient = getSanityClient();
   if (!sanityClient) return mockProjectBySlug(slug);
-  return sanityClient.fetch<Project | null>(projectBySlugQuery, { slug }, {
+  return sanityClient.fetch<Project | null>(projectBySlugQuery, { slug, lang }, {
     next: { tags: ["project", `project:${slug}`] }
   });
 }
@@ -230,7 +232,9 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
 export async function getCareers(): Promise<Career[]> {
   const sanityClient = getSanityClient();
   if (!sanityClient) return [];
-  return sanityClient.fetch<Career[]>(careersQuery);
+  return sanityClient.fetch<Career[]>(careersQuery, {}, {
+    next: { tags: ["careers"] }
+  });
 }
 
 export async function getFAQs(lang: string = "en"): Promise<FAQ[]> {
@@ -401,10 +405,14 @@ export const serviceBySlugQuery = groq`
 }
 `;
 
-export async function getServiceBySlug(slug: string): Promise<Service> {
+export async function getServiceBySlug(slug: string): Promise<Service | null> {
   const sanityClient = getSanityClient();
-  if (!sanityClient) return {} as Service;
-  return sanityClient.fetch(serviceBySlugQuery, { slug });
+  // null, not {} as Service: an empty object typed as Service let callers
+  // read undefined fields silently instead of handling the missing document.
+  if (!sanityClient) return null;
+  return sanityClient.fetch<Service | null>(serviceBySlugQuery, { slug }, {
+    next: { tags: ["service", `service:${slug}`] }
+  });
 }
 
 // Blog / Insights Queries
@@ -459,13 +467,17 @@ export const postBySlugQuery = groq`
 export async function getPosts(lang: string = "en"): Promise<BlogPost[]> {
   const sanityClient = getSanityClient();
   if (!sanityClient) return [];
-  return sanityClient.fetch(allPostsQuery, { lang });
+  return sanityClient.fetch(allPostsQuery, { lang }, {
+    next: { tags: ["posts", `posts:${lang}`] }
+  });
 }
 
 export async function getPostBySlug(slug: string, lang: string = "en"): Promise<BlogPost | null> {
   const sanityClient = getSanityClient();
   if (!sanityClient) return null;
-  return sanityClient.fetch<BlogPost | null>(postBySlugQuery, { slug, lang });
+  return sanityClient.fetch<BlogPost | null>(postBySlugQuery, { slug, lang }, {
+    next: { tags: ["posts", `post:${slug}`] }
+  });
 }
 
 const partnersQuery = groq`

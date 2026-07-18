@@ -170,35 +170,47 @@ function removeSnapshot() {
   document.getElementById(SNAPSHOT_ID)?.remove();
 }
 
-function shouldInterceptAnchor(anchor: HTMLAnchorElement, event: MouseEvent): string | null {
-  if (event.defaultPrevented) return null;
-  if (event.button !== 0) return null;
-  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return null;
-  if (anchor.target && anchor.target !== "_self") return null;
-  if (anchor.hasAttribute("download")) return null;
-  if (anchor.dataset.curtain === "off") return null;
+type InterceptDecision =
+  | { kind: "curtain"; href: string }
+  | { kind: "swallow" } // same-page re-click: navigating would only flash
+  | { kind: "native" };
+
+function decideAnchor(anchor: HTMLAnchorElement, event: MouseEvent): InterceptDecision {
+  const native: InterceptDecision = { kind: "native" };
+  if (event.defaultPrevented) return native;
+  if (event.button !== 0) return native;
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return native;
+  if (anchor.target && anchor.target !== "_self") return native;
+  if (anchor.hasAttribute("download")) return native;
+  if (anchor.dataset.curtain === "off") return native;
 
   const raw = anchor.getAttribute("href");
   if (!raw || raw.startsWith("#") || raw.startsWith("mailto:") || raw.startsWith("tel:")) {
-    return null;
+    return native;
   }
 
   let url: URL;
   try {
     url = new URL(raw, window.location.origin);
   } catch {
-    return null;
+    return native;
   }
 
-  if (url.origin !== window.location.origin) return null;
-  if (url.pathname.startsWith("/studio") || url.pathname.startsWith("/admin")) return null;
+  if (url.origin !== window.location.origin) return native;
+  if (url.pathname.startsWith("/studio") || url.pathname.startsWith("/admin")) return native;
 
-  // Same-path hash / query toggles: let the browser handle them.
   const nextPath = url.pathname.replace(/\/$/, "") || "/";
   const currentPath = window.location.pathname.replace(/\/$/, "") || "/";
-  if (nextPath === currentPath) return null;
+  if (nextPath === currentPath) {
+    // Hash / query change on the same page: browser handles it natively.
+    if (url.hash || url.search !== window.location.search) return native;
+    // Identical destination (nav link to the page you are on, or a rapid
+    // re-click after the URL already committed): a native follow here would
+    // full-reload and blank-flash the page. Swallow it instead.
+    return { kind: "swallow" };
+  }
 
-  return `${url.pathname}${url.search}${url.hash}`;
+  return { kind: "curtain", href: `${url.pathname}${url.search}${url.hash}` };
 }
 
 type Phase = "idle" | "rising" | "revealing";
@@ -352,7 +364,12 @@ export function CurtainTransitionProvider({
 
   const navigateWithCurtain = useCallback(
     (href: string, hint?: PreviewHint) => {
-      if (shouldReduceMotion) {
+      // Live media-query check as well as the hook: the hook can lag a
+      // mid-session OS toggle, and reduced motion must win immediately.
+      if (
+        shouldReduceMotion ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
         router.push(href);
         return;
       }
@@ -451,14 +468,15 @@ export function CurtainTransitionProvider({
       const anchor = target.closest("a");
       if (!(anchor instanceof HTMLAnchorElement)) return;
 
-      const href = shouldInterceptAnchor(anchor, event);
-      if (!href) return;
+      const decision = decideAnchor(anchor, event);
+      if (decision.kind === "native") return;
 
       event.preventDefault();
+      if (decision.kind === "swallow") return;
       // Snapshot runs synchronously in this handler — before React closes
       // any open menu — so the frozen frame still shows the menu and the
       // curtain rises over it (no hard-cut, no exposed old page).
-      navigateWithCurtain(href, extractHint(anchor));
+      navigateWithCurtain(decision.href, extractHint(anchor));
     };
 
     document.addEventListener("click", onClick, true);

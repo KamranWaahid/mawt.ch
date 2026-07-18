@@ -63,8 +63,8 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
                   src={slideImages[activeIndex % slideImages.length]}
                   alt="Testimonial background"
                   fill
+                  sizes="(max-width: 768px) 100vw, 90vw"
                   className="object-cover filter brightness-[0.7] md:brightness-[0.75]"
-                  priority
                 />
               </motion.div>
             </AnimatePresence>
@@ -125,6 +125,7 @@ export function TestimonialsSection({ testimonials }: TestimonialsSectionProps) 
                       src={slideImages[i % slideImages.length]}
                       alt={`Slide ${i + 1} thumbnail`}
                       fill
+                      sizes="56px"
                       className="object-cover"
                     />
                   </button>

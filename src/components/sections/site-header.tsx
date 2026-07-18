@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "motion/react";
+import { useLenis } from "lenis/react";
 import Image from "next/image";
 import LogoBlack from "../../../public/logo-black.svg";
 import LogoWhite from "../../../public/logo-white.svg";
@@ -95,9 +96,14 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
     };
   }, []);
 
-  const isDark = headerThemeOverride
-    ? headerThemeOverride === "dark"
-    : isMobileMenuOpen || !isHomePage || isPastHero;
+  // The open mobile menu always wins: its overlay is near-white, so the
+  // header controls must go dark even when a page-level theme override
+  // (e.g. Services forcing "light") is active.
+  const isDark = isMobileMenuOpen
+    ? true
+    : headerThemeOverride
+      ? headerThemeOverride === "dark"
+      : !isHomePage || isPastHero;
 
   const navTextClass = isDark ? "text-black/72" : "text-white/80";
   const navHoverClass = isDark ? "hover:text-black" : "hover:text-white";
@@ -106,6 +112,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
 
   const useDarkLogo = isDark;
   const { scrollY } = useScroll();
+  const lenis = useLenis();
 
   const lastPathnameRef = useRef(pathname);
 
@@ -116,6 +123,27 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
       lastPathnameRef.current = pathname;
     }
   }, [pathname]);
+
+  // Lock the page behind the open mobile menu. Single mechanism: Lenis
+  // stop()/start() (its .lenis-stopped class also sets overflow:hidden in
+  // globals.css). The effect cleanup covers every exit path — close button,
+  // link navigation, route change, unmount — so a lock can never leak.
+  useEffect(() => {
+    if (!isMobileMenuOpen || !lenis) return;
+    lenis.stop();
+    return () => lenis.start();
+  }, [isMobileMenuOpen, lenis]);
+
+  // Cache the viewport height off the scroll hot path.
+  const viewportHeightRef = useRef(0);
+  useEffect(() => {
+    const update = () => {
+      viewportHeightRef.current = window.innerHeight;
+    };
+    update();
+    window.addEventListener("resize", update, { passive: true });
+    return () => window.removeEventListener("resize", update);
+  }, []);
 
   // Keep isPastHero state in sync with scroll position/page type changes
   useEffect(() => {
@@ -139,11 +167,13 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
   }, [isHomePage, isPastHero]);
 
   useMotionValueEvent(scrollY, "change", (latest) => {
-    if (isHomePage && typeof window !== "undefined") {
+    if (isHomePage) {
       // The hero section is 400svh, and sticky container is 100svh.
-      // We reveal the sticky header right after the hero finishes (around 3.9 * vh).
-      const vh = window.innerHeight;
-      setIsPastHero(latest > 3.9 * vh);
+      // We reveal the sticky header right after the hero finishes (around
+      // 3.9 * vh). Hysteresis band (±24px) so parking exactly on the
+      // boundary can't flip the header on every one-pixel move.
+      const threshold = 3.9 * viewportHeightRef.current;
+      setIsPastHero((past) => (past ? latest > threshold - 24 : latest > threshold + 24));
     }
   });
 
@@ -191,7 +221,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
           Eight stacked backdrop-filter layers (::before + 6 divs + ::after), each masked to a
           sliding band, so the blur is strongest at the top and fully dissolved at the bottom. */}
       <div
-        className={`navbar-blur-backdrop ${isPastHero ? "visible" : ""} ${isDark ? "is-light-bg" : "is-dark-bg"}`}
+        className={`navbar-blur-backdrop ${isPastHero && !isMobileMenuOpen ? "visible" : ""} ${isDark ? "is-light-bg" : "is-dark-bg"}`}
       >
         <div />
         <div />
@@ -296,8 +326,15 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
           </div>
         </div>
       </nav>
+    </motion.header>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu Overlay — deliberately OUTSIDE <motion.header>: a
+          position:fixed element inside a transformed ancestor is positioned
+          relative to that ancestor, not the viewport, so the overlay would
+          be clipped/dragged whenever the header carries a transform. As a
+          sibling it is genuinely viewport-fixed. z-[79] + later DOM order
+          keeps it above the blur backdrop (z-79) but under the header
+          controls (z-[80]) so the close button stays reachable. */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -306,7 +343,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
             exit={{ opacity: 0, y: -8, filter: "blur(10px)" }}
             transition={{ duration: 0.28, ease: "easeOut" }}
             style={{ paddingTop: "calc(env(safe-area-inset-top) + 6rem)", paddingBottom: "calc(env(safe-area-inset-bottom) + 4rem)" }}
-            className="fixed inset-0 z-40 overflow-y-auto bg-white/95 px-6 md:hidden"
+            className="fixed inset-0 z-[79] overflow-y-auto overscroll-contain bg-white/95 px-6 md:hidden"
           >
             <div className="flex flex-col gap-12 pb-24">
               <motion.div
@@ -378,7 +415,6 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.header>
     </>
   );
 }

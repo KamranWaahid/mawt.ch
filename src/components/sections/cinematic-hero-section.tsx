@@ -155,8 +155,7 @@ export function CinematicHeroSection({ settings, dict }: CinematicHeroSectionPro
 
       timeline
         .fromTo(".hero-kicker", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 1 })
-        .fromTo(".hero-title-line", { yPercent: 100 }, { yPercent: 0, duration: 1.2, stagger: 0.1 }, "-=0.7")
-        .fromTo(".hero-cta-group", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 1, stagger: 0.1 }, "-=0.9");
+        .fromTo(".hero-cta-group", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 1, stagger: 0.1 }, "-=0.4");
     },
     { scope: containerRef }
   );
@@ -191,7 +190,9 @@ export function CinematicHeroSection({ settings, dict }: CinematicHeroSectionPro
             playsInline
             muted
             onEnded={handleVideoEnded}
-            preload="auto"
+            // metadata only: the full ~11 MB file must not compete with the
+            // LCP path on load (same fix homepage-hero-section already has).
+            preload="metadata"
           />
           {heroState === 'videoPlaying' && (
              <div className="absolute inset-0 z-20 hidden items-center justify-center bg-black/40 text-white cursor-pointer group hover:bg-black/20 transition-all" onClick={handlePlayFallback}>

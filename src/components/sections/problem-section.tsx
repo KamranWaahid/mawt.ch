@@ -130,13 +130,21 @@ export function ProblemSection({ dict }: { dict: ProblemCopy }) {
   });
 
   useEffect(() => {
-    const onScrollOrResize = () => updateScrollProgress();
-    onScrollOrResize();
-    window.addEventListener("scroll", onScrollOrResize, { passive: true });
-    window.addEventListener("resize", onScrollOrResize, { passive: true });
+    // The Lenis callback above already runs updateScrollProgress every frame
+    // while scrolling — with Lenis present, the native scroll listener was a
+    // second getBoundingClientRect per frame for the same value. Keep it
+    // purely as a no-Lenis fallback; resize always re-measures.
+    const onScroll = () => {
+      if (lenisRef.current) return;
+      updateScrollProgress();
+    };
+    const onResize = () => updateScrollProgress();
+    updateScrollProgress();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize, { passive: true });
     return () => {
-      window.removeEventListener("scroll", onScrollOrResize);
-      window.removeEventListener("resize", onScrollOrResize);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
     };
   }, [updateScrollProgress]);
 

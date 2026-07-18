@@ -47,9 +47,9 @@ export function CustomCursor() {
       setHoverState("default");
     };
 
-    window.addEventListener("mousemove", moveCursor);
-    window.addEventListener("mouseover", handleHoverStart);
-    window.addEventListener("mouseout", handleHoverEnd);
+    window.addEventListener("mousemove", moveCursor, { passive: true });
+    window.addEventListener("mouseover", handleHoverStart, { passive: true });
+    window.addEventListener("mouseout", handleHoverEnd, { passive: true });
 
     return () => {
       window.removeEventListener("mousemove", moveCursor);

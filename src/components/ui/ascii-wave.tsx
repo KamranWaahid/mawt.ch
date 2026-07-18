@@ -99,8 +99,15 @@ export function AsciiWave({ src, active, fit = "contain", focusX = 0.5, focusY =
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const activeRef = useRef(active);
   const readyRef = useRef(false);
+  const resumeRef = useRef<(() => void) | null>(null);
 
-  activeRef.current = active;
+  // The rAF loop parks itself when `active` goes false (no wasted wakeups);
+  // this effect keeps the ref in sync and restarts the loop when the wave
+  // becomes active again.
+  useEffect(() => {
+    activeRef.current = active;
+    if (active) resumeRef.current?.();
+  }, [active]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -304,10 +311,19 @@ export function AsciiWave({ src, active, fit = "contain", focusX = 0.5, focusY =
       }
     };
 
+    let running = false;
+
     const frame = (time: number) => {
       if (disposed) return;
 
-      if (activeRef.current && !document.hidden && cells.length > 0) {
+      // Park the loop while inactive instead of idling at 60 wakeups/s —
+      // the `active` prop effect resumes it via resumeRef.
+      if (!activeRef.current) {
+        running = false;
+        return;
+      }
+
+      if (!document.hidden && cells.length > 0) {
         if (time - lastTick >= TICK_MS) {
           const mutations = Math.max(30, Math.floor(cells.length * (0.05 + Math.random() * 0.04)));
           for (let i = 0; i < mutations; i++) {
@@ -330,9 +346,12 @@ export function AsciiWave({ src, active, fit = "contain", focusX = 0.5, focusY =
     };
 
     const startAnimation = () => {
+      if (disposed || running) return;
+      running = true;
       cancelAnimationFrame(animationFrameId);
       animationFrameId = requestAnimationFrame(frame);
     };
+    resumeRef.current = startAnimation;
 
     img = new Image();
     img.decoding = "async";
@@ -342,13 +361,21 @@ export function AsciiWave({ src, active, fit = "contain", focusX = 0.5, focusY =
     };
     img.src = src;
 
+    // Debounced: the mobile URL bar fires a stream of resizes while it
+    // animates, and every uncoalesced pass reallocates (= clears) the
+    // canvas backing store — a visible flash mid-scroll. One pass after
+    // the viewport settles is enough; buildGrid sizes the initial paint.
+    let resizeTimer: number | null = null;
     const ro = new ResizeObserver(() => {
-      requestAnimationFrame(resizeCanvas);
+      if (resizeTimer !== null) window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => requestAnimationFrame(resizeCanvas), 150);
     });
     ro.observe(viewport);
 
     return () => {
       disposed = true;
+      resumeRef.current = null;
+      if (resizeTimer !== null) window.clearTimeout(resizeTimer);
       cancelAnimationFrame(animationFrameId);
       ro.disconnect();
       if (img) img.onload = null;

@@ -35,7 +35,8 @@ export function ApproachFlowerSequence({ frames }: ApproachFlowerSequenceProps) 
   const sectionRef = useRef<HTMLElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const imagesRef = useRef<(HTMLImageElement | undefined)[]>([]);
-  const lastDrawnFrameRef = useRef(0);
+  // -1 = nothing drawn yet, so the first real frame always paints.
+  const lastDrawnFrameRef = useRef(-1);
   const desiredFrameRef = useRef(0);
   const rafRef = useRef<number | null>(null);
   const loadedFramesRef = useRef<Set<number>>(new Set());
@@ -52,7 +53,9 @@ export function ApproachFlowerSequence({ frames }: ApproachFlowerSequenceProps) 
     restDelta: 0.0008,
   });
 
-  const drawFrame = useCallback((frameIndex: number) => {
+  // `force` bypasses the same-frame guard — needed after a resize cleared
+  // the backing store and the current frame must repaint.
+  const drawFrame = useCallback((frameIndex: number, force = false) => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx || frames.length === 0) return;
@@ -61,6 +64,9 @@ export function ApproachFlowerSequence({ frames }: ApproachFlowerSequenceProps) 
     const img = imagesRef.current[clampedIndex];
 
     if (img?.complete) {
+      // The spring emits many sub-frame changes per scroll; skip the full-
+      // viewport repaint when the resolved frame index hasn't changed.
+      if (!force && clampedIndex === lastDrawnFrameRef.current) return;
       drawCover(ctx, img);
       lastDrawnFrameRef.current = clampedIndex;
       return;
@@ -80,6 +86,7 @@ export function ApproachFlowerSequence({ frames }: ApproachFlowerSequenceProps) 
 
     const fallbackImg = imagesRef.current[nearestFrame];
     if (fallbackImg?.complete) {
+      if (!force && nearestFrame === lastDrawnFrameRef.current) return;
       drawCover(ctx, fallbackImg);
       lastDrawnFrameRef.current = nearestFrame;
       return;
@@ -105,10 +112,21 @@ export function ApproachFlowerSequence({ frames }: ApproachFlowerSequenceProps) 
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const resizeCanvas = () => {
+    let debounceId: number | null = null;
+    const lastSize = { width: 0, height: 0 };
+
+    const applySize = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const width = Math.max(1, Math.round(window.innerWidth * dpr));
       const height = Math.max(1, Math.round(window.innerHeight * dpr));
+
+      // Mobile URL-bar show/hide fires resize with small height-only deltas.
+      // Reallocating the backing store clears the canvas mid-scroll (visible
+      // flash), and the CSS box is 100svh so those deltas don't change what
+      // is visible — skip them.
+      if (width === lastSize.width && Math.abs(height - lastSize.height) < 160) return;
+      lastSize.width = width;
+      lastSize.height = height;
 
       canvas.width = width;
       canvas.height = height;
@@ -116,12 +134,20 @@ export function ApproachFlowerSequence({ frames }: ApproachFlowerSequenceProps) 
       canvas.style.height = "100svh";
       const ctx = canvas.getContext("2d");
       if (ctx) fillCanvas(ctx);
-      drawFrame(lastDrawnFrameRef.current);
+      drawFrame(lastDrawnFrameRef.current, true);
     };
 
-    resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
-    return () => window.removeEventListener("resize", resizeCanvas);
+    const handleResize = () => {
+      if (debounceId !== null) window.clearTimeout(debounceId);
+      debounceId = window.setTimeout(applySize, 150);
+    };
+
+    applySize();
+    window.addEventListener("resize", handleResize, { passive: true });
+    return () => {
+      if (debounceId !== null) window.clearTimeout(debounceId);
+      window.removeEventListener("resize", handleResize);
+    };
   }, [drawFrame]);
 
   useEffect(() => {
@@ -140,7 +166,9 @@ export function ApproachFlowerSequence({ frames }: ApproachFlowerSequenceProps) 
 
     const remainingFrames = frames.slice(1).map((src, index) => ({ src, index: index + 1 }));
     let cursor = 0;
-    const concurrency = 18;
+    // 6, not 18: the old fan-out saturated the connection on mount and
+    // starved the rest of the page (fonts, LCP media) of bandwidth.
+    const concurrency = 6;
 
     const loadNext = () => {
       if (!active || cursor >= remainingFrames.length) return;

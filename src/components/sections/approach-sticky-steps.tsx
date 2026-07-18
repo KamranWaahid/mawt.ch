@@ -245,10 +245,16 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     setNavigationDirection(direction);
     hasReleasedScrollRef.current = true;
 
-    // Snap section to the top of viewport natively
+    // Snap section to the top of viewport. Through Lenis (immediate) so its
+    // internal position stays in sync — a raw window.scrollTo left Lenis
+    // holding a stale position that could snap the page back on start().
     if (containerRef.current) {
       const targetScroll = window.scrollY + containerRef.current.getBoundingClientRect().top;
-      window.scrollTo(0, targetScroll);
+      if (lenisRef.current) {
+        lenisRef.current.scrollTo(targetScroll, { immediate: true, force: true });
+      } else {
+        window.scrollTo(0, targetScroll);
+      }
     }
 
     // Stop Lenis immediately
@@ -313,27 +319,16 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     }
   };
 
-  // Manage body scroll overflow (CSS overflow is hidden while locked)
+  // Scroll locking uses ONE mechanism: lenis.stop() (its .lenis-stopped
+  // class already sets overflow:hidden in globals.css, and the wheel/touch
+  // handlers below preventDefault). The previous extra body/html overflow
+  // mutations were two more locks doing the same job — three mechanisms to
+  // keep in sync for one lock.
+
+  // rAF processor loop — runs ONLY while the section is locked; while idle
+  // (most of every page's lifetime) there is no per-frame wakeup at all.
   useEffect(() => {
-    if (!isMounted || isMobile) return;
-
-    if (lockState !== "idle") {
-      document.body.style.overflow = "hidden";
-      document.documentElement.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    }
-
-    return () => {
-      document.body.style.overflow = "";
-      document.documentElement.style.overflow = "";
-    };
-  }, [isMounted, isMobile, lockState]);
-
-  // Continuously running requestAnimationFrame processor loop
-  useEffect(() => {
-    if (!isMounted || isMobile) return;
+    if (!isMounted || isMobile || lockState === "idle") return;
 
     let rafId: number;
 
@@ -355,7 +350,8 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     return () => {
       cancelAnimationFrame(rafId);
     };
-  }, [isMounted, isMobile]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMounted, isMobile, lockState]);
 
   // Intercept wheel, touch, and keyboard inputs persistently on window
   useEffect(() => {
@@ -610,10 +606,12 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
       <section
         ref={containerRef}
         className="relative z-10 block w-full bg-[#F6F5F4]"
-        style={{ height: `${totalSteps * 40}vh` }}
+        // svh, not vh: the mobile URL bar changing 100vh mid-scroll resized
+        // the track and the sticky panel (footer jump + panel clipping).
+        style={{ height: `${totalSteps * 40}svh` }}
         aria-label="Approach steps (mobile)"
       >
-        <div className="sticky top-0 h-screen w-full overflow-hidden bg-[#F6F5F4]">
+        <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-[#F6F5F4]">
           {/* Plateau Linear Gradient Background */}
           <motion.div
             aria-hidden="true"

@@ -4,6 +4,7 @@ import { useId, useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform, useSpring, MotionValue } from "motion/react";
+import { useLenis } from "lenis/react";
 import { Menu, X } from "lucide-react";
 import type { SiteSettings } from "@/lib/types";
 import { localizedHref, translatePath } from "@/lib/routing/url-helpers";
@@ -238,7 +239,13 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   const sectionRef = useRef<HTMLElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const videoWarmedRef = useRef(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  // Threshold booleans instead of a raw progress number in React state: a
+  // setState per scroll frame re-rendered this whole (very large) tree every
+  // frame. Boolean setters bail out of rendering unless a threshold is
+  // actually crossed; every continuous value lives on motion values instead.
+  const [isAsciiActive, setIsAsciiActive] = useState(true);
+  const [isLogoInteractive, setIsLogoInteractive] = useState(true);
+  const [isHomeNavLight, setIsHomeNavLight] = useState(false);
   const [isHeroMobileMenuOpen, setIsHeroMobileMenuOpen] = useState(false);
   const [isAsciiVideoReady, setIsAsciiVideoReady] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -255,8 +262,14 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   // lag on the first scroll. 120/26 halves the settle time, still overdamped.
   const smoothProgress = useSpring(scrollYProgress, { stiffness: 120, damping: 26, restDelta: 0.0001 });
 
+  const applyProgressFlags = (v: number) => {
+    setIsAsciiActive(v < 0.63);
+    setIsLogoInteractive(v < 0.03);
+    setIsHomeNavLight(v >= 0.9);
+  };
+
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    setScrollProgress(latest);
+    applyProgressFlags(latest);
 
     const video = videoRef.current;
     if (video) {
@@ -325,7 +338,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   useEffect(() => {
     const sync = (v: number) => {
       smoothProgress.jump(v);
-      setScrollProgress(v);
+      applyProgressFlags(v);
       // Refreshing straight into the cinema phase must also start the film.
       const video = videoRef.current;
       if (video && v >= VIDEO_OPEN_PROGRESS && video.paused) {
@@ -363,6 +376,15 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  // Lock the page behind the hero's own mobile menu (same single mechanism
+  // as the site header: Lenis stop/start, cleanup covers every exit path).
+  const lenis = useLenis();
+  useEffect(() => {
+    if (!isHeroMobileMenuOpen || !lenis) return;
+    lenis.stop();
+    return () => lenis.start();
+  }, [isHeroMobileMenuOpen, lenis]);
 
   // Camera-dive keyframes: the scale grows GEOMETRICALLY (×~8-12 per step) so
   // the perceived zoom speed stays constant — that's what reads as "flying
@@ -439,23 +461,18 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   // flickering (AsciiWave's `active` prop), so the wave shows as a still.
   // The field stays behind everything while scrolling and only fades once the
   // gradient transition sweeps up to cover it (~0.55 on the scroll track).
-  const asciiLayerOpacity = !isAsciiVideoReady
-    ? 0
-    : scrollProgress <= 0.52
-      ? 1
-      : scrollProgress >= 0.62
-        ? 0
-        : 1 - (scrollProgress - 0.52) / 0.1;
-  const asciiLayerVisibility = isAsciiVideoReady && scrollProgress < 0.63 ? "visible" : "hidden";
+  // Continuous fade lives on motion values (no per-frame React render).
+  const asciiFadeOpacity = useTransform(scrollYProgress, [0.52, 0.62], [1, 0]);
+  const asciiFadeVisibility = useTransform(scrollYProgress, (p) =>
+    p < 0.63 ? ("visible" as const) : ("hidden" as const),
+  );
   const heroContentOpacity = useTransform(smoothProgress, [0.04, 0.10], [1, 0]);
   const scrollIndicatorOpacity = useTransform(smoothProgress, [0.45, 0.50], [1, 0]);
-  
-  const isHomeNavLight = scrollProgress >= 0.90;
+
   const homeNavTextClass = isHomeNavLight ? "text-black/70" : "text-white/72";
   const homeNavDividerClass = isHomeNavLight ? "text-black/25" : "text-white/25";
   const homeNavSlashClass = isHomeNavLight ? "text-black/45" : "text-white/45";
-  const isTransitionTextDark = scrollProgress >= 0.90;
-  const transitionCtaClass = isTransitionTextDark
+  const transitionCtaClass = isHomeNavLight
     ? "border-black/12 bg-black/[0.04] text-black/92"
     : "border-white/14 bg-white/[0.10] text-white/92";
     
@@ -535,12 +552,15 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
         <motion.div
           aria-hidden="true"
           className="home-hero-ascii-layer pointer-events-none absolute inset-0 z-[8] overflow-hidden"
-          style={{ opacity: asciiLayerOpacity, visibility: asciiLayerVisibility }}
+          style={{
+            opacity: isAsciiVideoReady ? asciiFadeOpacity : 0,
+            visibility: isAsciiVideoReady ? asciiFadeVisibility : "hidden",
+          }}
         >
           <div className="ascii-wave-viewport">
             <AsciiWave
               src="/hero-ascii-map.jpg"
-              active={scrollProgress < 0.63}
+              active={isAsciiActive}
               focusX={isMobile ? 0.35 : 0.5}
               focusY={isMobile ? 0.6 : 0.68}
               className="ascii-wave-canvas"
@@ -567,7 +587,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                   href={`/${lang}`}
                   aria-label="MAWT home"
                   className="block"
-                  style={{ pointerEvents: scrollProgress < 0.03 ? "auto" : "none" }}
+                  style={{ pointerEvents: isLogoInteractive ? "auto" : "none" }}
                 >
                   <MawatLogo className="h-auto w-full" tone="light" />
                 </a>
@@ -590,7 +610,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                   href={`/${lang}`}
                   aria-label="MAWT home"
                   className="block"
-                  style={{ pointerEvents: scrollProgress < 0.03 ? "auto" : "none" }}
+                  style={{ pointerEvents: isLogoInteractive ? "auto" : "none" }}
                 >
                   <MawatLogo className="h-auto w-full" tone="light" />
                 </a>
@@ -613,7 +633,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                   href={`/${lang}`}
                   aria-label="MAWT home"
                   className="block"
-                  style={{ pointerEvents: scrollProgress < 0.03 ? "auto" : "none" }}
+                  style={{ pointerEvents: isLogoInteractive ? "auto" : "none" }}
                 >
                   <MawatLogo className="h-auto w-full" tone="light" />
                 </a>

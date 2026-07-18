@@ -87,19 +87,47 @@ export function PageTransition({ children }: { children: ReactNode }) {
   const lenis = useLenis();
   const { takePendingSlide } = useCurtainTransition();
 
+  // Back/forward navigations must keep the browser's scroll restoration —
+  // forcing scrollTo(0) there makes history feel broken. popstate fires
+  // before the pathname updates, so a ref flag set here is consumed by the
+  // very next pathname-change render below.
+  const traversalRef = useRef(false);
+  const skipScrollResetRef = useRef(false);
+  useEffect(() => {
+    const onPopState = () => {
+      traversalRef.current = true;
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
   // Decide the mode ONCE per pathname change, synchronously during render.
   // Refs only — they mutate reliably even inside a transition render.
+  /* eslint-disable react-hooks/refs -- deliberate render-time protocol: the
+     mode must be decided during the pathname-change render itself (an effect
+     is too late — the enter animation already read it). */
   const lastPathRef = useRef(pathname);
   const modeRef = useRef<Mode>("fade");
   if (pathname !== lastPathRef.current) {
     lastPathRef.current = pathname;
     modeRef.current = !shouldReduceMotion && takePendingSlide() ? "slide" : "fade";
+    skipScrollResetRef.current = traversalRef.current;
+    traversalRef.current = false;
   }
   const mode = modeRef.current;
+  /* eslint-enable react-hooks/refs */
 
   useEffect(() => {
     isInitialLoad = false;
   }, []);
+
+  // Failsafe on every route change: no section may leave Lenis stopped for
+  // the next page (a leaked stop() reads as a completely frozen site). All
+  // sections that stop Lenis do so from user interaction, never on mount,
+  // so an unconditional start() here can't undo a legitimate lock.
+  useEffect(() => {
+    if (lenis?.isStopped) lenis.start();
+  }, [pathname, lenis]);
 
   const variants = shouldReduceMotion ? reducedVariants : pageVariants;
 
@@ -115,8 +143,10 @@ export function PageTransition({ children }: { children: ReactNode }) {
         className="w-full"
         onAnimationStart={(definition) => {
           // Fade swaps pages in place: reset scroll up front (historic
-          // behavior). Slide resets via SlideMountSignal instead.
-          if (definition === "visible" && mode === "fade") {
+          // behavior). Slide resets via SlideMountSignal instead. History
+          // traversal (back/forward) skips the reset entirely so browser
+          // scroll restoration stays in charge.
+          if (definition === "visible" && mode === "fade" && !skipScrollResetRef.current) {
             if (lenis) lenis.scrollTo(0, { immediate: true });
             else if (typeof window !== "undefined") window.scrollTo({ top: 0 });
           }

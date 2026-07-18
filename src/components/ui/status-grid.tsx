@@ -15,6 +15,11 @@ interface StatusGridProps {
   items: StatusItem[];
 }
 
+// Deterministic pseudo-random per bar index: Math.random() in render made
+// the server and client disagree on every bar (hydration mismatch) and
+// changed the bars on each re-render.
+const pseudoRandom = (seed: number) => Math.abs(Math.sin(seed * 12.9898) * 43758.5453) % 1;
+
 const statusConfig = {
   Operational: {
     color: "bg-[#75DAB4]",
@@ -80,14 +85,14 @@ export function StatusGrid({ items }: StatusGridProps) {
               <div className="flex-1 max-w-md hidden lg:block">
                  <div className="flex items-end gap-1 h-8">
                     {Array.from({ length: 40 }).map((_, i) => (
-                      <motion.div 
+                      <motion.div
                         key={i}
                         initial={{ height: "40%" }}
-                        animate={{ height: `${40 + Math.random() * 60}%` }}
-                        transition={{ 
-                          repeat: Infinity, 
-                          repeatType: "reverse", 
-                          duration: 1 + Math.random(),
+                        animate={{ height: `${40 + pseudoRandom(i) * 60}%` }}
+                        transition={{
+                          repeat: Infinity,
+                          repeatType: "reverse",
+                          duration: 1 + pseudoRandom(i + 40),
                           delay: i * 0.05
                         }}
                         className={cn(

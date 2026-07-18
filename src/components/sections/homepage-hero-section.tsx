@@ -428,25 +428,6 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
     setNativeScroll(prefersNativeScroll());
   }, []);
 
-  // Refreshing the homepage must replay the intro from the top — mid-page
-  // scroll restoration re-landed the user on an already-black statement and a
-  // half-finished hero. Manual restoration + explicit top jump on reload;
-  // client-side navigations are unaffected (Next scrolls new routes to top).
-  useLayoutEffect(() => {
-    if (typeof window === "undefined") return;
-    const previous = window.history.scrollRestoration;
-    window.history.scrollRestoration = "manual";
-    const navEntry = performance.getEntriesByType?.("navigation")?.[0] as
-      | PerformanceNavigationTiming
-      | undefined;
-    if (navEntry?.type === "reload") {
-      window.scrollTo(0, 0);
-    }
-    return () => {
-      window.history.scrollRestoration = previous;
-    };
-  }, []);
-
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 1024);

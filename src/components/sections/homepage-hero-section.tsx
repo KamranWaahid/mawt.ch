@@ -3,7 +3,7 @@
 import { useId, useRef, useState, useEffect, useLayoutEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { motion, AnimatePresence, useMotionValueEvent, useReducedMotion, useScroll, useTransform, useSpring, MotionValue } from "motion/react";
+import { motion, AnimatePresence, useMotionValue, useMotionValueEvent, useReducedMotion, useScroll, useTransform, useSpring, MotionValue } from "motion/react";
 import { Menu, X } from "lucide-react";
 import type { SiteSettings } from "@/lib/types";
 import { localizedHref, translatePath } from "@/lib/routing/url-helpers";
@@ -178,8 +178,8 @@ function StatementWord({
   total: number;
   progress: MotionValue<number>;
 }) {
-  const start = 0.65 + index * 0.005;
-  const end = Math.min(0.75, start + 0.05);
+  const start = 0.70 + index * 0.005;
+  const end = Math.min(0.80, start + 0.05);
   
   const opacity = useTransform(progress, [start, end], [0, 1]);
   const y = useTransform(progress, [start, end], [14, 0]);
@@ -213,18 +213,25 @@ function StatementWord({
 function HeroGradientStatement({
   text,
   progress,
+  revealProgress,
   className = "",
 }: {
   text: string;
   progress: MotionValue<number>;
+  revealProgress: MotionValue<number>;
   className?: string;
 }) {
   const words = text.split(" ");
-  // Text transitions to dark when white background reaches it, then fades out
-  // only at the very end of the pinned track: fading at 0.95-0.98 left ~2% of
-  // scroll on an empty beige background before the section unpinned.
-  const exitOpacity = useTransform(progress, [0.975, 0.998], [1, 0]);
-  const textColor = useTransform(progress, [0.86, 0.95], ["#F6F5F4", "#000000"]);
+  // Text transitions to dark when the light background reaches it, then fades
+  // out BEFORE the clients panel (which overlaps the end of this track) can
+  // slide up into it: the panel top reaches the statement around p≈0.99.
+  // The exit fade follows LIVE progress (scrolling back up from the clients
+  // panel must bring the statement back), while the reveal effects (word
+  // blur-in + light→dark color) run on the LATCHED progress: once played they
+  // never rewind on scroll-up — scrolling up just scrolls, and scrolling down
+  // resumes the effect wherever it stopped.
+  const exitOpacity = useTransform(progress, [0.945, 0.98], [1, 0]);
+  const textColor = useTransform(revealProgress, [0.87, 0.94], ["#F6F5F4", "#000000"]);
 
   return (
     <motion.h2
@@ -237,7 +244,7 @@ function HeroGradientStatement({
           word={word}
           index={index}
           total={words.length}
-          progress={progress}
+          progress={revealProgress}
         />
       ))}
     </motion.h2>
@@ -271,20 +278,39 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   });
 
   // Lenis already smooths desktop wheel scroll, so the spring only needs a
-  // light touch. On native/touch devices skip the spring entirely — stacked
-  // smoothing reads as lag and breaks momentum feel.
+  // light touch. Native/touch gets its own MUCH stiffer spring: raw touch
+  // deltas arrive as discrete steps and made the logo dive visibly juddery,
+  // while a loose spring on top of finger tracking reads as lag — the stiff
+  // one only rounds off the steps.
   const springProgress = useSpring(scrollYProgress, {
     stiffness: 120,
     damping: 26,
     restDelta: 0.0001,
   });
-  const smoothProgress = nativeScroll ? scrollYProgress : springProgress;
+  const nativeSpringProgress = useSpring(scrollYProgress, {
+    stiffness: 300,
+    damping: 40,
+    restDelta: 0.0001,
+  });
+  const smoothProgress = nativeScroll ? nativeSpringProgress : springProgress;
+
+  // One-way progress for the statement reveal (words + light→dark color):
+  // it only ever advances, so scrolling back up never rewinds the effect —
+  // the user just scrolls. It re-arms only back at the very top of the hero,
+  // where the statement is long hidden, so the release itself is invisible.
+  const statementRevealProgress = useMotionValue(0);
+  useMotionValueEvent(smoothProgress, "change", (v) => {
+    const prev = statementRevealProgress.get();
+    if (v > prev || v < 0.05) {
+      statementRevealProgress.set(v);
+    }
+  });
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     setHeroUi((prev) => {
       const next = {
         logoInteractive: latest < 0.03,
-        asciiActive: latest < 0.63,
+        asciiActive: latest < 0.68,
         navLight: latest >= 0.9,
       };
       if (
@@ -363,13 +389,13 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   // measured value; afterwards it tracks normally.
   useEffect(() => {
     const sync = (v: number) => {
-      // Jump the spring only when it is actually driving visuals (desktop).
-      if (!prefersNativeScroll()) {
-        springProgress.jump(v);
-      }
+      // Jump both springs — whichever drives visuals must not animate from 0.
+      springProgress.jump(v);
+      nativeSpringProgress.jump(v);
+      statementRevealProgress.set(v);
       setHeroUi({
         logoInteractive: v < 0.03,
-        asciiActive: v < 0.63,
+        asciiActive: v < 0.68,
         navLight: v >= 0.9,
       });
       // Refreshing straight into the cinema phase must also start the film.
@@ -400,6 +426,25 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
 
   useLayoutEffect(() => {
     setNativeScroll(prefersNativeScroll());
+  }, []);
+
+  // Refreshing the homepage must replay the intro from the top — mid-page
+  // scroll restoration re-landed the user on an already-black statement and a
+  // half-finished hero. Manual restoration + explicit top jump on reload;
+  // client-side navigations are unaffected (Next scrolls new routes to top).
+  useLayoutEffect(() => {
+    if (typeof window === "undefined") return;
+    const previous = window.history.scrollRestoration;
+    window.history.scrollRestoration = "manual";
+    const navEntry = performance.getEntriesByType?.("navigation")?.[0] as
+      | PerformanceNavigationTiming
+      | undefined;
+    if (navEntry?.type === "reload") {
+      window.scrollTo(0, 0);
+    }
+    return () => {
+      window.history.scrollRestoration = previous;
+    };
   }, []);
 
   useEffect(() => {
@@ -469,13 +514,17 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   // The dim starts almost immediately (1.5% of the track) so the very first
   // wheel tick produces visible feedback — the old 5% threshold left a dead
   // zone where scrolling did nothing, which read as input lag.
+  // The cinema hold (video fully revealed, film playing) runs 0.19 → 0.55 of
+  // the pinned track — over a full viewport of scroll. One flick can no
+  // longer blow straight through the video into the gradient: the user has
+  // to scroll again to move on.
   const maskLayerOpacityDown = useTransform(
     smoothProgress,
-    [0.015, 0.05, 0.14, 0.19, 0.50, 0.60],
+    [0.015, 0.05, 0.14, 0.19, 0.55, 0.65],
     [0, 0.8, 0.8, 1, 1, 0],
   );
-  const heroLogoOpacityDown = useTransform(smoothProgress, [0.50, 0.60], [1, 0]);
-  const videoContainerOpacityDown = useTransform(smoothProgress, [0.08, 0.13, 0.50, 0.60], [0, 1, 1, 0]);
+  const heroLogoOpacityDown = useTransform(smoothProgress, [0.55, 0.65], [1, 0]);
+  const videoContainerOpacityDown = useTransform(smoothProgress, [0.08, 0.13, 0.55, 0.65], [0, 1, 1, 0]);
   // The nav logo takes over as soon as the hero logo mark has faded,
   // so logo + menu frame the video during the cinema-mode phase.
   const navLogoOpacityDown = useTransform(smoothProgress, [0.12, 0.20], [0, 1]);
@@ -498,9 +547,17 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   // flickering (AsciiWave's `active` prop), so the wave shows as a still.
   // The field stays behind everything while scrolling and only fades once the
   // gradient transition sweeps up to cover it (~0.55 on the scroll track).
-  const asciiFadeOpacity = useTransform(smoothProgress, [0.52, 0.62], [1, 0]);
+  const asciiFadeOpacity = useTransform(smoothProgress, [0.57, 0.67], [1, 0]);
   const asciiLayerOpacity = isAsciiVideoReady ? asciiFadeOpacity : 0;
   const asciiLayerVisibility = isAsciiVideoReady && heroUi.asciiActive ? "visible" : "hidden";
+  // Past the cinema phase every logo/mask/video layer is at opacity 0 but was
+  // still LAYERIZED: the ×700-scaled logo svgs are ~68000px wide — beyond GPU
+  // texture limits — and mobile compositors render such stale layers as solid
+  // BLACK BARS (the "black bar before the client logos"). visibility:hidden
+  // drops them from the layer tree entirely once they are invisible.
+  const cinemaLayersVisibility = useTransform(smoothProgress, (p) =>
+    p < 0.66 ? "visible" : "hidden",
+  );
   const heroContentOpacity = useTransform(smoothProgress, [0.04, 0.10], [1, 0]);
   const scrollIndicatorOpacity = useTransform(smoothProgress, [0.45, 0.50], [1, 0]);
 
@@ -517,15 +574,30 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   const desktopContentY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
   const compactContentY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
   
-  // Gradient slides up from below the screen (100vh) to 0, then continues up
+  // Gradient slides up from below the screen (100vh) to 0, then continues up.
+  // It is fully beige by 0.955 — the clients section overlaps the last
+  // ~30dvh of this track (page.tsx negative margin), so the gradient must be
+  // done before that panel slides in over it.
   const transitionGradientY = useTransform(
     scrollYProgress,
-    [0.55, 0.65, 0.85, 0.98],
+    [0.60, 0.70, 0.86, 0.955],
     ["100vh", "0vh", "-150vh", "-300vh"]
   );
-  
-  const transitionCtaOpacity = useTransform(scrollYProgress, [0.75, 0.82, 0.93, 0.99], [0, 1, 1, 0]);
-  const transitionCtaVisibility = useTransform(scrollYProgress, (p) => p >= 0.65 && p <= 0.995 ? "visible" : "hidden");
+
+  const transitionCtaOpacity = useTransform(scrollYProgress, [0.76, 0.83, 0.92, 0.97], [0, 1, 1, 0]);
+  const transitionCtaVisibility = useTransform(scrollYProgress, (p) => p >= 0.70 && p <= 0.985 ? "visible" : "hidden");
+
+  // With the reveal latched, the words would stay painted over the cinema
+  // phase when scrolling back up — this LIVE gate keeps the whole statement
+  // block tied to the gradient sweep (which enters the screen around 0.64):
+  // scrolling up past it, the black text sinks into the dark top of the
+  // gradient and the block unmounts from paint below 0.64.
+  const statementGateOpacity = useTransform(scrollYProgress, (p) =>
+    p >= 0.68 ? 1 : p <= 0.64 ? 0 : (p - 0.64) / 0.04,
+  );
+  const statementGateVisibility = useTransform(scrollYProgress, (p) =>
+    p >= 0.64 ? "visible" : "hidden",
+  );
 
   const navHref = (route: string) => {
     if (route === "news") return `/${lang}/${lang === "fr" ? "blog" : "news"}`;
@@ -539,7 +611,15 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   return (
     <section
       ref={sectionRef}
-      className="home-hero-root relative z-50 h-[400dvh] w-full bg-black text-white"
+      className="home-hero-root relative z-50 h-[400dvh] w-full text-white"
+      // Black for the pinned 3/4, beige for the unpin tail: on mobile the
+      // URL-bar collapse resizes every dvh height mid-scroll and the section's
+      // own background peeks out at the seam with the next section — it must
+      // already be beige there, not black (the "black bar" above the logos).
+      style={{
+        background:
+          "linear-gradient(180deg, #000000 0%, #000000 72%, #F6F5F4 76%, #F6F5F4 100%)",
+      }}
     >
       <div className="sticky top-0 flex h-[100dvh] w-full items-center justify-center overflow-hidden bg-black">
         <motion.div
@@ -559,7 +639,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
             opaque. Nav logo + menu (z-50) stay lit above everything. */}
         <motion.div
           className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center"
-          style={{ opacity: videoContainerOpacity }}
+          style={{ opacity: videoContainerOpacity, visibility: cinemaLayersVisibility }}
         >
           <div className="absolute inset-0 bg-black/80" />
           {/* The parallax scale lives on the video itself, NOT the container:
@@ -616,7 +696,9 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 width: "98px",
                 transform: heroLogoTransformDesktop,
                 transformOrigin: "top left",
+                willChange: "transform",
                 opacity: heroLogoOpacity,
+                visibility: cinemaLayersVisibility,
               }}
             >
               <motion.div className="absolute inset-0" style={{ opacity: maskCoverOpacity }}>
@@ -639,7 +721,9 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 width: "98px",
                 transform: heroLogoTransformLandscape,
                 transformOrigin: "top left",
+                willChange: "transform",
                 opacity: heroLogoOpacity,
+                visibility: cinemaLayersVisibility,
               }}
             >
               <motion.div className="absolute inset-0" style={{ opacity: maskCoverOpacity }}>
@@ -662,7 +746,9 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 width: "98px",
                 transform: heroLogoTransformPortrait,
                 transformOrigin: "top left",
+                willChange: "transform",
                 opacity: heroLogoOpacity,
+                visibility: cinemaLayersVisibility,
               }}
             >
               <motion.div className="absolute inset-0" style={{ opacity: maskCoverOpacity }}>
@@ -682,7 +768,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
         {/* Z-15: THE SVG HOLE MASK */}
         <motion.div
           className="absolute inset-0 z-[15] pointer-events-none overflow-hidden"
-          style={{ opacity: maskLayerOpacity }}
+          style={{ opacity: maskLayerOpacity, visibility: cinemaLayersVisibility }}
         >
           {/* Desktop Mask */}
           <div className="hidden lg:block absolute inset-0">
@@ -692,6 +778,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 width: "98px",
                 transform: heroLogoTransformDesktop,
                 transformOrigin: "top left",
+                willChange: "transform",
                 opacity: heroLogoOpacity,
                 overflow: "visible",
               }}
@@ -711,6 +798,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 width: "98px",
                 transform: heroLogoTransformLandscape,
                 transformOrigin: "top left",
+                willChange: "transform",
                 opacity: heroLogoOpacity,
                 overflow: "visible",
               }}
@@ -730,6 +818,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 width: "98px",
                 transform: heroLogoTransformPortrait,
                 transformOrigin: "top left",
+                willChange: "transform",
                 opacity: heroLogoOpacity,
                 overflow: "visible",
               }}
@@ -834,9 +923,14 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
         {/* Z-30: GRADIENT TRANSITION TEXTS */}
         <motion.div
           className="pointer-events-none absolute inset-x-0 top-0 z-30 hidden px-5 sm:px-7 md:px-9 lg:block lg:px-[2.5vw]"
+          style={{ opacity: statementGateOpacity, visibility: statementGateVisibility }}
         >
           <div className="mx-auto w-full max-w-[1760px] pt-[28vh]">
-            <HeroGradientStatement text={transitionDict.statement} progress={smoothProgress} />
+            <HeroGradientStatement
+              text={transitionDict.statement}
+              progress={smoothProgress}
+              revealProgress={statementRevealProgress}
+            />
             <motion.div
               initial={{ opacity: 0, visibility: "hidden" }}
               className="mt-12"
@@ -854,11 +948,13 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
 
         <motion.div
           className="pointer-events-none absolute inset-x-0 top-0 z-30 px-5 sm:px-7 md:px-9 lg:hidden"
+          style={{ opacity: statementGateOpacity, visibility: statementGateVisibility }}
         >
           <div className="mx-auto w-full max-w-[48rem] pt-[28vh]">
             <HeroGradientStatement
               text={transitionDict.statement}
               progress={smoothProgress}
+              revealProgress={statementRevealProgress}
               className="text-[clamp(2rem,11vw,4rem)] leading-[1.03]"
             />
             <motion.div
@@ -883,9 +979,12 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
         >
           <div className="mx-auto flex h-full w-full max-w-[1760px] items-center justify-between gap-5 md:gap-8">
             <motion.div style={{ opacity: navLogoOpacity }} className="shrink-0">
-              <Link href={`/${lang}`} aria-label="MAWT home" className="block w-[98px]">
+              {/* Plain anchor, not a Next Link: clicking the logo while already
+                  on the homepage must do a full reload (Link to the current
+                  route is a no-op), which also replays the intro. */}
+              <a href={`/${lang}`} aria-label="MAWT home" className="block w-[98px]">
                 <MawatLogo className="h-auto w-full" tone={isHomeNavLight ? "dark" : "light"} />
-              </Link>
+              </a>
             </motion.div>
 
             <motion.div

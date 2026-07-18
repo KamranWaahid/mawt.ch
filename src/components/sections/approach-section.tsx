@@ -195,7 +195,11 @@ export function ApproachSection({ dict }: { dict: any }) {
               ref={scrollerRef}
               data-lenis-prevent
               className="overflow-x-auto overscroll-x-contain pb-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-              style={{ touchAction: "pan-x pinch-zoom" }}
+              // pan-x alone blocked VERTICAL page scroll whenever the touch
+              // started on the deck (which fills most of a phone screen) —
+              // the page felt stuck at this section. manipulation = pan-x +
+              // pan-y + pinch-zoom; the browser picks the dominant axis.
+              style={{ touchAction: "manipulation" }}
             >
               <motion.div
                 className="flex w-max gap-3"

@@ -73,7 +73,9 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
 
   return (
     <section
-      className="relative overflow-hidden bg-[#F6F5F4] pt-3 pb-4 md:pt-4 md:pb-5 lg:pt-5 lg:pb-6"
+      // Same vertical rhythm as the other homepage sections (py-12 → lg:py-24
+      // family): pt-3 made the logos crowd the gradient statement above.
+      className="relative overflow-hidden bg-[#F6F5F4] pt-12 pb-10 md:pt-16 md:pb-12 lg:pt-20 lg:pb-14"
       style={{ backgroundColor: "#F6F5F4" }}
     >
       <div className="site-container relative z-10">

@@ -3,7 +3,7 @@
 import { useId, useRef, useState, useEffect, useLayoutEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform, useSpring, MotionValue } from "motion/react";
+import { motion, AnimatePresence, useMotionValueEvent, useReducedMotion, useScroll, useTransform, useSpring, MotionValue } from "motion/react";
 import { Menu, X } from "lucide-react";
 import type { SiteSettings } from "@/lib/types";
 import { localizedHref, translatePath } from "@/lib/routing/url-helpers";
@@ -933,27 +933,52 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
           </div>
         </motion.nav>
 
-        {isHeroMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -8, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: -8, filter: "blur(10px)" }}
-            className="fixed inset-0 z-[49] bg-black/94 px-6 pb-10 pt-[calc(env(safe-area-inset-top)+6rem)] text-white md:hidden"
-          >
-            <div className="flex flex-col gap-7">
-              {navItems.map((item) => (
-                <Link
-                  key={item.route}
-                  href={navHref(item.route)}
-                  onClick={() => setIsHeroMobileMenuOpen(false)}
-                  className="text-[clamp(2rem,10vw,3.35rem)] font-normal leading-none tracking-tight text-white"
-                >
-                  {navItemLabel(item, lang)}
-                </Link>
-              ))}
-            </div>
-          </motion.div>
-        )}
+        {/* Same motion language as the site header's mobile menu: blur-fade
+            overlay with AnimatePresence exit, staggered link reveal. */}
+        <AnimatePresence>
+          {isHeroMobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -8, filter: "blur(10px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              exit={{ opacity: 0, y: -8, filter: "blur(10px)" }}
+              transition={{ duration: 0.28, ease: "easeOut" }}
+              className="fixed inset-0 z-[49] bg-black/94 px-6 pb-10 pt-[calc(env(safe-area-inset-top)+6rem)] text-white md:hidden"
+            >
+              <motion.div
+                className="flex flex-col gap-7"
+                initial="initial"
+                animate="animate"
+                variants={{
+                  animate: {
+                    transition: {
+                      staggerChildren: 0.08,
+                      delayChildren: 0.2,
+                    },
+                  },
+                }}
+              >
+                {navItems.map((item) => (
+                  <motion.div
+                    key={item.route}
+                    variants={{
+                      initial: { opacity: 0, x: -20, filter: "blur(10px)" },
+                      animate: { opacity: 1, x: 0, filter: "blur(0px)" },
+                    }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                  >
+                    <Link
+                      href={navHref(item.route)}
+                      onClick={() => setIsHeroMobileMenuOpen(false)}
+                      className="text-[clamp(2rem,10vw,3.35rem)] font-normal leading-none tracking-tight text-white"
+                    >
+                      {navItemLabel(item, lang)}
+                    </Link>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
 
       </div>

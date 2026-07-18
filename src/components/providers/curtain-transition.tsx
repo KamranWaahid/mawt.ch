@@ -92,8 +92,15 @@ function extractHint(anchor: HTMLAnchorElement): PreviewHint | undefined {
 }
 
 function createSnapshot() {
-  const main = document.querySelector("main");
-  if (!main || document.getElementById(SNAPSHOT_ID)) return;
+  const body = document.body;
+  if (document.getElementById(SNAPSHOT_ID)) return;
+
+  // While a menu/modal holds the body-scroll lock, body is position:fixed
+  // with top:-scrollY and window.scrollY reads 0 — derive the VISUAL scroll
+  // from the lock offset so the frozen frame never jumps.
+  const lockedTop =
+    body.style.position === "fixed" ? Math.abs(parseInt(body.style.top || "0", 10) || 0) : null;
+  const visualScroll = lockedTop ?? window.scrollY;
 
   const holder = document.createElement("div");
   holder.id = SNAPSHOT_ID;
@@ -101,12 +108,18 @@ function createSnapshot() {
   holder.style.cssText =
     "position:fixed;inset:0;z-index:110;overflow:hidden;background:#F6F5F4;pointer-events:none;";
 
-  const clone = main.cloneNode(true) as HTMLElement;
-  clone.style.cssText = `position:absolute;left:0;right:0;top:${-window.scrollY}px;margin:0;`;
+  // Clone the WHOLE body, not just <main>: open overlays (mobile menu),
+  // the header and any fixed UI freeze exactly as the user sees them, so
+  // the curtain rises over the real screen — no hard-cut, no flash.
+  const clone = body.cloneNode(true) as HTMLElement;
   clone.removeAttribute("id");
+  // Neutralize scroll-lock inline styles; the top offset reproduces the
+  // visual scroll. Fixed descendants ignore this offset — they anchor to
+  // the transformed stage below, which matches the viewport.
+  clone.style.cssText = `position:absolute;left:0;right:0;top:${-visualScroll}px;margin:0;width:100%;overflow:visible;`;
 
   // Canvases clone blank — copy pixels so animated backgrounds stay frozen.
-  const src = main.querySelectorAll("canvas");
+  const src = body.querySelectorAll("canvas");
   const dst = clone.querySelectorAll("canvas");
   src.forEach((c, i) => {
     const target = dst[i];
@@ -372,20 +385,10 @@ export function CurtainTransitionProvider({
       if (!href) return;
 
       event.preventDefault();
-      const hint = extractHint(anchor);
-
-      // Links inside a closing overlay (mobile menu): let the overlay play its
-      // exit animation before freezing the page — an instant snapshot would
-      // hard-cut the menu away. The overlay's own onClick still closes it.
-      const deferMs = anchor.closest("[data-curtain-defer]")
-        ? Number((anchor.closest("[data-curtain-defer]") as HTMLElement).dataset.curtainDefer) || 320
-        : 0;
-
-      if (deferMs > 0) {
-        setTimeout(() => navigateWithCurtain(href, hint), deferMs);
-      } else {
-        navigateWithCurtain(href, hint);
-      }
+      // Snapshot runs synchronously in this handler — before React closes
+      // any open menu — so the frozen frame still shows the menu and the
+      // curtain rises over it (no hard-cut, no exposed old page).
+      navigateWithCurtain(href, extractHint(anchor));
     };
 
     document.addEventListener("click", onClick, true);

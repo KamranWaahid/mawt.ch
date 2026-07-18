@@ -86,9 +86,14 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
     };
   }, []);
 
-  const isDark = headerThemeOverride
-    ? headerThemeOverride === "dark"
-    : isMobileMenuOpen || !isHomePage || isPastHero;
+  // The open mobile menu always wins: its overlay is near-white, so the
+  // header controls must go dark even when a page-level theme override
+  // (e.g. Services forcing "light") is active.
+  const isDark = isMobileMenuOpen
+    ? true
+    : headerThemeOverride
+      ? headerThemeOverride === "dark"
+      : !isHomePage || isPastHero;
 
   const navTextClass = isDark ? "text-black/72" : "text-white/80";
   const navHoverClass = isDark ? "hover:text-black" : "hover:text-white";
@@ -191,7 +196,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
           Eight stacked backdrop-filter layers (::before + 6 divs + ::after), each masked to a
           sliding band, so the blur is strongest at the top and fully dissolved at the bottom. */}
       <div
-        className={`navbar-blur-backdrop ${isPastHero ? "visible" : ""} ${isDark ? "is-light-bg" : "is-dark-bg"}`}
+        className={`navbar-blur-backdrop ${isPastHero && !isMobileMenuOpen ? "visible" : ""} ${isDark ? "is-light-bg" : "is-dark-bg"}`}
       >
         <div />
         <div />
@@ -288,8 +293,15 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
           </div>
         </div>
       </nav>
+    </motion.header>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu Overlay — deliberately OUTSIDE <motion.header>: a
+          position:fixed element inside a transformed ancestor is positioned
+          relative to that ancestor, not the viewport, so the overlay would
+          be clipped/dragged whenever the header carries a transform. As a
+          sibling it is genuinely viewport-fixed. z-[79] + later DOM order
+          keeps it above the blur backdrop (z-79) but under the header
+          controls (z-[80]) so the close button stays reachable. */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -298,7 +310,7 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
             exit={{ opacity: 0, y: -8, filter: "blur(10px)" }}
             transition={{ duration: 0.28, ease: "easeOut" }}
             style={{ paddingTop: "calc(env(safe-area-inset-top) + 6rem)", paddingBottom: "calc(env(safe-area-inset-bottom) + 4rem)" }}
-            className="fixed inset-0 z-40 overflow-y-auto bg-white/95 px-6 md:hidden"
+            className="fixed inset-0 z-[79] overflow-y-auto overscroll-contain bg-white/95 px-6 md:hidden"
           >
             <div className="flex flex-col gap-12 pb-24">
               <motion.div
@@ -364,7 +376,6 @@ export function SiteHeader({ title, theme: themeProp, mainNav }: SiteHeaderProps
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.header>
     </>
   );
 }

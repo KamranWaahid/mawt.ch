@@ -62,20 +62,21 @@ export function LenisProvider({ children }: LenisProviderProps) {
         touchMultiplier: 1,
         // lerp governs when set: high enough to track input, low enough to glide.
         lerp: 0.09,
+        // Route in-page #hash links through Lenis and land clear of the
+        // fixed header instead of the native jump underneath it.
+        anchors: { offset: -96 },
         // Prevent Lenis from hijacking touch events on elements that need
         // native scrolling (e.g. data-lenis-prevent carousels)
         prevent: (node) => {
           if (node.closest("[data-lenis-allow-vertical-scroll]")) return false;
           if (node.closest("[data-lenis-prevent]")) return true;
           if (node.hasAttribute("data-lenis-prevent")) return true;
-          // Prevent scroll capturing in any overflow:auto/scroll children
-          const style = window.getComputedStyle(node);
-          const overflowX = style.overflowX;
-          if (
-            (overflowX === "auto" || overflowX === "scroll") &&
-            node.scrollWidth > node.clientWidth
-          ) {
-            return true;
+          // Prevent scroll capturing in any overflow:auto/scroll children.
+          // Cheap geometry check first — getComputedStyle sits on the
+          // wheel/touch hot path and most nodes don't overflow.
+          if (node.scrollWidth > node.clientWidth) {
+            const overflowX = window.getComputedStyle(node).overflowX;
+            if (overflowX === "auto" || overflowX === "scroll") return true;
           }
           return false;
         },

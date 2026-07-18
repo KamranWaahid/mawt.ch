@@ -359,9 +359,10 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     };
   }, [isMounted, isMobile, lockState]);
 
-  // Continuously running requestAnimationFrame processor loop
+  // rAF processor loop — runs ONLY while the section is locked; while idle
+  // (most of every page's lifetime) there is no per-frame wakeup at all.
   useEffect(() => {
-    if (!isMounted || isMobile) return;
+    if (!isMounted || isMobile || lockState === "idle") return;
 
     let rafId: number;
 
@@ -383,7 +384,8 @@ export function ApproachStickySteps({ steps }: ApproachStickyStepsProps) {
     return () => {
       cancelAnimationFrame(rafId);
     };
-  }, [isMounted, isMobile]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMounted, isMobile, lockState]);
 
   // Intercept wheel, touch, and keyboard inputs persistently on window
   useEffect(() => {

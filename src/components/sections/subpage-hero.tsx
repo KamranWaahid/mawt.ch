@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useMotionValueEvent, useScroll } from "motion/react";
-import { useRef, useState } from "react";
+import { motion, useScroll, useTransform, type MotionValue } from "motion/react";
+import { useRef } from "react";
 
 interface SubpageHeroProps {
   /** Small eyebrow label above the title */
@@ -43,7 +43,7 @@ function HeroWord({
   word: string;
   index: number;
   total: number;
-  progress: number;
+  progress: MotionValue<number>;
   muted?: boolean;
   mutedIndex?: number;
   mutedTotal?: number;
@@ -52,18 +52,24 @@ function HeroWord({
     ? 0.04 + (mutedIndex / Math.max(1, mutedTotal - 1)) * 0.5
     : 0.08 + (index / Math.max(1, total)) * 0.72;
   const end = muted ? Math.min(0.72, start + 0.16) : Math.min(0.92, start + 0.18);
-  const localProgress = Math.max(0, Math.min(1, (progress - start) / (end - start)));
   const grey = [167, 173, 183];
   const black = [6, 40, 51];
-  const color = muted
-    ? `rgb(${grey.map((channel, i) => Math.round(channel + (black[i] - channel) * localProgress)).join(", ")})`
-    : "#062833";
+  // Scrub color on a motion value: the old number-in-state version re-rendered
+  // the whole hero tree on every scroll frame. Only muted (subtitle) words
+  // actually animate — title words are a constant color.
+  const scrubColor = useTransform(progress, (p) => {
+    const localProgress = Math.max(0, Math.min(1, (p - start) / (end - start)));
+    return `rgb(${grey.map((channel, i) => Math.round(channel + (black[i] - channel) * localProgress)).join(", ")})`;
+  });
 
   return (
     <span className="inline">
-      <span style={{ color }} className="inline-block will-change-[color]">
+      <motion.span
+        style={{ color: muted ? scrubColor : "#062833" }}
+        className="inline-block will-change-[color]"
+      >
         {word}
-      </span>{" "}
+      </motion.span>{" "}
     </span>
   );
 }
@@ -75,7 +81,7 @@ function ScrollHeroTitle({
 }: {
   title: string;
   subtitle?: string;
-  progress: number;
+  progress: MotionValue<number>;
 }) {
   const titleWords = title.split(" ");
   const subtitleWords = subtitle?.split(" ") ?? [];
@@ -123,17 +129,10 @@ export function SubpageHero({
   badge,
 }: SubpageHeroProps) {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
   const eyebrowLabel = eyebrow ?? badge;
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
-  });
-  // Quantize progress so React does not re-render every scroll frame
-  // (word color scrub still looks continuous; mobile stays smooth).
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    const quantized = Math.round(latest * 40) / 40;
-    setScrollProgress((prev) => (prev === quantized ? prev : quantized));
   });
 
   return (
@@ -176,7 +175,7 @@ export function SubpageHero({
         <div className="max-w-[1240px]">
           {eyebrowLabel && <span className="sr-only">{eyebrowLabel}</span>}
 
-          <ScrollHeroTitle title={title} subtitle={subtitle} progress={scrollProgress} />
+          <ScrollHeroTitle title={title} subtitle={subtitle} progress={scrollYProgress} />
 
           {description && (
             <motion.p

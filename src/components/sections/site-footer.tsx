@@ -84,7 +84,7 @@ export function SiteFooter({
                       const Icon = platformIcons[link.platform] || Globe;
                       return (
                         <Link
-                          key={i}
+                          key={link.url || link.platform || i}
                           href={link.url}
                           target="_blank"
                           rel="noopener noreferrer"

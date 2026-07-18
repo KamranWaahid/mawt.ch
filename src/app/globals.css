@@ -84,6 +84,12 @@ body {
   overflow-anchor: none;
 }
 
+html {
+  /* Native fallback for in-page anchors (Lenis handles the smooth path with
+     its own offset): land clear of the 71px fixed header. */
+  scroll-padding-top: 96px;
+}
+
 .site-container,
 .site-container-wide {
   width: min(100% - calc(var(--page-gutter) * 2), var(--container-max));
@@ -325,6 +331,15 @@ body::after {
 
 .animate-marquee:hover {
   animation-play-state: paused;
+}
+
+/* The JS layer (motion/react, Lenis) already respects reduced motion; these
+   two CSS loops ran forever regardless. Show their resting state instead. */
+@media (prefers-reduced-motion: reduce) {
+  .gradient-drift,
+  .animate-marquee {
+    animation: none;
+  }
 }
 
 

@@ -84,9 +84,13 @@ function GeometricSymbol({ className }: { className?: string }) {
 
 /**
  * Swiss flag inline mark. `label` is what machines read in place of the flag:
- * "Swiss" fits the EN sentence ("MAWT is a [Swiss] Geneva-based…"), but in FR
- * the flag is purely decorative — injecting the English word produced
- * "MAWT est une Swiss Agence IA…" for screen readers and text extractors.
+ * "Swiss" completes the EN sentence ("MAWT is a Swiss studio for AI and
+ * engineering in Geneva."), while in FR the flag is purely decorative and the
+ * sentence must read whole without it ("MAWT est un studio d'IA et
+ * d'ingénierie à Genève.") — injecting the English word produced
+ * "MAWT est un Swiss studio…" for screen readers and text extractors.
+ * The lead-in and hero.description are written to COMPOSE as one sentence;
+ * keep them grammatical together when editing either side.
  */
 function SwissMark({ label }: { label?: string }) {
   return (
@@ -836,7 +840,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 (mobile-first indexing) stays extractable, so snippets and AI
                 answers read the SEO paragraph exactly once. */}
             <motion.p data-nosnippet className="absolute right-[2.5vw] bottom-[6%] w-[30.5%] text-[1.17cqw] font-normal leading-[1.35] tracking-[-0.01em] text-white/74" style={{ y: desktopContentY }}>
-              <span className="text-white">{lang === "fr" ? "MAWT est une" : "MAWT is a"}</span> <SwissMark label={lang === "fr" ? undefined : "Swiss"} /> {dict.description}
+              <span className="text-white">{lang === "fr" ? "MAWT est un" : "MAWT is a"}</span> <SwissMark label={lang === "fr" ? undefined : "Swiss"} /> {dict.description}
             </motion.p>
           </div>
 
@@ -856,7 +860,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 </Link>
               </motion.div>
               <motion.p data-nosnippet className="absolute left-[59%] bottom-[10%] w-[38%] text-[0.8125rem] font-normal leading-[1.32] tracking-[-0.01em] text-white/74" style={{ y: compactContentY }}>
-                <span className="text-white">{lang === "fr" ? "MAWT est une" : "MAWT is a"}</span> <SwissMark label={lang === "fr" ? undefined : "Swiss"} /> {dict.description}
+                <span className="text-white">{lang === "fr" ? "MAWT est un" : "MAWT is a"}</span> <SwissMark label={lang === "fr" ? undefined : "Swiss"} /> {dict.description}
               </motion.p>
             </div>
           </div>
@@ -884,7 +888,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                   {/* Canonical (extractable) instance of the SEO paragraph —
                       the desktop/landscape twins carry data-nosnippet. */}
                   <p className="max-w-[26rem] text-[0.8125rem] font-normal leading-[1.35] tracking-[-0.01em] text-white/74 sm:text-[0.9375rem] md:max-w-none">
-                    <span className="text-white">{lang === "fr" ? "MAWT est une" : "MAWT is a"}</span> <SwissMark label={lang === "fr" ? undefined : "Swiss"} /> {dict.description}
+                    <span className="text-white">{lang === "fr" ? "MAWT est un" : "MAWT is a"}</span> <SwissMark label={lang === "fr" ? undefined : "Swiss"} /> {dict.description}
                   </p>
                 </div>
               </div>

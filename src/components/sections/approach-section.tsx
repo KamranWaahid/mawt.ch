@@ -5,7 +5,6 @@ import { motion, useScroll, useTransform, useMotionValueEvent } from "motion/rea
 import Image from "next/image";
 import { AnimatedTitle } from "@/components/ui/animated-title";
 import { sectionTitleClass } from "@/components/ui/section-title-style";
-import { prefersNativeScroll } from "@/lib/scroll-environment";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -40,7 +39,14 @@ export function ApproachSection({ dict }: { dict: any }) {
 
   useEffect(() => {
     const sync = () => {
-      setNativeCarousel(prefersNativeScroll());
+      // Touch-primary only — NOT prefersNativeScroll(): that also matched
+      // prefers-reduced-motion, silently swapping the signature pinned scrub
+      // for a manual carousel on desktops with Windows animations off. The
+      // scrub is 1:1 scroll-driven (position follows the wheel, no autonomous
+      // motion), so reduced-motion desktops keep it; phones keep the swipe.
+      setNativeCarousel(
+        window.matchMedia("(hover: none) and (pointer: coarse)").matches,
+      );
     };
     sync();
     const media = window.matchMedia(

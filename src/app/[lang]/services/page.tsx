@@ -110,13 +110,26 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
     return acc;
   }, {} as Record<string, { title: string; href: string }[]>);
 
+  // Family pillar page URL per displayed family title, so the group heading
+  // can link to it — the 7 pillar pages were otherwise orphaned (only /geneve
+  // and the sitemap linked them).
+  const familyHrefByTitle: Record<string, string> = {};
+  data.services?.forEach((s: any) => {
+    if (!s?.family || !s?.title) return;
+    const t = getFamilyTitle(s.family, lang);
+    if (!familyHrefByTitle[t]) {
+      familyHrefByTitle[t] = `/${lang}/services/${familySlugForLang(s.family, lang)}`;
+    }
+  });
+
   // Convert the grouped object into the array format expected by the UI
   let servicesList: any[] = defaultServicesList;
-  
+
   if (dynamicServicesGrouped && Object.keys(dynamicServicesGrouped).length > 0) {
     servicesList = Object.entries(dynamicServicesGrouped).map(([category, services]) => ({
       category,
       services,
+      categoryHref: familyHrefByTitle[category] ?? null,
     }));
   }
   
@@ -202,7 +215,18 @@ export default async function ServicesPage({ params }: ServicesPageProps) {
                   className={`grid grid-cols-1 md:grid-cols-2 gap-8 py-10 ${idx === 0 ? "border-t border-black/10 lg:pt-0 lg:border-t-0" : "border-t border-black/5"}`}
                 >
                   <div className="col-span-1">
-                    <h3 className="text-lg-fluid font-medium text-black">{item.category}</h3>
+                    <h3 className="text-lg-fluid font-medium text-black">
+                      {item.categoryHref ? (
+                        <Link
+                          href={item.categoryHref}
+                          className="hover:underline transition-colors decoration-[#75DAB4] decoration-2 underline-offset-4"
+                        >
+                          {item.category}
+                        </Link>
+                      ) : (
+                        item.category
+                      )}
+                    </h3>
                   </div>
                   <div className="col-span-1">
                     <ul className="flex flex-col gap-2.5">

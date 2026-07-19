@@ -194,12 +194,22 @@ export function ApproachSection({ dict }: { dict: any }) {
             <div
               ref={scrollerRef}
               data-lenis-prevent
-              className="overflow-x-auto overscroll-x-contain pb-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-              // pan-x alone blocked VERTICAL page scroll whenever the touch
-              // started on the deck (which fills most of a phone screen) —
-              // the page felt stuck at this section. manipulation = pan-x +
-              // pan-y + pinch-zoom; the browser picks the dominant axis.
-              style={{ touchAction: "manipulation" }}
+              // Slim light scrollbar, not hidden: reduced-motion desktops get
+              // this variant too, and a mouse can only reach the off-screen
+              // cards through the bar (touch devices swipe; their overlay
+              // scrollbars stay invisible anyway). Inline styles because the
+              // html-level scrollbar-color inherits into every scroller and
+              // must be beaten here.
+              className="overflow-x-auto overscroll-x-contain pb-6"
+              // touchAction: pan-x alone blocked VERTICAL page scroll whenever
+              // the touch started on the deck (which fills most of a phone
+              // screen) — the page felt stuck at this section. manipulation =
+              // pan-x + pan-y + pinch-zoom; the browser picks the dominant axis.
+              style={{
+                touchAction: "manipulation",
+                scrollbarWidth: "thin",
+                scrollbarColor: "rgba(0,0,0,0.18) transparent",
+              }}
             >
               <motion.div
                 className="flex w-max gap-3"

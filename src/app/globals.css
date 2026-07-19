@@ -308,9 +308,20 @@ body::after {
   100% { background-position: 0% 50%; }
 }
 
-* {
+/* Dark scrollbar theme on the root; scrollbar-color inherits everywhere.
+   The universal thin width lives in @layer base — NEVER unlayered: an
+   unlayered `*` rule beats Tailwind v4 layered utilities, which made
+   `[scrollbar-width:none]` a no-op and painted a black bar under every
+   inner scroller (e.g. the approach cards deck). */
+html {
   scrollbar-width: thin;
   scrollbar-color: #333 #050606;
+}
+
+@layer base {
+  * {
+    scrollbar-width: thin;
+  }
 }
 
 ::selection {

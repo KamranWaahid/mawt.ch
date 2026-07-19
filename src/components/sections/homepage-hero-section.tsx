@@ -691,7 +691,11 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 width: "98px",
                 transform: heroLogoTransformDesktop,
                 transformOrigin: "top left",
-                willChange: "transform",
+                // NO willChange here: with will-change:transform Chrome keeps a
+                // persistent texture and rasterizes this layer at its animated
+                // scale (up to x700) — on real GPUs that HARD-FREEZES the
+                // renderer within the first wheel ticks (reproduced 100% via
+                // CDP stress; removing will-change survives the same stress).
                 opacity: heroLogoOpacity,
                 visibility: cinemaLayersVisibility,
               }}
@@ -716,7 +720,11 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 width: "98px",
                 transform: heroLogoTransformLandscape,
                 transformOrigin: "top left",
-                willChange: "transform",
+                // NO willChange here: with will-change:transform Chrome keeps a
+                // persistent texture and rasterizes this layer at its animated
+                // scale (up to x700) — on real GPUs that HARD-FREEZES the
+                // renderer within the first wheel ticks (reproduced 100% via
+                // CDP stress; removing will-change survives the same stress).
                 opacity: heroLogoOpacity,
                 visibility: cinemaLayersVisibility,
               }}
@@ -741,7 +749,11 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 width: "98px",
                 transform: heroLogoTransformPortrait,
                 transformOrigin: "top left",
-                willChange: "transform",
+                // NO willChange here: with will-change:transform Chrome keeps a
+                // persistent texture and rasterizes this layer at its animated
+                // scale (up to x700) — on real GPUs that HARD-FREEZES the
+                // renderer within the first wheel ticks (reproduced 100% via
+                // CDP stress; removing will-change survives the same stress).
                 opacity: heroLogoOpacity,
                 visibility: cinemaLayersVisibility,
               }}
@@ -773,7 +785,11 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 width: "98px",
                 transform: heroLogoTransformDesktop,
                 transformOrigin: "top left",
-                willChange: "transform",
+                // NO willChange here: with will-change:transform Chrome keeps a
+                // persistent texture and rasterizes this layer at its animated
+                // scale (up to x700) — on real GPUs that HARD-FREEZES the
+                // renderer within the first wheel ticks (reproduced 100% via
+                // CDP stress; removing will-change survives the same stress).
                 opacity: heroLogoOpacity,
                 overflow: "visible",
               }}
@@ -793,7 +809,11 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 width: "98px",
                 transform: heroLogoTransformLandscape,
                 transformOrigin: "top left",
-                willChange: "transform",
+                // NO willChange here: with will-change:transform Chrome keeps a
+                // persistent texture and rasterizes this layer at its animated
+                // scale (up to x700) — on real GPUs that HARD-FREEZES the
+                // renderer within the first wheel ticks (reproduced 100% via
+                // CDP stress; removing will-change survives the same stress).
                 opacity: heroLogoOpacity,
                 overflow: "visible",
               }}
@@ -813,7 +833,11 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
                 width: "98px",
                 transform: heroLogoTransformPortrait,
                 transformOrigin: "top left",
-                willChange: "transform",
+                // NO willChange here: with will-change:transform Chrome keeps a
+                // persistent texture and rasterizes this layer at its animated
+                // scale (up to x700) — on real GPUs that HARD-FREEZES the
+                // renderer within the first wheel ticks (reproduced 100% via
+                // CDP stress; removing will-change survives the same stress).
                 opacity: heroLogoOpacity,
                 overflow: "visible",
               }}

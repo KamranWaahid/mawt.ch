@@ -356,13 +356,23 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
         // Reveal underway: hold playback and scrub. This handler already runs
         // at most once per frame (Motion batches scroll reads on rAF), so a
         // direct seek gated by a small delta is enough — no extra batching.
+        // The !video.seeking guard matters under violent up/down scrolling:
+        // without it a new seek is issued while the decoder is still working
+        // on the previous one (measured ~23 seeks/s), and on weaker machines
+        // that seek storm can stall the tab. One in-flight seek at a time
+        // shows the same frames — you cannot display more than one seek per
+        // frame anyway.
         if (!video.paused) video.pause();
         const scrubT = Math.min(
           1,
           Math.max(0, (latest - VIDEO_SCRUB_START) / (VIDEO_OPEN_PROGRESS - VIDEO_SCRUB_START)),
         );
         const target = scrubT * VIDEO_SCRUB_SECONDS;
-        if (video.readyState >= 1 && Math.abs(video.currentTime - target) > 0.04) {
+        if (
+          video.readyState >= 1 &&
+          !video.seeking &&
+          Math.abs(video.currentTime - target) > 0.04
+        ) {
           video.currentTime = target;
         }
       } else if (video.paused) {

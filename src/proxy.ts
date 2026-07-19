@@ -78,10 +78,9 @@ export async function proxy(request: NextRequest) {
   const isPublicAsset = [
     "/App Icons/",
     "/Approach/",
-    "/Approach Page/",
-    "/Approach%20Page/",
     "/Client Logos.png",
     "/cover-image.png",
+    "/og-image.jpg",
     "/HeroImage.gif",
     "/HeroImage.png",
     "/MAWTBackground.gif",

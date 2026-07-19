@@ -115,6 +115,29 @@ export function ApproachSection({ dict }: { dict: any }) {
     return () => scroller.removeEventListener("scroll", onScroll);
   }, [nativeCarousel, dict?.items]);
 
+  // Mouse drag-to-scroll for the native carousel: its scrollbar is hidden
+  // (a visible bar under the cards read as broken), yet reduced-motion
+  // desktops land on this variant too and a mouse has no other way to reach
+  // the off-screen cards. Touch keeps native swipe (pointerType guard).
+  const dragRef = useRef({ startX: 0, startLeft: 0, dragging: false });
+  const onDeckPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    const scroller = scrollerRef.current;
+    if (e.pointerType !== "mouse" || !scroller) return;
+    if (scroller.scrollWidth <= scroller.clientWidth) return;
+    dragRef.current = { startX: e.clientX, startLeft: scroller.scrollLeft, dragging: true };
+    scroller.setPointerCapture(e.pointerId);
+  };
+  const onDeckPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragRef.current.dragging || !scrollerRef.current) return;
+    scrollerRef.current.scrollLeft =
+      dragRef.current.startLeft - (e.clientX - dragRef.current.startX);
+  };
+  const onDeckPointerEnd = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragRef.current.dragging) return;
+    dragRef.current.dragging = false;
+    scrollerRef.current?.releasePointerCapture(e.pointerId);
+  };
+
   if (!dict) return null;
 
   const cards = (
@@ -194,22 +217,23 @@ export function ApproachSection({ dict }: { dict: any }) {
             <div
               ref={scrollerRef}
               data-lenis-prevent
-              // Slim light scrollbar, not hidden: reduced-motion desktops get
-              // this variant too, and a mouse can only reach the off-screen
-              // cards through the bar (touch devices swipe; their overlay
-              // scrollbars stay invisible anyway). Inline styles because the
-              // html-level scrollbar-color inherits into every scroller and
-              // must be beaten here.
-              className="overflow-x-auto overscroll-x-contain pb-6"
+              // No visible scrollbar (inline style so the html-level
+              // scrollbar theme can't leak back in); mouse users drag the
+              // deck instead — see the pointer handlers. select-none because
+              // a drag would otherwise smear a text selection across cards.
+              className="overflow-x-auto overscroll-x-contain pb-6 select-none cursor-grab active:cursor-grabbing"
               // touchAction: pan-x alone blocked VERTICAL page scroll whenever
               // the touch started on the deck (which fills most of a phone
               // screen) — the page felt stuck at this section. manipulation =
               // pan-x + pan-y + pinch-zoom; the browser picks the dominant axis.
               style={{
                 touchAction: "manipulation",
-                scrollbarWidth: "thin",
-                scrollbarColor: "rgba(0,0,0,0.18) transparent",
+                scrollbarWidth: "none",
               }}
+              onPointerDown={onDeckPointerDown}
+              onPointerMove={onDeckPointerMove}
+              onPointerUp={onDeckPointerEnd}
+              onPointerCancel={onDeckPointerEnd}
             >
               <motion.div
                 className="flex w-max gap-3"

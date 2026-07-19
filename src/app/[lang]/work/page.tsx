@@ -1,3 +1,4 @@
+import { DEFAULT_OG_IMAGE, DEFAULT_TWITTER_CARD } from "@/lib/seo-meta";
 import type { Locale } from "@/i18n-config";
 import { WorkProjectsSection } from "@/components/ui/work-projects-section";
 import { getAllProjects } from "@/lib/sanity.queries";
@@ -25,12 +26,13 @@ export async function generateMetadata({ params }: ProjectsPageProps): Promise<M
     description,
     alternates: standaloneAlternates("projets", lang),
     openGraph: {
+      images: [DEFAULT_OG_IMAGE],
       title,
       description,
       url: `${SITE_URL}${localizedHref("projets", lang)}`,
       locale: lang === "fr" ? "fr_CH" : "en_US",
     },
-    twitter: { title, description },
+    twitter: { title, description, ...DEFAULT_TWITTER_CARD },
   };
 }
 

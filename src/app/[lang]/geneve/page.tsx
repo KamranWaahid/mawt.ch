@@ -1,3 +1,4 @@
+import { DEFAULT_OG_IMAGE, DEFAULT_TWITTER_CARD } from "@/lib/seo-meta";
 import Link from "next/link";
 import { SubpageHero } from "@/components/sections/subpage-hero";
 import { AiMaturityCta } from "@/components/ui/ai-maturity-cta";
@@ -113,12 +114,13 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: Loc
     description,
     alternates: standaloneAlternates("geneve", lang),
     openGraph: {
+      images: [DEFAULT_OG_IMAGE],
       title,
       description,
       url,
       locale: lang === "fr" ? "fr_CH" : "en_US",
     },
-    twitter: { title, description },
+    twitter: { title, description, ...DEFAULT_TWITTER_CARD },
   };
 }
 

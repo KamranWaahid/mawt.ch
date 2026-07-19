@@ -1,3 +1,4 @@
+import { DEFAULT_OG_IMAGE, DEFAULT_TWITTER_CARD } from "@/lib/seo-meta";
 import { SubpageHero } from "@/components/sections/subpage-hero";
 import { BlogFilter } from "@/components/ui/blog-filter";
 import { getDictionary } from "@/get-dictionary";
@@ -22,12 +23,13 @@ export async function generateMetadata({ params }: BlogPageProps): Promise<Metad
     description,
     alternates: standaloneAlternates("blog", lang),
     openGraph: {
+      images: [DEFAULT_OG_IMAGE],
       title,
       description,
       url: `${SITE_URL}${localizedHref("blog", lang)}`,
       locale: lang === "fr" ? "fr_CH" : "en_US",
     },
-    twitter: { title, description },
+    twitter: { title, description, ...DEFAULT_TWITTER_CARD },
   };
 }
 

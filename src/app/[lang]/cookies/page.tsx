@@ -1,3 +1,4 @@
+import { brandSafeTitle } from "@/lib/seo-meta";
 import { SubpageHero } from "@/components/sections/subpage-hero";
 import { LegalContent } from "@/components/ui/legal-content";
 import type { Locale } from "@/i18n-config";
@@ -12,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: Loc
   const { lang } = await params;
   const page = await getPageContent(PAGE_KEY, lang);
   return {
-    title: page?.seo?.metaTitle || (lang === "fr" ? "Cookies | MAWT" : "Cookie Policy | MAWT Solutions"),
+    title: brandSafeTitle(page?.seo?.metaTitle || (lang === "fr" ? "Cookies | MAWT" : "Cookie Policy | MAWT")),
     description:
       page?.seo?.metaDescription ||
       "Information regarding cookie transparency, tracking tools, and user consent management for MAWT Solutions.",

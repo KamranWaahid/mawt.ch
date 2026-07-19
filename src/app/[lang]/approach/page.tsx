@@ -1,3 +1,4 @@
+import { brandSafeTitle } from "@/lib/seo-meta";
 import { SubpageHero } from "@/components/sections/subpage-hero";
 import { ApproachStickySteps } from "@/components/sections/approach-sticky-steps";
 import { RichText } from "@/components/ui/rich-text";
@@ -33,7 +34,7 @@ export async function generateMetadata({ params }: ProcessPageProps): Promise<Me
   const { lang } = await params;
   const doc = await getMethodPage(lang);
   return {
-    title: doc?.seo?.metaTitle || (lang === "fr" ? "Notre méthode | MAWT" : "Our Process | MAWT"),
+    title: brandSafeTitle(doc?.seo?.metaTitle || (lang === "fr" ? "Notre méthode | MAWT" : "Our Process | MAWT")),
     description:
       doc?.seo?.metaDescription ||
       (lang === "fr"

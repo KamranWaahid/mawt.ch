@@ -1,3 +1,4 @@
+import { DEFAULT_OG_IMAGE, DEFAULT_TWITTER_CARD } from "@/lib/seo-meta";
 import { SubpageHero } from "@/components/sections/subpage-hero";
 import { getAboutContent } from "@/lib/sanity.queries";
 import { standaloneAlternates, localizedHref } from "@/lib/routing/url-helpers";
@@ -34,12 +35,14 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: Loc
     description,
     alternates: standaloneAlternates("a-propos", lang),
     openGraph: {
+      images: [DEFAULT_OG_IMAGE],
       title: doc?.seo?.metaTitle || (lang === "fr" ? "À propos de MAWT" : "About MAWT"),
       description,
       url,
       locale: lang === "fr" ? "fr_CH" : "en_US",
     },
     twitter: {
+      ...DEFAULT_TWITTER_CARD,
       title: doc?.seo?.metaTitle || (lang === "fr" ? "À propos de MAWT" : "About MAWT"),
       description,
     },

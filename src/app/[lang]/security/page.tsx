@@ -1,3 +1,4 @@
+import { brandSafeTitle } from "@/lib/seo-meta";
 import { SubpageHero } from "@/components/sections/subpage-hero";
 import { RichText } from "@/components/ui/rich-text";
 import { getSecurityPage } from "@/lib/sanity.queries";
@@ -11,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: Loc
   const { lang } = await params;
   const doc = await getSecurityPage(lang);
   return {
-    title: doc?.seo?.metaTitle || (lang === "fr" ? "Sécurité | MAWT" : "Security | MAWT"),
+    title: brandSafeTitle(doc?.seo?.metaTitle || (lang === "fr" ? "Sécurité | MAWT" : "Security | MAWT")),
     description:
       doc?.seo?.metaDescription ||
       (lang === "fr"

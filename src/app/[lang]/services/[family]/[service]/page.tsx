@@ -1,3 +1,4 @@
+import { DEFAULT_OG_IMAGE, DEFAULT_TWITTER_CARD } from "@/lib/seo-meta";
 import { getSanityClient } from "@/lib/sanity.client";
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
@@ -160,12 +161,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description,
     alternates,
     openGraph: {
+      images: [DEFAULT_OG_IMAGE],
       title: titleText,
       description,
       url: canonical,
       locale: lang === "fr" ? "fr_CH" : "en_US",
     },
-    twitter: { title: titleText, description },
+    twitter: { title: titleText, description, ...DEFAULT_TWITTER_CARD },
   };
 }
 

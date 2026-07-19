@@ -17,6 +17,7 @@ import { CursorProvider } from "@/components/providers/cursor-provider";
 import { LenisProvider } from "@/components/providers/lenis-provider";
 import { StructuredData } from "@/components/seo/structured-data";
 import { Inter, Instrument_Serif } from "next/font/google";
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import "../globals.css";
 
@@ -67,6 +68,16 @@ export async function generateMetadata({
       siteName: "MAWT",
       locale: isFr ? "fr_CH" : "en_US",
       type: "website",
+      // Site-wide fallback: pages with their own Sanity cover override this
+      // via their local metadata; everything else still gets a social card.
+      images: [
+        {
+          url: "/og-image.jpg",
+          width: 1200,
+          height: 630,
+          alt: isFr ? "MAWT — Agence IA à Genève" : "MAWT — AI agency in Geneva",
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
@@ -74,6 +85,7 @@ export async function generateMetadata({
       description: isFr
         ? "Agence IA à Genève. Intelligence artificielle, automatisation des processus et outils sur mesure pour PME."
         : "AI agency in Geneva. Artificial intelligence, process automation and custom tools for SMEs and growing companies.",
+      images: ["/og-image.jpg"],
     },
     robots: {
       index: true,
@@ -102,6 +114,12 @@ export default async function LangLayout({
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
+  // Any /xx/... with an unknown locale used to render an EN homepage clone
+  // with a 200 + self-referencing canonical — an unbounded soft-404 surface
+  // for crawlers. Unknown locales are a real 404.
+  if (!i18n.locales.includes(lang as Locale)) {
+    notFound();
+  }
   const htmlLang = lang === "fr" ? "fr" : "en";
   const locale = lang as Locale;
   const [dictionary, data, about, method] = await Promise.all([

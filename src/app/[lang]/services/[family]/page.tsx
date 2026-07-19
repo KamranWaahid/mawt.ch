@@ -1,3 +1,4 @@
+import { DEFAULT_OG_IMAGE, DEFAULT_TWITTER_CARD } from "@/lib/seo-meta";
 import { getSanityClient } from "@/lib/sanity.client";
 import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
@@ -107,6 +108,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: dynamicMetaDescription,
     alternates: hreflangAlternates(`/${lang}/services/${family}`, lang as Locale),
     openGraph: {
+      images: [DEFAULT_OG_IMAGE],
       title: copy.metaTitle.replace(/\s*\|\s*MAWT\s*$/i, ""),
       description: copy.metaDescription,
       url: `https://mawt.ch/${lang}/services/${family}`,
@@ -115,6 +117,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       locale: lang === "fr" ? "fr_CH" : "en_US",
     },
     twitter: {
+      ...DEFAULT_TWITTER_CARD,
       title: copy.metaTitle.replace(/\s*\|\s*MAWT\s*$/i, ""),
       description: copy.metaDescription,
     },

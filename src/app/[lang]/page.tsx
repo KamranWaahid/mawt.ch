@@ -1,3 +1,4 @@
+import { DEFAULT_OG_IMAGE, DEFAULT_TWITTER_CARD } from "@/lib/seo-meta";
 import { ClientsSection } from "@/components/sections/clients-section";
 import { DescriptionSection } from "@/components/sections/description-section";
 import { HomepageHeroSection } from "@/components/sections/homepage-hero-section";
@@ -41,6 +42,7 @@ export async function generateMetadata({
       ? "Agence IA à Genève. Nous concevons vos systèmes IA sur mesure, bases documentaires (RAG) et automatisations. Du code qui tourne, pas des slides."
       : "Geneva-based AI agency. We design and build custom integrations, RAG systems, and workflow automations that run in production. Get custom software, not slides.",
     openGraph: {
+      images: [DEFAULT_OG_IMAGE],
       title: isFr
         ? "MAWT | Systèmes IA & Automatisation"
         : "MAWT | AI Systems & Workflow Automation",
@@ -53,6 +55,7 @@ export async function generateMetadata({
       locale: isFr ? "fr_CH" : "en_US",
     },
     twitter: {
+      ...DEFAULT_TWITTER_CARD,
       title: isFr
         ? "MAWT | Systèmes IA & Automatisation"
         : "MAWT | AI Systems & Workflow Automation",

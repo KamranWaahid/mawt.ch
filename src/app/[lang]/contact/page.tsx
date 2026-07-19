@@ -1,3 +1,4 @@
+import { DEFAULT_OG_IMAGE, DEFAULT_TWITTER_CARD } from "@/lib/seo-meta";
 import { SubpageHero } from "@/components/sections/subpage-hero";
 import { ContactForm } from "@/components/ui/contact-form";
 import { getDictionary } from "@/get-dictionary";
@@ -21,12 +22,13 @@ export async function generateMetadata({ params }: { params: Promise<{ lang: Loc
     description,
     alternates: standaloneAlternates("contact", lang),
     openGraph: {
+      images: [DEFAULT_OG_IMAGE],
       title,
       description,
       url: `${SITE_URL}/${lang}/contact`,
       locale: lang === "fr" ? "fr_CH" : "en_US",
     },
-    twitter: { title, description },
+    twitter: { title, description, ...DEFAULT_TWITTER_CARD },
   };
 }
 

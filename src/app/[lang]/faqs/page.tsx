@@ -1,3 +1,4 @@
+import { DEFAULT_OG_IMAGE, DEFAULT_TWITTER_CARD } from "@/lib/seo-meta";
 import { SubpageHero } from "@/components/sections/subpage-hero";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { getFAQs } from "@/lib/sanity.queries";
@@ -23,12 +24,13 @@ export async function generateMetadata({ params }: FAQsPageProps): Promise<Metad
     description,
     alternates: standaloneAlternates("faqs", lang),
     openGraph: {
+      images: [DEFAULT_OG_IMAGE],
       title,
       description,
       url: `https://mawt.ch/${lang}/faqs`,
       locale: lang === "fr" ? "fr_CH" : "en_US",
     },
-    twitter: { title, description },
+    twitter: { title, description, ...DEFAULT_TWITTER_CARD },
   };
 }
 

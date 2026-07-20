@@ -48,22 +48,22 @@ export function LenisProvider({ children }: LenisProviderProps) {
     <ReactLenis
       root
       options={{
-        // FEEL — do not retune without explicit user validation.
-        // Midpoint under test between the approved heavy glide
-        // (2.2 / ×0.45 / 0.035 — the composed premium feel, could read as
-        // stuck) and the reactive pass (1.4 / ×0.8 / 0.09 — rejected as
-        // notchy/saccadé on content sections). Fall back to the heavy
-        // values if this still doesn't feel smooth.
-        duration: 1.8,
+        // APPROVED FEEL — do not retune without explicit user validation.
+        // The heavy, Apple-like glide (slow wheel, long drift, soft settle)
+        // IS the design. Two departures were both rejected by the user:
+        // the reactive pass (1.4 / ×0.8 / 0.09 — "saccadé") and the tested
+        // midpoint (1.8 / ×0.6 / 0.05 — "on a perdu le smoothness",
+        // 2026-07-20). These values are final.
+        duration: 2.2,
         // Soft exponential ease similar to Framer-style scroll smoothing.
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
         // Touch stays native even if a desktop user briefly uses a touchscreen.
         syncTouch: false,
-        wheelMultiplier: 0.6,
+        wheelMultiplier: 0.45,
         touchMultiplier: 0.95,
         // Lower lerp adds a smoother, more composed glide without feeling stuck.
-        lerp: 0.05,
+        lerp: 0.035,
         // Route in-page #hash links through Lenis and land clear of the
         // fixed header instead of the native jump underneath it.
         anchors: { offset: -96 },

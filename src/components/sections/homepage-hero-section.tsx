@@ -228,18 +228,19 @@ function HeroGradientStatement({
   const words = text.split(" ");
   // Text transitions to dark when the light background reaches it, then fades
   // out BEFORE the clients panel (which overlaps the end of this track) can
-  // slide up into it: the panel top reaches the statement around p≈0.99.
+  // slide up into it: with the ~48dvh overlap the panel reaches the statement
+  // earlier, so the exit starts sooner than the old 0.945→0.98 window.
   // The exit fade follows LIVE progress (scrolling back up from the clients
   // panel must bring the statement back), while the reveal effects (word
   // blur-in + light→dark color) run on the LATCHED progress: once played they
   // never rewind on scroll-up — scrolling up just scrolls, and scrolling down
   // resumes the effect wherever it stopped.
-  const exitOpacity = useTransform(progress, [0.945, 0.98], [1, 0]);
-  const textColor = useTransform(revealProgress, [0.87, 0.94], ["#F6F5F4", "#000000"]);
+  const exitOpacity = useTransform(progress, [0.925, 0.965], [1, 0]);
+  const textColor = useTransform(revealProgress, [0.84, 0.91], ["#F6F5F4", "#000000"]);
 
   return (
     <motion.h2
-      className={`max-w-[1040px] select-text font-serif text-[clamp(2.1rem,4.05vw,3.7rem)] font-normal leading-[1.01] tracking-normal ${className}`}
+      className={`max-w-[38rem] select-text font-serif text-[clamp(1.85rem,3.4vw,3.15rem)] font-normal leading-[1.18] tracking-[-0.015em] sm:max-w-[44rem] md:max-w-[52rem] ${className}`}
       style={{ opacity: exitOpacity, color: textColor }}
     >
       {words.map((word, index) => (
@@ -570,17 +571,17 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
   const compactContentY = useTransform(smoothProgress, [0, 1], ["0svh", "0svh"]);
   
   // Gradient slides up from below the screen (100vh) to 0, then continues up.
-  // It is fully beige by 0.955 — the clients section overlaps the last
-  // ~30dvh of this track (page.tsx negative margin), so the gradient must be
+  // It is fully beige by 0.94 — the clients section overlaps the last
+  // ~48dvh of this track (page.tsx negative margin), so the gradient must be
   // done before that panel slides in over it.
   const transitionGradientY = useTransform(
     scrollYProgress,
-    [0.60, 0.70, 0.86, 0.955],
+    [0.60, 0.70, 0.84, 0.94],
     ["100vh", "0vh", "-150vh", "-300vh"]
   );
 
-  const transitionCtaOpacity = useTransform(scrollYProgress, [0.76, 0.83, 0.92, 0.97], [0, 1, 1, 0]);
-  const transitionCtaVisibility = useTransform(scrollYProgress, (p) => p >= 0.70 && p <= 0.985 ? "visible" : "hidden");
+  const transitionCtaOpacity = useTransform(scrollYProgress, [0.76, 0.83, 0.90, 0.95], [0, 1, 1, 0]);
+  const transitionCtaVisibility = useTransform(scrollYProgress, (p) => p >= 0.70 && p <= 0.96 ? "visible" : "hidden");
 
   // With the reveal latched, the words would stay painted over the cinema
   // phase when scrolling back up — this LIVE gate keeps the whole statement
@@ -939,12 +940,14 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
           <div className="w-[1px] h-10 bg-gradient-to-b from-white/40 to-transparent" />
         </motion.div>
 
-        {/* Z-30: GRADIENT TRANSITION TEXTS */}
+        {/* Z-30: GRADIENT TRANSITION TEXTS — site-container keeps the left edge
+            aligned with the clients logos that follow, so the handoff reads as
+            one editorial column instead of two unrelated blocks. */}
         <motion.div
-          className="pointer-events-none absolute inset-x-0 top-0 z-30 hidden px-5 sm:px-7 md:px-9 lg:block lg:px-[2.5vw]"
+          className="pointer-events-none absolute inset-x-0 top-0 z-30 hidden lg:block"
           style={{ opacity: statementGateOpacity, visibility: statementGateVisibility }}
         >
-          <div className="mx-auto w-full max-w-[1760px] pt-[28vh]">
+          <div className="site-container pt-[clamp(5.5rem,16vh,9.5rem)]">
             <HeroGradientStatement
               text={transitionDict.statement}
               progress={smoothProgress}
@@ -952,7 +955,7 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
             />
             <motion.div
               initial={{ opacity: 0, visibility: "hidden" }}
-              className="mt-12"
+              className="mt-8"
               style={{ opacity: transitionCtaOpacity, visibility: transitionCtaVisibility }}
             >
               <Link
@@ -966,19 +969,19 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
         </motion.div>
 
         <motion.div
-          className="pointer-events-none absolute inset-x-0 top-0 z-30 px-5 sm:px-7 md:px-9 lg:hidden"
+          className="pointer-events-none absolute inset-x-0 top-0 z-30 lg:hidden"
           style={{ opacity: statementGateOpacity, visibility: statementGateVisibility }}
         >
-          <div className="mx-auto w-full max-w-[48rem] pt-[28vh]">
+          <div className="site-container pt-[clamp(4.5rem,14vh,7.5rem)]">
             <HeroGradientStatement
               text={transitionDict.statement}
               progress={smoothProgress}
               revealProgress={statementRevealProgress}
-              className="text-[clamp(2rem,11vw,4rem)] leading-[1.03]"
+              className="text-[clamp(1.75rem,8.5vw,2.75rem)] leading-[1.16]"
             />
             <motion.div
               initial={{ opacity: 0, visibility: "hidden" }}
-              className="mt-8"
+              className="mt-7"
               style={{ opacity: transitionCtaOpacity, visibility: transitionCtaVisibility }}
             >
               <Link

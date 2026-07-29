@@ -181,10 +181,12 @@ export default async function HomePage({
       {/* The flow overlaps the hero's unpin tail (the empty beige screen the
           sticky plate travels through): it slides up OVER the plate — both are
           beige, so the seam is invisible — and the dead scroll between the
-          gradient statement and the clients logos disappears. z above the
+          gradient statement and the clients logos disappears. A deeper
+          overlap (~48dvh) keeps the logos title in conversation with the
+          statement instead of floating alone mid-screen. z above the
           hero's z-50 makes the overlap actually paint on top. */}
       <div
-        className="homepage-flow relative z-[55] mt-[-30dvh]"
+        className="homepage-flow relative z-[55] mt-[-48dvh]"
         style={{ backgroundColor: "#F6F5F4" }}
       >
         <ClientsSection dict={dictionary.clients} partners={partners} />

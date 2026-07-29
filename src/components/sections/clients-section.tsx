@@ -73,14 +73,14 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
 
   return (
     <section
-      // Same vertical rhythm as the other homepage sections (py-12 → lg:py-24
-      // family): pt-3 made the logos crowd the gradient statement above.
-      className="relative overflow-hidden bg-[#F6F5F4] pt-12 pb-10 md:pt-16 md:pb-12 lg:pt-20 lg:pb-14"
+      // Soft top padding: the homepage-flow already overlaps the hero unpin
+      // tail, so a heavy pt-* recreated the old dead gap under the statement.
+      className="relative overflow-hidden bg-[#F6F5F4] pt-6 pb-12 md:pt-8 md:pb-14 lg:pt-10 lg:pb-16"
       style={{ backgroundColor: "#F6F5F4" }}
     >
       <div className="site-container relative z-10">
         <motion.h2
-          initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+          initial={{ opacity: 0, y: 16, filter: "blur(8px)" }}
           whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           viewport={{ once: true, amount: 0.45 }}
           transition={revealTransition}
@@ -91,11 +91,11 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
         
         {hasPartnerLogos ? (
           <motion.ul
-            initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+            initial={{ opacity: 0, y: 16, filter: "blur(8px)" }}
             whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             viewport={{ once: true, amount: 0.28 }}
-            transition={{ ...revealTransition, delay: 0.1 }}
-            className="mt-7 grid grid-cols-2 items-center gap-x-6 gap-y-7 sm:mt-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7"
+            transition={{ ...revealTransition, delay: 0.08 }}
+            className="mt-8 grid grid-cols-2 items-center gap-x-6 gap-y-8 sm:mt-10 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7"
             aria-label={dict?.title}
           >
             {partnerLogos.map((logo) => {
@@ -136,11 +136,11 @@ export function ClientsSection({ dict, partners }: { dict?: ClientsCopy; partner
           </motion.ul>
         ) : (
           <motion.ul
-          initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
+          initial={{ opacity: 0, y: 16, filter: "blur(8px)" }}
           whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
           viewport={{ once: true, amount: 0.28 }}
-          transition={{ ...revealTransition, delay: 0.1 }}
-          className="mt-7 grid grid-cols-2 items-center gap-x-6 gap-y-7 sm:mt-8 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7"
+          transition={{ ...revealTransition, delay: 0.08 }}
+          className="mt-8 grid grid-cols-2 items-center gap-x-6 gap-y-8 sm:mt-10 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7"
           aria-label={dict?.title}
         >
           {fallbackLogos.map((logo) => {

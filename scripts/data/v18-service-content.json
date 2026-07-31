@@ -823,7 +823,7 @@
     "heroH1": "QA et testing dédié pour vos produits.",
     "heroH2": "Tests manuels, automatisés, plans de recette, intégration CI/CD.",
     "description": "QA dédiée pour vos applications et sites : manuel, automatisé, CI/CD.",
-    "longDescription": "Votre équipe développe vite, mais sans QA dédiée, les bugs en production érodent la confiance et coûtent cher. Recruter un profil QA pour un produit en croissance n'est pas trivial.\n\nOn vous propose un QA senior dédié. Tests manuels exploratoires, scénarios automatisés (Playwright, Cypress), plans de recette, intégration dans votre pipeline CI/CD, suivi des régressions. Cas concret : EMS (QA testing dédié sur application métier).",
+    "longDescription": "Votre équipe développe vite, mais sans QA dédiée, les bugs en production érodent la confiance et coûtent cher. Recruter un profil QA pour un produit en croissance n'est pas trivial.\n\nOn vous propose un QA senior dédié. Tests manuels exploratoires, scénarios automatisés (Playwright, Cypress), plans de recette, intégration dans votre pipeline CI/CD, suivi des régressions.",
     "features": [
       "QA senior dédiée à votre produit",
       "Tests manuels et automatisés",
@@ -840,7 +840,7 @@
     "heroH1": "Dedicated QA and testing for your products.",
     "heroH2": "Manual, automated, test plans, CI/CD integration.",
     "description": "Dedicated QA for your apps and sites : manual, automated, CI/CD.",
-    "longDescription": "Your team ships fast, but without dedicated QA, production bugs erode trust and cost money. Hiring a QA profile for a growing product is non trivial.\n\nWe bring a senior dedicated QA. Exploratory manual testing, automated scenarios (Playwright, Cypress), structured test plans, integration into your CI/CD pipeline, regression tracking. Real case : EMS (dedicated QA testing on business application).",
+    "longDescription": "Your team ships fast, but without dedicated QA, production bugs erode trust and cost money. Hiring a QA profile for a growing product is non trivial.\n\nWe bring a senior dedicated QA. Exploratory manual testing, automated scenarios (Playwright, Cypress), structured test plans, integration into your CI/CD pipeline, regression tracking.",
     "features": [
       "Senior QA dedicated to your product",
       "Manual and automated testing",

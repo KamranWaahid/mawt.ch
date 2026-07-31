@@ -225,7 +225,7 @@ export const PILLAR_COPY: Record<FamilyKey, { fr: PillarLangCopy; en: PillarLang
       ],
       servicesH2: "Les profils qu'on met à votre disposition",
       socialProof:
-        "Cas concrets : Digital Admin (renfort développeur à la demande), EMS (QA testing), Swixit (sparring UX et UI continu), Kouleta (pilotage de refonte).",
+        "Cas concrets : Digital Admin (renfort développeur à la demande), Swixit (sparring UX et UI continu), Kouleta (pilotage de refonte).",
       projectsH2: "Projets de la famille Renfort et équipe",
       faqH2: "Questions fréquentes sur le renfort d'équipe",
       bottomCtaH2: "Quel profil vous manque ?",
@@ -253,7 +253,7 @@ export const PILLAR_COPY: Record<FamilyKey, { fr: PillarLangCopy; en: PillarLang
       ],
       servicesH2: "The roles we bring to your team",
       socialProof:
-        "Real cases : Digital Admin (on demand dev resources), EMS (QA testing), Swixit (continuous UX and UI sparring), Kouleta (redesign pilot).",
+        "Real cases : Digital Admin (on demand dev resources), Swixit (continuous UX and UI sparring), Kouleta (redesign pilot).",
       projectsH2: "Featured Team augmentation projects",
       faqH2: "Frequently asked questions about team augmentation",
       bottomCtaH2: "Which role are you missing ?",

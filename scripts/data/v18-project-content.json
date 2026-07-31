@@ -257,42 +257,6 @@
     ],
     "family": "sites-and-branding"
   },
-  "fr:ems": {
-    "slug": "ems",
-    "lang": "fr",
-    "featuredHomepage": false,
-    "metaTitle": "EMS : QA testing dédié sur application métier | MAWT",
-    "metaDescription": "QA dédiée sur application métier critique : tests manuels, automatisés, intégration CI/CD, suivi des régressions.",
-    "heroH1": "EMS : QA testing dédié sur application critique.",
-    "heroH2": "Manuel, automatisé, intégration CI/CD, suivi régressions.",
-    "pitch": "",
-    "cardTeaser": "QA dédiée sur application métier critique.",
-    "challenge": "",
-    "solution": "EMS exploite une application métier critique. Sans QA dédiée, les bugs en production érodaient la confiance. On a mis en place une QA senior dédiée, plans de recette structurés, scénarios automatisés intégrés au pipeline CI/CD, suivi continu des régressions.",
-    "outcome": "EMS exploite une application métier critique. Sans QA dédiée, les bugs en production érodaient la confiance. On a mis en place une QA senior dédiée, plans de recette structurés, scénarios automatisés intégrés au pipeline CI/CD, suivi continu des régressions.",
-    "serviceSlugs": [
-      "qa-testing"
-    ],
-    "family": "renfort-equipe"
-  },
-  "en:ems": {
-    "slug": "ems",
-    "lang": "en",
-    "featuredHomepage": false,
-    "metaTitle": "EMS : dedicated QA on a business application | MAWT",
-    "metaDescription": "Dedicated QA on a critical business application : manual, automated, CI/CD integration, regression tracking.",
-    "heroH1": "EMS : dedicated QA on a critical app.",
-    "heroH2": "Manual, automated, CI/CD integration, regression tracking.",
-    "pitch": "",
-    "cardTeaser": "Dedicated QA on a critical business application.",
-    "challenge": "",
-    "solution": "EMS operates a critical business application. Without dedicated QA, production bugs were eroding trust. We brought a senior dedicated QA, structured test plans, automated scenarios wired into the CI/CD pipeline, continuous regression tracking.",
-    "outcome": "EMS operates a critical business application. Without dedicated QA, production bugs were eroding trust. We brought a senior dedicated QA, structured test plans, automated scenarios wired into the CI/CD pipeline, continuous regression tracking.",
-    "serviceSlugs": [
-      "qa-testing"
-    ],
-    "family": "team-augmentation"
-  },
   "fr:swixit": {
     "slug": "swixit",
     "lang": "fr",

@@ -36,7 +36,6 @@ const fallbackLogos: LogoSprite[] = [
   { name: "Mellender Real Estate", href: "https://www.mellender.ch/", x: 0, y: 0, width: 232, height: 60, emphasis: "wide" },
   { name: "Sotheby's", x: 326, y: 7, width: 193, height: 46 },
   { name: "United Nations", x: 612, y: 2, width: 183, height: 56 },
-  { name: "EMS", x: 888, y: 8, width: 189, height: 44 },
   { name: "Kouleta", x: 1170, y: 0, width: 188, height: 60 },
   { name: "Ciro", x: 1452, y: 4, width: 124, height: 52, emphasis: "compact" },
   { name: "Légitimes Express", x: 1670, y: 0, width: 176, height: 60 },

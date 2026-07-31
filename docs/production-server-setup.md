@@ -35,7 +35,7 @@ Visitor → Hostinger (website)
 
 - Deploy / restart the Node.js app after **any** environment variable change.
 - Environment variables are set in the Hostinger panel for this project (exact UI name may vary: *Environment variables*, *App settings*, etc.).
-- Production URL example: `https://your-domain.com`
+- Production URL: `https://mawt.ch` (formerly `https://beta.mawt.ch`)
 
 ### 2. Sanity
 
@@ -44,8 +44,18 @@ Visitor → Hostinger (website)
 - Optional read token for admin stats
 - Webhook (recommended) to refresh the site when content is published
 
-**Studio URL (after login):** `https://your-domain.com/studio`  
-**Login URL:** `https://your-domain.com/en/login` (French: `/fr/login`)
+**Studio URL (after login):** `https://mawt.ch/studio`  
+**Login URL:** `https://mawt.ch/en/login` (French: `/fr/login`)
+
+#### CORS origins (required for Studio on mawt.ch)
+
+In [sanity.io/manage](https://www.sanity.io/manage) → project `ewciugup` → **API** → **CORS origins**:
+
+1. Add `https://mawt.ch` with **Allow credentials** enabled.
+2. Keep `http://localhost:3000` for local Studio.
+3. Remove `https://beta.mawt.ch` if it is still listed (domain retired).
+
+Without `https://mawt.ch` in CORS, login may succeed but Studio will fail to load content.
 
 ### 3. Upstash Redis (required in production)
 
@@ -122,10 +132,13 @@ That message is generic. Check the browser Network tab for `/api/admin/login`:
 | HTTP status | Meaning | What to do |
 |-------------|---------|------------|
 | **401** | Key does not match `ADMIN_SECRET` | Fix the value or what you type; redeploy if you changed env |
-| **429** | Rate limiter blocked the request | Almost always missing/wrong Upstash, or app not restarted after adding it |
+| **429** | Rate limiter blocked the request | Wait 15 minutes, or clear the `rl:admin-login:*` keys in Upstash |
+| **503** | Upstash missing/down (fail-closed) | Set `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` on Hostinger for **mawt.ch**, then restart |
 | **500** | Server misconfiguration | Ensure `ADMIN_SECRET` and `SESSION_SECRET` are both set |
 
 Then: fix env → **redeploy/restart** → try again.
+
+After moving from `beta.mawt.ch` → `mawt.ch`, re-check that the **production Hostinger app** for `mawt.ch` has the full env checklist below (Upstash is the most common miss).
 
 ---
 
@@ -136,7 +149,9 @@ So published content appears on the live site without a full redeploy:
 1. Generate a strong secret → set as `SANITY_REVALIDATE_SECRET` on Hostinger.
 2. In Sanity → API → Webhooks (or equivalent), create a webhook that `POST`s to:
 
-   `https://your-domain.com/api/revalidate`
+   `https://mawt.ch/api/revalidate`
+
+   If an old webhook still targets `https://beta.mawt.ch/api/revalidate`, update or replace it.
 
 3. Prefer auth header:
 
@@ -168,14 +183,15 @@ Without a valid secret, revalidation is refused (fail-closed).
 
 ## Quick go-live checklist
 
-- [ ] Hostinger app deployed and running  
-- [ ] `ADMIN_SECRET` + `SESSION_SECRET` set  
+- [ ] Hostinger app deployed and running on `https://mawt.ch`  
+- [ ] `ADMIN_SECRET` + `SESSION_SECRET` set on that Hostinger app  
 - [ ] Upstash Redis created; REST URL + token set  
 - [ ] Sanity public IDs + write token set  
+- [ ] Sanity CORS includes `https://mawt.ch` (Allow credentials)  
 - [ ] App **restarted** after env changes  
-- [ ] Login works at `/en/login` → `/studio`  
+- [ ] Login works at `https://mawt.ch/en/login` → `/studio`  
 - [ ] Contact / newsletter tested (email + provider vars)  
-- [ ] Sanity revalidate webhook configured (recommended)  
+- [ ] Sanity revalidate webhook points to `https://mawt.ch/api/revalidate`  
 
 ---
 

@@ -15,6 +15,17 @@ export async function POST(request: Request) {
   // an unprotected admin login must refuse rather than run unlimited.
   const limiter = await rateLimit("admin-login", 5, 15 * 60, { failClosed: true });
   if (!limiter.success) {
+    // Missing/broken Upstash looks like a rate-limit to callers unless we
+    // surface a distinct status — common after domain/hosting moves.
+    if (limiter.unavailable) {
+      console.error(
+        "[Admin Login] Rate limiter unavailable (UPSTASH_REDIS_REST_URL / TOKEN missing or down)."
+      );
+      return NextResponse.json(
+        { error: "Server misconfiguration. Please contact the administrator." },
+        { status: 503 }
+      );
+    }
     return NextResponse.json(
       { error: "Too many attempts. Please try again later." },
       { status: 429 }

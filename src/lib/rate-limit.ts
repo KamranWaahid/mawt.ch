@@ -18,7 +18,12 @@ const UPSTASH_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
 
 import { headers } from "next/headers";
 
-type RateLimitResult = { success: boolean; remaining: number };
+type RateLimitResult = {
+  success: boolean;
+  remaining: number;
+  /** True when the request was denied because the limiter store is missing/down. */
+  unavailable?: boolean;
+};
 
 type RateLimitOptions = {
   /**
@@ -90,7 +95,7 @@ export async function rateLimit(
     } catch (err) {
       if (options.failClosed) {
         console.error("[RateLimit] Upstash Redis error — DENYING request (failClosed):", err);
-        return { success: false, remaining: 0 };
+        return { success: false, remaining: 0, unavailable: true };
       }
       // Public forms: if Redis is temporarily unavailable, allow but log.
       console.error("[RateLimit] Upstash Redis error — allowing request:", err);
@@ -106,7 +111,7 @@ export async function rateLimit(
     );
     if (options.failClosed) {
       // Auth-critical callers must not run unprotected in production.
-      return { success: false, remaining: 0 };
+      return { success: false, remaining: 0, unavailable: true };
     }
   }
   return { success: true, remaining: limit - 1 };

@@ -37,7 +37,7 @@ export function LoginForm({ dict, lang }: LoginFormProps) {
 
       if (res.ok) {
         setStatus("success");
-        router.push(`/${lang}/studio`);
+        router.push("/studio");
       } else {
         setStatus("error");
         setTimeout(() => setStatus("idle"), 3000);

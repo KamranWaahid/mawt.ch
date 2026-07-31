@@ -45,7 +45,7 @@ export default function StudioPage() {
                  </li>
                  <li className="flex items-start gap-3 text-xs text-neutral-300">
                    <div className="mt-1 h-1.5 w-1.5 rounded-full bg-[#75DAB4]" />
-                   <span>Add <strong>http://localhost:3000</strong> to CORS origins in Sanity settings</span>
+                   <span>Add <strong>https://mawt.ch</strong> and <strong>http://localhost:3000</strong> to CORS origins in Sanity (Allow credentials)</span>
                  </li>
                </ul>
             </div>

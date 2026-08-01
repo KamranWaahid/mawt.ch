@@ -91,13 +91,18 @@ export function NewsletterForm({ dict, lang = "en" }: NewsletterFormProps) {
             >
               <input type="hidden" name="lang" value={lang} />
               {/* Honeypot: humans never see or fill this; bots do. The server
-                  action drops any submission where it has a value. */}
+                  action drops any submission where it has a value.
+
+                  Neither the name nor the label may say "company": browsers
+                  autofill organisation fields from the address book (matching
+                  on both) and ignore autocomplete="off", which silently
+                  discarded real sign-ups. Keep in sync with actions.ts. */}
               <div aria-hidden="true" className="absolute -left-[9999px] top-0 h-px w-px overflow-hidden">
-                <label htmlFor="newsletter-company">Company</label>
+                <label htmlFor="newsletter-mawt-hp">Leave this field empty</label>
                 <input
-                  id="newsletter-company"
+                  id="newsletter-mawt-hp"
                   type="text"
-                  name="company"
+                  name="mawt_hp"
                   tabIndex={-1}
                   autoComplete="off"
                 />

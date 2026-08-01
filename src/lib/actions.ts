@@ -86,9 +86,15 @@ export async function submitContactForm(
   const lang = formData.get("lang") === "fr" ? "fr" : "en";
   const messages = contactMessages[lang];
 
-  // Honeypot: the visible form carries an off-screen "company" field humans
-  // never fill. A value means a bot — pretend success, store nothing.
-  const honeypot = formData.get("company");
+  // Honeypot: the form carries an off-screen field humans never fill. A value
+  // means a bot — pretend success, store nothing.
+  //
+  // The field is deliberately named "mawt_hp", NOT something semantic like
+  // "company": Chrome and Safari autofill organisation fields from the address
+  // book and largely ignore autocomplete="off", which silently discarded real
+  // enquiries. A name outside every autofill taxonomy cannot be autofilled,
+  // while bots that blanket-fill every input still trip it.
+  const honeypot = formData.get("mawt_hp");
   if (typeof honeypot === "string" && honeypot.trim() !== "") {
     logger.warn("Contact honeypot triggered — submission dropped");
     return { success: true };
@@ -154,9 +160,8 @@ export async function subscribeNewsletter(
   const lang = formData.get("lang") === "fr" ? "fr" : "en";
   const messages = newsletterMessages[lang];
 
-  // Honeypot (same pattern as the contact form): off-screen "company" field
-  // humans never fill. A value means a bot — pretend success, store nothing.
-  const honeypot = formData.get("company");
+  // Honeypot (same pattern and same non-autofillable name as the contact form).
+  const honeypot = formData.get("mawt_hp");
   if (typeof honeypot === "string" && honeypot.trim() !== "") {
     logger.warn("Newsletter honeypot triggered — submission dropped");
     return { success: true };

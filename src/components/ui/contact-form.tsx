@@ -150,20 +150,26 @@ export function ContactForm({ dict, lang = "en" }: ContactFormProps) {
     return Object.keys(errors).length === 0;
   };
 
-  const validateStep3 = (): boolean => {
-    const errors: ClientErrors = {};
-    if (!formData.message.trim() || formData.message.trim().length < 10) {
-      errors.message = labels.validation.message;
-    }
-    setClientErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
   const handleContinue = (e: React.MouseEvent) => {
     e.preventDefault();
     if (step === 1 && !validateStep1()) return;
     if (step < 3) {
       setStep((prev) => (prev + 1) as FormStep);
+    }
+  };
+
+  // Validation must live on the form's submit event, not the button's onClick:
+  // React runs the action unless the submit event is default-prevented, so
+  // validating in onClick only painted errors while the request went out anyway.
+  //
+  // Only touch state on the failing path. Setting state on a VALID submit
+  // re-renders while React is starting the action transition, which raced with
+  // the AnimatePresence unmount below and threw:
+  //   NotFoundError: Failed to execute 'removeChild' on 'Node'
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    if (formData.message.trim().length < 10) {
+      e.preventDefault();
+      setClientErrors({ message: labels.validation.message });
     }
   };
 
@@ -254,7 +260,7 @@ export function ContactForm({ dict, lang = "en" }: ContactFormProps) {
         ))}
       </div>
 
-      <form action={formAction} className="relative overflow-hidden min-h-[400px]">
+      <form action={formAction} onSubmit={handleSubmit} className="relative overflow-hidden min-h-[400px]">
         <AnimatePresence mode="wait" custom={step}>
           <motion.div
             key={step}
@@ -448,10 +454,15 @@ export function ContactForm({ dict, lang = "en" }: ContactFormProps) {
             )}
 
             {/* Honeypot: invisible to humans, tempting for bots. The server
-                silently drops submissions that fill it. */}
+                silently drops submissions that fill it.
+
+                Named "mawt_hp" rather than "company" on purpose — browsers
+                autofill organisation fields from the address book and ignore
+                autocomplete="off", which was silently discarding real
+                enquiries. Keep this name in sync with actions.ts. */}
             <input
               type="text"
-              name="company"
+              name="mawt_hp"
               tabIndex={-1}
               autoComplete="off"
               aria-hidden="true"
@@ -498,7 +509,6 @@ export function ContactForm({ dict, lang = "en" }: ContactFormProps) {
                 <button
                   type="submit"
                   disabled={status === "submitting"}
-                  onClick={() => validateStep3()}
                   className="flex-1 flex items-center justify-center gap-3 py-4 bg-black text-white text-sm font-normal disabled:bg-neutral-400 transition-all uppercase tracking-widest hover:bg-neutral-900 group"
                 >
                   {status === "submitting" ? (

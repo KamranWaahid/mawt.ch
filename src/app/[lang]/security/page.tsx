@@ -1,6 +1,9 @@
 import { brandSafeTitle } from "@/lib/seo-meta";
 import { SubpageHero } from "@/components/sections/subpage-hero";
 import { RichText } from "@/components/ui/rich-text";
+import { LegalContent } from "@/components/ui/legal-content";
+import { withLastUpdated } from "@/lib/legal-sections";
+import { getDictionary } from "@/get-dictionary";
 import { getSecurityPage } from "@/lib/sanity.queries";
 import { standaloneAlternates } from "@/lib/routing/url-helpers";
 import type { Locale } from "@/i18n-config";
@@ -10,33 +13,28 @@ import { AnimatedTitle } from "@/components/ui/animated-title";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: Locale }> }): Promise<Metadata> {
   const { lang } = await params;
-  const doc = await getSecurityPage(lang);
+  const [doc, dictionary] = await Promise.all([getSecurityPage(lang), getDictionary(lang)]);
+  const copy = dictionary.security;
+
   return {
-    title: brandSafeTitle(doc?.seo?.metaTitle || (lang === "fr" ? "Sécurité | MAWT" : "Security | MAWT")),
-    description:
-      doc?.seo?.metaDescription ||
-      (lang === "fr"
-        ? "Sécurité, confidentialité et IA responsable chez MAWT."
-        : "Security, confidentiality and responsible AI at MAWT."),
+    title: brandSafeTitle(doc?.seo?.metaTitle || copy.metaTitle),
+    description: doc?.seo?.metaDescription || copy.metaDescription,
     alternates: standaloneAlternates("securite", lang),
   };
 }
 
 export default async function SecurityPage({ params }: { params: Promise<{ lang: Locale }> }) {
   const { lang } = await params;
-  const doc = await getSecurityPage(lang);
-  const badge = lang === "fr" ? "Sécurité" : "Security";
+  const [doc, dictionary] = await Promise.all([getSecurityPage(lang), getDictionary(lang)]);
+  const copy = dictionary.security;
+  const badge = copy.badge;
 
-  // No CMS doc for this language → clean localized placeholder, never English.
+  // No CMS doc for this language → serve the localised dictionary copy.
   if (!doc?.heroH1) {
     return (
       <div className="min-h-screen">
-        <SubpageHero badge={badge} title={lang === "fr" ? "Bientôt disponible." : "Coming soon."} />
-        <section className="px-6 py-24 sm:px-8 md:px-10 lg:px-12 text-center">
-          <p className="text-neutral-500 font-normal italic">
-            {lang === "fr" ? "Cette page sera bientôt disponible." : "This page will be available soon."}
-          </p>
-        </section>
+        <SubpageHero badge={badge} title={copy.title} />
+        <LegalContent sections={withLastUpdated(copy)} />
       </div>
     );
   }

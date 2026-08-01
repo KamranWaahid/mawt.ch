@@ -454,5 +454,412 @@
     "button": "Se connecter",
     "error": "Cette clé d'accès n'a pas été reconnue. Veuillez réessayer.",
     "success": "Connecté. Redirection..."
+  },
+  "privacy": {
+    "badge": "Confidentialité",
+    "title": "La transparence et la confiance au cœur de nos opérations.",
+    "metaTitle": "Politique de confidentialité | MAWT",
+    "metaDescription": "Comment MAWT collecte, utilise et protège les données personnelles, conformément à la nouvelle Loi fédérale sur la protection des données (nLPD) et au RGPD.",
+    "lastUpdated": "Dernière mise à jour : 1er août 2026",
+    "sections": [
+      {
+        "title": "1. Responsable du traitement",
+        "content": [
+          "Le responsable du traitement des données personnelles collectées via le site mawt.ch est :",
+          {
+            "type": "lines",
+            "items": [
+              "**Marketing & Web Technologies Sàrl (MAWT)**",
+              "Rue de la Fontenette 23",
+              "1227 Carouge (Genève), Suisse",
+              "E-mail : info@mawt.ch",
+              "Téléphone : +41 76 636 33 33"
+            ]
+          },
+          "Pour toute question relative à la protection des données, vous pouvez nous écrire à l'adresse ci-dessus."
+        ]
+      },
+      {
+        "title": "2. Champ d'application et cadre légal",
+        "content": [
+          "La présente politique décrit la manière dont nous collectons, utilisons et protégeons vos données personnelles lorsque vous visitez notre site, nous contactez ou faites appel à nos services.",
+          "Nous traitons vos données conformément à la **nouvelle Loi fédérale suisse sur la protection des données (nLPD)** et, lorsque cela s'applique, notamment pour les personnes résidant dans l'Espace économique européen, au **Règlement général sur la protection des données (RGPD)**."
+        ]
+      },
+      {
+        "title": "3. Principes",
+        "content": [
+          "Nous ne collectons que les données nécessaires aux finalités décrites ci-dessous. Nous ne vendons jamais vos données personnelles et ne les transmettons à des tiers que dans les cas prévus par la présente politique ou par la loi."
+        ]
+      },
+      {
+        "title": "4. Données collectées et finalités",
+        "content": [
+          { "type": "subtitle", "text": "4.1 Données de navigation (fichiers journaux)" },
+          "Lors de chaque visite, notre hébergeur enregistre automatiquement :",
+          {
+            "type": "list",
+            "items": [
+              "votre adresse IP, le cas échéant abrégée ou anonymisée ;",
+              "la date et l'heure de la requête ;",
+              "les pages consultées et le volume de données transféré ;",
+              "le type et la version de votre navigateur, ainsi que le système d'exploitation ;",
+              "la page de provenance."
+            ]
+          },
+          "**Finalité :** assurer le fonctionnement technique, la sécurité et la stabilité du site, détecter les abus et établir des statistiques agrégées.",
+          "**Base légale :** intérêt légitime (art. 31 nLPD / art. 6 al. 1 let. f RGPD).",
+          "**Conservation :** 90 jours, sauf incident de sécurité nécessitant une conservation plus longue.",
+          { "type": "subtitle", "text": "4.2 Formulaire de contact et prise de contact par e-mail" },
+          "Lorsque vous nous contactez via le site, nous traitons les données que vous nous transmettez : votre nom, votre adresse e-mail, le service qui vous intéresse, l'échéance indicative de votre projet et le contenu de votre message.",
+          "**Finalité :** répondre à votre demande, établir une offre et gérer la relation commerciale.",
+          "**Base légale :** mesures précontractuelles ou exécution du contrat, ainsi que notre intérêt légitime à répondre aux sollicitations.",
+          "**Conservation :** pendant la durée de la relation commerciale, puis 10 ans conformément aux obligations comptables suisses, ou 12 mois si aucune relation n'est nouée.",
+          { "type": "subtitle", "text": "4.3 Relation client" },
+          "Dans le cadre de nos prestations (conseil IT, développement web, automatisation, intelligence artificielle), nous traitons les données de contact et de facturation de nos clients et de leurs collaborateurs.",
+          "**Finalité :** exécution du contrat, facturation, support et respect des obligations légales et comptables.",
+          "**Conservation :** 10 ans à compter de la fin de la relation contractuelle, conformément aux obligations de conservation du droit suisse.",
+          { "type": "subtitle", "text": "4.4 Newsletter" },
+          "Si vous vous inscrivez à notre newsletter, nous traitons votre adresse e-mail et, le cas échéant, votre nom.",
+          "**Base légale :** votre consentement, révocable à tout moment via le lien de désinscription présent dans chaque envoi ou par simple e-mail.",
+          "**Conservation :** jusqu'à votre désinscription.",
+          { "type": "subtitle", "text": "4.5 Données traitées pour le compte de nos clients" },
+          "Dans le cadre de projets (CRM, automatisation, intégrations), MAWT peut agir en qualité de **sous-traitant** au sens de la nLPD et du RGPD. Ces traitements sont alors régis par le contrat et l'accord de sous-traitance conclus avec le client concerné, et non par la présente politique."
+        ]
+      },
+      {
+        "title": "5. Cookies et mesure d'audience",
+        "content": [
+          { "type": "subtitle", "text": "5.1 Cookies techniques" },
+          "Le site utilise des cookies strictement nécessaires à son fonctionnement, tels que la gestion de session, les préférences et la sécurité. Ils ne requièrent pas votre consentement.",
+          { "type": "subtitle", "text": "5.2 Mesure d'audience" },
+          "Lorsque nous mesurons l'utilisation du site afin de l'améliorer, nous le faisons uniquement avec votre consentement, recueilli via la bannière cookies. Aucun cookie de mesure d'audience n'est déposé avant que vous ne l'acceptiez.",
+          "Vous pouvez à tout moment modifier vos préférences via les paramètres des cookies accessibles en pied de page, ou configurer votre navigateur pour refuser les cookies."
+        ]
+      },
+      {
+        "title": "6. Hébergement et prestataires tiers",
+        "content": [
+          "Le site est hébergé par **Hostinger**.",
+          "Nous faisons appel à des prestataires soigneusement sélectionnés, liés par des obligations contractuelles de confidentialité et de sécurité, notamment pour :",
+          {
+            "type": "list",
+            "items": [
+              "l'hébergement web : Hostinger ;",
+              "la gestion de contenu et le stockage des demandes de contact et des inscriptions à la newsletter : Sanity ;",
+              "la protection contre les abus et la limitation du débit : Upstash ;",
+              "l'envoi des notifications de demandes et des newsletters : notre prestataire de messagerie."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "7. Transferts de données à l'étranger",
+        "content": [
+          "Certains prestataires peuvent être situés hors de Suisse. En cas de transfert vers un pays ne disposant pas d'une protection des données adéquate au sens de la liste du Conseil fédéral, nous mettons en place des garanties appropriées, notamment les **clauses contractuelles types** reconnues par le PFPDT et la Commission européenne."
+        ]
+      },
+      {
+        "title": "8. Sécurité",
+        "content": [
+          "Nous appliquons des mesures techniques et organisationnelles appropriées pour protéger vos données contre tout accès, perte, altération ou divulgation non autorisés : chiffrement TLS des communications, contrôle des accès, authentification forte, sauvegardes régulières et mises à jour de sécurité.",
+          "Aucune transmission par Internet ne peut toutefois être garantie comme totalement sûre."
+        ]
+      },
+      {
+        "title": "9. Vos droits",
+        "content": [
+          "Conformément à la nLPD et, le cas échéant, au RGPD, vous disposez des droits suivants :",
+          {
+            "type": "list",
+            "items": [
+              "**droit d'accès** aux données vous concernant ;",
+              "**droit de rectification** des données inexactes ;",
+              "**droit à l'effacement** de vos données ;",
+              "**droit d'opposition** à un traitement fondé sur l'intérêt légitime ;",
+              "**droit de retirer votre consentement** à tout moment, sans effet rétroactif ;",
+              "**droit à la portabilité**, soit la remise de vos données dans un format électronique courant ;",
+              "**droit de ne pas faire l'objet d'une décision individuelle automatisée** produisant des effets juridiques."
+            ]
+          },
+          "Pour exercer ces droits, écrivez-nous à **info@mawt.ch**. Nous pourrons vous demander une preuve d'identité afin d'éviter toute divulgation à un tiers. Une réponse vous sera adressée dans un délai de 30 jours.",
+          "Vous avez également le droit de déposer une réclamation auprès du **Préposé fédéral à la protection des données et à la transparence (PFPDT)**, Feldeggweg 1, 3003 Berne, ou auprès de l'autorité de contrôle compétente dans votre pays de résidence au sein de l'Union européenne."
+        ]
+      },
+      {
+        "title": "10. Liens externes et réseaux sociaux",
+        "content": [
+          "Notre site peut contenir des liens vers des sites tiers ou vers nos profils sur des plateformes externes telles que LinkedIn, X, Instagram et Facebook. Nous n'exerçons aucun contrôle sur ces sites et déclinons toute responsabilité quant à leurs pratiques en matière de protection des données. Nous vous invitons à consulter leurs propres politiques de confidentialité."
+        ]
+      },
+      {
+        "title": "11. Modifications",
+        "content": [
+          "Nous nous réservons le droit de modifier la présente politique à tout moment afin de l'adapter à l'évolution de nos services ou du cadre légal. La version applicable est celle publiée sur cette page à la date de votre visite."
+        ]
+      },
+      {
+        "title": "12. Contact",
+        "content": [
+          {
+            "type": "lines",
+            "items": [
+              "**Marketing & Web Technologies Sàrl**",
+              "Rue de la Fontenette 23",
+              "1227 Carouge (Genève), Suisse",
+              "info@mawt.ch",
+              "+41 76 636 33 33"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "badge": "Conditions",
+    "title": "Des règles claires pour une collaboration professionnelle.",
+    "metaTitle": "Conditions d'utilisation | MAWT",
+    "metaDescription": "Conditions d'utilisation du site MAWT : objet, propriété intellectuelle, responsabilité et droit applicable en Suisse.",
+    "lastUpdated": "Dernière mise à jour : 1er août 2026",
+    "sections": [
+      {
+        "title": "1. Qui nous sommes",
+        "content": [
+          "Le site mawt.ch est édité par :",
+          {
+            "type": "lines",
+            "items": [
+              "**Marketing & Web Technologies Sàrl (MAWT)**",
+              "Rue de la Fontenette 23",
+              "1227 Carouge (Genève), Suisse",
+              "info@mawt.ch",
+              "+41 76 636 33 33"
+            ]
+          }
+        ]
+      },
+      {
+        "title": "2. Objet",
+        "content": [
+          "Ce site présente nos activités : conseil informatique, développement web, automatisation et intelligence artificielle. En le consultant, vous acceptez les présentes conditions. Si elles ne vous conviennent pas, nous vous invitons à ne pas utiliser le site."
+        ]
+      },
+      {
+        "title": "3. Utilisation du site",
+        "content": [
+          "Le site est mis à votre disposition à des fins d'information. Vous vous engagez à ne pas :",
+          {
+            "type": "list",
+            "items": [
+              "tenter d'accéder à des zones non publiques du site ou de nos systèmes ;",
+              "perturber son fonctionnement, par surcharge, injection ou contournement de sécurité ;",
+              "procéder à une extraction automatisée et massive de son contenu ;",
+              "réutiliser nos contenus de manière trompeuse ou pour vous présenter comme MAWT."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "4. Contenus et propriété intellectuelle",
+        "content": [
+          "Les textes, visuels, éléments graphiques, logos et codes présents sur le site appartiennent à MAWT ou à ses partenaires. Toute reproduction ou réutilisation à des fins commerciales nécessite notre accord écrit préalable.",
+          "La citation d'un extrait accompagnée d'un lien vers la page d'origine reste bien entendu autorisée."
+        ]
+      },
+      {
+        "title": "5. Valeur des informations publiées",
+        "content": [
+          "Les informations figurant sur ce site sont fournies à titre indicatif. Nous les tenons à jour avec soin, sans pouvoir garantir leur exactitude, leur exhaustivité ou leur actualité à tout moment.",
+          "Elles ne constituent **ni un conseil personnalisé, ni une offre contractuelle**. Une prestation ne prend naissance qu'au travers d'une offre ou d'un contrat signé entre MAWT et le client."
+        ]
+      },
+      {
+        "title": "6. Disponibilité",
+        "content": [
+          "Nous mettons tout en œuvre pour que le site reste accessible, sans garantir une disponibilité ininterrompue. Des interruptions peuvent survenir pour maintenance, mise à jour ou pour des raisons techniques indépendantes de notre volonté."
+        ]
+      },
+      {
+        "title": "7. Liens externes",
+        "content": [
+          "Le site peut renvoyer vers des sites tiers. Nous n'exerçons aucun contrôle sur leur contenu et n'assumons aucune responsabilité à leur égard."
+        ]
+      },
+      {
+        "title": "8. Responsabilité",
+        "content": [
+          "Dans les limites autorisées par le droit suisse, MAWT décline toute responsabilité pour les dommages directs ou indirects résultant de l'accès au site, de son utilisation ou de l'impossibilité d'y accéder. Cette limitation ne s'applique pas en cas de faute intentionnelle ou de négligence grave."
+        ]
+      },
+      {
+        "title": "9. Prestations et mandats",
+        "content": [
+          "Les prestations de MAWT sont régies par les offres, contrats et conditions particulières conclus avec chaque client. En cas de divergence, ces documents priment sur les présentes conditions."
+        ]
+      },
+      {
+        "title": "10. Protection des données",
+        "content": [
+          "Le traitement de vos données personnelles est décrit dans notre **politique de confidentialité** et notre page **cookies**."
+        ]
+      },
+      {
+        "title": "11. Modifications",
+        "content": [
+          "Nous pouvons adapter ces conditions à tout moment. La version applicable est celle publiée sur cette page au moment de votre visite."
+        ]
+      },
+      {
+        "title": "12. Droit applicable et for",
+        "content": [
+          "Les présentes conditions sont soumises au droit suisse. Le for est à Genève, sous réserve des fors impératifs prévus par la loi."
+        ]
+      }
+    ]
+  },
+  "cookies": {
+    "badge": "Cookies",
+    "title": "Une transparence claire sur le suivi et le consentement.",
+    "metaTitle": "Cookies | MAWT",
+    "metaDescription": "Les cookies utilisés par MAWT, leur durée de conservation et la manière de modifier vos choix à tout moment. Pas de publicité, pas de traceurs publicitaires.",
+    "lastUpdated": "Dernière mise à jour : 1er août 2026",
+    "sections": [
+      {
+        "title": "Ce qu'est un cookie",
+        "content": [
+          "Un cookie est un petit fichier déposé par un site sur votre navigateur. Il permet, par exemple, de garder une session ouverte ou de mémoriser une préférence d'une page à l'autre."
+        ]
+      },
+      {
+        "title": "Ce que nous utilisons",
+        "content": [
+          "Nous gardons les choses simples : **pas de publicité, pas de traceurs publicitaires, aucune revente de données**.",
+          { "type": "subtitle", "text": "Cookies nécessaires" },
+          "Indispensables au fonctionnement du site : gestion de session, sécurité, préférence de langue et mémorisation de vos choix en matière de cookies. Ils ne peuvent pas être désactivés et ne requièrent pas votre consentement.",
+          { "type": "subtitle", "text": "Mesure d'audience" },
+          "Lorsque nous mesurons l'utilisation du site afin de l'améliorer, les cookies de mesure d'audience ne sont déposés qu'après votre acceptation via la bannière cookies.",
+          "Les adresses IP sont abrégées avant traitement et les statistiques sont exploitées uniquement de manière agrégée. Nous ne cherchons pas à identifier les visiteurs individuellement."
+        ]
+      },
+      {
+        "title": "Durée de conservation",
+        "content": [
+          "Les cookies de session disparaissent à la fermeture du navigateur. Les autres sont conservés au maximum **13 mois**, puis expirent automatiquement."
+        ]
+      },
+      {
+        "title": "Gérer vos cookies",
+        "content": [
+          "Vous pouvez à tout moment :",
+          {
+            "type": "list",
+            "items": [
+              "modifier vos choix via le bandeau de gestion des cookies du site ;",
+              "configurer votre navigateur pour bloquer ou supprimer les cookies, ce que Chrome, Firefox, Safari et Edge proposent tous dans leurs paramètres de confidentialité ;",
+              "naviguer en mode privé."
+            ]
+          },
+          "Le blocage des cookies nécessaires peut empêcher certaines parties du site de fonctionner correctement."
+        ]
+      },
+      {
+        "title": "Contenus intégrés",
+        "content": [
+          "Certaines pages peuvent contenir des éléments provenant de services tiers, tels que vidéo, carte ou formulaire. Ces services peuvent déposer leurs propres cookies, soumis à leurs politiques respectives."
+        ]
+      },
+      {
+        "title": "Questions",
+        "content": [
+          {
+            "type": "lines",
+            "items": ["info@mawt.ch", "Rue de la Fontenette 23, 1227 Carouge (Genève)"]
+          },
+          "Pour le détail des traitements, voir notre **politique de confidentialité**."
+        ]
+      }
+    ]
+  },
+  "security": {
+    "badge": "Sécurité",
+    "title": "La sécurité fait partie de notre métier.",
+    "metaTitle": "Sécurité | MAWT",
+    "metaDescription": "Comment MAWT protège ses systèmes et les données de ses clients : chiffrement, contrôle des accès, sauvegardes, cloisonnement et signalement de vulnérabilités.",
+    "lastUpdated": "Dernière mise à jour : 1er août 2026",
+    "sections": [
+      {
+        "title": "",
+        "content": [
+          "Nos clients nous confient leurs systèmes, leurs données d'exploitation et parfois leurs infrastructures : nous appliquons à notre propre organisation les principes que nous leur recommandons."
+        ]
+      },
+      {
+        "title": "Notre approche",
+        "content": [
+          "Nous privilégions des choix simples et vérifiables plutôt que des dispositifs complexes mal maîtrisés : accès restreints, journalisation et un nombre limité de prestataires soigneusement sélectionnés."
+        ]
+      },
+      {
+        "title": "Mesures principales",
+        "content": [
+          {
+            "type": "list",
+            "items": [
+              "**Chiffrement des échanges** : l'ensemble du site et de nos services est servi en HTTPS (TLS).",
+              "**Hébergement** : nos environnements web et notre messagerie sont hébergés chez Hostinger.",
+              "**Contrôle des accès** : authentification à double facteur sur nos comptes sensibles, principe du moindre privilège, revue périodique des accès.",
+              "**Mises à jour** : suivi régulier des correctifs de sécurité sur les systèmes et dépendances que nous exploitons.",
+              "**Sauvegardes** : sauvegardes régulières, avec vérification de leur restauration.",
+              "**Séparation des environnements** : développement, préproduction et production sont cloisonnés.",
+              "**Prestataires** : nous évaluons nos fournisseurs sur leur localisation, leurs engagements contractuels et leurs pratiques de sécurité."
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Données de nos clients",
+        "content": [
+          "Lorsque nous intervenons sur les systèmes d'un client, nous n'accédons qu'aux données nécessaires à l'exécution du mandat, pour la durée de celui-ci. Les accès sont nominatifs et révoqués à la fin de la mission.",
+          "Nous signons volontiers un accord de confidentialité (NDA) ou un accord de sous-traitance (DPA) lorsque le contexte l'exige."
+        ]
+      },
+      {
+        "title": "Signaler une vulnérabilité",
+        "content": [
+          "Si vous pensez avoir identifié une faille sur l'un de nos sites ou services, écrivez-nous à **info@mawt.ch** avec une description permettant de reproduire le problème.",
+          "Nous vous demandons de :",
+          {
+            "type": "list",
+            "items": [
+              "ne pas accéder, modifier ou supprimer des données qui ne vous appartiennent pas ;",
+              "ne pas dégrader le service, par déni de service, envoi massif ou ingénierie sociale ;",
+              "nous laisser un délai raisonnable pour corriger avant toute publication."
+            ]
+          },
+          "Nous accusons réception dans les meilleurs délais et vous tenons informé du traitement. Nous ne proposons pas de programme de récompense, mais les signalements sérieux sont toujours les bienvenus, et reconnus."
+        ]
+      },
+      {
+        "title": "Limites",
+        "content": [
+          "Aucun système informatique n'est totalement sûr. Les mesures décrites ici traduisent nos pratiques et ne constituent ni une garantie ni un engagement contractuel. Les engagements applicables à une prestation figurent dans le contrat conclu avec le client concerné."
+        ]
+      },
+      {
+        "title": "Bonnes pratiques de votre côté",
+        "content": [
+          "Activez l'authentification à double facteur, utilisez des mots de passe uniques et un gestionnaire de mots de passe, et vérifiez l'expéditeur avant de répondre à une demande inhabituelle. Nous ne vous demanderons jamais un mot de passe par e-mail ou par téléphone."
+        ]
+      },
+      {
+        "title": "Contact",
+        "content": [
+          {
+            "type": "lines",
+            "items": ["info@mawt.ch", "+41 76 636 33 33", "Rue de la Fontenette 23, 1227 Carouge (Genève)"]
+          }
+        ]
+      }
+    ]
   }
 }

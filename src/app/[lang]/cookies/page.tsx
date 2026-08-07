@@ -29,7 +29,7 @@ export default async function CookiesPage({ params }: { params: Promise<{ lang: 
   const copy = dictionary.cookies;
 
   const sections: LegalSection[] = page?.body
-    ? portableTextToSections(page.body, page.intro)
+    ? portableTextToSections(page.body, page.intro, lang, page._updatedAt)
     : withLastUpdated(copy);
 
   return (

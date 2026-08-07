@@ -31,7 +31,7 @@ export default async function LegalPage({ params }: { params: Promise<{ lang: Lo
   // Sanity stays the source of truth when a privacy document exists; otherwise
   // the localised dictionary copy is used, prefixed with the last-updated line.
   const sections: LegalSection[] = page?.body
-    ? portableTextToSections(page.body, page.intro)
+    ? portableTextToSections(page.body, page.intro, lang, page._updatedAt)
     : withLastUpdated(copy);
 
   return (

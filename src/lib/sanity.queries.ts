@@ -517,6 +517,8 @@ export async function getPartners(): Promise<Partner[]> {
 
 // Static pages (legal + list-page headers) stored as `pageContent`
 export interface PageContentData {
+  /** Drives the "Last updated" line on the legal pages. */
+  _updatedAt?: string;
   heroH1?: string;
   heroH2?: string;
   intro?: unknown[];
@@ -529,6 +531,7 @@ export interface PageContentData {
 
 const pageContentQuery = groq`
 *[_type == "pageContent" && pageKey == $pageKey && language == $lang][0]{
+  _updatedAt,
   heroH1,
   heroH2,
   intro,

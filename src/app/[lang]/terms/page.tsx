@@ -29,7 +29,7 @@ export default async function TermsPage({ params }: { params: Promise<{ lang: Lo
   const copy = dictionary.terms;
 
   const sections: LegalSection[] = page?.body
-    ? portableTextToSections(page.body, page.intro)
+    ? portableTextToSections(page.body, page.intro, lang, page._updatedAt)
     : withLastUpdated(copy);
 
   return (

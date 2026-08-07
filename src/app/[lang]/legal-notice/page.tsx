@@ -39,7 +39,7 @@ const fallbackSections = [
 export default async function LegalNoticePage({ params }: { params: Promise<{ lang: Locale }> }) {
   const { lang } = await params;
   const page = await getPageContent(PAGE_KEY, lang);
-  const sections = page?.body ? portableTextToSections(page.body, page.intro) : fallbackSections;
+  const sections = page?.body ? portableTextToSections(page.body, page.intro, lang, page._updatedAt) : fallbackSections;
 
   return (
     <div className="min-h-screen">

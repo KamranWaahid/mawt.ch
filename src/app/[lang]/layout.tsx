@@ -16,6 +16,7 @@ import {
 import { CursorProvider } from "@/components/providers/cursor-provider";
 import { LenisProvider } from "@/components/providers/lenis-provider";
 import { StructuredData } from "@/components/seo/structured-data";
+import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 import { MetaPixel } from "@/components/analytics/meta-pixel";
 import { Inter, Instrument_Serif } from "next/font/google";
 import { notFound } from "next/navigation";
@@ -237,6 +238,7 @@ export default async function LangLayout({
                 </a>
                 <CursorProvider />
                 <MetaPixel />
+                <WhatsAppButton dict={dictionary.whatsapp} />
                 <SiteHeader
                   title={data.settings.title}
                   socialLinks={data.settings.socialLinks}

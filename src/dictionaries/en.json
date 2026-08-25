@@ -861,5 +861,11 @@
         ]
       }
     ]
+  },
+  "whatsapp": {
+    "phone": "41766363333",
+    "label": "Chat on WhatsApp",
+    "ariaLabel": "Chat with MAWT on WhatsApp",
+    "message": "Hello MAWT, I would like to talk about a project."
   }
 }

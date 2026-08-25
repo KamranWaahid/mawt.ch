@@ -55,6 +55,8 @@ export function CookieConsentModal({ isOpen, onClose, lang = "en" }: CookieConse
         if (choice === "essential") {
           document.cookie = "_ga=; Max-Age=0; path=/";
           document.cookie = "_gid=; Max-Age=0; path=/";
+          document.cookie = "_fbp=; Max-Age=0; path=/";
+          document.cookie = "_fbc=; Max-Age=0; path=/";
         }
       }
       setSaved(true);

@@ -858,10 +858,13 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
         >
           {/* Desktop Text */}
           <div className="hidden lg:block relative h-full w-full">
-            <motion.div className="absolute left-[2.5vw] top-[62%]" style={{ y: desktopContentY }}>
+            {/* Symbol + statement are bottom-anchored (like the CTA) so the
+                gap above "Engager la conversation" stays constant however many
+                lines the statement wraps to on short viewports. */}
+            <motion.div className="absolute left-[2.5vw] bottom-[34%]" style={{ y: desktopContentY }}>
               <GeometricSymbol className="h-[4.35cqw] w-[7.03cqw] max-h-[56px] max-w-[90px] text-white" />
             </motion.div>
-            <motion.p className="absolute left-[2.5vw] top-[74%] w-[43%] text-[2.45cqw] font-normal leading-[1.16] tracking-[-0.02em] text-white" style={{ y: desktopContentY }}>
+            <motion.p className="absolute left-[2.5vw] bottom-[13%] w-[43%] text-[2.45cqw] font-normal leading-[1.16] tracking-[-0.02em] text-white" style={{ y: desktopContentY }}>
               {dict.statement}
             </motion.p>
             <motion.div className="absolute left-[2.5vw] bottom-[6%]" style={{ y: desktopContentY }}>
@@ -882,10 +885,10 @@ export function HomepageHeroSection({ settings, dict, transitionDict, services }
           {/* Landscape Mobile Text */}
           <div className="absolute inset-0 px-8 py-5 hidden max-lg:landscape:block">
             <div className="relative h-full w-full">
-              <motion.div className="absolute left-[2%] top-[56%]" style={{ y: compactContentY }}>
+              <motion.div className="absolute left-[2%] bottom-[46%]" style={{ y: compactContentY }}>
                 <GeometricSymbol className="h-7 w-[45px] text-white" />
               </motion.div>
-              <motion.p className="absolute left-[2%] top-[65%] w-[48%] text-[clamp(1.2rem,3vw,1.55rem)] font-normal leading-[1.06] tracking-[-0.02em] text-white" style={{ y: compactContentY }}>
+              <motion.p className="absolute left-[2%] bottom-[20%] w-[48%] text-[clamp(1.2rem,3vw,1.55rem)] font-normal leading-[1.06] tracking-[-0.02em] text-white" style={{ y: compactContentY }}>
                 {dict.statement}
               </motion.p>
               <motion.div className="absolute left-[6.5%] bottom-[10%]" style={{ y: compactContentY }}>

@@ -16,6 +16,7 @@ import {
 import { CursorProvider } from "@/components/providers/cursor-provider";
 import { LenisProvider } from "@/components/providers/lenis-provider";
 import { StructuredData } from "@/components/seo/structured-data";
+import { MetaPixel } from "@/components/analytics/meta-pixel";
 import { Inter, Instrument_Serif } from "next/font/google";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -235,6 +236,7 @@ export default async function LangLayout({
                   Skip to content
                 </a>
                 <CursorProvider />
+                <MetaPixel />
                 <SiteHeader
                   title={data.settings.title}
                   socialLinks={data.settings.socialLinks}

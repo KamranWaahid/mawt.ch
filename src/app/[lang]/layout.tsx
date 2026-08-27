@@ -18,6 +18,7 @@ import { LenisProvider } from "@/components/providers/lenis-provider";
 import { StructuredData } from "@/components/seo/structured-data";
 import { WhatsAppButton } from "@/components/ui/whatsapp-button";
 import { MetaPixel } from "@/components/analytics/meta-pixel";
+import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import { Inter, Instrument_Serif } from "next/font/google";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -239,6 +240,7 @@ export default async function LangLayout({
                 <CursorProvider />
                 <MetaPixel />
                 <WhatsAppButton dict={dictionary.whatsapp} />
+                <GoogleAnalytics />
                 <SiteHeader
                   title={data.settings.title}
                   socialLinks={data.settings.socialLinks}
